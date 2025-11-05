@@ -1,0 +1,86 @@
+"use client"
+
+import * as React from "react"
+import { motion, HTMLMotionProps } from "framer-motion"
+import { cn } from "@/lib/utils"
+
+export interface TextGradientProps extends Omit<HTMLMotionProps<"p">, "children"> {
+  /**
+   * The text content to animate
+   */
+  children: string
+  /**
+   * Gradient colors (CSS gradient string)
+   * @default "linear-gradient(90deg, #3b82f6, #8b5cf6, #ec4899)"
+   */
+  gradient?: string
+  /**
+   * Whether to animate the gradient
+   * @default true
+   */
+  animate?: boolean
+  /**
+   * Animation duration in seconds (for gradient movement)
+   * @default 3
+   */
+  duration?: number
+}
+
+/**
+ * A text component with an animated gradient effect.
+ * 
+ * @example
+ * ```tsx
+ * <TextGradient>Hello World</TextGradient>
+ * ```
+ * 
+ * @example
+ * ```tsx
+ * <TextGradient 
+ *   gradient="linear-gradient(90deg, #ff0080, #ff8c00, #40e0d0)"
+ *   duration={2}
+ * >
+ *   Custom Gradient
+ * </TextGradient>
+ * ```
+ */
+export function TextGradient({
+  children,
+  className,
+  gradient = "linear-gradient(90deg, #3b82f6, #8b5cf6, #ec4899)",
+  animate: shouldAnimate = true,
+  duration = 3,
+  ...props
+}: TextGradientProps) {
+  return (
+    <motion.p
+      className={cn(className)}
+      style={{
+        backgroundImage: gradient,
+        backgroundSize: shouldAnimate ? "200% auto" : "100% auto",
+        WebkitBackgroundClip: "text",
+        WebkitTextFillColor: "transparent",
+        backgroundClip: "text",
+      }}
+      animate={
+        shouldAnimate
+          ? {
+              backgroundPosition: ["0% center", "200% center"],
+            }
+          : undefined
+      }
+      transition={
+        shouldAnimate
+          ? {
+              duration,
+              ease: "linear",
+              repeat: Infinity,
+            }
+          : undefined
+      }
+      {...props}
+    >
+      {children}
+    </motion.p>
+  )
+}

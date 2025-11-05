@@ -1,77 +1,536 @@
 {
   "$schema": "https://ui.shadcn.com/schema/registry.json",
-  "name": "acme",
-  "homepage": "https://acme.com",
+  "name": "animbits",
+  "homepage": "https://animbits.dev",
   "items": [
     {
-      "name": "hello-world",
+      "name": "@animbits/icons/pulse",
       "type": "registry:component",
-      "title": "Hello World",
-      "description": "A simple hello world component",
-      "registryDependencies": ["button"],
+      "title": "Pulse Icon",
+      "description": "Continuous pulsing animation for icons",
+      "tags": ["icon", "continuous", "pulse", "loop"],
+      "dependencies": ["framer-motion"],
       "files": [
         {
-          "path": "registry/new-york/blocks/hello-world/hello-world.tsx",
+          "path": "registry/new-york/animations/icons/pulse.tsx",
           "type": "registry:component"
         }
       ]
     },
     {
-      "name": "example-form",
+      "name": "@animbits/icons/bounce",
       "type": "registry:component",
-      "title": "Example Form",
-      "description": "A contact form with Zod validation.",
-      "dependencies": ["zod"],
-      "registryDependencies": ["button", "input", "label", "textarea", "card"],
+      "title": "Bounce Icon",
+      "description": "One-shot bounce animation for icons with configurable triggers",
+      "tags": ["icon", "one-shot", "bounce", "interactive"],
+      "dependencies": ["framer-motion"],
       "files": [
         {
-          "path": "registry/new-york/blocks/example-form/example-form.tsx",
+          "path": "registry/new-york/animations/icons/bounce.tsx",
           "type": "registry:component"
         }
       ]
     },
     {
-      "name": "complex-component",
+      "name": "@animbits/icons/bounce-continuous",
       "type": "registry:component",
-      "title": "Complex Component",
-      "description": "A complex component showing hooks, libs and components.",
-      "registryDependencies": ["card"],
+      "title": "Bounce Continuous",
+      "description": "Continuous bouncing animation for icons",
+      "tags": ["icon", "continuous", "bounce", "loop"],
+      "dependencies": ["framer-motion"],
       "files": [
         {
-          "path": "registry/new-york/blocks/complex-component/page.tsx",
-          "type": "registry:page",
-          "target": "app/pokemon/page.tsx"
-        },
-        {
-          "path": "registry/new-york/blocks/complex-component/components/pokemon-card.tsx",
+          "path": "registry/new-york/animations/icons/bounce-continuous.tsx",
           "type": "registry:component"
-        },
-        {
-          "path": "registry/new-york/blocks/complex-component/components/pokemon-image.tsx",
-          "type": "registry:component"
-        },
-        {
-          "path": "registry/new-york/blocks/complex-component/lib/pokemon.ts",
-          "type": "registry:lib"
-        },
-        {
-          "path": "registry/new-york/blocks/complex-component/hooks/use-pokemon.ts",
-          "type": "registry:hook"
         }
       ]
     },
     {
-      "name": "example-with-css",
+      "name": "@animbits/icons/spin",
       "type": "registry:component",
-      "title": "Example with CSS",
-      "description": "A login form with a CSS file.",
+      "title": "Spin Icon",
+      "description": "Continuous rotation animation for icons",
+      "tags": ["icon", "continuous", "spin", "rotate", "loop"],
+      "dependencies": ["framer-motion"],
       "files": [
         {
-          "path": "registry/new-york/blocks/example-with-css/example-card.tsx",
+          "path": "registry/new-york/animations/icons/spin.tsx",
           "type": "registry:component"
-        },
+        }
+      ]
+    },
+    {
+      "name": "@animbits/icons/wiggle",
+      "type": "registry:component",
+      "title": "Wiggle Icon",
+      "description": "One-shot wiggle animation (rotate left-right) for icons",
+      "tags": ["icon", "one-shot", "wiggle", "interactive"],
+      "dependencies": ["framer-motion"],
+      "files": [
         {
-          "path": "registry/new-york/blocks/example-with-css/example-card.css",
+          "path": "registry/new-york/animations/icons/wiggle.tsx",
+          "type": "registry:component"
+        }
+      ]
+    },
+    {
+      "name": "@animbits/icons/shake",
+      "type": "registry:component",
+      "title": "Shake Icon",
+      "description": "One-shot shake animation (horizontal shake) for icons",
+      "tags": ["icon", "one-shot", "shake", "interactive"],
+      "dependencies": ["framer-motion"],
+      "files": [
+        {
+          "path": "registry/new-york/animations/icons/shake.tsx",
+          "type": "registry:component"
+        }
+      ]
+    },
+    {
+      "name": "@animbits/icons/heartbeat",
+      "type": "registry:component",
+      "title": "Heartbeat Icon",
+      "description": "Continuous heartbeat rhythm animation for icons",
+      "tags": ["icon", "continuous", "heartbeat", "pulse", "loop"],
+      "dependencies": ["framer-motion"],
+      "files": [
+        {
+          "path": "registry/new-york/animations/icons/heartbeat.tsx",
+          "type": "registry:component"
+        }
+      ]
+    },
+    {
+      "name": "@animbits/icons/fade-in",
+      "type": "registry:component",
+      "title": "Fade In Icon",
+      "description": "Entrance animation with fade effect for icons",
+      "tags": ["icon", "entrance", "fade"],
+      "dependencies": ["framer-motion"],
+      "files": [
+        {
+          "path": "registry/new-york/animations/icons/fade-in.tsx",
+          "type": "registry:component"
+        }
+      ]
+    },
+    {
+      "name": "@animbits/icons/scale-in",
+      "type": "registry:component",
+      "title": "Scale In Icon",
+      "description": "Entrance animation with scale effect for icons",
+      "tags": ["icon", "entrance", "scale"],
+      "dependencies": ["framer-motion"],
+      "files": [
+        {
+          "path": "registry/new-york/animations/icons/scale-in.tsx",
+          "type": "registry:component"
+        }
+      ]
+    },
+    {
+      "name": "@animbits/icons/pop",
+      "type": "registry:component",
+      "title": "Pop Icon",
+      "description": "One-shot pop effect (scale from 0 to 1) for icons",
+      "tags": ["icon", "one-shot", "pop", "scale"],
+      "dependencies": ["framer-motion"],
+      "files": [
+        {
+          "path": "registry/new-york/animations/icons/pop.tsx",
+          "type": "registry:component"
+        }
+      ]
+    },
+    {
+      "name": "@animbits/icons/rotate",
+      "type": "registry:component",
+      "title": "Rotate Icon",
+      "description": "One-shot 360° rotation animation for icons",
+      "tags": ["icon", "one-shot", "rotate", "interactive"],
+      "dependencies": ["framer-motion"],
+      "files": [
+        {
+          "path": "registry/new-york/animations/icons/rotate.tsx",
+          "type": "registry:component"
+        }
+      ]
+    },
+    {
+      "name": "@animbits/buttons/press",
+      "type": "registry:component",
+      "title": "Press Button",
+      "description": "Button with press-down effect on tap",
+      "tags": ["button", "interactive", "press", "tap"],
+      "dependencies": ["framer-motion"],
+      "files": [
+        {
+          "path": "registry/new-york/animations/buttons/press.tsx",
+          "type": "registry:component"
+        }
+      ]
+    },
+    {
+      "name": "@animbits/buttons/glow",
+      "type": "registry:component",
+      "title": "Glow Button",
+      "description": "Button with glow effect on hover",
+      "tags": ["button", "interactive", "glow", "hover"],
+      "dependencies": ["framer-motion"],
+      "files": [
+        {
+          "path": "registry/new-york/animations/buttons/glow.tsx",
+          "type": "registry:component"
+        }
+      ]
+    },
+    {
+      "name": "@animbits/buttons/lift",
+      "type": "registry:component",
+      "title": "Lift Button",
+      "description": "Button that lifts up on hover",
+      "tags": ["button", "interactive", "lift", "hover"],
+      "dependencies": ["framer-motion"],
+      "files": [
+        {
+          "path": "registry/new-york/animations/buttons/lift.tsx",
+          "type": "registry:component"
+        }
+      ]
+    },
+    {
+      "name": "@animbits/buttons/shine",
+      "type": "registry:component",
+      "title": "Shine Button",
+      "description": "Button with shine sweep effect on hover",
+      "tags": ["button", "interactive", "shine", "hover"],
+      "dependencies": ["framer-motion"],
+      "files": [
+        {
+          "path": "registry/new-york/animations/buttons/shine.tsx",
+          "type": "registry:component"
+        }
+      ]
+    },
+    {
+      "name": "@animbits/buttons/fade-in",
+      "type": "registry:component",
+      "title": "Fade In Button",
+      "description": "Button with fade-in entrance animation",
+      "tags": ["button", "entrance", "fade"],
+      "dependencies": ["framer-motion"],
+      "files": [
+        {
+          "path": "registry/new-york/animations/buttons/fade-in.tsx",
+          "type": "registry:component"
+        }
+      ]
+    },
+    {
+      "name": "@animbits/buttons/slide-in",
+      "type": "registry:component",
+      "title": "Slide In Button",
+      "description": "Button with slide-in entrance animation",
+      "tags": ["button", "entrance", "slide"],
+      "dependencies": ["framer-motion"],
+      "files": [
+        {
+          "path": "registry/new-york/animations/buttons/slide-in.tsx",
+          "type": "registry:component"
+        }
+      ]
+    },
+    {
+      "name": "@animbits/cards/hover-lift",
+      "type": "registry:component",
+      "title": "Hover Lift Card",
+      "description": "Card that lifts with shadow on hover",
+      "tags": ["card", "interactive", "lift", "hover"],
+      "dependencies": ["framer-motion"],
+      "files": [
+        {
+          "path": "registry/new-york/animations/cards/hover-lift.tsx",
+          "type": "registry:component"
+        }
+      ]
+    },
+    {
+      "name": "@animbits/cards/hover-glow",
+      "type": "registry:component",
+      "title": "Hover Glow Card",
+      "description": "Card with glow effect on hover",
+      "tags": ["card", "interactive", "glow", "hover"],
+      "dependencies": ["framer-motion"],
+      "files": [
+        {
+          "path": "registry/new-york/animations/cards/hover-glow.tsx",
+          "type": "registry:component"
+        }
+      ]
+    },
+    {
+      "name": "@animbits/cards/fade-in",
+      "type": "registry:component",
+      "title": "Fade In Card",
+      "description": "Card with fade-in animation on mount",
+      "tags": ["card", "entrance", "fade"],
+      "dependencies": ["framer-motion"],
+      "files": [
+        {
+          "path": "registry/new-york/animations/cards/fade-in.tsx",
+          "type": "registry:component"
+        }
+      ]
+    },
+    {
+      "name": "@animbits/cards/scale-in",
+      "type": "registry:component",
+      "title": "Scale In Card",
+      "description": "Card with scale-in animation on mount",
+      "tags": ["card", "entrance", "scale"],
+      "dependencies": ["framer-motion"],
+      "files": [
+        {
+          "path": "registry/new-york/animations/cards/scale-in.tsx",
+          "type": "registry:component"
+        }
+      ]
+    },
+    {
+      "name": "@animbits/cards/slide-in",
+      "type": "registry:component",
+      "title": "Slide In Card",
+      "description": "Card that slides in from any direction on mount",
+      "tags": ["card", "entrance", "slide"],
+      "dependencies": ["framer-motion"],
+      "files": [
+        {
+          "path": "registry/new-york/animations/cards/slide-in.tsx",
+          "type": "registry:component"
+        }
+      ]
+    },
+    {
+      "name": "@animbits/cards/flip",
+      "type": "registry:component",
+      "title": "Flip Card",
+      "description": "Card with 3D flip animation on hover",
+      "tags": ["card", "interactive", "flip", "hover", "3d"],
+      "dependencies": ["framer-motion"],
+      "files": [
+        {
+          "path": "registry/new-york/animations/cards/flip.tsx",
+          "type": "registry:component"
+        }
+      ]
+    },
+    {
+      "name": "@animbits/cards/tilt",
+      "type": "registry:component",
+      "title": "Tilt Card",
+      "description": "Card with mouse-tracking tilt effect",
+      "tags": ["card", "interactive", "tilt", "hover", "3d"],
+      "dependencies": ["framer-motion"],
+      "files": [
+        {
+          "path": "registry/new-york/animations/cards/tilt.tsx",
+          "type": "registry:component"
+        }
+      ]
+    },
+    {
+      "name": "@animbits/text/fade-in",
+      "type": "registry:component",
+      "title": "Fade In Text",
+      "description": "Text that fades in word by word or character by character",
+      "tags": ["text", "entrance", "fade", "stagger"],
+      "dependencies": ["framer-motion"],
+      "files": [
+        {
+          "path": "registry/new-york/animations/text/fade-in.tsx",
+          "type": "registry:component"
+        }
+      ]
+    },
+    {
+      "name": "@animbits/text/slide-up",
+      "type": "registry:component",
+      "title": "Slide Up Text",
+      "description": "Text that slides up word by word or character by character",
+      "tags": ["text", "entrance", "slide", "stagger"],
+      "dependencies": ["framer-motion"],
+      "files": [
+        {
+          "path": "registry/new-york/animations/text/slide-up.tsx",
+          "type": "registry:component"
+        }
+      ]
+    },
+    {
+      "name": "@animbits/text/typewriter",
+      "type": "registry:component",
+      "title": "Typewriter Text",
+      "description": "Text with typewriter effect and optional blinking cursor",
+      "tags": ["text", "typewriter", "animation"],
+      "dependencies": ["framer-motion"],
+      "files": [
+        {
+          "path": "registry/new-york/animations/text/typewriter.tsx",
+          "type": "registry:component"
+        }
+      ]
+    },
+    {
+      "name": "@animbits/text/gradient",
+      "type": "registry:component",
+      "title": "Gradient Text",
+      "description": "Text with animated gradient effect",
+      "tags": ["text", "gradient", "continuous", "loop"],
+      "dependencies": ["framer-motion"],
+      "files": [
+        {
+          "path": "registry/new-york/animations/text/gradient.tsx",
+          "type": "registry:component"
+        }
+      ]
+    },
+    {
+      "name": "@animbits/text/blur-in",
+      "type": "registry:component",
+      "title": "Blur In Text",
+      "description": "Text that blurs in word by word or character by character",
+      "tags": ["text", "entrance", "blur", "stagger"],
+      "dependencies": ["framer-motion"],
+      "files": [
+        {
+          "path": "registry/new-york/animations/text/blur-in.tsx",
+          "type": "registry:component"
+        }
+      ]
+    },
+    {
+      "name": "@animbits/loaders/spinner",
+      "type": "registry:component",
+      "title": "Spinner Loader",
+      "description": "Circular spinning loader",
+      "tags": ["loader", "spinner", "loading", "continuous"],
+      "dependencies": ["framer-motion"],
+      "files": [
+        {
+          "path": "registry/new-york/animations/loaders/spinner.tsx",
+          "type": "registry:component"
+        }
+      ]
+    },
+    {
+      "name": "@animbits/loaders/dots",
+      "type": "registry:component",
+      "title": "Dots Loader",
+      "description": "Bouncing dots loader",
+      "tags": ["loader", "dots", "loading", "continuous"],
+      "dependencies": ["framer-motion"],
+      "files": [
+        {
+          "path": "registry/new-york/animations/loaders/dots.tsx",
+          "type": "registry:component"
+        }
+      ]
+    },
+    {
+      "name": "@animbits/loaders/bars",
+      "type": "registry:component",
+      "title": "Bars Loader",
+      "description": "Animated height bars loader",
+      "tags": ["loader", "bars", "loading", "continuous"],
+      "dependencies": ["framer-motion"],
+      "files": [
+        {
+          "path": "registry/new-york/animations/loaders/bars.tsx",
+          "type": "registry:component"
+        }
+      ]
+    },
+    {
+      "name": "@animbits/loaders/pulse",
+      "type": "registry:component",
+      "title": "Pulse Loader",
+      "description": "Pulsing circle loader",
+      "tags": ["loader", "pulse", "loading", "continuous"],
+      "dependencies": ["framer-motion"],
+      "files": [
+        {
+          "path": "registry/new-york/animations/loaders/pulse.tsx",
+          "type": "registry:component"
+        }
+      ]
+    },
+    {
+      "name": "@animbits/loaders/skeleton",
+      "type": "registry:component",
+      "title": "Skeleton Loader",
+      "description": "Shimmer skeleton loader for content placeholders",
+      "tags": ["loader", "skeleton", "shimmer", "loading", "continuous"],
+      "dependencies": ["framer-motion"],
+      "files": [
+        {
+          "path": "registry/new-york/animations/loaders/skeleton.tsx",
+          "type": "registry:component"
+        }
+      ]
+    },
+    {
+      "name": "@animbits/lists/slide-in",
+      "type": "registry:component",
+      "title": "Slide In List",
+      "description": "List with staggered slide-in animation for items",
+      "tags": ["list", "entrance", "slide", "stagger"],
+      "dependencies": ["framer-motion"],
+      "files": [
+        {
+          "path": "registry/new-york/animations/lists/slide-in.tsx",
+          "type": "registry:component"
+        }
+      ]
+    },
+    {
+      "name": "@animbits/lists/stagger-fade",
+      "type": "registry:component",
+      "title": "Stagger Fade List",
+      "description": "List with staggered fade-in animation for items",
+      "tags": ["list", "entrance", "fade", "stagger"],
+      "dependencies": ["framer-motion"],
+      "files": [
+        {
+          "path": "registry/new-york/animations/lists/stagger-fade.tsx",
+          "type": "registry:component"
+        }
+      ]
+    },
+    {
+      "name": "@animbits/pages/page-transition",
+      "type": "registry:component",
+      "title": "Page Transition",
+      "description": "Smooth page transition with fade and slide",
+      "tags": ["page", "transition", "fade", "slide"],
+      "dependencies": ["framer-motion"],
+      "files": [
+        {
+          "path": "registry/new-york/animations/pages/page-transition.tsx",
+          "type": "registry:component"
+        }
+      ]
+    },
+    {
+      "name": "@animbits/pages/slide-transition",
+      "type": "registry:component",
+      "title": "Slide Transition",
+      "description": "Page transition with directional slide effect",
+      "tags": ["page", "transition", "slide"],
+      "dependencies": ["framer-motion"],
+      "files": [
+        {
+          "path": "registry/new-york/animations/pages/slide-transition.tsx",
           "type": "registry:component"
         }
       ]
