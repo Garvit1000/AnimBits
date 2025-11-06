@@ -4,6 +4,56 @@
   "homepage": "https://animbits.dev",
   "items": [
     {
+      "name": "@animbits/hooks",
+      "type": "registry:lib",
+      "title": "Animation Primitive Hooks",
+      "description": "Component-agnostic animation hooks that work with any element via Framer Motion",
+      "tags": ["hooks", "primitive", "core", "utilities"],
+      "dependencies": ["framer-motion"],
+      "files": [
+        {
+          "path": "lib/hooks/use-hover-lift.ts",
+          "type": "registry:lib"
+        },
+        {
+          "path": "lib/hooks/use-hover-glow.ts",
+          "type": "registry:lib"
+        },
+        {
+          "path": "lib/hooks/use-press.ts",
+          "type": "registry:lib"
+        },
+        {
+          "path": "lib/hooks/use-fade-in.ts",
+          "type": "registry:lib"
+        },
+        {
+          "path": "lib/hooks/use-scale-in.ts",
+          "type": "registry:lib"
+        },
+        {
+          "path": "lib/hooks/use-slide-in.ts",
+          "type": "registry:lib"
+        },
+        {
+          "path": "lib/hooks/use-pulse.ts",
+          "type": "registry:lib"
+        },
+        {
+          "path": "lib/hooks/use-bounce.ts",
+          "type": "registry:lib"
+        },
+        {
+          "path": "lib/hooks/index.ts",
+          "type": "registry:lib"
+        },
+        {
+          "path": "lib/hooks/README.md",
+          "type": "registry:lib"
+        }
+      ]
+    },
+    {
       "name": "@animbits/icons/pulse",
       "type": "registry:component",
       "title": "Pulse Icon",

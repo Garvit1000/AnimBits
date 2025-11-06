@@ -1,7 +1,7 @@
 "use client"
 
 import { motion, type HTMLMotionProps } from "framer-motion"
-import { pressVariants } from "@/lib/animation-presets"
+import { usePress } from "@/lib/hooks"
 
 interface PressButtonProps extends Omit<HTMLMotionProps<"button">, "animate"> {
   children: React.ReactNode
@@ -14,12 +14,25 @@ interface PressButtonProps extends Omit<HTMLMotionProps<"button">, "animate"> {
 
 /**
  * Button with press-down effect on tap
- * 
+ *
+ * Uses the `usePress` primitive hook internally - you can use that hook
+ * directly on any motion component for the same effect.
+ *
  * @example
  * ```tsx
  * <PressButton className="px-4 py-2 bg-blue-500 text-white rounded">
  *   Click me
  * </PressButton>
+ * ```
+ *
+ * @example Using the hook directly
+ * ```tsx
+ * import { usePress } from "@/lib/hooks"
+ *
+ * function MyComponent() {
+ *   const pressProps = usePress({ pressScale: 0.92 })
+ *   return <motion.div {...pressProps}>Any element</motion.div>
+ * }
  * ```
  */
 export function PressButton({
@@ -27,19 +40,12 @@ export function PressButton({
   scale = 0.95,
   ...props
 }: PressButtonProps) {
-  const customVariants = {
-    initial: { scale: 1 },
-    tap: { scale },
-  }
+  const pressProps = usePress({
+    pressScale: scale,
+  })
 
   return (
-    <motion.button
-      variants={customVariants}
-      initial="initial"
-      whileTap="tap"
-      transition={{ duration: 0.1 }}
-      {...props}
-    >
+    <motion.button {...pressProps} {...props}>
       {children}
     </motion.button>
   )

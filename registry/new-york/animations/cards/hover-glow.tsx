@@ -3,6 +3,7 @@
 import * as React from "react"
 import { motion, HTMLMotionProps } from "framer-motion"
 import { cn } from "@/lib/utils"
+import { useHoverGlow } from "@/lib/hooks"
 
 export interface CardHoverGlowProps extends HTMLMotionProps<"div"> {
   /**
@@ -24,7 +25,10 @@ export interface CardHoverGlowProps extends HTMLMotionProps<"div"> {
 
 /**
  * A card component that glows on hover with customizable color.
- * 
+ *
+ * Uses the `useHoverGlow` primitive hook internally - you can use that hook
+ * directly on any motion component for the same effect.
+ *
  * @example
  * ```tsx
  * <CardHoverGlow className="p-6 bg-white rounded-lg border">
@@ -32,16 +36,26 @@ export interface CardHoverGlowProps extends HTMLMotionProps<"div"> {
  *   <p>Card content goes here</p>
  * </CardHoverGlow>
  * ```
- * 
+ *
  * @example
  * ```tsx
- * <CardHoverGlow 
+ * <CardHoverGlow
  *   glowColor="rgba(168, 85, 247, 0.5)"
  *   glowSpread={30}
  *   className="p-6 bg-white rounded-lg border"
  * >
  *   <h3>Purple Glow Card</h3>
  * </CardHoverGlow>
+ * ```
+ *
+ * @example Using the hook directly
+ * ```tsx
+ * import { useHoverGlow } from "@/lib/hooks"
+ *
+ * function MyComponent() {
+ *   const glowProps = useHoverGlow({ glowColor: "rgba(168, 85, 247, 0.5)" })
+ *   return <motion.section {...glowProps}>Any element</motion.section>
+ * }
  * ```
  */
 export function CardHoverGlow({
@@ -52,12 +66,15 @@ export function CardHoverGlow({
   duration = 0.3,
   ...props
 }: CardHoverGlowProps) {
+  const glowProps = useHoverGlow({
+    glowColor,
+    glowBlur: glowSpread,
+    duration,
+  })
+
   return (
     <motion.div
-      whileHover={{
-        boxShadow: `0 0 ${glowSpread}px ${glowColor}`,
-      }}
-      transition={{ duration }}
+      {...glowProps}
       className={cn("cursor-pointer", className)}
       {...props}
     >

@@ -1,6 +1,7 @@
 "use client"
 
 import { motion, type HTMLMotionProps } from "framer-motion"
+import { useHoverLift } from "@/lib/hooks"
 
 interface LiftButtonProps extends Omit<HTMLMotionProps<"button">, "animate"> {
   children: React.ReactNode
@@ -18,15 +19,28 @@ interface LiftButtonProps extends Omit<HTMLMotionProps<"button">, "animate"> {
 
 /**
  * Button that lifts up on hover
- * 
+ *
+ * Uses the `useHoverLift` primitive hook internally - you can use that hook
+ * directly on any motion component for the same effect.
+ *
  * @example
  * ```tsx
- * <LiftButton 
+ * <LiftButton
  *   className="px-4 py-2 bg-blue-500 text-white rounded"
  *   liftHeight={8}
  * >
  *   Hover me
  * </LiftButton>
+ * ```
+ *
+ * @example Using the hook directly
+ * ```tsx
+ * import { useHoverLift } from "@/lib/hooks"
+ *
+ * function MyComponent() {
+ *   const liftProps = useHoverLift({ liftDistance: 8 })
+ *   return <motion.div {...liftProps}>Any element</motion.div>
+ * }
  * ```
  */
 export function LiftButton({
@@ -35,19 +49,13 @@ export function LiftButton({
   shadow = true,
   ...props
 }: LiftButtonProps) {
+  const liftProps = useHoverLift({
+    liftDistance: liftHeight,
+    addShadow: shadow,
+  })
+
   return (
-    <motion.button
-      initial={{ 
-        y: 0,
-        boxShadow: shadow ? "0 0 0 rgba(0,0,0,0)" : undefined,
-      }}
-      whileHover={{
-        y: -liftHeight,
-        boxShadow: shadow ? "0 10px 30px rgba(0,0,0,0.15)" : undefined,
-      }}
-      transition={{ duration: 0.2 }}
-      {...props}
-    >
+    <motion.button {...liftProps} {...props}>
       {children}
     </motion.button>
   )
