@@ -3,7 +3,6 @@
 import * as React from "react"
 import { motion, HTMLMotionProps } from "framer-motion"
 import { cn } from "@/lib/utils"
-import { useFadeIn } from "@/lib/hooks"
 
 export interface CardFadeInProps extends HTMLMotionProps<"div"> {
   /**
@@ -19,10 +18,7 @@ export interface CardFadeInProps extends HTMLMotionProps<"div"> {
 }
 
 /**
- * A card component that fades in when it enters the viewport.
- *
- * Uses the `useFadeIn` primitive hook internally - you can use that hook
- * directly on any motion component for the same effect.
+ * A card component that fades in when it mounts.
  *
  * @example
  * ```tsx
@@ -38,16 +34,6 @@ export interface CardFadeInProps extends HTMLMotionProps<"div"> {
  *   <h3>Delayed Card</h3>
  * </CardFadeIn>
  * ```
- *
- * @example Using the hook directly
- * ```tsx
- * import { useFadeIn } from "@/lib/hooks"
- *
- * function MyComponent() {
- *   const fadeProps = useFadeIn({ duration: 0.6, delay: 0.2 })
- *   return <motion.div {...fadeProps}>Any element</motion.div>
- * }
- * ```
  */
 export function CardFadeIn({
   children,
@@ -56,14 +42,11 @@ export function CardFadeIn({
   delay = 0,
   ...props
 }: CardFadeInProps) {
-  const fadeProps = useFadeIn({
-    duration,
-    delay,
-  })
-
   return (
     <motion.div
-      {...fadeProps}
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration, delay }}
       className={cn(className)}
       {...props}
     >

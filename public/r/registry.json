@@ -44,6 +44,30 @@
           "type": "registry:lib"
         },
         {
+          "path": "lib/hooks/use-shimmer.ts",
+          "type": "registry:lib"
+        },
+        {
+          "path": "lib/hooks/use-scramble.ts",
+          "type": "registry:lib"
+        },
+        {
+          "path": "lib/hooks/use-word-carousel.ts",
+          "type": "registry:lib"
+        },
+        {
+          "path": "lib/hooks/use-magnetic.ts",
+          "type": "registry:lib"
+        },
+        {
+          "path": "lib/hooks/use-parallax-tilt.ts",
+          "type": "registry:lib"
+        },
+        {
+          "path": "lib/hooks/use-stroke-draw.ts",
+          "type": "registry:lib"
+        },
+        {
           "path": "lib/hooks/index.ts",
           "type": "registry:lib"
         },
@@ -208,6 +232,20 @@
       ]
     },
     {
+      "name": "@animbits/icons/stroke-draw",
+      "type": "registry:component",
+      "title": "Stroke Draw Icon",
+      "description": "SVG path stroke drawing animation for icons",
+      "tags": ["icon", "stroke", "draw", "svg", "entrance"],
+      "dependencies": ["framer-motion"],
+      "files": [
+        {
+          "path": "registry/new-york/animations/icons/stroke-draw.tsx",
+          "type": "registry:component"
+        }
+      ]
+    },
+    {
       "name": "@animbits/buttons/press",
       "type": "registry:component",
       "title": "Press Button",
@@ -287,6 +325,48 @@
       "files": [
         {
           "path": "registry/new-york/animations/buttons/slide-in.tsx",
+          "type": "registry:component"
+        }
+      ]
+    },
+    {
+      "name": "@animbits/buttons/ripple",
+      "type": "registry:component",
+      "title": "Ripple Button",
+      "description": "Button with touch-aware ripple effect on click",
+      "tags": ["button", "interactive", "ripple", "click"],
+      "dependencies": ["framer-motion"],
+      "files": [
+        {
+          "path": "registry/new-york/animations/buttons/ripple.tsx",
+          "type": "registry:component"
+        }
+      ]
+    },
+    {
+      "name": "@animbits/buttons/magnetic",
+      "type": "registry:component",
+      "title": "Magnetic Button",
+      "description": "Button with cursor-following magnetic attraction effect",
+      "tags": ["button", "interactive", "magnetic", "hover"],
+      "dependencies": ["framer-motion"],
+      "files": [
+        {
+          "path": "registry/new-york/animations/buttons/magnetic.tsx",
+          "type": "registry:component"
+        }
+      ]
+    },
+    {
+      "name": "@animbits/buttons/border-gradient",
+      "type": "registry:component",
+      "title": "Border Gradient Button",
+      "description": "Button with animated gradient border",
+      "tags": ["button", "gradient", "border", "continuous"],
+      "dependencies": ["framer-motion"],
+      "files": [
+        {
+          "path": "registry/new-york/animations/buttons/border-gradient.tsx",
           "type": "registry:component"
         }
       ]
@@ -390,6 +470,48 @@
       ]
     },
     {
+      "name": "@animbits/cards/parallax-tilt",
+      "type": "registry:component",
+      "title": "Parallax Tilt Card",
+      "description": "Card with 3D parallax tilt effect and depth",
+      "tags": ["card", "interactive", "parallax", "tilt", "hover", "3d"],
+      "dependencies": ["framer-motion"],
+      "files": [
+        {
+          "path": "registry/new-york/animations/cards/parallax-tilt.tsx",
+          "type": "registry:component"
+        }
+      ]
+    },
+    {
+      "name": "@animbits/cards/frosted-glass",
+      "type": "registry:component",
+      "title": "Frosted Glass Card",
+      "description": "Card with frosted glass blur effect",
+      "tags": ["card", "glass", "blur", "backdrop"],
+      "dependencies": ["framer-motion"],
+      "files": [
+        {
+          "path": "registry/new-york/animations/cards/frosted-glass.tsx",
+          "type": "registry:component"
+        }
+      ]
+    },
+    {
+      "name": "@animbits/cards/background-zoom",
+      "type": "registry:component",
+      "title": "Background Zoom Card",
+      "description": "Card with background image zoom on hover",
+      "tags": ["card", "interactive", "zoom", "hover", "background"],
+      "dependencies": ["framer-motion"],
+      "files": [
+        {
+          "path": "registry/new-york/animations/cards/background-zoom.tsx",
+          "type": "registry:component"
+        }
+      ]
+    },
+    {
       "name": "@animbits/text/fade-in",
       "type": "registry:component",
       "title": "Fade In Text",
@@ -460,6 +582,62 @@
       ]
     },
     {
+      "name": "@animbits/text/shimmer",
+      "type": "registry:component",
+      "title": "Shimmer Text",
+      "description": "Text with gradient shimmer sweep animation",
+      "tags": ["text", "shimmer", "gradient", "continuous"],
+      "dependencies": ["framer-motion"],
+      "files": [
+        {
+          "path": "registry/new-york/animations/text/shimmer.tsx",
+          "type": "registry:component"
+        }
+      ]
+    },
+    {
+      "name": "@animbits/text/scramble",
+      "type": "registry:component",
+      "title": "Scramble Text",
+      "description": "Hacker-style text scramble decode animation",
+      "tags": ["text", "scramble", "decode", "entrance"],
+      "dependencies": ["framer-motion"],
+      "files": [
+        {
+          "path": "registry/new-york/animations/text/scramble.tsx",
+          "type": "registry:component"
+        }
+      ]
+    },
+    {
+      "name": "@animbits/text/word-carousel",
+      "type": "registry:component",
+      "title": "Word Carousel Text",
+      "description": "Rotating word carousel animation",
+      "tags": ["text", "carousel", "rotate", "continuous"],
+      "dependencies": ["framer-motion"],
+      "files": [
+        {
+          "path": "registry/new-york/animations/text/word-carousel.tsx",
+          "type": "registry:component"
+        }
+      ]
+    },
+    {
+      "name": "@animbits/text/split-reveal",
+      "type": "registry:component",
+      "title": "Split Reveal Text",
+      "description": "Text reveals with vertical split effect",
+      "tags": ["text", "split", "reveal", "entrance"],
+      "dependencies": ["framer-motion"],
+      "files": [
+        {
+          "path": "registry/new-york/animations/text/split-reveal.tsx",
+          "type": "registry:component"
+        }
+      ]
+    },
+    {
       "name": "@animbits/loaders/spinner",
       "type": "registry:component",
       "title": "Spinner Loader",
@@ -525,6 +703,48 @@
       "files": [
         {
           "path": "registry/new-york/animations/loaders/skeleton.tsx",
+          "type": "registry:component"
+        }
+      ]
+    },
+    {
+      "name": "@animbits/loaders/orbit",
+      "type": "registry:component",
+      "title": "Orbit Loader",
+      "description": "Spinning particles in orbit animation",
+      "tags": ["loader", "orbit", "particles", "loading", "continuous"],
+      "dependencies": ["framer-motion"],
+      "files": [
+        {
+          "path": "registry/new-york/animations/loaders/orbit.tsx",
+          "type": "registry:component"
+        }
+      ]
+    },
+    {
+      "name": "@animbits/loaders/gooey-blobs",
+      "type": "registry:component",
+      "title": "Gooey Blobs Loader",
+      "description": "Organic merging blobs animation",
+      "tags": ["loader", "gooey", "blobs", "loading", "continuous"],
+      "dependencies": ["framer-motion"],
+      "files": [
+        {
+          "path": "registry/new-york/animations/loaders/gooey-blobs.tsx",
+          "type": "registry:component"
+        }
+      ]
+    },
+    {
+      "name": "@animbits/loaders/morphing",
+      "type": "registry:component",
+      "title": "Morphing Loader",
+      "description": "Shape-shifting morphing animation",
+      "tags": ["loader", "morphing", "shapes", "loading", "continuous"],
+      "dependencies": ["framer-motion"],
+      "files": [
+        {
+          "path": "registry/new-york/animations/loaders/morphing.tsx",
           "type": "registry:component"
         }
       ]

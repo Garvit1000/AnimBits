@@ -120,3 +120,137 @@
     @apply bg-background text-foreground;
   }
 }
+
+/* ============================================
+   View Transitions API - Theme Toggle Animations
+   ============================================ */
+
+/* Circular ripple animation origin variables */
+:root {
+  --x: 50%;
+  --y: 50%;
+}
+
+/* Base View Transition Configuration */
+::view-transition-group(root) {
+  animation-duration: 0.5s;
+  animation-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Default - Circular ripple animation */
+::view-transition-new(root) {
+  animation-name: reveal-theme-circular;
+  will-change: clip-path;
+}
+
+::view-transition-old(root),
+.dark::view-transition-old(root) {
+  animation: none;
+  z-index: -1;
+}
+
+.dark::view-transition-new(root) {
+  animation-name: reveal-theme-circular;
+  will-change: clip-path;
+}
+
+@keyframes reveal-theme-circular {
+  from {
+    clip-path: circle(0% at var(--x) var(--y));
+  }
+  to {
+    clip-path: circle(150% at var(--x) var(--y));
+  }
+}
+
+/* Slide from Top */
+.theme-slide-top::view-transition-old(root) {
+  animation: slide-out-top 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.theme-slide-top::view-transition-new(root) {
+  animation: slide-in-top 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@keyframes slide-out-top {
+  to {
+    transform: translateY(-100%);
+  }
+}
+
+@keyframes slide-in-top {
+  from {
+    transform: translateY(-100%);
+  }
+}
+
+/* Slide from Bottom */
+.theme-slide-bottom::view-transition-old(root) {
+  animation: slide-out-bottom 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.theme-slide-bottom::view-transition-new(root) {
+  animation: slide-in-bottom 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@keyframes slide-out-bottom {
+  to {
+    transform: translateY(100%);
+  }
+}
+
+@keyframes slide-in-bottom {
+  from {
+    transform: translateY(100%);
+  }
+}
+
+/* Slide from Left */
+.theme-slide-left::view-transition-old(root) {
+  animation: slide-out-left 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.theme-slide-left::view-transition-new(root) {
+  animation: slide-in-left 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@keyframes slide-out-left {
+  to {
+    transform: translateX(-100%);
+  }
+}
+
+@keyframes slide-in-left {
+  from {
+    transform: translateX(-100%);
+  }
+}
+
+/* Slide from Right */
+.theme-slide-right::view-transition-old(root) {
+  animation: slide-out-right 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.theme-slide-right::view-transition-new(root) {
+  animation: slide-in-right 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@keyframes slide-out-right {
+  to {
+    transform: translateX(100%);
+  }
+}
+
+@keyframes slide-in-right {
+  from {
+    transform: translateX(100%);
+  }
+}
+
+/* Disable animations for reduced motion preference */
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-old(root),
+  ::view-transition-new(root) {
+    animation: none !important;
+  }
+}
