@@ -1,10 +1,10 @@
 "use client"
 
 import * as React from "react"
-import { motion, HTMLMotionProps } from "framer-motion"
+import { motion, SVGMotionProps } from "framer-motion"
 import { cn } from "@/lib/utils"
 
-export interface MorphIconProps extends Omit<React.SVGProps<SVGSVGElement>, "children"> {
+export interface MorphIconProps extends Omit<SVGMotionProps<SVGSVGElement>, "children"> {
   /**
    * Array of path data strings to morph between
    */
