@@ -1,5 +1,5 @@
 import * as React from "react"
-import { useMotionValue, useSpring, type MotionProps } from "framer-motion"
+import { useMotionValue, useSpring } from "framer-motion"
 
 export interface UseMagneticOptions {
   /**

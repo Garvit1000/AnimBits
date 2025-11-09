@@ -149,7 +149,7 @@ const DatabaseWithRestApi = ({
               stroke="currentColor"
               strokeWidth="0.3"
             ></rect>
-            <DatabaseIcon x="18" y="7.5" isDark={true}></DatabaseIcon>
+            <DatabaseIcon x="18" y="7.5"></DatabaseIcon>
             <text
               x="28"
               y="12"
@@ -173,7 +173,7 @@ const DatabaseWithRestApi = ({
               stroke="currentColor"
               strokeWidth="0.3"
             ></rect>
-            <DatabaseIcon x="64" y="7.5" isDark={true}></DatabaseIcon>
+            <DatabaseIcon x="64" y="7.5"></DatabaseIcon>
             <text
               x="74"
               y="12"
@@ -197,7 +197,7 @@ const DatabaseWithRestApi = ({
               stroke="currentColor"
               strokeWidth="0.3"
             ></rect>
-            <DatabaseIcon x="112" y="7.5" isDark={true}></DatabaseIcon>
+            <DatabaseIcon x="112" y="7.5"></DatabaseIcon>
             <text
               x="122"
               y="12"
@@ -221,7 +221,7 @@ const DatabaseWithRestApi = ({
               stroke="currentColor"
               strokeWidth="0.3"
             ></rect>
-            <DatabaseIcon x="154" y="7.5" isDark={true}></DatabaseIcon>
+            <DatabaseIcon x="154" y="7.5"></DatabaseIcon>
             <text
               x="165"
               y="12"
@@ -338,7 +338,7 @@ const DatabaseWithRestApi = ({
 
 export default DatabaseWithRestApi;
 
-const DatabaseIcon = ({ x = "0", y = "0", isDark = false }: { x: string; y: string; isDark?: boolean }) => {
+const DatabaseIcon = ({ x = "0", y = "0" }: { x: string; y: string }) => {
   return (
     <svg
       x={x}
