@@ -1,10 +1,10 @@
 "use client"
 
 import * as React from "react"
-import { motion, HTMLMotionProps } from "framer-motion"
+import { motion } from "framer-motion"
 import { cn } from "@/lib/utils"
 
-export interface LoaderLiquidProgressProps extends Omit<HTMLMotionProps<"div">, "children"> {
+export interface LoaderLiquidProgressProps {
   /**
    * Progress value (0-100)
    * @default 0
@@ -50,13 +50,11 @@ export function LoaderLiquidProgress({
   height = 8,
   color = "#3b82f6",
   duration = 1,
-  ...props
 }: LoaderLiquidProgressProps) {
   return (
     <div
       className={cn("relative w-full overflow-hidden rounded-full bg-neutral-200 dark:bg-neutral-800", className)}
       style={{ height }}
-      {...props}
     >
       <motion.div
         className="absolute inset-0 rounded-full"
