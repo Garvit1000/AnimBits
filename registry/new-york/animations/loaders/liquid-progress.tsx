@@ -25,6 +25,10 @@ export interface LoaderLiquidProgressProps {
    * @default 1
    */
   duration?: number
+  /**
+   * Additional CSS classes
+   */
+  className?: string
 }
 
 /**
