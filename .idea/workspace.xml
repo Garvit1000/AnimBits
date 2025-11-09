@@ -2,14 +2,9 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="79a2cc61-d1f8-4491-a38e-181ef2f6daf0" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/app/globals.css" beforeDir="false" afterPath="$PROJECT_DIR$/app/globals.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/layout.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/app/layout.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/page.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/app/page.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/components.json" beforeDir="false" afterPath="$PROJECT_DIR$/components.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/hooks/index.ts" beforeDir="false" afterPath="$PROJECT_DIR$/lib/hooks/index.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/components/ui/container-text-flip.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/components/ui/container-text-flip.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/package.json" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/pnpm-lock.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/pnpm-lock.yaml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/registry/new-york/animations/cards/fade-in.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/registry/new-york/animations/cards/fade-in.tsx" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -96,6 +91,7 @@
       <workItem from="1762580340379" duration="243000" />
       <workItem from="1762617896055" duration="91000" />
       <workItem from="1762687292963" duration="1000" />
+      <workItem from="1762689957804" duration="19000" />
     </task>
     <servers />
   </component>
