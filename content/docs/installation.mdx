@@ -1,0 +1,116 @@
+---
+title: Installation
+description: How to install dependencies and structure your app
+---
+
+# Installation
+
+Get started with AnimBits by installing the required dependencies and setting up your project.
+
+## Prerequisites
+
+Before you begin, ensure you have the following installed:
+
+- Node.js 18.x or later
+- npm, yarn, or pnpm package manager
+- A Next.js or React project
+
+## Install Dependencies
+
+AnimBits components are built with Framer Motion and require a few dependencies:
+
+<Tabs items={['npm', 'yarn', 'pnpm']}>
+  <Tab value="npm">
+    ```bash
+    npm install framer-motion clsx tailwind-merge
+    ```
+  </Tab>
+  <Tab value="yarn">
+    ```bash
+    yarn add framer-motion clsx tailwind-merge
+    ```
+  </Tab>
+  <Tab value="pnpm">
+    ```bash
+    pnpm add framer-motion clsx tailwind-merge
+    ```
+  </Tab>
+</Tabs>
+
+## Add Utility Functions
+
+Create a utility file for className merging:
+
+```ts title="lib/utils.ts"
+import { clsx, type ClassValue } from "clsx";
+import { twMerge } from "tailwind-merge";
+
+export function cn(...inputs: ClassValue[]) {
+  return twMerge(clsx(inputs));
+}
+```
+
+## Configure Tailwind CSS
+
+Ensure your `tailwind.config.js` includes the content paths:
+
+```js title="tailwind.config.js"
+/** @type {import('tailwindcss').Config} */
+module.exports = {
+  content: [
+    "./pages/**/*.{js,ts,jsx,tsx,mdx}",
+    "./components/**/*.{js,ts,jsx,tsx,mdx}",
+    "./app/**/*.{js,ts,jsx,tsx,mdx}",
+  ],
+  theme: {
+    extend: {},
+  },
+  plugins: [],
+};
+```
+
+## Add Components
+
+You can now copy and paste any component from the AnimBits registry directly into your project.
+
+### Manual Installation
+
+1. Browse the [Components](/docs/components) page
+2. Select a component you want to use
+3. Copy the component code
+4. Paste it into your project (e.g., `components/ui/`)
+5. Import and use it in your application
+
+### Example Usage
+
+```tsx
+import { RippleButton } from "@/components/ui/ripple-button";
+
+export default function Page() {
+  return (
+    <div>
+      <RippleButton>Click me</RippleButton>
+    </div>
+  );
+}
+```
+
+## TypeScript Configuration
+
+AnimBits components are written in TypeScript. Ensure your `tsconfig.json` includes:
+
+```json title="tsconfig.json"
+{
+  "compilerOptions": {
+    "paths": {
+      "@/*": ["./*"]
+    }
+  }
+}
+```
+
+## Next Steps
+
+- Explore the [Components](/docs/components) library
+- Check out component-specific documentation
+- Customize components to match your design system
