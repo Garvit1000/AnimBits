@@ -59,13 +59,20 @@ export default function Home() {
           <div className="mx-auto max-w-4xl text-center">
             {/* Badge */}
             <motion.div
-              className="mb-8 inline-flex items-center gap-2 rounded-full border border-neutral-200 bg-neutral-50 px-3 py-1 text-sm dark:border-neutral-800 dark:bg-neutral-900"
+              className="mb-8 inline-flex items-center gap-2 rounded-full px-3 py-1 text-sm relative bg-neutral-50 dark:bg-neutral-900"
+              style={{
+                backgroundImage: 'linear-gradient(135deg, rgb(59 130 246) 0%, rgb(229 231 235) 30%, rgb(229 231 235) 100%)',
+                backgroundOrigin: 'border-box',
+                backgroundClip: 'padding-box, border-box',
+                border: '1px solid transparent',
+              }}
               initial={{ opacity: 0, y: -20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5 }}
             >
-              <Sparkles className="h-3.5 w-3.5 text-blue-600" />
-              <span className="font-medium text-neutral-700 dark:text-neutral-300">
+              <div className="absolute inset-0 rounded-full bg-neutral-50 dark:bg-neutral-900 m-[1px]" />
+              <Sparkles className="h-3.5 w-3.5 text-blue-600 relative z-10" />
+              <span className="font-medium text-neutral-700 dark:text-neutral-300 relative z-10">
                 Production-ready animations
               </span>
             </motion.div>

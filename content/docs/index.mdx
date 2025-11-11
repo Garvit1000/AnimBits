@@ -1,52 +1,270 @@
 ---
-title: Introduction
-description: Beautiful animation components for React and Next.js applications
+title: AnimBits
+description: Beautiful, component-agnostic animation primitives for React. Copy, paste, and make it yours.
 ---
 
-# Introduction
+import { Tab, Tabs } from 'fumadocs-ui/components/tabs';
+import { Step, Steps } from 'fumadocs-ui/components/steps';
+import { Callout } from 'fumadocs-ui/components/callout';
 
-AnimBits is a collection of production-ready animation components built with Framer Motion and React. Copy and paste components directly into your project.
 
-## Features
+<div className="not-prose mt-8 flex flex-wrap gap-3">
+  <a
+    href="/docs/installation"
+    className="inline-flex items-center justify-center rounded-lg bg-primary px-6 py-3 font-semibold text-primary-foreground transition-colors hover:bg-primary/90"
+  >
+    Get Started
+  </a>
+  <a
+    href="/docs/components/buttons"
+    className="inline-flex items-center justify-center rounded-lg border bg-background px-6 py-3 font-semibold transition-colors hover:bg-accent"
+  >
+    Browse Components
+  </a>
+</div>
 
-### Beautiful Animations
-Carefully crafted animations for buttons, cards, text, icons, and more.
+## What is AnimBits?
 
-### Performance First
-Optimized for smooth 60fps animations with minimal bundle size.
+AnimBits is a collection of **copy-paste animation components** and **primitive hooks** built on Framer Motion. Unlike traditional animation libraries, AnimBits gives you the source code. Customize everything to match your design system.
 
-### TypeScript Support
-Fully typed components and hooks for better developer experience.
+<Callout type="info">
+  **Not a component library.** AnimBits is a collection of re-usable components and hooks that you can copy and paste into your apps. Built with React, TypeScript, and Framer Motion.
+</Callout>
 
-### Customizable
-Easy to customize with Tailwind CSS and component props.
+## Key Features
 
-### Tree Shakeable
-Import only what you need. No bloated dependencies.
-
-### Composable Hooks
-Reusable animation hooks that work with any component.
+<div className="not-prose mt-8 grid gap-4 md:grid-cols-2">
+  <div className="rounded-lg border bg-card p-6">
+    <h3 className="mb-2 font-semibold">Component-Agnostic</h3>
+    <p className="text-sm text-muted-foreground">
+      Use any animation on any element. Not locked into categories like "button animations" or "card animations".
+    </p>
+  </div>
+  
+  <div className="rounded-lg border bg-card p-6">
+    <h3 className="mb-2 font-semibold">Primitive Hooks</h3>
+    <p className="text-sm text-muted-foreground">
+      Low-level hooks that return Framer Motion props. Maximum flexibility to compose and combine animations.
+    </p>
+  </div>
+  
+  <div className="rounded-lg border bg-card p-6">
+    <h3 className="mb-2 font-semibold">Copy & Paste</h3>
+    <p className="text-sm text-muted-foreground">
+      No npm dependencies. Copy the source code directly into your project and customize to your heart's content.
+    </p>
+  </div>
+  
+  <div className="rounded-lg border bg-card p-6">
+    <h3 className="mb-2 font-semibold">Composable</h3>
+    <p className="text-sm text-muted-foreground">
+      Mix and match animations. Combine lift + glow, fade + scale, or any other combination you can imagine.
+    </p>
+  </div>
+</div>
 
 ## Quick Start
 
-Install dependencies and add your first animation component:
+<Steps>
+  <Step>
+    ### Install dependencies
+    
+    AnimBits requires Framer Motion and React. Install them if you haven't already:
+    
+    ```bash
+    npm install framer-motion
+    ```
+  </Step>
+  
+  <Step>
+    ### Copy a component or hook
+    
+    Browse the [components](/docs/components/buttons) or [hooks](/docs/hooks/hover-lift) and copy the code you need:
+    
+    <Tabs items={['Component', 'Hook']}>
+      <Tab value="Component">
+        ```tsx
+        // Copy from registry/buttons/lift.tsx
+        import { LiftButton } from '@/components/animations/buttons/lift'
+        
+        export function MyComponent() {
+          return (
+            <LiftButton className="px-6 py-3 bg-blue-500 text-white rounded-lg">
+              Hover me!
+            </LiftButton>
+          )
+        }
+        ```
+      </Tab>
+      
+      <Tab value="Hook">
+        ```tsx
+        // Copy from lib/hooks/use-hover-lift.ts
+        import { motion } from 'framer-motion'
+        import { useHoverLift } from '@/lib/hooks/use-hover-lift'
+        
+        export function MyComponent() {
+          const liftProps = useHoverLift({ liftDistance: 12 })
+          
+          return (
+            <motion.div {...liftProps} className="p-6 bg-white rounded-lg">
+              This card lifts on hover!
+            </motion.div>
+          )
+        }
+        ```
+      </Tab>
+    </Tabs>
+  </Step>
+  
+  <Step>
+    ### Customize to your needs
+    
+    Modify the animations, change the styling, add your own features. It's your code now!
+  </Step>
+</Steps>
 
-```bash
-npm install framer-motion clsx tailwind-merge
+## Architecture
+
+AnimBits uses a layered architecture that gives you flexibility in how you use it:
+
+```
+┌─────────────────────────────────────────┐
+│ Layer 3: Semantic Components            │
+│ (buttons/lift, cards/hover-glow, etc.)  │
+│ Quick to use, opinionated examples      │
+└─────────────────────────────────────────┘
+                  ↓ uses
+┌─────────────────────────────────────────┐
+│ Layer 2: Generic Wrappers (Optional)    │
+│ (<Animated />, merge utilities)         │
+│ Convenience layer for common patterns   │
+└─────────────────────────────────────────┘
+                  ↓ uses
+┌─────────────────────────────────────────┐
+│ Layer 1: Animation Primitives           │
+│ (useHoverLift, useGlow, useFadeIn...)   │
+│ Component-agnostic, maximum flexibility │
+└─────────────────────────────────────────┘
 ```
 
-## Component Categories
+### Choose Your Layer
 
-Browse our collection of animation components organized by category:
+<Tabs items={['Semantic Components', 'Primitive Hooks', 'Generic Wrappers']}>
+  <Tab value="Semantic Components">
+    **Best for:** Quick prototyping, consistent patterns
+    
+    ```tsx
+    import { LiftButton } from '@/components/animations/buttons/lift'
+    
+    <LiftButton>Click me</LiftButton>
+    ```
+    
+    - Fastest to implement
+    - Opinionated styling included
+    - Less flexible for custom use cases
+  </Tab>
+  
+  <Tab value="Primitive Hooks">
+    **Best for:** Custom implementations, maximum flexibility
+    
+    ```tsx
+    import { motion } from 'framer-motion'
+    import { useHoverLift } from '@/lib/hooks/use-hover-lift'
+    
+    const liftProps = useHoverLift({ liftDistance: 16 })
+    <motion.article {...liftProps}>
+      Custom article with lift!
+    </motion.article>
+    ```
+    
+    - Works with ANY element
+    - Easy to compose multiple animations
+    - Component-agnostic
+    - Requires more setup
+  </Tab>
+  
+  <Tab value="Generic Wrappers">
+    **Best for:** Consistent animation patterns across elements
+    
+    ```tsx
+    import { Animated } from '@/lib/components/animated'
+    import { useHoverLift } from '@/lib/hooks/use-hover-lift'
+    
+    const lift = useHoverLift()
+    <Animated animation={lift} as="article">
+      Convenient wrapper!
+    </Animated>
+    ```
+    
+    - Cleaner than raw motion components
+    - Still fully flexible
+    - Extra abstraction layer
+  </Tab>
+</Tabs>
 
-- **Buttons** - Interactive button animations and effects
-- **Cards** - Card hover effects and transitions
-- **Text** - Text reveal and animation effects
-- **Icons** - Icon animations and transitions
-- **Loaders** - Loading spinners and progress indicators
-- **Lists** - List item animations and stagger effects
-- **Pages** - Page transition effects
+## Philosophy
 
-## Getting Started
+<Callout>
+  **You own the code.** AnimBits is not a package you install. It's a collection of components and hooks you copy into your project. This means:
+  
+  - No version conflicts or breaking changes
+  - Full control over implementation
+  - Customize without fighting the library
+  - Learn by reading the source
+</Callout>
 
-Check out the [Installation](/docs/installation) guide to get started with AnimBits.
+### Why Copy-Paste?
+
+Traditional animation libraries force you into their patterns. AnimBits gives you **the building blocks** and gets out of your way. Want to modify the easing? Change the shadow? Combine three different animations? Go for it. It's your code.
+
+## What's Included
+
+- **8+ Primitive Hooks** — `useHoverLift`, `useHoverGlow`, `useFadeIn`, `useScaleIn`, `useSlideIn`, `usePulse`, `usePress`, `useBounce`
+- **40+ Semantic Components** — Buttons, cards, icons, lists, pages, text, loaders, and transitions
+- **TypeScript** — Fully typed with intelligent autocomplete
+- **Composable** — Mix and match animations freely
+- **Accessible** — Built with accessibility in mind
+
+## Examples
+
+<div className="not-prose mt-8 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+  <a href="/docs/components/buttons" className="group rounded-lg border bg-card p-6 transition-all hover:shadow-lg">
+    <h3 className="mb-2 font-semibold group-hover:text-primary">Buttons</h3>
+    <p className="text-sm text-muted-foreground">Lift, glow, press, pulse, and more button animations.</p>
+  </a>
+  
+  <a href="/docs/components/cards" className="group rounded-lg border bg-card p-6 transition-all hover:shadow-lg">
+    <h3 className="mb-2 font-semibold group-hover:text-primary">Cards</h3>
+    <p className="text-sm text-muted-foreground">Hover effects, entrance animations, and interactive cards.</p>
+  </a>
+  
+  <a href="/docs/components/icons" className="group rounded-lg border bg-card p-6 transition-all hover:shadow-lg">
+    <h3 className="mb-2 font-semibold group-hover:text-primary">Icons</h3>
+    <p className="text-sm text-muted-foreground">Pulse, bounce, spin, and attention-grabbing icon animations.</p>
+  </a>
+  
+  <a href="/docs/components/text" className="group rounded-lg border bg-card p-6 transition-all hover:shadow-lg">
+    <h3 className="mb-2 font-semibold group-hover:text-primary">Text</h3>
+    <p className="text-sm text-muted-foreground">Fade in, slide in, typewriter, and staggered text animations.</p>
+  </a>
+  
+  <a href="/docs/components/loaders" className="group rounded-lg border bg-card p-6 transition-all hover:shadow-lg">
+    <h3 className="mb-2 font-semibold group-hover:text-primary">Loaders</h3>
+    <p className="text-sm text-muted-foreground">Spinners, skeletons, pulse, and progress indicators.</p>
+  </a>
+  
+  <a href="/docs/components/transitions" className="group rounded-lg border bg-card p-6 transition-all hover:shadow-lg">
+    <h3 className="mb-2 font-semibold group-hover:text-primary">Transitions</h3>
+    <p className="text-sm text-muted-foreground">Page transitions, modal entrances, and layout animations.</p>
+  </a>
+</div>
+
+## Community & Support
+
+- [GitHub Repository](https://github.com/yourusername/animbits) - Star us and contribute!
+- [Discord Community](https://discord.gg/animbits) - Get help and share your creations
+- [Twitter](https://twitter.com/animbits) - Follow for updates
+
+
+

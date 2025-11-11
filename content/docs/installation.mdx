@@ -1,107 +1,378 @@
 ---
 title: Installation
-description: How to install dependencies and structure your app
+description: AnimBits is not a traditional npm package. You copy the components and hooks directly into your project. This gives you full control over the code and allows you to customize everything.
 ---
 
-# Installation
+import { Tab, Tabs } from 'fumadocs-ui/components/tabs';
+import { Step, Steps } from 'fumadocs-ui/components/steps';
+import { Callout } from 'fumadocs-ui/components/callout';
 
-Get started with AnimBits by installing the required dependencies and setting up your project.
 
 ## Prerequisites
 
-Before you begin, ensure you have the following installed:
+Before you begin, make sure you have:
 
-- Node.js 18.x or later
-- npm, yarn, or pnpm package manager
-- A Next.js or React project
+- React 18.0 or later
+- TypeScript 4.9 or later (recommended)
+- Node.js 16.0 or later
 
-## Install Dependencies
+## Pick Your Framework
 
-AnimBits components are built with Framer Motion and require a few dependencies:
+Start by selecting your framework of choice. Then follow the instructions to install the dependencies and structure your app. AnimBits is built to work with all React frameworks.
 
-<Tabs items={['npm', 'yarn', 'pnpm']}>
-  <Tab value="npm">
-    ```bash
-    npm install framer-motion clsx tailwind-merge
+<div className="grid grid-cols-2 gap-4 my-8">
+  <a href="#nextjs" className="group relative flex flex-col items-center gap-4 rounded-xl border-2 border-zinc-800 bg-zinc-950/30 p-8 transition-all hover:border-zinc-700 hover:bg-zinc-900/50">
+    <svg className="h-16 w-16 text-zinc-400" viewBox="0 0 180 180" fill="none">
+      <mask id="mask0_nextjs" maskUnits="userSpaceOnUse" x="0" y="0" width="180" height="180">
+        <circle cx="90" cy="90" r="90" fill="white"/>
+      </mask>
+      <g mask="url(#mask0_nextjs)">
+        <circle cx="90" cy="90" r="90" fill="currentColor"/>
+        <path d="M149.508 157.52L69.142 54H54V125.97H66.1136V69.3836L139.999 164.845C143.333 162.614 146.509 160.165 149.508 157.52Z" fill="url(#paint0_linear_nextjs)"/>
+        <rect x="115" y="54" width="12" height="72" fill="url(#paint1_linear_nextjs)"/>
+      </g>
+      <defs>
+        <linearGradient id="paint0_linear_nextjs" x1="109" y1="116.5" x2="144.5" y2="160.5" gradientUnits="userSpaceOnUse">
+          <stop stopColor="white"/>
+          <stop offset="1" stopColor="white" stopOpacity="0"/>
+        </linearGradient>
+        <linearGradient id="paint1_linear_nextjs" x1="121" y1="54" x2="120.799" y2="106.875" gradientUnits="userSpaceOnUse">
+          <stop stopColor="white"/>
+          <stop offset="1" stopColor="white" stopOpacity="0"/>
+        </linearGradient>
+      </defs>
+    </svg>
+    <span className="text-lg font-medium">Next.js</span>
+  </a>
+
+  <a href="#vite" className="group relative flex flex-col items-center gap-4 rounded-xl border-2 border-zinc-800 bg-zinc-950/30 p-8 transition-all hover:border-zinc-700 hover:bg-zinc-900/50">
+    <svg className="h-16 w-16" viewBox="0 0 410 404" fill="none">
+      <path d="M399.641 59.5246L215.643 388.545C211.844 395.338 202.084 395.378 198.228 388.618L10.5817 59.5563C6.38087 52.1896 12.6802 43.2665 21.0281 44.7586L205.223 77.6824C206.398 77.8924 207.601 77.8904 208.776 77.6763L389.119 44.8058C397.439 43.2894 403.768 52.1434 399.641 59.5246Z" fill="url(#paint0_linear_vite)"/>
+      <path d="M292.965 1.5744L156.801 28.2552C154.563 28.6937 152.906 30.5903 152.771 32.8664L144.395 174.33C144.198 177.662 147.258 180.248 150.51 179.498L188.42 170.749C191.967 169.931 195.172 173.055 194.443 176.622L183.18 231.775C182.422 235.487 185.907 238.661 189.532 237.56L212.947 230.446C216.577 229.344 220.065 232.527 219.297 236.242L201.398 322.875C200.278 328.294 207.486 331.249 210.492 326.603L212.5 323.5L323.454 102.072C325.312 98.3645 322.108 94.137 318.036 94.9228L279.014 102.454C275.347 103.161 272.227 99.746 273.262 96.1583L298.731 7.86689C299.767 4.27314 296.636 0.855181 292.965 1.5744Z" fill="url(#paint1_linear_vite)"/>
+      <defs>
+        <linearGradient id="paint0_linear_vite" x1="6.00017" y1="32.9999" x2="235" y2="344" gradientUnits="userSpaceOnUse">
+          <stop stopColor="#41D1FF"/>
+          <stop offset="1" stopColor="#BD34FE"/>
+        </linearGradient>
+        <linearGradient id="paint1_linear_vite" x1="194.651" y1="8.81818" x2="236.076" y2="292.989" gradientUnits="userSpaceOnUse">
+          <stop stopColor="#FFEA83"/>
+          <stop offset="0.0833333" stopColor="#FFDD35"/>
+          <stop offset="1" stopColor="#FFA800"/>
+        </linearGradient>
+      </defs>
+    </svg>
+    <span className="text-lg font-medium">Vite</span>
+  </a>
+
+  <a href="#laravel" className="group relative flex flex-col items-center gap-4 rounded-xl border-2 border-zinc-800 bg-zinc-950/30 p-8 transition-all hover:border-zinc-700 hover:bg-zinc-900/50">
+    <svg className="h-16 w-16 text-zinc-400" viewBox="0 0 50 52" fill="none">
+      <path d="M49.626 11.564a.809.809 0 0 1-.028.209v10.972a.8.8 0 0 1-.402.694l-9.209 5.302V39.25c0 .286-.152.55-.4.694L20.42 51.01c-.044.025-.092.041-.14.058-.018.006-.035.017-.054.022a.805.805 0 0 1-.41 0c-.022-.006-.042-.018-.063-.026-.044-.016-.09-.03-.132-.054L.402 39.944A.801.801 0 0 1 0 39.25V6.334c0-.072.01-.142.028-.21.006-.023.02-.044.028-.067.015-.042.029-.085.051-.124.015-.026.037-.047.055-.071.023-.032.044-.065.071-.093.023-.023.053-.04.079-.06.029-.024.055-.05.088-.069h.001l9.61-5.533a.802.802 0 0 1 .8 0l9.61 5.533h.002c.032.02.059.045.088.068.026.02.055.038.078.06.028.029.048.062.072.094.017.024.04.045.054.071.023.04.036.082.052.124.008.023.022.044.028.068a.809.809 0 0 1 .028.209v20.559l8.008-4.611v-10.51c0-.07.01-.141.028-.208.007-.024.02-.045.028-.068.016-.042.03-.085.052-.124.015-.026.037-.047.054-.071.024-.032.044-.065.072-.093.023-.023.052-.04.078-.06.03-.024.056-.05.088-.069h.001l9.611-5.533a.801.801 0 0 1 .8 0l9.61 5.533c.034.02.06.045.09.068.025.02.054.038.077.06.028.029.048.062.072.094.018.024.04.045.054.071.023.039.036.082.052.124.009.023.022.044.028.068zm-1.574 10.718v-9.124l-3.363 1.936-4.646 2.675v9.124l8.01-4.611zm-9.61 16.505v-9.13l-4.57 2.61-13.05 7.448v9.216l17.62-10.144zM1.602 7.719v31.068L19.22 48.93v-9.214l-9.204-5.209-.003-.002-.004-.002c-.031-.018-.057-.044-.086-.066-.025-.02-.054-.036-.076-.058l-.002-.003c-.026-.025-.044-.056-.066-.084-.02-.027-.044-.05-.06-.078l-.001-.003c-.018-.03-.029-.066-.042-.1-.013-.03-.03-.058-.038-.09v-.001c-.01-.038-.012-.078-.016-.117-.004-.03-.012-.06-.012-.09v-21.483L1.602 7.72zm8.81-5.994L2.405 6.334l8.005 4.609 8.006-4.61-8.006-4.608zm4.164 28.764l4.645-2.674V7.719l-3.363 1.936-4.646 2.675v20.096l3.364-1.937zM39.243 7.164l-8.006 4.609 8.006 4.609 8.005-4.61-8.005-4.608zm-.801 10.605l-4.646-2.675-3.363-1.936v9.124l4.645 2.674 3.364 1.937v-9.124zM20.02 38.33l11.743-6.704 5.87-3.35-8-4.606-9.211 5.303-8.395 4.833 7.993 4.524z" fill="currentColor"/>
+    </svg>
+    <span className="text-lg font-medium">Laravel</span>
+  </a>
+
+  <a href="#remix" className="group relative flex flex-col items-center gap-4 rounded-xl border-2 border-zinc-800 bg-zinc-950/30 p-8 transition-all hover:border-zinc-700 hover:bg-zinc-900/50">
+    <svg className="h-16 w-16 text-zinc-400" viewBox="0 0 256 256" fill="none">
+      <circle cx="128" cy="128" r="108" fill="currentColor" opacity="0.3"/>
+      <circle cx="90" cy="90" r="30" fill="currentColor"/>
+      <circle cx="166" cy="90" r="30" fill="currentColor"/>
+      <circle cx="128" cy="166" r="30" fill="currentColor"/>
+      <path d="M90 90L128 166M166 90L128 166" stroke="currentColor" strokeWidth="8" strokeLinecap="round"/>
+    </svg>
+    <span className="text-lg font-medium">React Router</span>
+  </a>
+</div>
+
+## Quick Start
+
+<Steps>
+  <Step>
+    ### Install Framer Motion
+    
+    AnimBits is built on top of Framer Motion. Install it in your project:
+    
+    <Tabs items={['npm', 'pnpm', 'yarn', 'bun']}>
+      <Tab value="npm">
+        ```bash
+        npm install framer-motion
+        ```
+      </Tab>
+      <Tab value="pnpm">
+        ```bash
+        pnpm add framer-motion
+        ```
+      </Tab>
+      <Tab value="yarn">
+        ```bash
+        yarn add framer-motion
+        ```
+      </Tab>
+      <Tab value="bun">
+        ```bash
+        bun add framer-motion
+        ```
+      </Tab>
+    </Tabs>
+  </Step>
+  
+  <Step>
+    ### Install Tailwind CSS (Optional)
+    
+    While not required, AnimBits components use Tailwind CSS for styling. If you haven't set it up:
+    
+    <Tabs items={['npm', 'pnpm', 'yarn', 'bun']}>
+      <Tab value="npm">
+        ```bash
+        npm install -D tailwindcss postcss autoprefixer
+        npx tailwindcss init -p
+        ```
+      </Tab>
+      <Tab value="pnpm">
+        ```bash
+        pnpm add -D tailwindcss postcss autoprefixer
+        pnpm dlx tailwindcss init -p
+        ```
+      </Tab>
+      <Tab value="yarn">
+        ```bash
+        yarn add -D tailwindcss postcss autoprefixer
+        yarn dlx tailwindcss init -p
+        ```
+      </Tab>
+      <Tab value="bun">
+        ```bash
+        bun add -D tailwindcss postcss autoprefixer
+        bunx tailwindcss init -p
+        ```
+      </Tab>
+    </Tabs>
+    
+    Configure your `tailwind.config.js`:
+    
+    ```js title="tailwind.config.js"
+    /** @type {import('tailwindcss').Config} */
+    module.exports = {
+      content: [
+        './pages/**/*.{js,ts,jsx,tsx,mdx}',
+        './components/**/*.{js,ts,jsx,tsx,mdx}',
+        './app/**/*.{js,ts,jsx,tsx,mdx}',
+      ],
+      theme: {
+        extend: {},
+      },
+      plugins: [],
+    }
     ```
-  </Tab>
-  <Tab value="yarn">
-    ```bash
-    yarn add framer-motion clsx tailwind-merge
+    
+    Add Tailwind directives to your CSS:
+    
+    ```css title="app/globals.css"
+    @tailwind base;
+    @tailwind components;
+    @tailwind utilities;
     ```
-  </Tab>
-  <Tab value="pnpm">
+  </Step>
+  
+  <Step>
+    ### Create Directory Structure
+    
+    Create the necessary folders in your project:
+    
     ```bash
-    pnpm add framer-motion clsx tailwind-merge
+    mkdir -p lib/hooks
+    mkdir -p lib/components
+    mkdir -p components/animations
     ```
-  </Tab>
-</Tabs>
+    
+    Your structure should look like:
+    
+    ```
+    your-project/
+    ├── lib/
+    │   ├── hooks/          # Animation primitive hooks
+    │   └── components/     # Generic wrapper components
+    └── components/
+        └── animations/     # Semantic animation components
+            ├── buttons/
+            ├── cards/
+            ├── icons/
+            └── ...
+    ```
+  </Step>
+  
+  <Step>
+    ### Copy Your First Component
+    
+    Browse the [components](/docs/components/buttons) or [hooks](/docs/hooks/hover-lift) documentation and copy the code you need.
+    
+    For example, to use the hover lift animation:
+    
+    **Option 1: Copy the hook (recommended for flexibility)**
+    
+    ```tsx title="lib/hooks/use-hover-lift.ts"
+    import { type MotionProps } from "framer-motion"
 
-## Add Utility Functions
+    export interface UseHoverLiftOptions {
+      liftDistance?: number
+      addShadow?: boolean
+      duration?: number
+      shadowStyle?: string
+    }
 
-Create a utility file for className merging:
+    export function useHoverLift(options: UseHoverLiftOptions = {}): MotionProps {
+      const {
+        liftDistance = 8,
+        addShadow = true,
+        duration = 0.2,
+        shadowStyle = "0 10px 30px rgba(0,0,0,0.15)",
+      } = options
 
-```ts title="lib/utils.ts"
-import { clsx, type ClassValue } from "clsx";
-import { twMerge } from "tailwind-merge";
+      return {
+        initial: {
+          y: 0,
+          boxShadow: addShadow ? "0 0 0 rgba(0,0,0,0)" : undefined,
+        },
+        whileHover: {
+          y: -liftDistance,
+          boxShadow: addShadow ? shadowStyle : undefined,
+        },
+        transition: { duration },
+      }
+    }
+    ```
+    
+    **Option 2: Copy the component (quick start)**
+    
+    ```tsx title="components/animations/buttons/lift.tsx"
+    "use client"
 
-export function cn(...inputs: ClassValue[]) {
-  return twMerge(clsx(inputs));
+    import { motion, type HTMLMotionProps } from "framer-motion"
+    import { useHoverLift } from "@/lib/hooks/use-hover-lift"
+
+    export interface LiftButtonProps extends Omit<HTMLMotionProps<"button">, "animate"> {
+      children: React.ReactNode
+      liftHeight?: number
+      shadow?: boolean
+    }
+
+    export function LiftButton({
+      children,
+      liftHeight = 8,
+      shadow = true,
+      ...props
+    }: LiftButtonProps) {
+      const liftAnimation = useHoverLift({
+        liftDistance: liftHeight,
+        addShadow: shadow,
+      })
+
+      return (
+        <motion.button
+          {...liftAnimation}
+          {...props}
+        >
+          {children}
+        </motion.button>
+      )
+    }
+    ```
+  </Step>
+  
+  <Step>
+    ### Use in Your Project
+    
+    Import and use the component or hook in your application:
+    
+    <Tabs items={['Using Component', 'Using Hook']}>
+      <Tab value="Using Component">
+        ```tsx title="app/page.tsx"
+        import { LiftButton } from '@/components/animations/buttons/lift'
+
+        export default function Home() {
+          return (
+            <LiftButton className="px-6 py-3 bg-blue-500 text-white rounded-lg">
+              Hover me!
+            </LiftButton>
+          )
+        }
+        ```
+      </Tab>
+      <Tab value="Using Hook">
+        ```tsx title="app/page.tsx"
+        import { motion } from 'framer-motion'
+        import { useHoverLift } from '@/lib/hooks/use-hover-lift'
+
+        export default function Home() {
+          const liftProps = useHoverLift({ liftDistance: 12 })
+          
+          return (
+            <motion.div 
+              {...liftProps} 
+              className="p-6 bg-white rounded-lg shadow"
+            >
+              This card lifts on hover!
+            </motion.div>
+          )
+        }
+        ```
+      </Tab>
+    </Tabs>
+  </Step>
+</Steps>
+
+## Framework-Specific Setup
+
+### Next.js
+
+AnimBits works seamlessly with Next.js 13+ (App Router). Make sure to add `"use client"` directive to components that use animations:
+
+```tsx title="components/animations/buttons/lift.tsx"
+"use client"
+
+import { motion } from "framer-motion"
+// ... rest of your component
+```
+
+### Remix
+
+No special configuration needed. Import and use components as normal:
+
+```tsx title="app/routes/_index.tsx"
+import { motion } from "framer-motion"
+import { useHoverLift } from "~/lib/hooks/use-hover-lift"
+
+export default function Index() {
+  const liftProps = useHoverLift()
+  return <motion.button {...liftProps}>Hover me</motion.button>
 }
 ```
 
-## Configure Tailwind CSS
+### Vite
 
-Ensure your `tailwind.config.js` includes the content paths:
+AnimBits works out of the box with Vite. Just ensure you have React and Framer Motion installed.
 
-```js title="tailwind.config.js"
-/** @type {import('tailwindcss').Config} */
-module.exports = {
-  content: [
-    "./pages/**/*.{js,ts,jsx,tsx,mdx}",
-    "./components/**/*.{js,ts,jsx,tsx,mdx}",
-    "./app/**/*.{js,ts,jsx,tsx,mdx}",
-  ],
-  theme: {
-    extend: {},
-  },
-  plugins: [],
-};
-```
+### Create React App
 
-## Add Components
-
-You can now copy and paste any component from the AnimBits registry directly into your project.
-
-### Manual Installation
-
-1. Browse the [Components](/docs/components) page
-2. Select a component you want to use
-3. Copy the component code
-4. Paste it into your project (e.g., `components/ui/`)
-5. Import and use it in your application
-
-### Example Usage
-
-```tsx
-import { RippleButton } from "@/components/ui/ripple-button";
-
-export default function Page() {
-  return (
-    <div>
-      <RippleButton>Click me</RippleButton>
-    </div>
-  );
-}
-```
+No additional setup required beyond installing Framer Motion.
 
 ## TypeScript Configuration
 
-AnimBits components are written in TypeScript. Ensure your `tsconfig.json` includes:
+For better type support, ensure your `tsconfig.json` includes:
 
 ```json title="tsconfig.json"
 {
   "compilerOptions": {
+    "target": "ES2020",
+    "lib": ["ES2020", "DOM", "DOM.Iterable"],
+    "jsx": "react-jsx",
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "resolveJsonModule": true,
+    "allowJs": true,
+    "strict": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
     "paths": {
       "@/*": ["./*"]
     }
@@ -109,8 +380,136 @@ AnimBits components are written in TypeScript. Ensure your `tsconfig.json` inclu
 }
 ```
 
+## Path Aliases
+
+AnimBits code uses the `@/` path alias. Set it up in your project:
+
+<Tabs items={['Next.js', 'Vite', 'TypeScript']}>
+  <Tab value="Next.js">
+    ```json title="tsconfig.json"
+    {
+      "compilerOptions": {
+        "paths": {
+          "@/*": ["./*"]
+        }
+      }
+    }
+    ```
+  </Tab>
+  <Tab value="Vite">
+    ```ts title="vite.config.ts"
+    import { defineConfig } from 'vite'
+    import react from '@vitejs/plugin-react'
+    import path from 'path'
+
+    export default defineConfig({
+      plugins: [react()],
+      resolve: {
+        alias: {
+          '@': path.resolve(__dirname, './src'),
+        },
+      },
+    })
+    ```
+  </Tab>
+  <Tab value="TypeScript">
+    ```json title="tsconfig.json"
+    {
+      "compilerOptions": {
+        "baseUrl": ".",
+        "paths": {
+          "@/*": ["./src/*"]
+        }
+      }
+    }
+    ```
+  </Tab>
+</Tabs>
+
+## Utils Setup (Optional)
+
+Some components use a `cn()` utility function for merging class names. Create this utility:
+
+```ts title="lib/utils.ts"
+import { type ClassValue, clsx } from "clsx"
+import { twMerge } from "tailwind-merge"
+
+export function cn(...inputs: ClassValue[]) {
+  return twMerge(clsx(inputs))
+}
+```
+
+Install the required dependencies:
+
+<Tabs items={['npm', 'pnpm', 'yarn', 'bun']}>
+  <Tab value="npm">
+    ```bash
+    npm install clsx tailwind-merge
+    ```
+  </Tab>
+  <Tab value="pnpm">
+    ```bash
+    pnpm add clsx tailwind-merge
+    ```
+  </Tab>
+  <Tab value="yarn">
+    ```bash
+    yarn add clsx tailwind-merge
+    ```
+  </Tab>
+  <Tab value="bun">
+    ```bash
+    bun add clsx tailwind-merge
+    ```
+  </Tab>
+</Tabs>
+
+## Troubleshooting
+
+### "Module not found" errors
+
+Make sure your path aliases are set up correctly. Check your `tsconfig.json` or bundler configuration.
+
+### Animations not working
+
+Ensure Framer Motion is properly installed and you're using `motion` components from `framer-motion`.
+
+### "use client" directive missing
+
+If using Next.js 13+ App Router, add `"use client"` at the top of any component that uses animations.
+
+### TypeScript errors
+
+Make sure you're using TypeScript 4.9 or later and have proper type definitions installed.
+
 ## Next Steps
 
-- Explore the [Components](/docs/components) library
-- Check out component-specific documentation
-- Customize components to match your design system
+<div className="mt-8 grid gap-4 md:grid-cols-2 not-prose">
+  <a href="/docs/hooks/hover-lift" className="group rounded-lg border border-zinc-800 bg-zinc-950/30 p-6 transition-all hover:border-zinc-700 hover:shadow-lg">
+    <h3 className="mb-2 font-semibold group-hover:text-primary">Browse Hooks</h3>
+    <p className="text-sm text-zinc-400">
+      Explore primitive animation hooks that work with any element.
+    </p>
+  </a>
+  
+  <a href="/docs/components/buttons" className="group rounded-lg border border-zinc-800 bg-zinc-950/30 p-6 transition-all hover:border-zinc-700 hover:shadow-lg">
+    <h3 className="mb-2 font-semibold group-hover:text-primary">Browse Components</h3>
+    <p className="text-sm text-zinc-400">
+      Check out pre-built animation components ready to use.
+    </p>
+  </a>
+  
+  <a href="/docs/examples" className="group rounded-lg border border-zinc-800 bg-zinc-950/30 p-6 transition-all hover:border-zinc-700 hover:shadow-lg">
+    <h3 className="mb-2 font-semibold group-hover:text-primary">View Examples</h3>
+    <p className="text-sm text-zinc-400">
+      See real-world examples and implementation patterns.
+    </p>
+  </a>
+  
+  <a href="/docs/guides/composing-animations" className="group rounded-lg border border-zinc-800 bg-zinc-950/30 p-6 transition-all hover:border-zinc-700 hover:shadow-lg">
+    <h3 className="mb-2 font-semibold group-hover:text-primary">Learn to Compose</h3>
+    <p className="text-sm text-zinc-400">
+      Learn how to combine multiple animations together.
+    </p>
+  </a>
+</div>
