@@ -1,0 +1,24 @@
+---
+title: useStrokeDraw
+description: SVG stroke drawing animation.
+---
+
+## Overview
+
+Animate SVG paths with a drawing effect.
+
+## Usage
+
+```tsx
+import { motion } from "framer-motion"
+import { useStrokeDraw } from "@/lib/hooks/use-stroke-draw"
+
+export function DrawingSVG() {
+  const strokeProps = useStrokeDraw()
+  return (
+    <svg>
+      <motion.path {...strokeProps} d="M..." />
+    </svg>
+  )
+}
+```

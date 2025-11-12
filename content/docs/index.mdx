@@ -36,30 +36,30 @@ AnimBits is a collection of **copy-paste animation components** and **primitive 
 <div className="not-prose mt-8 grid gap-4 md:grid-cols-2">
   <div className="rounded-lg border bg-card p-6">
     <h3 className="mb-2 font-semibold">Component-Agnostic</h3>
-    <p className="text-sm text-muted-foreground">
+    <span className="text-sm text-muted-foreground block">
       Use any animation on any element. Not locked into categories like "button animations" or "card animations".
-    </p>
+    </span>
   </div>
   
   <div className="rounded-lg border bg-card p-6">
     <h3 className="mb-2 font-semibold">Primitive Hooks</h3>
-    <p className="text-sm text-muted-foreground">
+    <span className="text-sm text-muted-foreground block">
       Low-level hooks that return Framer Motion props. Maximum flexibility to compose and combine animations.
-    </p>
+    </span>
   </div>
   
   <div className="rounded-lg border bg-card p-6">
     <h3 className="mb-2 font-semibold">Copy & Paste</h3>
-    <p className="text-sm text-muted-foreground">
+    <span className="text-sm text-muted-foreground block">
       No npm dependencies. Copy the source code directly into your project and customize to your heart's content.
-    </p>
+    </span>
   </div>
   
   <div className="rounded-lg border bg-card p-6">
     <h3 className="mb-2 font-semibold">Composable</h3>
-    <p className="text-sm text-muted-foreground">
+    <span className="text-sm text-muted-foreground block">
       Mix and match animations. Combine lift + glow, fade + scale, or any other combination you can imagine.
-    </p>
+    </span>
   </div>
 </div>
 
@@ -226,37 +226,163 @@ Traditional animation libraries force you into their patterns. AnimBits gives yo
 - **Composable** — Mix and match animations freely
 - **Accessible** — Built with accessibility in mind
 
-## Examples
+## Browse by Category
 
-<div className="not-prose mt-8 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-  <a href="/docs/components/buttons" className="group rounded-lg border bg-card p-6 transition-all hover:shadow-lg">
-    <h3 className="mb-2 font-semibold group-hover:text-primary">Buttons</h3>
-    <p className="text-sm text-muted-foreground">Lift, glow, press, pulse, and more button animations.</p>
+### Animation Hooks
+
+<div className="not-prose mt-6 grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+  <a href="/docs/hooks/hover-lift" className="group relative flex flex-col items-start gap-3 rounded-xl border-2 border-zinc-800 bg-zinc-950/30 p-6 transition-all hover:border-zinc-700 hover:bg-zinc-900/50">
+    <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-blue-500/10">
+      <svg className="h-5 w-5 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 10l7-7m0 0l7 7m-7-7v18" />
+      </svg>
+    </div>
+    <div>
+      <h3 className="font-semibold group-hover:text-primary">useHoverLift</h3>
+      <p className="text-sm text-zinc-400">Lift elements on hover with shadow</p>
+    </div>
   </a>
-  
-  <a href="/docs/components/cards" className="group rounded-lg border bg-card p-6 transition-all hover:shadow-lg">
-    <h3 className="mb-2 font-semibold group-hover:text-primary">Cards</h3>
-    <p className="text-sm text-muted-foreground">Hover effects, entrance animations, and interactive cards.</p>
+
+  <a href="/docs/hooks/hover-glow" className="group relative flex flex-col items-start gap-3 rounded-xl border-2 border-zinc-800 bg-zinc-950/30 p-6 transition-all hover:border-zinc-700 hover:bg-zinc-900/50">
+    <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-purple-500/10">
+      <svg className="h-5 w-5 text-purple-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
+      </svg>
+    </div>
+    <div>
+      <h3 className="font-semibold group-hover:text-primary">useHoverGlow</h3>
+      <p className="text-sm text-zinc-400">Add colored glow on hover</p>
+    </div>
   </a>
-  
-  <a href="/docs/components/icons" className="group rounded-lg border bg-card p-6 transition-all hover:shadow-lg">
-    <h3 className="mb-2 font-semibold group-hover:text-primary">Icons</h3>
-    <p className="text-sm text-muted-foreground">Pulse, bounce, spin, and attention-grabbing icon animations.</p>
+
+  <a href="/docs/hooks/press" className="group relative flex flex-col items-start gap-3 rounded-xl border-2 border-zinc-800 bg-zinc-950/30 p-6 transition-all hover:border-zinc-700 hover:bg-zinc-900/50">
+    <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-green-500/10">
+      <svg className="h-5 w-5 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 15l-2 5L9 9l11 4-5 2zm0 0l5 5M7.188 2.239l.777 2.897M5.136 7.965l-2.898-.777M13.95 4.05l-2.122 2.122m-5.657 5.656l-2.12 2.122" />
+      </svg>
+    </div>
+    <div>
+      <h3 className="font-semibold group-hover:text-primary">usePress</h3>
+      <p className="text-sm text-zinc-400">Press down feedback on click</p>
+    </div>
   </a>
-  
-  <a href="/docs/components/text" className="group rounded-lg border bg-card p-6 transition-all hover:shadow-lg">
-    <h3 className="mb-2 font-semibold group-hover:text-primary">Text</h3>
-    <p className="text-sm text-muted-foreground">Fade in, slide in, typewriter, and staggered text animations.</p>
+
+  <a href="/docs/hooks/fade-in" className="group relative flex flex-col items-start gap-3 rounded-xl border-2 border-zinc-800 bg-zinc-950/30 p-6 transition-all hover:border-zinc-700 hover:bg-zinc-900/50">
+    <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-cyan-500/10">
+      <svg className="h-5 w-5 text-cyan-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+      </svg>
+    </div>
+    <div>
+      <h3 className="font-semibold group-hover:text-primary">useFadeIn</h3>
+      <p className="text-sm text-zinc-400">Smooth fade-in entrance</p>
+    </div>
   </a>
-  
-  <a href="/docs/components/loaders" className="group rounded-lg border bg-card p-6 transition-all hover:shadow-lg">
-    <h3 className="mb-2 font-semibold group-hover:text-primary">Loaders</h3>
-    <p className="text-sm text-muted-foreground">Spinners, skeletons, pulse, and progress indicators.</p>
+
+  <a href="/docs/hooks/scale-in" className="group relative flex flex-col items-start gap-3 rounded-xl border-2 border-zinc-800 bg-zinc-950/30 p-6 transition-all hover:border-zinc-700 hover:bg-zinc-900/50">
+    <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-orange-500/10">
+      <svg className="h-5 w-5 text-orange-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4" />
+      </svg>
+    </div>
+    <div>
+      <h3 className="font-semibold group-hover:text-primary">useScaleIn</h3>
+      <p className="text-sm text-zinc-400">Scale up entrance animation</p>
+    </div>
   </a>
-  
-  <a href="/docs/components/transitions" className="group rounded-lg border bg-card p-6 transition-all hover:shadow-lg">
-    <h3 className="mb-2 font-semibold group-hover:text-primary">Transitions</h3>
-    <p className="text-sm text-muted-foreground">Page transitions, modal entrances, and layout animations.</p>
+
+  <a href="/docs/hooks/pulse" className="group relative flex flex-col items-start gap-3 rounded-xl border-2 border-zinc-800 bg-zinc-950/30 p-6 transition-all hover:border-zinc-700 hover:bg-zinc-900/50">
+    <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-pink-500/10">
+      <svg className="h-5 w-5 text-pink-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+      </svg>
+    </div>
+    <div>
+      <h3 className="font-semibold group-hover:text-primary">usePulse</h3>
+      <p className="text-sm text-zinc-400">Continuous pulse animation</p>
+    </div>
+  </a>
+</div>
+
+<div className="mt-6 flex justify-end">
+  <a href="/docs/hooks/hover-lift" className="text-sm font-medium text-primary hover:underline">
+    View all hooks →
+  </a>
+</div>
+
+### Animation Components
+
+<div className="not-prose mt-6 grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+  <a href="/docs/animations/buttons" className="group relative flex flex-col items-start gap-3 rounded-xl border-2 border-zinc-800 bg-zinc-950/30 p-6 transition-all hover:border-zinc-700 hover:bg-zinc-900/50">
+    <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-blue-500/10">
+      <svg className="h-5 w-5 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 15l-2 5L9 9l11 4-5 2zm0 0l5 5M7.188 2.239l.777 2.897M5.136 7.965l-2.898-.777M13.95 4.05l-2.122 2.122m-5.657 5.656l-2.12 2.122" />
+      </svg>
+    </div>
+    <div>
+      <h3 className="font-semibold group-hover:text-primary">Buttons</h3>
+      <p className="text-sm text-zinc-400">Interactive button animations</p>
+    </div>
+  </a>
+
+  <a href="/docs/animations/cards" className="group relative flex flex-col items-start gap-3 rounded-xl border-2 border-zinc-800 bg-zinc-950/30 p-6 transition-all hover:border-zinc-700 hover:bg-zinc-900/50">
+    <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-purple-500/10">
+      <svg className="h-5 w-5 text-purple-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+      </svg>
+    </div>
+    <div>
+      <h3 className="font-semibold group-hover:text-primary">Cards</h3>
+      <p className="text-sm text-zinc-400">Hover and entrance effects</p>
+    </div>
+  </a>
+
+  <a href="/docs/animations/text" className="group relative flex flex-col items-start gap-3 rounded-xl border-2 border-zinc-800 bg-zinc-950/30 p-6 transition-all hover:border-zinc-700 hover:bg-zinc-900/50">
+    <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-green-500/10">
+      <svg className="h-5 w-5 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+      </svg>
+    </div>
+    <div>
+      <h3 className="font-semibold group-hover:text-primary">Text</h3>
+      <p className="text-sm text-zinc-400">Typewriter, stagger, reveal</p>
+    </div>
+  </a>
+
+  <a href="/docs/animations/loaders" className="group relative flex flex-col items-start gap-3 rounded-xl border-2 border-zinc-800 bg-zinc-950/30 p-6 transition-all hover:border-zinc-700 hover:bg-zinc-900/50">
+    <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-cyan-500/10">
+      <svg className="h-5 w-5 text-cyan-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+      </svg>
+    </div>
+    <div>
+      <h3 className="font-semibold group-hover:text-primary">Loaders</h3>
+      <p className="text-sm text-zinc-400">Spinners and progress indicators</p>
+    </div>
+  </a>
+
+  <a href="/docs/animations/icons" className="group relative flex flex-col items-start gap-3 rounded-xl border-2 border-zinc-800 bg-zinc-950/30 p-6 transition-all hover:border-zinc-700 hover:bg-zinc-900/50">
+    <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-orange-500/10">
+      <svg className="h-5 w-5 text-orange-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14.828 14.828a4 4 0 01-5.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+      </svg>
+    </div>
+    <div>
+      <h3 className="font-semibold group-hover:text-primary">Icons</h3>
+      <p className="text-sm text-zinc-400">Bounce, spin, pulse effects</p>
+    </div>
+  </a>
+
+  <a href="/docs/animations/transitions" className="group relative flex flex-col items-start gap-3 rounded-xl border-2 border-zinc-800 bg-zinc-950/30 p-6 transition-all hover:border-zinc-700 hover:bg-zinc-900/50">
+    <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-pink-500/10">
+      <svg className="h-5 w-5 text-pink-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16V4m0 0L3 8m4-4l4 4m6 0v12m0 0l4-4m-4 4l-4-4" />
+      </svg>
+    </div>
+    <div>
+      <h3 className="font-semibold group-hover:text-primary">Transitions</h3>
+      <p className="text-sm text-zinc-400">Page and modal transitions</p>
+    </div>
   </a>
 </div>
 

@@ -1,0 +1,249 @@
+---
+title: useBounce
+description: Bouncing animation for playful, attention-grabbing interactions.
+---
+
+import { Tab, Tabs } from 'fumadocs-ui/components/tabs';
+import { Callout } from 'fumadocs-ui/components/callout';
+
+## Overview
+
+The `useBounce` hook creates a bouncing animation effect. Use it continuously for attention-grabbing elements or on hover for interactive feedback. Perfect for playful UIs, celebrations, and notifications.
+
+<Callout type="info">
+  **Playful interactions:** Bounce animations add personality and energy to your interface.
+</Callout>
+
+## Installation
+
+<Tabs items={['Manual', 'CLI']}>
+  <Tab value="Manual">
+    ```tsx title="lib/hooks/use-bounce.ts"
+    import { type MotionProps } from "framer-motion"
+
+    export interface UseBounceOptions {
+      bounceHeight?: number
+      duration?: number
+      ease?: string | number[]
+      repeat?: number
+      delay?: number
+      onHover?: boolean
+    }
+
+    export function useBounce(options: UseBounceOptions = {}): MotionProps {
+      const {
+        bounceHeight = -20,
+        duration = 0.6,
+        ease = [0.68, -0.55, 0.265, 1.55],
+        repeat = Infinity,
+        delay = 0,
+        onHover = false,
+      } = options
+
+      if (onHover) {
+        return {
+          whileHover: {
+            y: [0, bounceHeight, 0],
+          },
+          transition: {
+            duration,
+            ease,
+          },
+        }
+      }
+
+      return {
+        animate: {
+          y: [0, bounceHeight, 0],
+        },
+        transition: {
+          duration,
+          ease,
+          repeat,
+          delay,
+        },
+      }
+    }
+    ```
+  </Tab>
+  <Tab value="CLI">
+    ```bash
+    npx shadcn add https://animbits.dev/r/hooks/bounce
+    ```
+  </Tab>
+</Tabs>
+
+## Usage
+
+### Basic Example (Continuous)
+
+```tsx
+import { motion } from "framer-motion"
+import { useBounce } from "@/lib/hooks/use-bounce"
+
+export function BouncyIcon() {
+  const bounceProps = useBounce()
+  
+  return (
+    <motion.div {...bounceProps} className="icon">
+      🎉
+    </motion.div>
+  )
+}
+```
+
+### Bounce on Hover
+
+```tsx
+import { motion } from "framer-motion"
+import { useBounce } from "@/lib/hooks/use-bounce"
+
+export function HoverBounce() {
+  const bounceProps = useBounce({ onHover: true })
+  
+  return (
+    <motion.button {...bounceProps} className="btn">
+      Hover me!
+    </motion.button>
+  )
+}
+```
+
+### Custom Bounce Height
+
+```tsx
+import { motion } from "framer-motion"
+import { useBounce } from "@/lib/hooks/use-bounce"
+
+export function HighBounce() {
+  const bounceProps = useBounce({ 
+    bounceHeight: -40,  // Higher bounce
+    duration: 0.8 
+  })
+  
+  return (
+    <motion.div {...bounceProps}>
+      ⬆️ High bounce
+    </motion.div>
+  )
+}
+```
+
+### Limited Bounces
+
+```tsx
+import { motion } from "framer-motion"
+import { useBounce } from "@/lib/hooks/use-bounce"
+
+export function ThreeBounces() {
+  const bounceProps = useBounce({ 
+    repeat: 3,  // Bounce 3 times then stop
+    bounceHeight: -25 
+  })
+  
+  return (
+    <motion.div {...bounceProps}>
+      Bounces 3 times
+    </motion.div>
+  )
+}
+```
+
+## API Reference
+
+### Options
+
+| Option | Type | Default | Description |
+|--------|------|---------|-------------|
+| `bounceHeight` | `number` | `-20` | Bounce height in pixels (negative = up) |
+| `duration` | `number` | `0.6` | Duration for one bounce cycle |
+| `ease` | `string \| number[]` | `[0.68, -0.55, 0.265, 1.55]` | Bounce easing (cubic bezier) |
+| `repeat` | `number` | `Infinity` | Number of times to repeat |
+| `delay` | `number` | `0` | Delay before animation starts |
+| `onHover` | `boolean` | `false` | Bounce on hover instead of continuous |
+
+## Examples
+
+### Subtle Bounce
+
+```tsx
+const bounceProps = useBounce({
+  bounceHeight: -10,
+  duration: 0.5,
+})
+```
+
+### Energetic Bounce
+
+```tsx
+const bounceProps = useBounce({
+  bounceHeight: -50,
+  duration: 0.8,
+})
+```
+
+### Quick Bounce
+
+```tsx
+const bounceProps = useBounce({
+  bounceHeight: -15,
+  duration: 0.4,
+})
+```
+
+### Hover Bounce
+
+```tsx
+const bounceProps = useBounce({
+  onHover: true,
+  bounceHeight: -30,
+})
+```
+
+## Common Use Cases
+
+### Success Celebration
+
+```tsx
+<motion.div {...useBounce({ repeat: 3, bounceHeight: -30 })}>
+  ✅ Success!
+</motion.div>
+```
+
+### Notification Badge
+
+```tsx
+<motion.span {...useBounce({ bounceHeight: -15, duration: 0.5 })}>
+  New
+</motion.span>
+```
+
+### Interactive Button
+
+```tsx
+<motion.button {...useBounce({ onHover: true })}>
+  Click me
+</motion.button>
+```
+
+### Scroll Indicator
+
+```tsx
+<motion.div {...useBounce({ bounceHeight: 10, duration: 1 })}>
+  ↓ Scroll down
+</motion.div>
+```
+
+## Accessibility
+
+- Continuous bounce animations can be distracting
+- Consider using `onHover: true` for better UX
+- Respect `prefers-reduced-motion` for accessibility
+- Use sparingly for important elements only
+
+## Browser Support
+
+Works in all modern browsers that support CSS transforms and Framer Motion:
+- Chrome/Edge 90+
+- Firefox 88+
+- Safari 14+

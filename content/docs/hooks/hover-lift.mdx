@@ -1,0 +1,360 @@
+---
+title: useHoverLift
+description: Component-agnostic hover lift animation hook that adds elevation and shadow effects on hover.
+---
+
+import { Tab, Tabs } from 'fumadocs-ui/components/tabs';
+import { Callout } from 'fumadocs-ui/components/callout';
+
+## Overview
+
+The `useHoverLift` hook returns Framer Motion props that add a lift effect with optional shadow when hovering over an element. It works with any HTML element via `motion` components.
+
+<Callout type="info">
+  **Component-agnostic:** This hook works with buttons, cards, divs, articles, or any other element. Not locked into specific use cases.
+</Callout>
+
+## Installation
+
+<Tabs items={['Manual', 'CLI']}>
+  <Tab value="Manual">
+    Copy and paste the hook code into your project:
+
+    ```tsx title="lib/hooks/use-hover-lift.ts"
+    import { type MotionProps } from "framer-motion"
+
+    export interface UseHoverLiftOptions {
+      liftDistance?: number
+      addShadow?: boolean
+      shadowIntensity?: number
+      duration?: number
+      ease?: string | number[]
+      scale?: number
+    }
+
+    export function useHoverLift(options: UseHoverLiftOptions = {}): MotionProps {
+      const {
+        liftDistance = 8,
+        addShadow = true,
+        shadowIntensity = 0.3,
+        duration = 0.2,
+        ease = "easeOut",
+        scale = 1,
+      } = options
+
+      const shadowBlur = liftDistance * 2
+      const shadowSpread = Math.round(liftDistance / 4)
+
+      return {
+        initial: {
+          y: 0,
+          scale: 1,
+          boxShadow: addShadow
+            ? `0 2px 4px rgba(0, 0, 0, ${shadowIntensity * 0.3})`
+            : undefined,
+        },
+        whileHover: {
+          y: -liftDistance,
+          scale,
+          boxShadow: addShadow
+            ? `0 ${shadowBlur}px ${shadowBlur + shadowSpread}px rgba(0, 0, 0, ${shadowIntensity})`
+            : undefined,
+        },
+        transition: {
+          duration,
+          ease,
+        },
+      }
+    }
+    ```
+  </Tab>
+  <Tab value="CLI">
+    ```bash
+    npx shadcn add https://animbits.dev/r/hooks/hover-lift
+    ```
+  </Tab>
+</Tabs>
+
+## Usage
+
+### Basic Example
+
+```tsx
+import { motion } from "framer-motion"
+import { useHoverLift } from "@/lib/hooks/use-hover-lift"
+
+export function Card() {
+  const liftProps = useHoverLift()
+  
+  return (
+    <motion.div 
+      {...liftProps}
+      className="p-6 bg-white rounded-lg border"
+    >
+      <h3>Hover me!</h3>
+      <p>This card lifts on hover</p>
+    </motion.div>
+  )
+}
+```
+
+### With Custom Options
+
+```tsx
+import { motion } from "framer-motion"
+import { useHoverLift } from "@/lib/hooks/use-hover-lift"
+
+export function ProductCard() {
+  const liftProps = useHoverLift({
+    liftDistance: 16,
+    shadowIntensity: 0.4,
+    scale: 1.02,
+    duration: 0.3,
+  })
+  
+  return (
+    <motion.article {...liftProps} className="product-card">
+      <img src="/product.jpg" alt="Product" />
+      <h3>Product Name</h3>
+      <p>$99.99</p>
+    </motion.article>
+  )
+}
+```
+
+### On Different Elements
+
+<Tabs items={['Button', 'Card', 'Image', 'Link']}>
+  <Tab value="Button">
+    ```tsx
+    import { motion } from "framer-motion"
+    import { useHoverLift } from "@/lib/hooks/use-hover-lift"
+
+    export function LiftButton() {
+      const liftProps = useHoverLift({ liftDistance: 6 })
+      
+      return (
+        <motion.button 
+          {...liftProps}
+          className="px-6 py-3 bg-blue-500 text-white rounded-lg"
+        >
+          Click me
+        </motion.button>
+      )
+    }
+    ```
+  </Tab>
+  <Tab value="Card">
+    ```tsx
+    import { motion } from "framer-motion"
+    import { useHoverLift } from "@/lib/hooks/use-hover-lift"
+
+    export function InfoCard() {
+      const liftProps = useHoverLift()
+      
+      return (
+        <motion.div {...liftProps} className="card">
+          <h3>Card Title</h3>
+          <p>Card content goes here</p>
+        </motion.div>
+      )
+    }
+    ```
+  </Tab>
+  <Tab value="Image">
+    ```tsx
+    import { motion } from "framer-motion"
+    import { useHoverLift } from "@/lib/hooks/use-hover-lift"
+
+    export function GalleryImage() {
+      const liftProps = useHoverLift({ 
+        liftDistance: 12,
+        scale: 1.05 
+      })
+      
+      return (
+        <motion.img 
+          {...liftProps}
+          src="/image.jpg"
+          alt="Gallery"
+          className="rounded-lg"
+        />
+      )
+    }
+    ```
+  </Tab>
+  <Tab value="Link">
+    ```tsx
+    import { motion } from "framer-motion"
+    import { useHoverLift } from "@/lib/hooks/use-hover-lift"
+
+    export function NavLink() {
+      const liftProps = useHoverLift({ 
+        liftDistance: 4,
+        addShadow: false 
+      })
+      
+      return (
+        <motion.a 
+          {...liftProps}
+          href="/about"
+          className="nav-link"
+        >
+          About
+        </motion.a>
+      )
+    }
+    ```
+  </Tab>
+</Tabs>
+
+## API Reference
+
+### Options
+
+<div className="overflow-x-auto">
+  <table className="w-full">
+    <thead>
+      <tr>
+        <th>Option</th>
+        <th>Type</th>
+        <th>Default</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>`liftDistance`</td>
+        <td>`number`</td>
+        <td>`8`</td>
+        <td>Distance to lift the element on hover (in pixels)</td>
+      </tr>
+      <tr>
+        <td>`addShadow`</td>
+        <td>`boolean`</td>
+        <td>`true`</td>
+        <td>Whether to add shadow effect on hover</td>
+      </tr>
+      <tr>
+        <td>`shadowIntensity`</td>
+        <td>`number`</td>
+        <td>`0.3`</td>
+        <td>Shadow opacity (0-1)</td>
+      </tr>
+      <tr>
+        <td>`duration`</td>
+        <td>`number`</td>
+        <td>`0.2`</td>
+        <td>Animation duration in seconds</td>
+      </tr>
+      <tr>
+        <td>`ease`</td>
+        <td>`string \| number[]`</td>
+        <td>`"easeOut"`</td>
+        <td>Animation easing function</td>
+      </tr>
+      <tr>
+        <td>`scale`</td>
+        <td>`number`</td>
+        <td>`1`</td>
+        <td>Scale factor on hover (1 = no scale)</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+### Returns
+
+Returns `MotionProps` object containing:
+- `initial` - Initial animation state
+- `whileHover` - Hover animation state
+- `transition` - Animation transition config
+
+## Examples
+
+### Subtle Lift
+
+```tsx
+const liftProps = useHoverLift({
+  liftDistance: 4,
+  shadowIntensity: 0.2,
+  duration: 0.15,
+})
+```
+
+### Dramatic Lift
+
+```tsx
+const liftProps = useHoverLift({
+  liftDistance: 20,
+  shadowIntensity: 0.5,
+  scale: 1.05,
+  duration: 0.3,
+})
+```
+
+### No Shadow
+
+```tsx
+const liftProps = useHoverLift({
+  liftDistance: 10,
+  addShadow: false,
+})
+```
+
+### Custom Easing
+
+```tsx
+const liftProps = useHoverLift({
+  liftDistance: 12,
+  ease: [0.4, 0, 0.2, 1], // Custom cubic bezier
+})
+```
+
+## Composing with Other Hooks
+
+Combine with other animation hooks for complex effects:
+
+```tsx
+import { useHoverLift } from "@/lib/hooks/use-hover-lift"
+import { useHoverGlow } from "@/lib/hooks/use-hover-glow"
+
+export function FancyCard() {
+  const lift = useHoverLift({ liftDistance: 12 })
+  const glow = useHoverGlow({ glowColor: "rgba(59, 130, 246, 0.5)" })
+  
+  // Merge the animations
+  const combined = {
+    ...lift,
+    whileHover: {
+      ...lift.whileHover,
+      ...glow.whileHover,
+    },
+  }
+  
+  return (
+    <motion.div {...combined} className="card">
+      Lift + Glow effect!
+    </motion.div>
+  )
+}
+```
+
+## Accessibility
+
+The lift effect is purely visual and doesn't affect accessibility. However, ensure:
+
+- Interactive elements remain keyboard accessible
+- Focus states are clearly visible
+- Hover effects don't convey critical information
+
+## Browser Support
+
+Works in all modern browsers that support CSS transforms and Framer Motion:
+- Chrome/Edge 90+
+- Firefox 88+
+- Safari 14+
+
+<Callout type="warn">
+  Reduced motion: Consider respecting `prefers-reduced-motion` for accessibility.
+</Callout>

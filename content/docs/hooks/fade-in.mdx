@@ -1,0 +1,390 @@
+---
+title: useFadeIn
+description: Smooth fade-in entrance animation for elegant content reveals.
+---
+
+import { Tab, Tabs } from 'fumadocs-ui/components/tabs';
+import { Callout } from 'fumadocs-ui/components/callout';
+
+## Overview
+
+The `useFadeIn` hook creates a smooth fade-in entrance animation. One of the most versatile and subtle animations, perfect for page loads, modal entrances, content reveals, and progressive disclosure.
+
+<Callout type="info">
+  **Subtle and elegant:** Fade-in is the most universally accepted animation, working well in any context.
+</Callout>
+
+## Installation
+
+<Tabs items={['Manual', 'CLI']}>
+  <Tab value="Manual">
+    Copy and paste the hook code into your project:
+
+    ```tsx title="lib/hooks/use-fade-in.ts"
+    import { type MotionProps } from "framer-motion"
+
+    export interface UseFadeInOptions {
+      duration?: number
+      delay?: number
+      ease?: string | number[]
+      viewport?: "once" | "always"
+    }
+
+    export function useFadeIn(options: UseFadeInOptions = {}): MotionProps {
+      const {
+        duration = 0.5,
+        delay = 0,
+        ease = "easeOut",
+        viewport = "once",
+      } = options
+
+      return {
+        initial: { opacity: 0 },
+        whileInView: { opacity: 1 },
+        viewport: {
+          once: viewport === "once",
+        },
+        transition: { duration, delay, ease },
+      }
+    }
+    ```
+  </Tab>
+  <Tab value="CLI">
+    ```bash
+    npx shadcn add https://animbits.dev/r/hooks/fade-in
+    ```
+  </Tab>
+</Tabs>
+
+## Usage
+
+### Basic Example
+
+```tsx
+import { motion } from "framer-motion"
+import { useFadeIn } from "@/lib/hooks/use-fade-in"
+
+export function Hero() {
+  const fadeProps = useFadeIn()
+  
+  return (
+    <motion.section {...fadeProps} className="hero">
+      <h1>Welcome</h1>
+      <p>This content fades in smoothly</p>
+    </motion.section>
+  )
+}
+```
+
+### Slow Fade
+
+```tsx
+import { motion } from "framer-motion"
+import { useFadeIn } from "@/lib/hooks/use-fade-in"
+
+export function SlowReveal() {
+  const fadeProps = useFadeIn({ 
+    duration: 1.5  // Slow, dramatic fade
+  })
+  
+  return (
+    <motion.div {...fadeProps}>
+      <h2>Slowly revealed content</h2>
+    </motion.div>
+  )
+}
+```
+
+### Delayed Fade
+
+```tsx
+import { motion } from "framer-motion"
+import { useFadeIn } from "@/lib/hooks/use-fade-in"
+
+export function DelayedContent() {
+  const fadeProps = useFadeIn({ 
+    delay: 0.5,  // Wait before fading in
+    duration: 0.8 
+  })
+  
+  return (
+    <motion.div {...fadeProps}>
+      <p>Appears after a delay</p>
+    </motion.div>
+  )
+}
+```
+
+### Staggered Fade
+
+```tsx
+import { motion } from "framer-motion"
+import { useFadeIn } from "@/lib/hooks/use-fade-in"
+
+export function StaggeredList({ items }) {
+  return (
+    <div className="space-y-4">
+      {items.map((item, index) => {
+        const fadeProps = useFadeIn({ 
+          delay: index * 0.1  // Stagger each item
+        })
+        
+        return (
+          <motion.div key={item.id} {...fadeProps}>
+            {item.content}
+          </motion.div>
+        )
+      })}
+    </div>
+  )
+}
+```
+
+### On Different Elements
+
+<Tabs items={['Text', 'Image', 'Card', 'Modal']}>
+  <Tab value="Text">
+    ```tsx
+    import { motion } from "framer-motion"
+    import { useFadeIn } from "@/lib/hooks/use-fade-in"
+
+    export function FadeText() {
+      const fadeProps = useFadeIn({ duration: 0.8 })
+      
+      return (
+        <motion.p {...fadeProps}>
+          This text fades in elegantly
+        </motion.p>
+      )
+    }
+    ```
+  </Tab>
+  <Tab value="Image">
+    ```tsx
+    import { motion } from "framer-motion"
+    import { useFadeIn } from "@/lib/hooks/use-fade-in"
+
+    export function FadeImage() {
+      const fadeProps = useFadeIn({ duration: 1 })
+      
+      return (
+        <motion.img 
+          {...fadeProps}
+          src="/image.jpg"
+          alt="Fades in"
+        />
+      )
+    }
+    ```
+  </Tab>
+  <Tab value="Card">
+    ```tsx
+    import { motion } from "framer-motion"
+    import { useFadeIn } from "@/lib/hooks/use-fade-in"
+
+    export function FadeCard() {
+      const fadeProps = useFadeIn({ delay: 0.2 })
+      
+      return (
+        <motion.div {...fadeProps} className="card">
+          <h3>Card Title</h3>
+          <p>Card content</p>
+        </motion.div>
+      )
+    }
+    ```
+  </Tab>
+  <Tab value="Modal">
+    ```tsx
+    import { motion } from "framer-motion"
+    import { useFadeIn } from "@/lib/hooks/use-fade-in"
+
+    export function Modal({ isOpen }) {
+      const fadeProps = useFadeIn({ duration: 0.3 })
+      
+      if (!isOpen) return null
+      
+      return (
+        <motion.div {...fadeProps} className="modal">
+          <h2>Modal Title</h2>
+          <p>Modal content</p>
+        </motion.div>
+      )
+    }
+    ```
+  </Tab>
+</Tabs>
+
+## API Reference
+
+### Options
+
+<div className="overflow-x-auto">
+  <table className="w-full">
+    <thead>
+      <tr>
+        <th>Option</th>
+        <th>Type</th>
+        <th>Default</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>`duration`</td>
+        <td>`number`</td>
+        <td>`0.5`</td>
+        <td>Animation duration in seconds</td>
+      </tr>
+      <tr>
+        <td>`delay`</td>
+        <td>`number`</td>
+        <td>`0`</td>
+        <td>Delay before animation starts in seconds</td>
+      </tr>
+      <tr>
+        <td>`ease`</td>
+        <td>`string \| number[]`</td>
+        <td>`"easeOut"`</td>
+        <td>Animation easing function</td>
+      </tr>
+      <tr>
+        <td>`viewport`</td>
+        <td>`"once" \| "always"`</td>
+        <td>`"once"`</td>
+        <td>Animate once or every time element enters viewport</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+### Returns
+
+Returns `MotionProps` object containing:
+- `initial` - Initial opacity state (0)
+- `whileInView` - Target opacity state (1)
+- `viewport` - Viewport animation config
+- `transition` - Animation transition config
+
+## Examples
+
+### Quick Fade
+
+```tsx
+const fadeProps = useFadeIn({
+  duration: 0.3,
+})
+```
+
+### Slow Dramatic Fade
+
+```tsx
+const fadeProps = useFadeIn({
+  duration: 2,
+  ease: "easeInOut",
+})
+```
+
+### Delayed Sequence
+
+```tsx
+const fadeProps = useFadeIn({
+  delay: 1,
+  duration: 0.8,
+})
+```
+
+### Repeat on Scroll
+
+```tsx
+const fadeProps = useFadeIn({
+  viewport: "always",  // Fade in every time
+  duration: 0.6,
+})
+```
+
+## Common Use Cases
+
+### Hero Section
+
+```tsx
+<motion.section {...useFadeIn({ duration: 1 })}>
+  <h1>Welcome to our site</h1>
+</motion.section>
+```
+
+### Image Gallery
+
+```tsx
+{images.map((img, i) => (
+  <motion.img 
+    key={img.id}
+    {...useFadeIn({ delay: i * 0.1 })}
+    src={img.url}
+  />
+))}
+```
+
+### Modal Overlay
+
+```tsx
+<motion.div {...useFadeIn({ duration: 0.2 })} className="overlay" />
+```
+
+### Content Sections
+
+```tsx
+<motion.article {...useFadeIn({ delay: 0.3 })}>
+  <h2>Section Title</h2>
+  <p>Section content</p>
+</motion.article>
+```
+
+## Composing with Other Hooks
+
+Combine fade with other animations:
+
+```tsx
+import { useFadeIn } from "@/lib/hooks/use-fade-in"
+import { useSlideIn } from "@/lib/hooks/use-slide-in"
+
+// Fade + Slide
+const fade = useFadeIn({ duration: 0.6 })
+const slide = useSlideIn({ direction: "left", distance: 30 })
+
+const combined = {
+  initial: {
+    ...fade.initial,
+    ...slide.initial,
+  },
+  whileInView: {
+    ...fade.whileInView,
+    ...slide.whileInView,
+  },
+  transition: fade.transition,
+}
+
+<motion.div {...combined}>Fade + Slide</motion.div>
+```
+
+## Accessibility
+
+- Fade-in is one of the most accessible animations
+- Generally well-tolerated by users with motion sensitivity
+- Still consider respecting `prefers-reduced-motion`
+- Avoid very slow fades (>2s) that delay content visibility
+
+## Browser Support
+
+Works in all modern browsers that support CSS opacity and Framer Motion:
+- Chrome/Edge 90+
+- Firefox 88+
+- Safari 14+
+- All mobile browsers
+
+## Performance
+
+- Opacity animations are GPU-accelerated
+- Very performant, even with many elements
+- No layout recalculation needed
+- Ideal for large lists and grids

@@ -1,0 +1,20 @@
+---
+title: useMagnetic
+description: Magnetic cursor follow effect for interactive elements.
+---
+
+## Overview
+
+Create a magnetic effect where elements follow the cursor when nearby.
+
+## Usage
+
+```tsx
+import { motion } from "framer-motion"
+import { useMagnetic } from "@/lib/hooks/use-magnetic"
+
+export function MagneticButton() {
+  const magneticProps = useMagnetic()
+  return <motion.button {...magneticProps}>Magnetic</motion.button>
+}
+```

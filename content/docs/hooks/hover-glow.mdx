@@ -1,0 +1,160 @@
+---
+title: useHoverGlow
+description: Add a glowing shadow effect on hover to any element.
+---
+
+import { Tab, Tabs } from 'fumadocs-ui/components/tabs';
+import { Callout } from 'fumadocs-ui/components/callout';
+
+## Overview
+
+The `useHoverGlow` hook adds a colored glow effect (via box-shadow) when hovering over an element. Perfect for creating attention-grabbing interactive elements.
+
+## Installation
+
+<Tabs items={['Manual', 'CLI']}>
+  <Tab value="Manual">
+    Copy the hook into your project:
+
+    ```tsx title="lib/hooks/use-hover-glow.ts"
+    import { type MotionProps } from "framer-motion"
+
+    export interface UseHoverGlowOptions {
+      glowColor?: string
+      glowSize?: number
+      duration?: number
+      ease?: string | number[]
+    }
+
+    export function useHoverGlow(options: UseHoverGlowOptions = {}): MotionProps {
+      const {
+        glowColor = "rgba(59, 130, 246, 0.5)",
+        glowSize = 20,
+        duration = 0.3,
+        ease = "easeOut",
+      } = options
+
+      return {
+        initial: {
+          boxShadow: "0 0 0 rgba(0, 0, 0, 0)",
+        },
+        whileHover: {
+          boxShadow: `0 0 ${glowSize}px ${glowColor}`,
+        },
+        transition: {
+          duration,
+          ease,
+        },
+      }
+    }
+    ```
+  </Tab>
+  <Tab value="CLI">
+    ```bash
+    npx shadcn add https://animbits.dev/r/hooks/hover-glow
+    ```
+  </Tab>
+</Tabs>
+
+## Usage
+
+### Basic Example
+
+```tsx
+import { motion } from "framer-motion"
+import { useHoverGlow } from "@/lib/hooks/use-hover-glow"
+
+export function GlowButton() {
+  const glowProps = useHoverGlow()
+  
+  return (
+    <motion.button 
+      {...glowProps}
+      className="px-6 py-3 bg-blue-500 text-white rounded-lg"
+    >
+      Hover for glow
+    </motion.button>
+  )
+}
+```
+
+### Custom Colors
+
+```tsx
+import { motion } from "framer-motion"
+import { useHoverGlow } from "@/lib/hooks/use-hover-glow"
+
+export function ColoredGlows() {
+  const blueGlow = useHoverGlow({ 
+    glowColor: "rgba(59, 130, 246, 0.6)" 
+  })
+  
+  const purpleGlow = useHoverGlow({ 
+    glowColor: "rgba(168, 85, 247, 0.6)" 
+  })
+  
+  const greenGlow = useHoverGlow({ 
+    glowColor: "rgba(34, 197, 94, 0.6)" 
+  })
+  
+  return (
+    <div className="flex gap-4">
+      <motion.button {...blueGlow}>Blue</motion.button>
+      <motion.button {...purpleGlow}>Purple</motion.button>
+      <motion.button {...greenGlow}>Green</motion.button>
+    </div>
+  )
+}
+```
+
+## API Reference
+
+### Options
+
+| Option | Type | Default | Description |
+|--------|------|---------|-------------|
+| `glowColor` | `string` | `"rgba(59, 130, 246, 0.5)"` | CSS color for the glow |
+| `glowSize` | `number` | `20` | Glow spread in pixels |
+| `duration` | `number` | `0.3` | Animation duration in seconds |
+| `ease` | `string \| number[]` | `"easeOut"` | Animation easing |
+
+## Examples
+
+### Intense Glow
+
+```tsx
+const glowProps = useHoverGlow({
+  glowColor: "rgba(239, 68, 68, 0.8)",
+  glowSize: 40,
+})
+```
+
+### Subtle Glow
+
+```tsx
+const glowProps = useHoverGlow({
+  glowColor: "rgba(59, 130, 246, 0.3)",
+  glowSize: 10,
+  duration: 0.2,
+})
+```
+
+### Combine with Lift
+
+```tsx
+import { useHoverLift } from "@/lib/hooks/use-hover-lift"
+import { useHoverGlow } from "@/lib/hooks/use-hover-glow"
+
+const lift = useHoverLift()
+const glow = useHoverGlow({ glowColor: "rgba(168, 85, 247, 0.5)" })
+
+const combined = {
+  ...lift,
+  whileHover: {
+    ...lift.whileHover,
+    ...glow.whileHover,
+  },
+}
+
+<motion.div {...combined}>Lift + Glow!</motion.div>
+```

@@ -1,0 +1,335 @@
+---
+title: usePress
+description: Press-down feedback animation for interactive elements providing tactile feedback.
+---
+
+import { Tab, Tabs } from 'fumadocs-ui/components/tabs';
+import { Callout } from 'fumadocs-ui/components/callout';
+
+## Overview
+
+The `usePress` hook adds a press-down effect when clicking or tapping elements, providing tactile feedback. Perfect for buttons, cards, and any interactive element that needs visual confirmation of user interaction.
+
+<Callout type="info">
+  **Tactile Feedback:** This hook uses `whileTap` to provide immediate visual feedback, making your UI feel more responsive and interactive.
+</Callout>
+
+## Installation
+
+<Tabs items={['Manual', 'CLI']}>
+  <Tab value="Manual">
+    Copy and paste the hook code into your project:
+
+    ```tsx title="lib/hooks/use-press.ts"
+    import { type MotionProps } from "framer-motion"
+
+    export interface UsePressOptions {
+      pressScale?: number
+      duration?: number
+      ease?: string | number[]
+      addRotation?: boolean
+      rotationAmount?: number
+    }
+
+    export function usePress(options: UsePressOptions = {}): MotionProps {
+      const {
+        pressScale = 0.95,
+        duration = 0.1,
+        ease = "easeInOut",
+        addRotation = false,
+        rotationAmount = 2,
+      } = options
+
+      return {
+        whileTap: {
+          scale: pressScale,
+          rotate: addRotation ? rotationAmount : 0,
+        },
+        transition: {
+          duration,
+          ease,
+        },
+      }
+    }
+    ```
+  </Tab>
+  <Tab value="CLI">
+    ```bash
+    npx shadcn add https://animbits.dev/r/hooks/press
+    ```
+  </Tab>
+</Tabs>
+
+## Usage
+
+### Basic Example
+
+```tsx
+import { motion } from "framer-motion"
+import { usePress } from "@/lib/hooks/use-press"
+
+export function PressButton() {
+  const pressProps = usePress()
+  
+  return (
+    <motion.button 
+      {...pressProps}
+      className="px-6 py-3 bg-blue-500 text-white rounded-lg"
+    >
+      Click me
+    </motion.button>
+  )
+}
+```
+
+### With Custom Scale
+
+```tsx
+import { motion } from "framer-motion"
+import { usePress } from "@/lib/hooks/use-press"
+
+export function StrongPress() {
+  const pressProps = usePress({ 
+    pressScale: 0.9,  // More dramatic press
+    duration: 0.15 
+  })
+  
+  return (
+    <motion.button {...pressProps} className="btn">
+      Strong press effect
+    </motion.button>
+  )
+}
+```
+
+### With Rotation
+
+```tsx
+import { motion } from "framer-motion"
+import { usePress } from "@/lib/hooks/use-press"
+
+export function RotatingPress() {
+  const pressProps = usePress({ 
+    addRotation: true,
+    rotationAmount: 3 
+  })
+  
+  return (
+    <motion.button {...pressProps} className="btn">
+      Press with rotation
+    </motion.button>
+  )
+}
+```
+
+### On Different Elements
+
+<Tabs items={['Button', 'Card', 'Icon', 'Image']}>
+  <Tab value="Button">
+    ```tsx
+    import { motion } from "framer-motion"
+    import { usePress } from "@/lib/hooks/use-press"
+
+    export function ActionButton() {
+      const pressProps = usePress()
+      
+      return (
+        <motion.button {...pressProps} className="action-btn">
+          Submit
+        </motion.button>
+      )
+    }
+    ```
+  </Tab>
+  <Tab value="Card">
+    ```tsx
+    import { motion } from "framer-motion"
+    import { usePress } from "@/lib/hooks/use-press"
+
+    export function InteractiveCard() {
+      const pressProps = usePress({ pressScale: 0.98 })
+      
+      return (
+        <motion.div {...pressProps} className="card cursor-pointer">
+          <h3>Click me</h3>
+          <p>This card responds to clicks</p>
+        </motion.div>
+      )
+    }
+    ```
+  </Tab>
+  <Tab value="Icon">
+    ```tsx
+    import { motion } from "framer-motion"
+    import { usePress } from "@/lib/hooks/use-press"
+
+    export function IconButton() {
+      const pressProps = usePress({ pressScale: 0.9 })
+      
+      return (
+        <motion.button {...pressProps} className="icon-btn">
+          <HeartIcon />
+        </motion.button>
+      )
+    }
+    ```
+  </Tab>
+  <Tab value="Image">
+    ```tsx
+    import { motion } from "framer-motion"
+    import { usePress } from "@/lib/hooks/use-press"
+
+    export function ClickableImage() {
+      const pressProps = usePress({ pressScale: 0.95 })
+      
+      return (
+        <motion.img 
+          {...pressProps}
+          src="/image.jpg"
+          alt="Clickable"
+          className="cursor-pointer rounded-lg"
+        />
+      )
+    }
+    ```
+  </Tab>
+</Tabs>
+
+## API Reference
+
+### Options
+
+<div className="overflow-x-auto">
+  <table className="w-full">
+    <thead>
+      <tr>
+        <th>Option</th>
+        <th>Type</th>
+        <th>Default</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>`pressScale`</td>
+        <td>`number`</td>
+        <td>`0.95`</td>
+        <td>Scale amount when pressed (1 = no scale, 0.9 = 10% smaller)</td>
+      </tr>
+      <tr>
+        <td>`duration`</td>
+        <td>`number`</td>
+        <td>`0.1`</td>
+        <td>Animation duration in seconds</td>
+      </tr>
+      <tr>
+        <td>`ease`</td>
+        <td>`string \| number[]`</td>
+        <td>`"easeInOut"`</td>
+        <td>Animation easing function</td>
+      </tr>
+      <tr>
+        <td>`addRotation`</td>
+        <td>`boolean`</td>
+        <td>`false`</td>
+        <td>Whether to add slight rotation on press</td>
+      </tr>
+      <tr>
+        <td>`rotationAmount`</td>
+        <td>`number`</td>
+        <td>`2`</td>
+        <td>Rotation amount in degrees (only used if addRotation is true)</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+### Returns
+
+Returns `MotionProps` object containing:
+- `whileTap` - Animation state while element is pressed
+- `transition` - Animation transition config
+
+## Examples
+
+### Subtle Press
+
+```tsx
+const pressProps = usePress({
+  pressScale: 0.98,
+  duration: 0.08,
+})
+```
+
+### Strong Press
+
+```tsx
+const pressProps = usePress({
+  pressScale: 0.85,
+  duration: 0.15,
+})
+```
+
+### Press with Rotation
+
+```tsx
+const pressProps = usePress({
+  pressScale: 0.92,
+  addRotation: true,
+  rotationAmount: 5,
+})
+```
+
+### Instant Feedback
+
+```tsx
+const pressProps = usePress({
+  pressScale: 0.93,
+  duration: 0.05,
+})
+```
+
+## Composing with Other Hooks
+
+Combine with hover effects for rich interactions:
+
+```tsx
+import { usePress } from "@/lib/hooks/use-press"
+import { useHoverLift } from "@/lib/hooks/use-hover-lift"
+
+export function RichButton() {
+  const press = usePress({ pressScale: 0.92 })
+  const lift = useHoverLift({ liftDistance: 6 })
+  
+  // Merge the animations
+  const combined = {
+    ...lift,
+    ...press,
+  }
+  
+  return (
+    <motion.button {...combined} className="btn">
+      Hover + Press
+    </motion.button>
+  )
+}
+```
+
+## Accessibility
+
+- Press feedback is visual only and doesn't affect keyboard navigation
+- Ensure buttons remain accessible via keyboard (Enter/Space keys)
+- Consider adding focus states for keyboard users
+- The animation is fast enough not to interfere with rapid clicking
+
+## Browser Support
+
+Works in all modern browsers that support CSS transforms and Framer Motion:
+- Chrome/Edge 90+
+- Firefox 88+
+- Safari 14+
+- Mobile browsers (iOS Safari, Chrome Mobile)
+
+<Callout type="warn">
+  **Touch devices:** The `whileTap` prop works on both mouse clicks and touch events, making it perfect for mobile-first designs.
+</Callout>

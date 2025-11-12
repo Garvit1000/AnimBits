@@ -1,0 +1,54 @@
+---
+title: Button Animations
+description: Pre-built animated button components using animation hooks.
+---
+
+## Overview
+
+Button components with built-in animations. These are semantic components that use the primitive hooks internally.
+
+## Available Buttons
+
+### Lift Button
+
+Button that lifts on hover with shadow effect.
+
+```tsx
+import { LiftButton } from "@/components/animations/buttons/lift"
+
+<LiftButton>Hover me</LiftButton>
+```
+
+### Glow Button
+
+Button with colored glow effect on hover.
+
+```tsx
+import { GlowButton } from "@/components/animations/buttons/glow"
+
+<GlowButton>Glow effect</GlowButton>
+```
+
+### Press Button
+
+Button with press-down feedback.
+
+```tsx
+import { PressButton } from "@/components/animations/buttons/press"
+
+<PressButton>Click me</PressButton>
+```
+
+### Pulse Button
+
+Continuously pulsing button for attention.
+
+```tsx
+import { PulseButton } from "@/components/animations/buttons/pulse"
+
+<PulseButton>Notice me</PulseButton>
+```
+
+## Customization
+
+All button components accept standard button props and can be customized with Tailwind classes.

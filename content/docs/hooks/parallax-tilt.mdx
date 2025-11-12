@@ -1,0 +1,20 @@
+---
+title: useParallaxTilt
+description: 3D tilt effect that follows mouse movement.
+---
+
+## Overview
+
+Add a 3D parallax tilt effect that responds to mouse position.
+
+## Usage
+
+```tsx
+import { motion } from "framer-motion"
+import { useParallaxTilt } from "@/lib/hooks/use-parallax-tilt"
+
+export function TiltCard() {
+  const tiltProps = useParallaxTilt()
+  return <motion.div {...tiltProps}>3D Card</motion.div>
+}
+```

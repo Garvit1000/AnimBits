@@ -1,0 +1,20 @@
+---
+title: useShimmer
+description: Shimmer loading effect animation.
+---
+
+## Overview
+
+Add a shimmer/shine effect for loading states.
+
+## Usage
+
+```tsx
+import { motion } from "framer-motion"
+import { useShimmer } from "@/lib/hooks/use-shimmer"
+
+export function ShimmerCard() {
+  const shimmerProps = useShimmer()
+  return <motion.div {...shimmerProps}>Loading...</motion.div>
+}
+```

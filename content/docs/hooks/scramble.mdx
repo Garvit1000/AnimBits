@@ -1,0 +1,19 @@
+---
+title: useScramble
+description: Text scramble animation effect.
+---
+
+## Overview
+
+Scramble text characters before revealing the final text.
+
+## Usage
+
+```tsx
+import { useScramble } from "@/lib/hooks/use-scramble"
+
+export function ScrambleText() {
+  const scrambleProps = useScramble({ text: "Hello World" })
+  return <div {...scrambleProps} />
+}
+```

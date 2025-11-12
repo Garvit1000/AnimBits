@@ -1,0 +1,19 @@
+{
+  "title": "Hooks",
+  "pages": [
+    "hover-lift",
+    "hover-glow",
+    "press",
+    "fade-in",
+    "scale-in",
+    "slide-in",
+    "pulse",
+    "bounce",
+    "magnetic",
+    "parallax-tilt",
+    "scramble",
+    "shimmer",
+    "stroke-draw",
+    "word-carousel"
+  ]
+}

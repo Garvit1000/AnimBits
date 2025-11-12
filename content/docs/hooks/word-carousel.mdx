@@ -1,0 +1,20 @@
+---
+title: useWordCarousel
+description: Rotating word carousel animation.
+---
+
+## Overview
+
+Cycle through words with smooth transitions.
+
+## Usage
+
+```tsx
+import { useWordCarousel } from "@/lib/hooks/use-word-carousel"
+
+export function RotatingWords() {
+  const words = ["Fast", "Beautiful", "Modern"]
+  const carouselProps = useWordCarousel({ words })
+  return <div {...carouselProps} />
+}
+```
