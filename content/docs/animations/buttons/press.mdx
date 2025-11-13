@@ -1,0 +1,105 @@
+---
+title: Press Button
+description: Button with press-down feedback effect on click using the usePress hook.
+---
+
+import { Tab, Tabs } from 'fumadocs-ui/components/tabs';
+import { Callout } from 'fumadocs-ui/components/callout';
+import { Preview, PreviewGrid } from '@/components/preview';
+import { PressButton } from '@/registry/new-york/animations/buttons/press';
+
+## Overview
+
+The `PressButton` component provides tactile press-down feedback when clicked. Built using the `usePress` primitive hook for responsive, satisfying interactions.
+
+## Preview
+
+<Preview
+  background="grid"
+  code={`import { PressButton } from "@/components/animations/buttons/press"
+
+<PressButton className="px-6 py-3 bg-blue-500 text-white rounded-lg">
+  Click me
+</PressButton>`}
+>
+  <PressButton className="px-6 py-3 bg-blue-500 text-white rounded-lg">
+    Click me
+  </PressButton>
+</Preview>
+
+## Installation
+
+<Tabs items={['CLI', 'Manual']}>
+  <Tab value="CLI">
+    ```bash
+    npx shadcn add https://animbits.dev/r/animations/buttons/press
+    ```
+  </Tab>
+  <Tab value="Manual">
+    ```tsx title="components/animations/buttons/press.tsx"
+    "use client"
+
+    import { motion, type HTMLMotionProps } from "framer-motion"
+    import { usePress } from "@/lib/hooks"
+
+    interface PressButtonProps extends Omit<HTMLMotionProps<"button">, "animate"> {
+      children: React.ReactNode
+      scale?: number
+    }
+
+    export function PressButton({
+      children,
+      scale = 0.95,
+      ...props
+    }: PressButtonProps) {
+      const pressProps = usePress({ pressScale: scale })
+      return <motion.button {...pressProps} {...props}>{children}</motion.button>
+    }
+    ```
+  </Tab>
+</Tabs>
+
+## Usage
+
+```tsx
+import { PressButton } from "@/components/animations/buttons/press"
+
+<PressButton className="px-6 py-3 bg-blue-500 text-white rounded-lg">
+  Click me
+</PressButton>
+```
+
+### Custom Scale
+
+```tsx
+// Subtle press
+<PressButton scale={0.98}>Subtle</PressButton>
+
+// Strong press
+<PressButton scale={0.90}>Strong</PressButton>
+```
+
+## Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `scale` | `number` | `0.95` | Scale factor when pressed (0-1) |
+| `children` | `React.ReactNode` | Required | Button content |
+
+## Examples
+
+```tsx
+// Icon button
+<PressButton scale={0.92} className="p-3 bg-white rounded-full">
+  <PlusIcon />
+</PressButton>
+
+// Keyboard key style
+<PressButton scale={0.93} className="px-4 py-2 bg-gray-200 rounded shadow-md">
+  Enter
+</PressButton>
+```
+
+<Callout>
+  **Tip:** Combine with other effects like lift or glow for richer interactions.
+</Callout>

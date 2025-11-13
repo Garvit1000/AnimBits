@@ -1,0 +1,404 @@
+---
+title: Border Gradient Button
+description: Button with animated gradient border that traces around the perimeter.
+---
+
+import { Tab, Tabs } from 'fumadocs-ui/components/tabs';
+import { Preview, PreviewGrid } from '@/components/preview';
+import { BorderGradientButton } from '@/registry/new-york/animations/buttons/border-gradient';
+
+## Overview
+
+The `BorderGradientButton` creates an animated gradient border that continuously traces around the button's perimeter, creating a premium, eye-catching effect.
+
+## Preview
+
+<Preview
+  background="default"
+  code={`import { BorderGradientButton } from "@/components/animations/buttons/border-gradient"
+
+<BorderGradientButton className="px-6 py-3 bg-white dark:bg-neutral-900 text-black dark:text-white rounded-lg">
+  Gradient Border
+</BorderGradientButton>`}
+>
+  <BorderGradientButton className="px-6 py-3 bg-white dark:bg-neutral-900 text-black dark:text-white rounded-lg">
+    Gradient Border
+  </BorderGradientButton>
+</Preview>
+
+## Installation
+
+<Tabs items={['CLI', 'Manual']}>
+  <Tab value="CLI">
+    ```bash
+    npx shadcn add https://animbits.dev/r/animations/buttons/border-gradient
+    ```
+  </Tab>
+  <Tab value="Manual">
+    ```tsx title="components/animations/buttons/border-gradient.tsx"
+    "use client"
+    
+    import * as React from "react"
+    import { motion, HTMLMotionProps } from "framer-motion"
+    
+    interface BorderGradientButtonProps extends Omit<HTMLMotionProps<"button">, "children"> {
+      children: React.ReactNode
+      /**
+       * Animation duration in seconds
+       * @default 2
+       */
+      duration?: number
+      /**
+       * Gradient colors
+       * @default ["#3b82f6", "#8b5cf6", "#ec4899"]
+       */
+      colors?: string[]
+    }
+    
+    function cn(...classes: (string | undefined)[]) {
+      return classes.filter(Boolean).join(' ')
+    }
+    
+    /**
+     * Button with animated gradient border that travels around perimeter.
+     * Now properly handles any border radius including pill shapes!
+     */
+    export function BorderGradientButton({
+      children,
+      className,
+      duration = 2,
+      colors = ["#3b82f6", "#8b5cf6", "#ec4899"],
+      ...props
+    }: BorderGradientButtonProps) {
+      const buttonRef = React.useRef<HTMLButtonElement>(null)
+      const [dimensions, setDimensions] = React.useState({ 
+        width: 0, 
+        height: 0, 
+        radius: 0,
+        perimeter: 0 
+      })
+      const gradientId = React.useId()
+
+      React.useEffect(() => {
+        if (!buttonRef.current) return
+        
+        const updateDimensions = () => {
+          if (buttonRef.current) {
+            const styles = window.getComputedStyle(buttonRef.current)
+            const width = buttonRef.current.offsetWidth
+            const height = buttonRef.current.offsetHeight
+            
+            // Get border radius
+            const borderRadius = parseFloat(styles.borderTopLeftRadius) || 
+                               parseFloat(styles.borderRadius) || 0
+            
+            // Cap radius at half of the shortest side (this is what browsers do)
+            const maxRadius = Math.min(width, height) / 2
+            const actualRadius = Math.min(borderRadius, maxRadius)
+            
+            // Calculate actual perimeter with rounded corners
+            // For a rounded rectangle: 
+            // perimeter = 2 * (width + height) - 8 * radius + 2 * π * radius
+            // Simplified: 2 * (width + height) - 8 * radius + 2π * radius
+            // = 2 * (width + height) + radius * (2π - 8)
+            const straightEdges = 2 * ((width - 2 * actualRadius) + (height - 2 * actualRadius))
+            const curvedEdges = 2 * Math.PI * actualRadius
+            const perimeter = straightEdges + curvedEdges
+            
+            setDimensions({
+              width,
+              height,
+              radius: actualRadius,
+              perimeter: perimeter || 1, // Prevent division by zero
+            })
+          }
+        }
+        
+        updateDimensions()
+        const observer = new ResizeObserver(updateDimensions)
+        if (buttonRef.current) {
+          observer.observe(buttonRef.current)
+        }
+        
+        return () => observer.disconnect()
+      }, [])
+
+      return (
+        <motion.button
+          ref={buttonRef}
+          className={cn("relative", className)}
+          {...props}
+        >
+          {/* SVG border that follows button shape */}
+          {dimensions.width > 0 && (
+            <svg
+              className="absolute inset-0 pointer-events-none"
+              width={dimensions.width}
+              height={dimensions.height}
+            >
+              <defs>
+                <linearGradient id={gradientId} x1="0%" y1="0%" x2="100%" y2="100%">
+                  {colors.map((color, i) => (
+                    <stop
+                      key={i}
+                      offset={`${(i / (colors.length - 1)) * 100}%`}
+                      stopColor={color}
+                    />
+                  ))}
+                </linearGradient>
+              </defs>
+              <motion.rect
+                x="1"
+                y="1"
+                width={dimensions.width - 2}
+                height={dimensions.height - 2}
+                rx={dimensions.radius}
+                fill="none"
+                stroke={`url(#${gradientId})`}
+                strokeWidth="2"
+                strokeDasharray={dimensions.perimeter}
+                strokeDashoffset={0}
+                animate={{ strokeDashoffset: [0, -dimensions.perimeter] }}
+                transition={{
+                  duration,
+                  ease: "linear",
+                  repeat: Infinity,
+                }}
+                style={{
+                  strokeLinecap: "round",
+                }}
+              />
+            </svg>
+          )}
+
+          <span className="relative z-10">{children}</span>
+        </motion.button>
+      )
+    }
+    ```
+  </Tab>
+</Tabs>
+
+## Usage
+
+```tsx
+import { BorderGradientButton } from "@/components/animations/buttons/border-gradient"
+
+<BorderGradientButton className="px-6 py-3 bg-white dark:bg-neutral-900 text-black dark:text-white rounded-lg">
+  Gradient Border
+</BorderGradientButton>
+```
+
+## Examples
+
+### Custom Colors
+
+<Preview
+  background="grid"
+  code={`<BorderGradientButton 
+  colors={["#ff0080", "#ff8c00", "#40e0d0"]}
+  className="px-6 py-3 bg-white dark:bg-neutral-900 rounded-lg"
+>
+  Custom Colors
+</BorderGradientButton>`}
+>
+  <BorderGradientButton 
+    colors={["#ff0080", "#ff8c00", "#40e0d0"]}
+    className="px-6 py-3 bg-white dark:bg-neutral-900 text-black dark:text-white rounded-lg"
+  >
+    Custom Colors
+  </BorderGradientButton>
+</Preview>
+
+```tsx
+<BorderGradientButton 
+  colors={["#ff0080", "#ff8c00", "#40e0d0"]}
+  className="px-6 py-3 bg-white dark:bg-neutral-900 rounded-lg"
+>
+  Custom Colors
+</BorderGradientButton>
+```
+
+### Custom Duration
+
+<PreviewGrid cols={2}>
+  <Preview
+    background="default"
+    code={`<BorderGradientButton duration={1}>
+  Fast Animation
+</BorderGradientButton>`}
+  >
+    <BorderGradientButton duration={1} className="px-6 py-3 bg-white dark:bg-neutral-900 text-black dark:text-white rounded-lg">
+      Fast Animation
+    </BorderGradientButton>
+  </Preview>
+  
+  <Preview
+    background="default"
+    code={`<BorderGradientButton duration={4}>
+  Slow Animation
+</BorderGradientButton>`}
+  >
+    <BorderGradientButton duration={4} className="px-6 py-3 bg-white dark:bg-neutral-900 text-black dark:text-white rounded-lg">
+      Slow Animation
+    </BorderGradientButton>
+  </Preview>
+</PreviewGrid>
+
+```tsx
+// Fast animation (1 second per cycle)
+<BorderGradientButton duration={1}>
+  Fast
+</BorderGradientButton>
+
+// Slow animation (4 seconds per cycle)
+<BorderGradientButton duration={4}>
+  Slow
+</BorderGradientButton>
+```
+
+### Different Shapes
+
+<PreviewGrid cols={2}>
+  <Preview
+    background="dots"
+    code={`<BorderGradientButton className="px-6 py-3 rounded-full">
+  Pill Shape
+</BorderGradientButton>`}
+  >
+    <BorderGradientButton className="px-6 py-3 bg-white dark:bg-neutral-900 text-black dark:text-white rounded-full">
+      Pill Shape
+    </BorderGradientButton>
+  </Preview>
+  
+  <Preview
+    background="dots"
+    code={`<BorderGradientButton className="px-6 py-3 rounded-none">
+  Sharp
+</BorderGradientButton>`}
+  >
+    <BorderGradientButton className="px-6 py-3 bg-white dark:bg-neutral-900 text-black dark:text-white rounded-none">
+      Sharp
+    </BorderGradientButton>
+  </Preview>
+</PreviewGrid>
+
+```tsx
+// Pill shape
+<BorderGradientButton className="px-6 py-3 rounded-full">
+  Pill Shape
+</BorderGradientButton>
+
+// Rounded corners
+<BorderGradientButton className="px-6 py-3 rounded-lg">
+  Rounded
+</BorderGradientButton>
+
+// Sharp corners
+<BorderGradientButton className="px-6 py-3 rounded-none">
+  Sharp
+</BorderGradientButton>
+```
+
+### Color Schemes
+
+<PreviewGrid cols={2}>
+  <Preview
+    background="gradient"
+    code={`<BorderGradientButton 
+  colors={["#ff0000", "#ff7f00", "#ffff00", "#00ff00", "#0000ff", "#8b00ff"]}
+  duration={3}
+>
+  Rainbow
+</BorderGradientButton>`}
+  >
+    <BorderGradientButton 
+      colors={["#ff0000", "#ff7f00", "#ffff00", "#00ff00", "#0000ff", "#8b00ff"]}
+      duration={3}
+      className="px-6 py-3 bg-white dark:bg-neutral-900 text-black dark:text-white rounded-lg"
+    >
+      Rainbow
+    </BorderGradientButton>
+  </Preview>
+  
+  <Preview
+    background="gradient"
+    code={`<BorderGradientButton 
+  colors={["#10b981", "#06b6d4", "#3b82f6"]}
+>
+  Ocean
+</BorderGradientButton>`}
+  >
+    <BorderGradientButton 
+      colors={["#10b981", "#06b6d4", "#3b82f6"]}
+      className="px-6 py-3 bg-white dark:bg-neutral-900 text-black dark:text-white rounded-lg"
+    >
+      Ocean
+    </BorderGradientButton>
+  </Preview>
+</PreviewGrid>
+
+```tsx
+// Rainbow gradient
+<BorderGradientButton 
+  colors={["#ff0000", "#ff7f00", "#ffff00", "#00ff00", "#0000ff", "#8b00ff"]}
+  duration={3}
+>
+  Rainbow
+</BorderGradientButton>
+
+// Ocean theme
+<BorderGradientButton 
+  colors={["#10b981", "#06b6d4", "#3b82f6"]}
+>
+  Ocean
+</BorderGradientButton>
+
+// Sunset theme
+<BorderGradientButton 
+  colors={["#f59e0b", "#ef4444", "#ec4899"]}
+>
+  Sunset
+</BorderGradientButton>
+
+// Purple to pink
+<BorderGradientButton 
+  colors={["#8b5cf6", "#ec4899"]}
+>
+  Purple Pink
+</BorderGradientButton>
+```
+
+## Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `duration` | `number` | `2` | Animation duration in seconds for one complete cycle |
+| `colors` | `string[]` | `["#3b82f6", "#8b5cf6", "#ec4899"]` | Array of hex colors for the gradient |
+| `children` | `React.ReactNode` | Required | Button content |
+| `className` | `string` | `undefined` | Additional CSS classes |
+
+All other props from `motion.button` are supported and passed through.
+
+## Animation Details
+
+The border gradient animation works by:
+
+1. Using a rotatingparate animated divs for each side (top, right, bottom, left)
+2. Each div moves along its respective edge with a sequential delay
+3. The gradient flows smoothly as it traces around the perimeter
+4. Animation runs continuously and infinitely
+5. Each side's animation is perfectly timed to create a seamless loop
+
+## Accessibility
+
+- Maintains all standard button semantics
+- Keyboard accessible (can be focused and activated)
+- Animation respects `prefers-reduced-motion` when using Framer Motion's default settings
+- Supports all ARIA attributes through prop spreading
+
+## Browser Support
+
+- Works in all modern browsers that support CSS gradients and transforms
+- Requires Framer Motion for animations
+- Gracefully degrades in browsers without animation support

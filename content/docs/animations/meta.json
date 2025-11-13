@@ -1,4 +1,11 @@
 {
   "title": "Animations",
-  "pages": ["buttons", "cards", "text", "icons", "loaders", "transitions"]
+  "pages": [
+    "buttons",
+    "cards",
+    "text",
+    "icons",
+    "loaders",
+    "transitions"
+  ]
 }

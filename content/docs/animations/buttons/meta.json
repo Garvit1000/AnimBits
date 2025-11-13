@@ -1,0 +1,15 @@
+{
+  "title": "Buttons",
+  "pages": [
+    "index",
+    "lift",
+    "glow",
+    "press",
+    "magnetic",
+    "ripple",
+    "shine",
+    "border-gradient",
+    "fade-in",
+    "slide-in"
+  ]
+}

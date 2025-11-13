@@ -1,0 +1,110 @@
+---
+title: Shine Button
+description: Button with shine sweep effect that travels across on hover.
+---
+
+import { Tab, Tabs } from 'fumadocs-ui/components/tabs';
+import { Preview, PreviewGrid } from '@/components/preview';
+import { ShineButton } from '@/registry/new-york/animations/buttons/shine';
+
+## Overview
+
+The `ShineButton` creates a shine/shimmer effect that sweeps across the button on hover, adding a premium, polished feel.
+
+## Preview
+
+<Preview
+  background="default"
+  code={`import { ShineButton } from "@/components/animations/buttons/shine"
+
+<ShineButton className="px-6 py-3 bg-blue-500 text-white rounded-lg">
+  Hover me
+</ShineButton>`}
+>
+  <ShineButton className="px-6 py-3 bg-blue-500 text-white rounded-lg">
+    Hover for shine effect
+  </ShineButton>
+</Preview>
+
+## Installation
+
+<Tabs items={['CLI', 'Manual']}>
+  <Tab value="CLI">
+    ```bash
+    npx shadcn add https://animbits.dev/r/animations/buttons/shine
+    ```
+  </Tab>
+  <Tab value="Manual">
+    ```tsx title="components/animations/buttons/shine.tsx"
+    "use client"
+
+    import { motion, type HTMLMotionProps } from "framer-motion"
+
+    interface ShineButtonProps extends Omit<HTMLMotionProps<"button">, "animate"> {
+      children: React.ReactNode
+      direction?: "left" | "right"
+    }
+
+    export function ShineButton({
+      children,
+      direction = "right",
+      className,
+      ...props
+    }: ShineButtonProps) {
+      return (
+        <motion.button
+          className={`relative overflow-hidden ${className || ""}`}
+          whileHover="hover"
+          initial="initial"
+          {...props}
+        >
+          {children}
+          <motion.div
+            className="absolute inset-0 w-full h-full pointer-events-none"
+            style={{
+              background: "linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent)",
+            }}
+            variants={{
+              initial: { x: direction === "right" ? "-100%" : "100%" },
+              hover: { x: direction === "right" ? "100%" : "-100%" },
+            }}
+            transition={{ duration: 0.6, ease: "easeInOut" }}
+          />
+        </motion.button>
+      )
+    }
+    ```
+  </Tab>
+</Tabs>
+
+## Usage
+
+```tsx
+import { ShineButton } from "@/components/animations/buttons/shine"
+
+<ShineButton className="px-6 py-3 bg-blue-500 text-white rounded-lg">
+  Hover me
+</ShineButton>
+```
+
+
+## Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `direction` | `"left" \| "right"` | `"right"` | Shine sweep direction |
+| `children` | `React.ReactNode` | Required | Button content |
+
+## Examples
+
+```tsx
+// Premium CTA
+<ShineButton className="px-8 py-4 bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-full font-bold">
+  Upgrade Now
+</ShineButton>
+
+// Dark button
+<ShineButton className="px-6 py-3 bg-gray-900 text-white rounded-lg">
+  Dark Shine
+</ShineButton>
+```

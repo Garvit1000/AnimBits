@@ -1,20 +1,353 @@
 ---
 title: useMagnetic
-description: Magnetic cursor follow effect for interactive elements.
+description: Magnetic cursor follow effect that makes elements smoothly follow the mouse with spring physics.
 ---
+
+import { Tab, Tabs } from 'fumadocs-ui/components/tabs';
+import { Callout } from 'fumadocs-ui/components/callout';
 
 ## Overview
 
-Create a magnetic effect where elements follow the cursor when nearby.
+The `useMagnetic` hook creates a magnetic attraction effect where elements smoothly follow the cursor on hover using spring physics. Perfect for creating engaging, interactive UI elements.
+
+<Callout type="info">
+  **Spring-based animation:** Uses Framer Motion's spring physics for natural, fluid movement.
+</Callout>
+
+## Installation
+
+<Tabs items={['Manual', 'CLI']}>
+  <Tab value="Manual">
+    Copy and paste the hook code into your project:
+
+    ```tsx title="lib/hooks/use-magnetic.ts"
+    import * as React from "react"
+    import { useMotionValue, useSpring } from "framer-motion"
+
+    export interface UseMagneticOptions {
+      strength?: number
+      stiffness?: number
+      damping?: number
+    }
+
+    export function useMagnetic(options: UseMagneticOptions = {}) {
+      const { strength = 30, stiffness = 150, damping = 15 } = options
+
+      const ref = React.useRef<HTMLElement>(null)
+      const x = useMotionValue(0)
+      const y = useMotionValue(0)
+
+      const springConfig = { damping, stiffness }
+      const springX = useSpring(x, springConfig)
+      const springY = useSpring(y, springConfig)
+
+      const handleMouseMove = (e: React.MouseEvent<HTMLElement>) => {
+        if (!ref.current) return
+
+        const rect = ref.current.getBoundingClientRect()
+        const centerX = rect.left + rect.width / 2
+        const centerY = rect.top + rect.height / 2
+
+        const distanceX = e.clientX - centerX
+        const distanceY = e.clientY - centerY
+
+        x.set(distanceX * (strength / 100))
+        y.set(distanceY * (strength / 100))
+      }
+
+      const handleMouseLeave = () => {
+        x.set(0)
+        y.set(0)
+      }
+
+      const magneticProps = {
+        style: { x: springX, y: springY },
+        onMouseMove: handleMouseMove,
+        onMouseLeave: handleMouseLeave,
+      }
+
+      return { magneticProps, ref }
+    }
+    ```
+  </Tab>
+  <Tab value="CLI">
+    ```bash
+    npx shadcn add https://animbits.dev/r/hooks/magnetic
+    ```
+  </Tab>
+</Tabs>
 
 ## Usage
+
+### Basic Example
 
 ```tsx
 import { motion } from "framer-motion"
 import { useMagnetic } from "@/lib/hooks/use-magnetic"
 
 export function MagneticButton() {
-  const magneticProps = useMagnetic()
-  return <motion.button {...magneticProps}>Magnetic</motion.button>
+  const { magneticProps, ref } = useMagnetic()
+  
+  return (
+    <motion.button 
+      ref={ref}
+      {...magneticProps}
+      className="px-6 py-3 bg-blue-500 text-white rounded-lg"
+    >
+      Hover me - I follow your cursor!
+    </motion.button>
+  )
 }
 ```
+
+### With Custom Strength
+
+```tsx
+import { motion } from "framer-motion"
+import { useMagnetic } from "@/lib/hooks/use-magnetic"
+
+export function StrongMagnet() {
+  const { magneticProps, ref } = useMagnetic({
+    strength: 50, // Stronger attraction
+    stiffness: 200,
+    damping: 20,
+  })
+  
+  return (
+    <motion.div 
+      ref={ref}
+      {...magneticProps}
+      className="card"
+    >
+      <h3>Strong Magnetic Card</h3>
+      <p>Follows cursor more aggressively</p>
+    </motion.div>
+  )
+}
+```
+
+### On Different Elements
+
+<Tabs items={['Button', 'Card', 'Icon', 'Link']}>
+  <Tab value="Button">
+    ```tsx
+    import { motion } from "framer-motion"
+    import { useMagnetic } from "@/lib/hooks/use-magnetic"
+
+    export function MagneticCTA() {
+      const { magneticProps, ref } = useMagnetic({ strength: 40 })
+      
+      return (
+        <motion.button 
+          ref={ref}
+          {...magneticProps}
+          className="cta-button"
+        >
+          Get Started
+        </motion.button>
+      )
+    }
+    ```
+  </Tab>
+  <Tab value="Card">
+    ```tsx
+    import { motion } from "framer-motion"
+    import { useMagnetic } from "@/lib/hooks/use-magnetic"
+
+    export function MagneticCard() {
+      const { magneticProps, ref } = useMagnetic()
+      
+      return (
+        <motion.div 
+          ref={ref}
+          {...magneticProps}
+          className="product-card"
+        >
+          <img src="/product.jpg" alt="Product" />
+          <h3>Product Name</h3>
+        </motion.div>
+      )
+    }
+    ```
+  </Tab>
+  <Tab value="Icon">
+    ```tsx
+    import { motion } from "framer-motion"
+    import { useMagnetic } from "@/lib/hooks/use-magnetic"
+
+    export function MagneticIcon() {
+      const { magneticProps, ref } = useMagnetic({ 
+        strength: 60,
+        stiffness: 300 
+      })
+      
+      return (
+        <motion.div 
+          ref={ref}
+          {...magneticProps}
+          className="icon-wrapper"
+        >
+          <HeartIcon />
+        </motion.div>
+      )
+    }
+    ```
+  </Tab>
+  <Tab value="Link">
+    ```tsx
+    import { motion } from "framer-motion"
+    import { useMagnetic } from "@/lib/hooks/use-magnetic"
+
+    export function MagneticLink() {
+      const { magneticProps, ref } = useMagnetic({ strength: 25 })
+      
+      return (
+        <motion.a 
+          ref={ref}
+          {...magneticProps}
+          href="/about"
+          className="nav-link"
+        >
+          About Us
+        </motion.a>
+      )
+    }
+    ```
+  </Tab>
+</Tabs>
+
+## API Reference
+
+### Options
+
+<div className="overflow-x-auto">
+  <table className="w-full">
+    <thead>
+      <tr>
+        <th>Option</th>
+        <th>Type</th>
+        <th>Default</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>`strength`</td>
+        <td>`number`</td>
+        <td>`30`</td>
+        <td>Magnetic attraction strength (distance in pixels)</td>
+      </tr>
+      <tr>
+        <td>`stiffness`</td>
+        <td>`number`</td>
+        <td>`150`</td>
+        <td>Spring stiffness (higher = snappier)</td>
+      </tr>
+      <tr>
+        <td>`damping`</td>
+        <td>`number`</td>
+        <td>`15`</td>
+        <td>Spring damping (higher = less bouncy)</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+### Returns
+
+Returns an object containing:
+- `magneticProps` - Props to spread on motion component (includes style and event handlers)
+- `ref` - Ref to attach to the element
+
+## Examples
+
+### Subtle Magnetic Effect
+
+```tsx
+const { magneticProps, ref } = useMagnetic({
+  strength: 15,
+  stiffness: 100,
+  damping: 20,
+})
+```
+
+### Strong Magnetic Effect
+
+```tsx
+const { magneticProps, ref } = useMagnetic({
+  strength: 60,
+  stiffness: 250,
+  damping: 10,
+})
+```
+
+### Smooth & Slow
+
+```tsx
+const { magneticProps, ref } = useMagnetic({
+  strength: 40,
+  stiffness: 80,
+  damping: 25,
+})
+```
+
+### Snappy & Responsive
+
+```tsx
+const { magneticProps, ref } = useMagnetic({
+  strength: 35,
+  stiffness: 300,
+  damping: 15,
+})
+```
+
+## Combining with Other Effects
+
+Combine magnetic effect with other animations:
+
+```tsx
+import { useMagnetic } from "@/lib/hooks/use-magnetic"
+import { useHoverLift } from "@/lib/hooks/use-hover-lift"
+
+export function MagneticLiftButton() {
+  const { magneticProps, ref } = useMagnetic()
+  const liftProps = useHoverLift()
+  
+  return (
+    <motion.button 
+      ref={ref}
+      {...magneticProps}
+      {...liftProps}
+      className="fancy-button"
+    >
+      Magnetic + Lift!
+    </motion.button>
+  )
+}
+```
+
+## Performance Tips
+
+- The magnetic effect uses `useMotionValue` and `useSpring` for optimal performance
+- No re-renders on mouse move - all animations happen in the transform layer
+- Safe to use on multiple elements simultaneously
+
+## Accessibility
+
+The magnetic effect is purely visual and doesn't affect:
+- Keyboard navigation
+- Screen readers
+- Focus states
+
+Ensure interactive elements remain accessible with proper focus indicators.
+
+## Browser Support
+
+Works in all modern browsers that support CSS transforms:
+- Chrome/Edge 90+
+- Firefox 88+
+- Safari 14+
+
+<Callout type="warn">
+  Consider disabling on mobile devices where hover interactions don't apply.
+</Callout>

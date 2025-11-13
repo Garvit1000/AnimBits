@@ -1,0 +1,106 @@
+---
+title: Fade In Button
+description: Button with smooth fade-in entrance animation.
+---
+
+import { Tab, Tabs } from 'fumadocs-ui/components/tabs';
+import { Preview, PreviewGrid } from '@/components/preview';
+import { FadeInButton } from '@/registry/new-york/animations/buttons/fade-in';
+
+## Overview
+
+The `FadeInButton` creates a smooth fade-in entrance animation, perfect for sequential reveals or delayed appearances.
+
+## Preview
+
+<Preview
+  background="grid"
+  code={`import { FadeInButton } from "@/components/animations/buttons/fade-in"
+
+<FadeInButton className="px-6 py-3 bg-blue-500 text-white rounded-lg">
+  Fades In
+</FadeInButton>`}
+>
+  <FadeInButton className="px-6 py-3 bg-blue-500 text-white rounded-lg">
+    Fades In
+  </FadeInButton>
+</Preview>
+
+## Installation
+
+<Tabs items={['CLI', 'Manual']}>
+  <Tab value="CLI">
+    ```bash
+    npx shadcn add https://animbits.dev/r/animations/buttons/fade-in
+    ```
+  </Tab>
+  <Tab value="Manual">
+    ```tsx title="components/animations/buttons/fade-in.tsx"
+    "use client"
+
+    import { motion, type HTMLMotionProps } from "framer-motion"
+    import { fadeInVariants, createDelayedTransition } from "@/lib/animation-presets"
+
+    interface FadeInButtonProps extends Omit<HTMLMotionProps<"button">, "animate"> {
+      children: React.ReactNode
+      delay?: number
+      duration?: number
+    }
+
+    export function FadeInButton({
+      children,
+      delay = 0,
+      duration = 0.3,
+      ...props
+    }: FadeInButtonProps) {
+      return (
+        <motion.button
+          variants={fadeInVariants}
+          initial="hidden"
+          animate="visible"
+          transition={createDelayedTransition(delay, duration)}
+          {...props}
+        >
+          {children}
+        </motion.button>
+      )
+    }
+    ```
+  </Tab>
+</Tabs>
+
+## Usage
+
+```tsx
+import { FadeInButton } from "@/components/animations/buttons/fade-in"
+
+<FadeInButton className="px-6 py-3 bg-blue-500 text-white rounded-lg">
+  Fades In
+</FadeInButton>
+```
+
+### With Delay
+
+```tsx
+<FadeInButton delay={0.5} className="px-6 py-3 bg-blue-500 text-white rounded-lg">
+  Delayed Fade
+</FadeInButton>
+```
+
+### Staggered Buttons
+
+```tsx
+<div className="flex gap-4">
+  <FadeInButton delay={0}>First</FadeInButton>
+  <FadeInButton delay={0.2}>Second</FadeInButton>
+  <FadeInButton delay={0.4}>Third</FadeInButton>
+</div>
+```
+
+## Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `delay` | `number` | `0` | Delay before animation starts (seconds) |
+| `duration` | `number` | `0.3` | Animation duration (seconds) |
+| `children` | `React.ReactNode` | Required | Button content |

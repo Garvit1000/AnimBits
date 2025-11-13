@@ -1,0 +1,246 @@
+---
+title: Lift Button
+description: Button component that lifts up on hover with shadow effect using the useHoverLift hook.
+---
+
+import { Tab, Tabs } from 'fumadocs-ui/components/tabs';
+import { Callout } from 'fumadocs-ui/components/callout';
+import { Preview, PreviewGrid } from '@/components/preview';
+import { LiftButton } from '@/registry/new-york/animations/buttons/lift';
+
+## Overview
+
+The `LiftButton` component creates a button that lifts up on hover with an optional shadow effect. Built using the `useHoverLift` primitive hook, providing a polished, interactive feel.
+
+<Callout type="info">
+  **Uses primitive hook:** This component uses `useHoverLift` internally. You can use that hook directly on any element for the same effect.
+</Callout>
+
+## Preview
+
+<Preview
+  background="grid"
+  code={`import { LiftButton } from "@/components/animations/buttons/lift"
+
+<LiftButton className="px-6 py-3 bg-blue-500 text-white rounded-lg">
+  Hover me!
+</LiftButton>`}
+>
+  <LiftButton className="px-6 py-3 bg-blue-500 text-white rounded-lg">
+    Hover me!
+  </LiftButton>
+</Preview>
+
+## Installation
+
+<Tabs items={['CLI', 'Manual']}>
+  <Tab value="CLI">
+    ```bash
+    npx shadcn add https://animbits.dev/r/animations/buttons/lift
+    ```
+  </Tab>
+  <Tab value="Manual">
+    Copy and paste the component code:
+
+    ```tsx title="components/animations/buttons/lift.tsx"
+    "use client"
+
+    import { motion, type HTMLMotionProps } from "framer-motion"
+    import { useHoverLift } from "@/lib/hooks"
+
+    interface LiftButtonProps extends Omit<HTMLMotionProps<"button">, "animate"> {
+      children: React.ReactNode
+      liftHeight?: number
+      shadow?: boolean
+    }
+
+    export function LiftButton({
+      children,
+      liftHeight = 8,
+      shadow = true,
+      ...props
+    }: LiftButtonProps) {
+      const liftProps = useHoverLift({
+        liftDistance: liftHeight,
+        addShadow: shadow,
+      })
+
+      return (
+        <motion.button {...liftProps} {...props}>
+          {children}
+        </motion.button>
+      )
+    }
+    ```
+
+    **Dependencies:**
+    - `useHoverLift` hook from `@/lib/hooks`
+  </Tab>
+</Tabs>
+
+## Usage
+
+### Basic Example
+
+```tsx
+import { LiftButton } from "@/components/animations/buttons/lift"
+
+export function Example() {
+  return (
+    <LiftButton className="px-6 py-3 bg-blue-500 text-white rounded-lg">
+      Hover me!
+    </LiftButton>
+  )
+}
+```
+
+## Props
+
+<div className="overflow-x-auto">
+  <table className="w-full">
+    <thead>
+      <tr>
+        <th>Prop</th>
+        <th>Type</th>
+        <th>Default</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>`liftHeight`</td>
+        <td>`number`</td>
+        <td>`8`</td>
+        <td>Distance to lift in pixels</td>
+      </tr>
+      <tr>
+        <td>`shadow`</td>
+        <td>`boolean`</td>
+        <td>`true`</td>
+        <td>Whether to show shadow effect</td>
+      </tr>
+      <tr>
+        <td>`children`</td>
+        <td>`React.ReactNode`</td>
+        <td>Required</td>
+        <td>Button content</td>
+      </tr>
+      <tr>
+        <td>`...props`</td>
+        <td>`HTMLMotionProps<"button">`</td>
+        <td>-</td>
+        <td>All standard button and motion props</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+## Examples
+
+### Call-to-Action Button
+
+```tsx
+<LiftButton 
+  liftHeight={12}
+  className="px-8 py-4 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-full font-semibold text-lg"
+>
+  Get Started Free
+</LiftButton>
+```
+
+### Icon Button
+
+```tsx
+<LiftButton 
+  liftHeight={6}
+  className="p-3 bg-white border border-gray-200 rounded-lg"
+>
+  <HeartIcon className="w-5 h-5" />
+</LiftButton>
+```
+
+### Subtle Lift
+
+```tsx
+<LiftButton 
+  liftHeight={4}
+  className="px-4 py-2 bg-gray-100 text-gray-700 rounded"
+>
+  Subtle Effect
+</LiftButton>
+```
+
+### Dramatic Lift
+
+```tsx
+<LiftButton 
+  liftHeight={20}
+  className="px-6 py-3 bg-red-500 text-white rounded-lg"
+>
+  Dramatic Lift
+</LiftButton>
+```
+
+## Using the Hook Directly
+
+For maximum flexibility, use the `useHoverLift` hook on any element:
+
+```tsx
+import { motion } from "framer-motion"
+import { useHoverLift } from "@/lib/hooks"
+
+export function CustomElement() {
+  const liftProps = useHoverLift({ liftDistance: 12 })
+  
+  return (
+    <motion.div {...liftProps} className="card">
+      <h3>Any Element</h3>
+      <p>Can have lift effect</p>
+    </motion.div>
+  )
+}
+```
+
+## Combining with Other Effects
+
+```tsx
+import { motion } from "framer-motion"
+import { useHoverLift, useHoverGlow } from "@/lib/hooks"
+
+export function LiftAndGlow() {
+  const lift = useHoverLift({ liftDistance: 10 })
+  const glow = useHoverGlow({ glowColor: "rgba(59, 130, 246, 0.5)" })
+  
+  const combined = {
+    ...lift,
+    whileHover: {
+      ...lift.whileHover,
+      ...glow.whileHover,
+    },
+  }
+  
+  return (
+    <motion.button {...combined} className="px-6 py-3 bg-blue-500 text-white rounded-lg">
+      Lift + Glow
+    </motion.button>
+  )
+}
+```
+
+## Accessibility
+
+- Maintains full keyboard accessibility
+- Works with screen readers
+- Preserves focus states
+- Animation is purely visual enhancement
+
+## Performance
+
+- Uses CSS transforms (GPU-accelerated)
+- No layout reflows
+- Smooth 60fps animation
+- Minimal performance impact
+
+<Callout>
+  **Tip:** The lift effect works great for primary actions, cards, and any interactive element that needs emphasis.
+</Callout>

@@ -1,0 +1,149 @@
+---
+title: Slide In Button
+description: Button with slide-in entrance animation from any direction.
+---
+
+import { Tab, Tabs } from 'fumadocs-ui/components/tabs';
+import { Preview, PreviewGrid } from '@/components/preview';
+import { SlideInButton } from '@/registry/new-york/animations/buttons/slide-in';
+
+## Overview
+
+The `SlideInButton` creates a slide-in entrance animation from any direction (left, right, up, down), perfect for sequential reveals.
+
+## Preview
+
+<Preview
+  background="grid"
+  code={`import { SlideInButton } from "@/components/animations/buttons/slide-in"
+
+<SlideInButton direction="left" className="px-6 py-3 bg-blue-500 text-white rounded-lg">
+  Slides In
+</SlideInButton>`}
+>
+  <SlideInButton direction="left" className="px-6 py-3 bg-blue-500 text-white rounded-lg">
+    Slides In
+  </SlideInButton>
+</Preview>
+
+## Installation
+
+<Tabs items={['CLI', 'Manual']}>
+  <Tab value="CLI">
+    ```bash
+    npx shadcn add https://animbits.dev/r/animations/buttons/slide-in
+    ```
+  </Tab>
+  <Tab value="Manual">
+    ```tsx title="components/animations/buttons/slide-in.tsx"
+    "use client"
+
+    import { motion, type HTMLMotionProps } from "framer-motion"
+
+    interface SlideInButtonProps extends Omit<HTMLMotionProps<"button">, "animate"> {
+      children: React.ReactNode
+      delay?: number
+      duration?: number
+      direction?: "left" | "right" | "up" | "down"
+    }
+
+    export function SlideInButton({
+      children,
+      delay = 0,
+      duration = 0.3,
+      direction = "left",
+      ...props
+    }: SlideInButtonProps) {
+      const customVariants = {
+        hidden: {
+          opacity: 0,
+          x: direction === "left" ? -20 : direction === "right" ? 20 : 0,
+          y: direction === "up" ? -20 : direction === "down" ? 20 : 0,
+        },
+        visible: {
+          opacity: 1,
+          x: 0,
+          y: 0,
+        },
+      }
+
+      return (
+        <motion.button
+          variants={customVariants}
+          initial="hidden"
+          animate="visible"
+          transition={{ delay, duration }}
+          {...props}
+        >
+          {children}
+        </motion.button>
+      )
+    }
+    ```
+  </Tab>
+</Tabs>
+
+## Usage
+
+```tsx
+import { SlideInButton } from "@/components/animations/buttons/slide-in"
+
+<SlideInButton 
+  direction="left"
+  className="px-6 py-3 bg-blue-500 text-white rounded-lg"
+>
+  Slides In
+</SlideInButton>
+```
+
+### All Directions
+
+<Tabs items={['Left', 'Right', 'Up', 'Down']}>
+  <Tab value="Left">
+    ```tsx
+    <SlideInButton direction="left">
+      From Left
+    </SlideInButton>
+    ```
+  </Tab>
+  <Tab value="Right">
+    ```tsx
+    <SlideInButton direction="right">
+      From Right
+    </SlideInButton>
+    ```
+  </Tab>
+  <Tab value="Up">
+    ```tsx
+    <SlideInButton direction="up">
+      From Top
+    </SlideInButton>
+    ```
+  </Tab>
+  <Tab value="Down">
+    ```tsx
+    <SlideInButton direction="down">
+      From Bottom
+    </SlideInButton>
+    ```
+  </Tab>
+</Tabs>
+
+### Staggered
+
+```tsx
+<div className="flex gap-4">
+  <SlideInButton direction="left" delay={0}>First</SlideInButton>
+  <SlideInButton direction="left" delay={0.1}>Second</SlideInButton>
+  <SlideInButton direction="left" delay={0.2}>Third</SlideInButton>
+</div>
+```
+
+## Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `direction` | `"left" \| "right" \| "up" \| "down"` | `"left"` | Slide direction |
+| `delay` | `number` | `0` | Delay before animation (seconds) |
+| `duration` | `number` | `0.3` | Animation duration (seconds) |
+| `children` | `React.ReactNode` | Required | Button content |

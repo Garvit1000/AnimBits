@@ -1,0 +1,162 @@
+---
+title: Magnetic Button
+description: Button that smoothly follows the cursor on hover using spring physics.
+---
+
+import { Tab, Tabs } from 'fumadocs-ui/components/tabs';
+import { Callout } from 'fumadocs-ui/components/callout';
+import { Preview, PreviewGrid } from '@/components/preview';
+import { MagneticButton } from '@/registry/new-york/animations/buttons/magnetic';
+
+## Overview
+
+The `MagneticButton` creates a magnetic attraction effect where the button smoothly follows your cursor. Built using the `useMagnetic` hook with spring physics for natural movement.
+
+<Callout type="info">
+  **Advanced interaction:** This creates a premium, playful feel perfect for hero CTAs and special actions.
+</Callout>
+
+## Preview
+
+<Preview
+  background="grid"
+  code={`import { MagneticButton } from "@/components/animations/buttons/magnetic"
+
+<MagneticButton className="px-8 py-4 bg-blue-500 text-white rounded-lg">
+  Follow Your Cursor
+</MagneticButton>`}
+>
+  <MagneticButton className="px-8 py-4 bg-blue-500 text-white rounded-lg">
+    Follow Your Cursor
+  </MagneticButton>
+</Preview>
+
+## Installation
+
+<Tabs items={['CLI', 'Manual']}>
+  <Tab value="CLI">
+    ```bash
+    npx shadcn add https://animbits.dev/r/animations/buttons/magnetic
+    ```
+  </Tab>
+  <Tab value="Manual">
+    ```tsx title="components/animations/buttons/magnetic.tsx"
+    "use client"
+
+    import * as React from "react"
+    import { motion, HTMLMotionProps } from "framer-motion"
+    import { useMagnetic, type UseMagneticOptions } from "@/lib/hooks/use-magnetic"
+
+    interface MagneticButtonProps extends Omit<HTMLMotionProps<"button">, "ref">, UseMagneticOptions {
+      children: React.ReactNode
+    }
+
+    export function MagneticButton({
+      children,
+      strength,
+      stiffness,
+      damping,
+      ...props
+    }: MagneticButtonProps) {
+      const { magneticProps, ref } = useMagnetic({ strength, stiffness, damping })
+
+      return (
+        <motion.button ref={ref as any} {...magneticProps} {...props}>
+          {children}
+        </motion.button>
+      )
+    }
+    ```
+  </Tab>
+</Tabs>
+
+## Usage
+
+### Basic Example
+
+```tsx
+import { MagneticButton } from "@/components/animations/buttons/magnetic"
+
+<MagneticButton className="px-8 py-4 bg-blue-500 text-white rounded-lg">
+  Follow Your Cursor
+</MagneticButton>
+```
+
+### Custom Strength
+
+```tsx
+// Subtle magnetic effect
+<MagneticButton strength={15}>
+  Subtle Pull
+</MagneticButton>
+
+// Strong magnetic effect
+<MagneticButton strength={60}>
+  Strong Pull
+</MagneticButton>
+```
+
+### Custom Physics
+
+```tsx
+<MagneticButton 
+  strength={40}
+  stiffness={300}
+  damping={20}
+  className="px-6 py-3 bg-purple-500 text-white rounded-lg"
+>
+  Snappy Response
+</MagneticButton>
+```
+
+## Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `strength` | `number` | `30` | Magnetic attraction strength |
+| `stiffness` | `number` | `150` | Spring stiffness (higher = snappier) |
+| `damping` | `number` | `15` | Spring damping (higher = less bouncy) |
+| `children` | `React.ReactNode` | Required | Button content |
+
+## Examples
+
+### Hero CTA
+
+```tsx
+<MagneticButton 
+  strength={50}
+  className="px-12 py-6 bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-full text-xl font-bold"
+>
+  Get Started Free
+</MagneticButton>
+```
+
+### Icon Button
+
+```tsx
+<MagneticButton 
+  strength={40}
+  stiffness={200}
+  className="p-4 bg-white rounded-full shadow-lg"
+>
+  <HeartIcon className="w-6 h-6" />
+</MagneticButton>
+```
+
+## Physics Presets
+
+```tsx
+// Smooth & Slow
+<MagneticButton strength={40} stiffness={80} damping={25}>
+  Smooth
+</MagneticButton>
+
+// Snappy & Responsive
+<MagneticButton strength={35} stiffness={300} damping={15}>
+  Snappy
+</MagneticButton>
+```
+
+<Callout type="warn">
+  **Mobile:** Consider disabling on touch devices where hover doesn't apply.
+</Callout>

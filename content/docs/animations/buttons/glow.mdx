@@ -1,0 +1,137 @@
+---
+title: Glow Button
+description: Button with colored glow effect on hover using the useHoverGlow hook.
+---
+
+import { Tab, Tabs } from 'fumadocs-ui/components/tabs';
+import { Callout } from 'fumadocs-ui/components/callout';
+import { Preview, PreviewGrid } from '@/components/preview';
+import { GlowButton } from '@/registry/new-york/animations/buttons/glow';
+
+## Overview
+
+The `GlowButton` component adds a colored glow effect on hover. Built using the `useHoverGlow` primitive hook, perfect for creating attention-grabbing CTAs.
+
+<Callout type="info">
+  **Uses primitive hook:** This component uses `useHoverGlow` internally. You can use that hook directly on any element.
+</Callout>
+
+## Preview
+
+<Preview
+  background="default"
+  code={`import { GlowButton } from "@/components/animations/buttons/glow"
+
+<GlowButton className="px-6 py-3 bg-blue-500 text-white rounded-lg">
+  Hover for Glow
+</GlowButton>`}
+>
+  <GlowButton className="px-6 py-3 bg-blue-500 text-white rounded-lg">
+    Hover for Glow
+  </GlowButton>
+</Preview>
+
+## Installation
+
+<Tabs items={['CLI', 'Manual']}>
+  <Tab value="CLI">
+    ```bash
+    npx shadcn add https://animbits.dev/r/animations/buttons/glow
+    ```
+  </Tab>
+  <Tab value="Manual">
+    ```tsx title="components/animations/buttons/glow.tsx"
+    "use client"
+
+    import { motion, type HTMLMotionProps } from "framer-motion"
+    import { useHoverGlow } from "@/lib/hooks"
+
+    interface GlowButtonProps extends Omit<HTMLMotionProps<"button">, "animate"> {
+      children: React.ReactNode
+      glowColor?: string
+      intensity?: number
+    }
+
+    export function GlowButton({
+      children,
+      glowColor = "rgba(59, 130, 246, 0.5)",
+      intensity = 20,
+      ...props
+    }: GlowButtonProps) {
+      const glowProps = useHoverGlow({
+        glowColor,
+        glowBlur: intensity,
+      })
+
+      return (
+        <motion.button {...glowProps} {...props}>
+          {children}
+        </motion.button>
+      )
+    }
+    ```
+  </Tab>
+</Tabs>
+
+## Usage
+
+### Basic Example
+
+```tsx
+import { GlowButton } from "@/components/animations/buttons/glow"
+
+<GlowButton className="px-6 py-3 bg-blue-500 text-white rounded-lg">
+  Hover for Glow
+</GlowButton>
+```
+
+## Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `glowColor` | `string` | `"rgba(59, 130, 246, 0.5)"` | Glow color (RGBA recommended) |
+| `intensity` | `number` | `20` | Glow spread in pixels |
+| `children` | `React.ReactNode` | Required | Button content |
+| `...props` | `HTMLMotionProps<"button">` | - | All button and motion props |
+
+## Examples
+
+### Premium CTA
+
+```tsx
+<GlowButton 
+  glowColor="rgba(255, 215, 0, 0.7)"
+  intensity={30}
+  className="px-8 py-4 bg-gradient-to-r from-yellow-400 to-orange-500 text-white rounded-full font-bold"
+>
+  Upgrade to Pro
+</GlowButton>
+```
+
+### Dark Mode
+
+```tsx
+<GlowButton 
+  glowColor="rgba(139, 92, 246, 0.5)"
+  className="px-6 py-3 bg-gray-800 text-white rounded-lg border border-purple-500"
+>
+  Dark Glow
+</GlowButton>
+```
+
+## Using the Hook Directly
+
+```tsx
+import { motion } from "framer-motion"
+import { useHoverGlow } from "@/lib/hooks"
+
+const glowProps = useHoverGlow({ glowColor: "rgba(236, 72, 153, 0.6)" })
+
+<motion.div {...glowProps} className="card">
+  Any element with glow
+</motion.div>
+```
+
+<Callout>
+  **Tip:** Match the glow color to your button's background for a cohesive look.
+</Callout>

@@ -1,10 +1,10 @@
+
 "use client"
 
 import * as React from "react"
 import { motion, HTMLMotionProps } from "framer-motion"
-import { cn } from "@/lib/utils"
 
-interface BorderGradientButtonProps extends HTMLMotionProps<"button"> {
+interface BorderGradientButtonProps extends Omit<HTMLMotionProps<"button">, "children"> {
   children: React.ReactNode
   /**
    * Animation duration in seconds
@@ -18,25 +18,13 @@ interface BorderGradientButtonProps extends HTMLMotionProps<"button"> {
   colors?: string[]
 }
 
+function cn(...classes: (string | undefined)[]) {
+  return classes.filter(Boolean).join(' ')
+}
+
 /**
  * Button with animated gradient border that travels around perimeter.
- * 
- * @example
- * ```tsx
- * <BorderGradientButton className="px-4 py-2 bg-white text-black rounded">
- *   Gradient Border
- * </BorderGradientButton>
- * ```
- * 
- * @example
- * ```tsx
- * <BorderGradientButton 
- *   colors={["#ff0080", "#ff8c00", "#40e0d0"]}
- *   duration={3}
- * >
- *   Custom Colors
- * </BorderGradientButton>
- * ```
+ * Now properly handles any border radius including pill shapes!
  */
 export function BorderGradientButton({
   children,
@@ -45,32 +33,107 @@ export function BorderGradientButton({
   colors = ["#3b82f6", "#8b5cf6", "#ec4899"],
   ...props
 }: BorderGradientButtonProps) {
-  const gradientString = colors.join(", ")
+  const buttonRef = React.useRef<HTMLButtonElement>(null)
+  const [dimensions, setDimensions] = React.useState({ 
+    width: 0, 
+    height: 0, 
+    radius: 0,
+    perimeter: 0 
+  })
+  const gradientId = React.useId()
+
+  React.useEffect(() => {
+    if (!buttonRef.current) return
+    
+    const updateDimensions = () => {
+      if (buttonRef.current) {
+        const styles = window.getComputedStyle(buttonRef.current)
+        const width = buttonRef.current.offsetWidth
+        const height = buttonRef.current.offsetHeight
+        
+        // Get border radius
+        const borderRadius = parseFloat(styles.borderTopLeftRadius) || 
+                           parseFloat(styles.borderRadius) || 0
+        
+        // Cap radius at half of the shortest side (this is what browsers do)
+        const maxRadius = Math.min(width, height) / 2
+        const actualRadius = Math.min(borderRadius, maxRadius)
+        
+        // Calculate actual perimeter with rounded corners
+        // For a rounded rectangle: 
+        // perimeter = 2 * (width + height) - 8 * radius + 2 * π * radius
+        // Simplified: 2 * (width + height) - 8 * radius + 2π * radius
+        // = 2 * (width + height) + radius * (2π - 8)
+        const straightEdges = 2 * ((width - 2 * actualRadius) + (height - 2 * actualRadius))
+        const curvedEdges = 2 * Math.PI * actualRadius
+        const perimeter = straightEdges + curvedEdges
+        
+        setDimensions({
+          width,
+          height,
+          radius: actualRadius,
+          perimeter: perimeter || 1, // Prevent division by zero
+        })
+      }
+    }
+    
+    updateDimensions()
+    const observer = new ResizeObserver(updateDimensions)
+    if (buttonRef.current) {
+      observer.observe(buttonRef.current)
+    }
+    
+    return () => observer.disconnect()
+  }, [])
 
   return (
     <motion.button
+      ref={buttonRef}
       className={cn("relative", className)}
-      whileHover="hover"
-      initial="initial"
       {...props}
     >
-      <motion.div
-        className="absolute inset-0 rounded-[inherit] p-[2px]"
-        style={{
-          background: `conic-gradient(from 0deg, ${gradientString}, ${colors[0]})`,
-        }}
-        variants={{
-          initial: { rotate: 0 },
-          hover: { rotate: 360 },
-        }}
-        transition={{
-          duration,
-          ease: "linear",
-          repeat: Infinity,
-        }}
-      >
-        <div className="w-full h-full rounded-[inherit] bg-white dark:bg-neutral-900" />
-      </motion.div>
+      {/* SVG border that follows button shape */}
+      {dimensions.width > 0 && (
+        <svg
+          className="absolute inset-0 pointer-events-none"
+          width={dimensions.width}
+          height={dimensions.height}
+        >
+          <defs>
+            <linearGradient id={gradientId} x1="0%" y1="0%" x2="100%" y2="100%">
+              {colors.map((color, i) => (
+                <stop
+                  key={i}
+                  offset={`${(i / (colors.length - 1)) * 100}%`}
+                  stopColor={color}
+                />
+              ))}
+            </linearGradient>
+          </defs>
+          <motion.rect
+            x="1"
+            y="1"
+            width={dimensions.width - 2}
+            height={dimensions.height - 2}
+            rx={dimensions.radius}
+            fill="none"
+            stroke={`url(#${gradientId})`}
+            strokeWidth="2"
+            strokeDasharray={dimensions.perimeter}
+            strokeDashoffset={0}
+            animate={{ strokeDashoffset: [0, -dimensions.perimeter] }}
+            transition={{
+              duration,
+              ease: "linear",
+              repeat: Infinity,
+            }}
+            style={{
+              strokeLinecap: "round",
+            }}
+          />
+        </svg>
+      )}
+
       <span className="relative z-10">{children}</span>
     </motion.button>
   )

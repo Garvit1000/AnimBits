@@ -27,18 +27,19 @@ interface ShineButtonProps extends Omit<HTMLMotionProps<"button">, "animate"> {
 export function ShineButton({
   children,
   direction = "right",
+  className,
   ...props
 }: ShineButtonProps) {
   return (
     <motion.button
-      className="relative overflow-hidden"
+      className={`relative overflow-hidden ${className || ""}`}
       whileHover="hover"
       initial="initial"
       {...props}
     >
       {children}
       <motion.div
-        className="absolute inset-0 w-full h-full"
+        className="absolute inset-0 w-full h-full pointer-events-none"
         style={{
           background: "linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent)",
         }}
