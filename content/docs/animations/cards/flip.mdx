@@ -1,0 +1,130 @@
+---
+title: Flip Card
+description: Card that flips on hover.
+---
+
+import { Tab, Tabs } from 'fumadocs-ui/components/tabs';
+import { Preview, PreviewGrid } from '@/components/preview';
+import { CardFlip } from '@/registry/new-york/animations/cards/flip';
+
+## Overview
+
+The `CardFlip` creates a 3D flip effect on hover, perfect for revealing additional content.
+
+## Preview
+
+<Preview
+  background="grid"
+  code={`import { CardFlip } from "@/components/animations/cards/flip"
+
+<CardFlip className="overflow-hidden bg-white dark:bg-neutral-900 rounded-lg border">
+  <img src="/product.jpg" alt="Product" className="w-full h-48 object-cover" />
+  <div className="p-6">
+    <h3>Product Name</h3>
+    <p>Hover to flip!</p>
+  </div>
+</CardFlip>`}
+>
+  <CardFlip className="overflow-hidden bg-white dark:bg-neutral-900 rounded-lg border border-neutral-200 dark:border-neutral-800 max-w-sm">
+    <img src="https://images.unsplash.com/photo-1572635196237-14b3f281503f?w=400&h=300&fit=crop" alt="Product" className="w-full h-48 object-cover" />
+    <div className="p-6">
+      <h3 className="text-lg font-semibold mb-2">Sunglasses</h3>
+      <div className="text-neutral-600 dark:text-neutral-400 text-sm">
+        Premium UV protection
+      </div>
+      <div className="text-lg font-bold mt-4">$149</div>
+    </div>
+  </CardFlip>
+</Preview>
+
+## Installation
+
+<Tabs items={['CLI', 'Manual']}>
+  <Tab value="CLI">
+    ```bash
+    npx shadcn add https://animbits.dev/r/animations/cards/flip
+    ```
+  </Tab>
+  <Tab value="Manual">
+    ```tsx title="components/animations/cards/flip.tsx"
+    "use client"
+    
+    import * as React from "react"
+    import { motion, HTMLMotionProps } from "framer-motion"
+    import { cn } from "@/lib/utils"
+    
+    export interface CardFlipProps extends HTMLMotionProps<"div"> {
+      duration?: number
+      axis?: "x" | "y"
+    }
+    
+    export function CardFlip({
+      children,
+      className,
+      duration = 0.6,
+      axis = "y",
+      ...props
+    }: CardFlipProps) {
+      return (
+        <motion.div
+          whileHover={{
+            rotateY: axis === "y" ? 180 : 0,
+            rotateX: axis === "x" ? 180 : 0,
+          }}
+          transition={{ duration }}
+          style={{ transformStyle: "preserve-3d" }}
+          className={cn("cursor-pointer", className)}
+          {...props}
+        >
+          {children}
+        </motion.div>
+      )
+    }
+    ```
+  </Tab>
+</Tabs>
+
+## Usage
+
+```tsx
+import { CardFlip } from "@/components/animations/cards/flip"
+
+<CardFlip className="p-6 bg-white rounded-lg border">
+  <h3>Card Title</h3>
+  <p>Hover to flip!</p>
+</CardFlip>
+```
+
+## Examples
+
+### Product Showcase
+
+<PreviewGrid cols={2}>
+  <Preview background="dots" code={`<CardFlip axis="y">Product 1</CardFlip>`}>
+    <CardFlip axis="y" className="overflow-hidden bg-white dark:bg-neutral-900 rounded-lg border border-neutral-200 dark:border-neutral-800">
+      <img src="https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=300&h=200&fit=crop" alt="Product" className="w-full h-32 object-cover" />
+      <div className="p-4">
+        <h3 className="font-semibold text-sm">Headphones</h3>
+        <p className="text-xs text-neutral-600 dark:text-neutral-400 mt-1">$199</p>
+      </div>
+    </CardFlip>
+  </Preview>
+  
+  <Preview background="dots" code={`<CardFlip axis="y">Product 2</CardFlip>`}>
+    <CardFlip axis="y" className="overflow-hidden bg-white dark:bg-neutral-900 rounded-lg border border-neutral-200 dark:border-neutral-800">
+      <img src="https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=300&h=200&fit=crop" alt="Product" className="w-full h-32 object-cover" />
+      <div className="p-4">
+        <h3 className="font-semibold text-sm">Smart Watch</h3>
+        <p className="text-xs text-neutral-600 dark:text-neutral-400 mt-1">$299</p>
+      </div>
+    </CardFlip>
+  </Preview>
+</PreviewGrid>
+
+## Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `duration` | `number` | `0.6` | Animation duration in seconds |
+| `axis` | `"x" \| "y"` | `"y"` | Flip axis |
+| `className` | `string` | `undefined` | Additional CSS classes |

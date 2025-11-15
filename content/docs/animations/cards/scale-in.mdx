@@ -1,0 +1,106 @@
+---
+title: Scale In Card
+description: Card that scales in when entering viewport.
+---
+
+import { Tab, Tabs } from 'fumadocs-ui/components/tabs';
+import { Preview, PreviewGrid } from '@/components/preview';
+import { CardScaleIn } from '@/registry/new-york/animations/cards/scale-in';
+
+## Overview
+
+The `CardScaleIn` scales up from a smaller size when entering the viewport, creating a zoom-in effect.
+
+## Preview
+
+<Preview
+  background="grid"
+  code={`import { CardScaleIn } from "@/components/animations/cards/scale-in"
+
+<CardScaleIn className="overflow-hidden bg-white dark:bg-neutral-900 rounded-lg border">
+  <img src="/service.jpg" alt="Service" className="w-full h-48 object-cover" />
+  <div className="p-6">
+    <h3>Our Service</h3>
+    <p>This card scales in</p>
+  </div>
+</CardScaleIn>`}
+>
+  <CardScaleIn className="overflow-hidden bg-white dark:bg-neutral-900 rounded-lg border border-neutral-200 dark:border-neutral-800 max-w-sm">
+    <img src="https://images.unsplash.com/photo-1551434678-e076c223a692?w=400&h=300&fit=crop" alt="Service" className="w-full h-48 object-cover" />
+    <div className="p-6">
+      <h3 className="text-lg font-semibold mb-2">Consulting</h3>
+      <div className="text-neutral-600 dark:text-neutral-400 text-sm">
+        Expert guidance for your business
+      </div>
+    </div>
+  </CardScaleIn>
+</Preview>
+
+## Installation
+
+<Tabs items={['CLI', 'Manual']}>
+  <Tab value="CLI">
+    ```bash
+    npx shadcn add https://animbits.dev/r/animations/cards/scale-in
+    ```
+  </Tab>
+  <Tab value="Manual">
+    Requires the `useScaleIn` hook from `@/lib/hooks`.
+  </Tab>
+</Tabs>
+
+## Usage
+
+```tsx
+import { CardScaleIn } from "@/components/animations/cards/scale-in"
+
+<CardScaleIn className="p-6 bg-white rounded-lg border">
+  <h3>Card Title</h3>
+  <p>Card content</p>
+</CardScaleIn>
+```
+
+## Examples
+
+### Service Cards
+
+<PreviewGrid cols={3}>
+  <Preview background="dots" code={`<CardScaleIn>Service 1</CardScaleIn>`}>
+    <CardScaleIn className="overflow-hidden bg-white dark:bg-neutral-900 rounded-lg border border-neutral-200 dark:border-neutral-800">
+      <img src="https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=300&h=200&fit=crop" alt="Service" className="w-full h-32 object-cover" />
+      <div className="p-4">
+        <h3 className="font-semibold text-sm">Web Design</h3>
+        <p className="text-xs text-neutral-600 dark:text-neutral-400 mt-1">Beautiful websites</p>
+      </div>
+    </CardScaleIn>
+  </Preview>
+  
+  <Preview background="dots" code={`<CardScaleIn delay={0.1}>Service 2</CardScaleIn>`}>
+    <CardScaleIn delay={0.1} className="overflow-hidden bg-white dark:bg-neutral-900 rounded-lg border border-neutral-200 dark:border-neutral-800">
+      <img src="https://images.unsplash.com/photo-1551650975-87deedd944c3?w=300&h=200&fit=crop" alt="Service" className="w-full h-32 object-cover" />
+      <div className="p-4">
+        <h3 className="font-semibold text-sm">Development</h3>
+        <p className="text-xs text-neutral-600 dark:text-neutral-400 mt-1">Custom solutions</p>
+      </div>
+    </CardScaleIn>
+  </Preview>
+  
+  <Preview background="dots" code={`<CardScaleIn delay={0.2}>Service 3</CardScaleIn>`}>
+    <CardScaleIn delay={0.2} className="overflow-hidden bg-white dark:bg-neutral-900 rounded-lg border border-neutral-200 dark:border-neutral-800">
+      <img src="https://images.unsplash.com/photo-1551434678-e076c223a692?w=300&h=200&fit=crop" alt="Service" className="w-full h-32 object-cover" />
+      <div className="p-4">
+        <h3 className="font-semibold text-sm">Consulting</h3>
+        <p className="text-xs text-neutral-600 dark:text-neutral-400 mt-1">Expert advice</p>
+      </div>
+    </CardScaleIn>
+  </Preview>
+</PreviewGrid>
+
+## Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `duration` | `number` | `0.5` | Animation duration in seconds |
+| `delay` | `number` | `0` | Delay before animation starts |
+| `initialScale` | `number` | `0.8` | Initial scale value (0 to 1) |
+| `className` | `string` | `undefined` | Additional CSS classes |

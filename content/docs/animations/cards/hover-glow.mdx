@@ -1,0 +1,182 @@
+---
+title: Hover Glow Card
+description: Card with customizable glow effect on hover.
+---
+
+import { Tab, Tabs } from 'fumadocs-ui/components/tabs';
+import { Preview, PreviewGrid } from '@/components/preview';
+import { CardHoverGlow } from '@/registry/new-york/animations/cards/hover-glow';
+
+## Overview
+
+The `CardHoverGlow` adds a glowing shadow effect on hover with customizable colors. Perfect for highlighting premium features or creating eye-catching call-to-actions.
+
+## Preview
+
+<Preview
+  background="default"
+  code={`import { CardHoverGlow } from "@/components/animations/cards/hover-glow"
+
+<CardHoverGlow className="overflow-hidden bg-white dark:bg-neutral-900 rounded-lg border">
+  <img src="/feature.jpg" alt="Feature" className="w-full h-48 object-cover" />
+  <div className="p-6">
+    <h3 className="text-lg font-semibold mb-2">Premium Feature</h3>
+    <p className="text-neutral-600 dark:text-neutral-400">
+      Hover to see the glow effect
+    </p>
+  </div>
+</CardHoverGlow>`}
+>
+  <CardHoverGlow className="overflow-hidden bg-white dark:bg-neutral-900 rounded-lg border border-neutral-200 dark:border-neutral-800 max-w-sm">
+    <img src="https://images.unsplash.com/photo-1550009158-9ebf69173e03?w=400&h=300&fit=crop" alt="Feature" className="w-full h-48 object-cover" />
+    <div className="p-6">
+      <h3 className="text-lg font-semibold mb-2">Premium Feature</h3>
+      <div className="text-neutral-600 dark:text-neutral-400 text-sm">
+        Unlock advanced capabilities with our premium plan
+      </div>
+    </div>
+  </CardHoverGlow>
+</Preview>
+
+## Installation
+
+<Tabs items={['CLI', 'Manual']}>
+  <Tab value="CLI">
+    ```bash
+    npx shadcn add https://animbits.dev/r/animations/cards/hover-glow
+    ```
+  </Tab>
+  <Tab value="Manual">
+    ```tsx title="components/animations/cards/hover-glow.tsx"
+    "use client"
+    
+    import * as React from "react"
+    import { motion, HTMLMotionProps } from "framer-motion"
+    import { cn } from "@/lib/utils"
+    import { useHoverGlow } from "@/lib/hooks"
+    
+    export interface CardHoverGlowProps extends HTMLMotionProps<"div"> {
+      glowColor?: string
+      glowSpread?: number
+      duration?: number
+    }
+    
+    export function CardHoverGlow({
+      children,
+      className,
+      glowColor = "rgba(59, 130, 246, 0.5)",
+      glowSpread = 20,
+      duration = 0.3,
+      ...props
+    }: CardHoverGlowProps) {
+      const glowProps = useHoverGlow({
+        glowColor,
+        glowBlur: glowSpread,
+        duration,
+      })
+    
+      return (
+        <motion.div
+          {...glowProps}
+          className={cn("cursor-pointer", className)}
+          {...props}
+        >
+          {children}
+        </motion.div>
+      )
+    }
+    ```
+  </Tab>
+</Tabs>
+
+## Usage
+
+```tsx
+import { CardHoverGlow } from "@/components/animations/cards/hover-glow"
+
+<CardHoverGlow className="p-6 bg-white rounded-lg border">
+  <h3>Card Title</h3>
+  <p>Card content</p>
+</CardHoverGlow>
+```
+
+## Examples
+
+### Blog Post Cards
+
+<PreviewGrid cols={2}>
+  <Preview
+    background="dots"
+    code={`<CardHoverGlow glowColor="rgba(168, 85, 247, 0.5)">
+  Blog Post
+</CardHoverGlow>`}
+  >
+    <CardHoverGlow glowColor="rgba(168, 85, 247, 0.5)" className="overflow-hidden bg-white dark:bg-neutral-900 rounded-lg border border-neutral-200 dark:border-neutral-800">
+      <img src="https://images.unsplash.com/photo-1499750310107-5fef28a66643?w=300&h=200&fit=crop" alt="Blog" className="w-full h-32 object-cover" />
+      <div className="p-4">
+        <h3 className="font-semibold text-sm mb-2">Design Trends 2024</h3>
+        <p className="text-xs text-neutral-600 dark:text-neutral-400">5 min read</p>
+      </div>
+    </CardHoverGlow>
+  </Preview>
+  
+  <Preview
+    background="dots"
+    code={`<CardHoverGlow glowColor="rgba(236, 72, 153, 0.5)">
+  Blog Post
+</CardHoverGlow>`}
+  >
+    <CardHoverGlow glowColor="rgba(236, 72, 153, 0.5)" className="overflow-hidden bg-white dark:bg-neutral-900 rounded-lg border border-neutral-200 dark:border-neutral-800">
+      <img src="https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=300&h=200&fit=crop" alt="Blog" className="w-full h-32 object-cover" />
+      <div className="p-4">
+        <h3 className="font-semibold text-sm mb-2">Web Development</h3>
+        <p className="text-xs text-neutral-600 dark:text-neutral-400">8 min read</p>
+      </div>
+    </CardHoverGlow>
+  </Preview>
+</PreviewGrid>
+
+### Custom Spread
+
+<PreviewGrid cols={2}>
+  <Preview
+    background="default"
+    code={`<CardHoverGlow glowSpread={10}>
+  Subtle Glow
+</CardHoverGlow>`}
+  >
+    <CardHoverGlow glowSpread={10} className="p-6 bg-white dark:bg-neutral-900 rounded-lg border border-neutral-200 dark:border-neutral-800">
+      <h3 className="text-lg font-semibold mb-2">Subtle Glow</h3>
+      <p className="text-sm text-neutral-600 dark:text-neutral-400">10px spread</p>
+    </CardHoverGlow>
+  </Preview>
+  
+  <Preview
+    background="default"
+    code={`<CardHoverGlow glowSpread={40}>
+  Intense Glow
+</CardHoverGlow>`}
+  >
+    <CardHoverGlow glowSpread={40} className="p-6 bg-white dark:bg-neutral-900 rounded-lg border border-neutral-200 dark:border-neutral-800">
+      <h3 className="text-lg font-semibold mb-2">Intense Glow</h3>
+      <p className="text-sm text-neutral-600 dark:text-neutral-400">40px spread</p>
+    </CardHoverGlow>
+  </Preview>
+</PreviewGrid>
+
+## Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `glowColor` | `string` | `"rgba(59, 130, 246, 0.5)"` | Glow color (rgba or hex) |
+| `glowSpread` | `number` | `20` | Glow spread in pixels |
+| `duration` | `number` | `0.3` | Animation duration in seconds |
+| `className` | `string` | `undefined` | Additional CSS classes |
+
+## Use Cases
+
+- Premium feature cards
+- Call-to-action cards
+- Highlighted content
+- Special offers
+- Interactive elements

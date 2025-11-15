@@ -1,0 +1,130 @@
+---
+title: Grayscale Card
+description: Card with grayscale to color transition on hover.
+---
+
+import { Tab, Tabs } from 'fumadocs-ui/components/tabs';
+import { Preview, PreviewGrid } from '@/components/preview';
+import { CardGrayscale } from '@/registry/new-york/animations/cards/grayscale';
+
+## Overview
+
+The `CardGrayscale` creates a smooth grayscale to color transition effect on hover. Perfect for image galleries, portfolios, and visual showcases.
+
+## Preview
+
+<Preview
+  background="default"
+  code={`import { CardGrayscale } from "@/components/animations/cards/grayscale"
+
+<div className="relative w-full max-w-2xl h-80 rounded-xl overflow-hidden flex">
+  {/* Left side - Image with grayscale effect */}
+  <CardGrayscale className="relative w-1/2">
+    <img 
+      src="/mountain.jpg" 
+      alt="Mountain" 
+      className="w-full h-full object-cover" 
+    />
+  </CardGrayscale>
+  
+  {/* Right side - Content */}
+  <div className="w-1/2 bg-white dark:bg-neutral-900 p-8 flex flex-col justify-center">
+    <h2 className="text-2xl font-bold mb-3">Mountain Vista</h2>
+    <div className="text-neutral-600 dark:text-neutral-400 mb-6">
+      Experience breathtaking views and pristine wilderness. 
+      Hover over the image to reveal the full color.
+    </div>
+    <button className="px-6 py-2 bg-blue-500 text-white rounded-lg font-medium hover:bg-blue-600 transition-colors w-fit">
+      Explore More
+    </button>
+  </div>
+</div>`}
+>
+  <div className="relative w-full max-w-2xl h-80 rounded-xl overflow-hidden flex border border-neutral-200 dark:border-neutral-800">
+    {/* Left side - Image with grayscale effect */}
+    <CardGrayscale className="relative w-1/2">
+      <img 
+        src="https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800&h=600&fit=crop" 
+        alt="Mountain landscape" 
+        className="w-full h-full object-cover" 
+      />
+    </CardGrayscale>
+    
+    {/* Right side - Content */}
+    <div className="w-1/2 bg-white dark:bg-neutral-900 p-8 flex flex-col justify-center">
+      <h2 className="text-2xl font-bold mb-3">Mountain Vista</h2>
+      <div className="text-neutral-600 dark:text-neutral-400 mb-6">
+        Experience breathtaking views and pristine wilderness. 
+        Hover over the image to reveal the full color.
+      </div>
+      <button className="px-6 py-2 bg-blue-500 text-white rounded-lg font-medium hover:bg-blue-600 transition-colors w-fit">
+        Explore More
+      </button>
+    </div>
+  </div>
+</Preview>
+
+## Installation
+
+<Tabs items={['CLI', 'Manual']}>
+  <Tab value="CLI">
+    ```bash
+    npx shadcn add https://animbits.dev/r/animations/cards/grayscale
+    ```
+  </Tab>
+  <Tab value="Manual">
+    ```tsx title="components/animations/cards/grayscale.tsx"
+    "use client"
+    
+    import * as React from "react"
+    import { motion, HTMLMotionProps } from "framer-motion"
+    import { cn } from "@/lib/utils"
+    
+    export interface CardGrayscaleProps extends Omit<HTMLMotionProps<"div">, "children"> {
+      children: React.ReactNode
+      duration?: number
+    }
+    
+    export function CardGrayscale({
+      children,
+      className,
+      duration = 0.5,
+      ...props
+    }: CardGrayscaleProps) {
+      const [isHovered, setIsHovered] = React.useState(false)
+    
+      return (
+        <motion.div
+          className={cn("relative overflow-hidden", className)}
+          onHoverStart={() => setIsHovered(true)}
+          onHoverEnd={() => setIsHovered(false)}
+          animate={{
+            filter: isHovered ? "grayscale(0%)" : "grayscale(100%)"
+          }}
+          transition={{ duration }}
+          {...props}
+        >
+          {children}
+        </motion.div>
+      )
+    }
+    ```
+  </Tab>
+</Tabs>
+
+## Usage
+
+```tsx
+import { CardGrayscale } from "@/components/animations/cards/grayscale"
+
+<CardGrayscale className="rounded-lg overflow-hidden">
+  <img src="/photo.jpg" alt="Photo" className="w-full h-full object-cover" />
+</CardGrayscale>
+```
+
+## Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `duration` | `number` | `0.5` | Animation duration in seconds |
+| `className` | `string` | `undefined` | Additional CSS classes |

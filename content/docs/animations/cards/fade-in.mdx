@@ -1,0 +1,136 @@
+---
+title: Fade In Card
+description: Card that fades in when mounted.
+---
+
+import { Tab, Tabs } from 'fumadocs-ui/components/tabs';
+import { Preview, PreviewGrid } from '@/components/preview';
+import { CardFadeIn } from '@/registry/new-york/animations/cards/fade-in';
+
+## Overview
+
+The `CardFadeIn` smoothly fades in when the component mounts, perfect for entrance animations.
+
+## Preview
+
+<Preview
+  background="grid"
+  code={`import { CardFadeIn } from "@/components/animations/cards/fade-in"
+
+<CardFadeIn className="overflow-hidden bg-white dark:bg-neutral-900 rounded-lg border">
+  <img src="/team.jpg" alt="Team" className="w-full h-48 object-cover" />
+  <div className="p-6">
+    <h3>Team Member</h3>
+    <p>This card fades in on mount</p>
+  </div>
+</CardFadeIn>`}
+>
+  <CardFadeIn className="overflow-hidden bg-white dark:bg-neutral-900 rounded-lg border border-neutral-200 dark:border-neutral-800 max-w-sm">
+    <img src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=400&h=300&fit=crop" alt="Team" className="w-full h-48 object-cover" />
+    <div className="p-6">
+      <h3 className="text-lg font-semibold mb-2">Sarah Johnson</h3>
+      <div className="text-neutral-600 dark:text-neutral-400 text-sm">
+        Product Designer
+      </div>
+    </div>
+  </CardFadeIn>
+</Preview>
+
+## Installation
+
+<Tabs items={['CLI', 'Manual']}>
+  <Tab value="CLI">
+    ```bash
+    npx shadcn add https://animbits.dev/r/animations/cards/fade-in
+    ```
+  </Tab>
+  <Tab value="Manual">
+    ```tsx title="components/animations/cards/fade-in.tsx"
+    "use client"
+    
+    import * as React from "react"
+    import { motion, HTMLMotionProps } from "framer-motion"
+    import { cn } from "@/lib/utils"
+    
+    export interface CardFadeInProps extends HTMLMotionProps<"div"> {
+      duration?: number
+      delay?: number
+    }
+    
+    export function CardFadeIn({
+      children,
+      className,
+      duration = 0.5,
+      delay = 0,
+      ...props
+    }: CardFadeInProps) {
+      return (
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration, delay }}
+          className={cn(className)}
+          {...props}
+        >
+          {children}
+        </motion.div>
+      )
+    }
+    ```
+  </Tab>
+</Tabs>
+
+## Usage
+
+```tsx
+import { CardFadeIn } from "@/components/animations/cards/fade-in"
+
+<CardFadeIn className="p-6 bg-white rounded-lg border">
+  <h3>Card Title</h3>
+  <p>Card content</p>
+</CardFadeIn>
+```
+
+## Examples
+
+### Team Grid
+
+<PreviewGrid cols={3}>
+  <Preview background="dots" code={`<CardFadeIn delay={0}>Team 1</CardFadeIn>`}>
+    <CardFadeIn delay={0} className="overflow-hidden bg-white dark:bg-neutral-900 rounded-lg border border-neutral-200 dark:border-neutral-800">
+      <img src="https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?w=300&h=300&fit=crop" alt="Team" className="w-full h-32 object-cover" />
+      <div className="p-4">
+        <h3 className="font-semibold text-sm">Emily Chen</h3>
+        <p className="text-xs text-neutral-600 dark:text-neutral-400 mt-1">CEO</p>
+      </div>
+    </CardFadeIn>
+  </Preview>
+  
+  <Preview background="dots" code={`<CardFadeIn delay={0.1}>Team 2</CardFadeIn>`}>
+    <CardFadeIn delay={0.1} className="overflow-hidden bg-white dark:bg-neutral-900 rounded-lg border border-neutral-200 dark:border-neutral-800">
+      <img src="https://images.unsplash.com/photo-1560250097-0b93528c311a?w=300&h=300&fit=crop" alt="Team" className="w-full h-32 object-cover" />
+      <div className="p-4">
+        <h3 className="font-semibold text-sm">Michael Brown</h3>
+        <p className="text-xs text-neutral-600 dark:text-neutral-400 mt-1">CTO</p>
+      </div>
+    </CardFadeIn>
+  </Preview>
+  
+  <Preview background="dots" code={`<CardFadeIn delay={0.2}>Team 3</CardFadeIn>`}>
+    <CardFadeIn delay={0.2} className="overflow-hidden bg-white dark:bg-neutral-900 rounded-lg border border-neutral-200 dark:border-neutral-800">
+      <img src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=300&h=300&fit=crop" alt="Team" className="w-full h-32 object-cover" />
+      <div className="p-4">
+        <h3 className="font-semibold text-sm">Sarah Johnson</h3>
+        <p className="text-xs text-neutral-600 dark:text-neutral-400 mt-1">Designer</p>
+      </div>
+    </CardFadeIn>
+  </Preview>
+</PreviewGrid>
+
+## Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `duration` | `number` | `0.5` | Animation duration in seconds |
+| `delay` | `number` | `0` | Delay before animation starts |
+| `className` | `string` | `undefined` | Additional CSS classes |

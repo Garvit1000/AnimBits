@@ -1,0 +1,107 @@
+---
+title: Slide In Card
+description: Card that slides in from a direction.
+---
+
+import { Tab, Tabs } from 'fumadocs-ui/components/tabs';
+import { Preview, PreviewGrid } from '@/components/preview';
+import { CardSlideIn } from '@/registry/new-york/animations/cards/slide-in';
+
+## Overview
+
+The `CardSlideIn` slides in from a specified direction when entering the viewport.
+
+## Preview
+
+<Preview
+  background="grid"
+  code={`import { CardSlideIn } from "@/components/animations/cards/slide-in"
+
+<CardSlideIn className="overflow-hidden bg-white dark:bg-neutral-900 rounded-lg border">
+  <img src="/feature.jpg" alt="Feature" className="w-full h-48 object-cover" />
+  <div className="p-6">
+    <h3>Feature Card</h3>
+    <p>Slides from left</p>
+  </div>
+</CardSlideIn>`}
+>
+  <CardSlideIn className="overflow-hidden bg-white dark:bg-neutral-900 rounded-lg border border-neutral-200 dark:border-neutral-800 max-w-sm">
+    <img src="https://images.unsplash.com/photo-1557821552-17105176677c?w=400&h=300&fit=crop" alt="Feature" className="w-full h-48 object-cover" />
+    <div className="p-6">
+      <h3 className="text-lg font-semibold mb-2">New Feature</h3>
+      <div className="text-neutral-600 dark:text-neutral-400 text-sm">
+        Discover our latest innovation
+      </div>
+    </div>
+  </CardSlideIn>
+</Preview>
+
+## Installation
+
+<Tabs items={['CLI', 'Manual']}>
+  <Tab value="CLI">
+    ```bash
+    npx shadcn add https://animbits.dev/r/animations/cards/slide-in
+    ```
+  </Tab>
+  <Tab value="Manual">
+    Requires the `useSlideIn` hook from `@/lib/hooks`.
+  </Tab>
+</Tabs>
+
+## Usage
+
+```tsx
+import { CardSlideIn } from "@/components/animations/cards/slide-in"
+
+<CardSlideIn direction="left" className="p-6 bg-white rounded-lg border">
+  <h3>Card Title</h3>
+  <p>Card content</p>
+</CardSlideIn>
+```
+
+## Examples
+
+### Feature Grid
+
+<PreviewGrid cols={3}>
+  <Preview background="dots" code={`<CardSlideIn direction="left">Feature 1</CardSlideIn>`}>
+    <CardSlideIn direction="left" className="overflow-hidden bg-white dark:bg-neutral-900 rounded-lg border border-neutral-200 dark:border-neutral-800">
+      <img src="https://images.unsplash.com/photo-1551650975-87deedd944c3?w=300&h=200&fit=crop" alt="Feature" className="w-full h-32 object-cover" />
+      <div className="p-4">
+        <h3 className="font-semibold text-sm">Fast Performance</h3>
+        <p className="text-xs text-neutral-600 dark:text-neutral-400 mt-1">Lightning speed</p>
+      </div>
+    </CardSlideIn>
+  </Preview>
+  
+  <Preview background="dots" code={`<CardSlideIn direction="up">Feature 2</CardSlideIn>`}>
+    <CardSlideIn direction="up" className="overflow-hidden bg-white dark:bg-neutral-900 rounded-lg border border-neutral-200 dark:border-neutral-800">
+      <img src="https://images.unsplash.com/photo-1563986768609-322da13575f3?w=300&h=200&fit=crop" alt="Feature" className="w-full h-32 object-cover" />
+      <div className="p-4">
+        <h3 className="font-semibold text-sm">Secure</h3>
+        <p className="text-xs text-neutral-600 dark:text-neutral-400 mt-1">Bank-level security</p>
+      </div>
+    </CardSlideIn>
+  </Preview>
+  
+  <Preview background="dots" code={`<CardSlideIn direction="right">Feature 3</CardSlideIn>`}>
+    <CardSlideIn direction="right" className="overflow-hidden bg-white dark:bg-neutral-900 rounded-lg border border-neutral-200 dark:border-neutral-800">
+      <img src="https://images.unsplash.com/photo-1551650975-87deedd944c3?w=300&h=200&fit=crop" alt="Feature" className="w-full h-32 object-cover" />
+      <div className="p-4">
+        <h3 className="font-semibold text-sm">Scalable</h3>
+        <p className="text-xs text-neutral-600 dark:text-neutral-400 mt-1">Grows with you</p>
+      </div>
+    </CardSlideIn>
+  </Preview>
+</PreviewGrid>
+
+## Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `duration` | `number` | `0.5` | Animation duration in seconds |
+| `delay` | `number` | `0` | Delay before animation starts |
+| `direction` | `"left" \| "right" \| "up" \| "down"` | `"left"` | Slide direction |
+| `distance` | `number` | `50` | Distance to slide in pixels |
+| `className` | `string` | `undefined` | Additional CSS classes |

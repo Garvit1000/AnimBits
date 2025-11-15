@@ -1,0 +1,187 @@
+---
+title: Background Zoom Card
+description: Card with background image that zooms on hover.
+---
+
+import { Tab, Tabs } from 'fumadocs-ui/components/tabs';
+import { Preview, PreviewGrid } from '@/components/preview';
+import { CardBackgroundZoom } from '@/registry/new-york/animations/cards/background-zoom';
+
+## Overview
+
+The `CardBackgroundZoom` creates a zoom effect on the background image while keeping content stable. Perfect for hero sections, travel destinations, and featured content.
+
+## Preview
+
+<Preview
+  background="default"
+  code={`import { CardBackgroundZoom } from "@/components/animations/cards/background-zoom"
+
+<CardBackgroundZoom 
+  backgroundImage="/hero.jpg"
+  className="p-8 rounded-lg h-64 flex items-end"
+>
+  <div>
+    <h3 className="text-white text-2xl font-bold mb-2">Featured Destination</h3>
+    <p className="text-white/90">Hover to zoom background</p>
+  </div>
+</CardBackgroundZoom>`}
+>
+  <CardBackgroundZoom 
+    backgroundImage="https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=600&h=400&fit=crop"
+    className="p-8 rounded-lg h-64 max-w-lg flex items-end"
+  >
+    <div>
+      <h3 className="text-white text-2xl font-bold mb-2">Mountain Adventure</h3>
+      <p className="text-white/90 text-sm">Explore breathtaking landscapes</p>
+      <button className="mt-4 px-4 py-2 bg-white text-black rounded-lg text-sm font-semibold">
+        Learn More
+      </button>
+    </div>
+  </CardBackgroundZoom>
+</Preview>
+
+## Installation
+
+<Tabs items={['CLI', 'Manual']}>
+  <Tab value="CLI">
+    ```bash
+    npx shadcn add https://animbits.dev/r/animations/cards/background-zoom
+    ```
+  </Tab>
+  <Tab value="Manual">
+    ```tsx title="components/animations/cards/background-zoom.tsx"
+    "use client"
+    
+    import * as React from "react"
+    import { motion, HTMLMotionProps } from "framer-motion"
+    import { cn } from "@/lib/utils"
+    
+    export interface CardBackgroundZoomProps extends Omit<HTMLMotionProps<"div">, "children"> {
+      backgroundImage: string
+      children: React.ReactNode
+      scale?: number
+      duration?: number
+    }
+    
+    export function CardBackgroundZoom({
+      backgroundImage,
+      children,
+      className,
+      scale = 1.1,
+      duration = 0.6,
+      ...props
+    }: CardBackgroundZoomProps) {
+      return (
+        <motion.div
+          className={cn("relative overflow-hidden", className)}
+          whileHover="hover"
+          initial="initial"
+          {...props}
+        >
+          <motion.div
+            className="absolute inset-0 bg-cover bg-center"
+            style={{ backgroundImage: `url(${backgroundImage})` }}
+            variants={{
+              initial: { scale: 1 },
+              hover: { scale },
+            }}
+            transition={{ duration, ease: "easeOut" }}
+          />
+          <div className="relative z-10">{children}</div>
+        </motion.div>
+      )
+    }
+    ```
+  </Tab>
+</Tabs>
+
+## Usage
+
+```tsx
+import { CardBackgroundZoom } from "@/components/animations/cards/background-zoom"
+
+<CardBackgroundZoom backgroundImage="/image.jpg">
+  <h3>Card Title</h3>
+  <p>Content</p>
+</CardBackgroundZoom>
+```
+
+## Examples
+
+### Hero Cards
+
+<PreviewGrid cols={2}>
+  <Preview background="default" code={`<CardBackgroundZoom backgroundImage="/hero1.jpg">Hero 1</CardBackgroundZoom>`}>
+    <CardBackgroundZoom 
+      backgroundImage="https://images.unsplash.com/photo-1557804506-669a67965ba0?w=400&h=300&fit=crop"
+      className="p-6 rounded-lg h-48 flex items-end"
+    >
+      <div>
+        <h3 className="text-white text-lg font-bold mb-1">Business Growth</h3>
+        <p className="text-white/90 text-sm">Scale your company</p>
+      </div>
+    </CardBackgroundZoom>
+  </Preview>
+  
+  <Preview background="default" code={`<CardBackgroundZoom backgroundImage="/hero2.jpg">Hero 2</CardBackgroundZoom>`}>
+    <CardBackgroundZoom 
+      backgroundImage="https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=400&h=300&fit=crop"
+      className="p-6 rounded-lg h-48 flex items-end"
+    >
+      <div>
+        <h3 className="text-white text-lg font-bold mb-1">Team Collaboration</h3>
+        <p className="text-white/90 text-sm">Work together</p>
+      </div>
+    </CardBackgroundZoom>
+  </Preview>
+</PreviewGrid>
+
+### Travel Destinations
+
+<PreviewGrid cols={3}>
+  <Preview background="dots" code={`<CardBackgroundZoom>Destination 1</CardBackgroundZoom>`}>
+    <CardBackgroundZoom 
+      backgroundImage="https://images.unsplash.com/photo-1502602898657-3e91760cbb34?w=300&h=200&fit=crop"
+      className="rounded-lg h-40 flex items-end p-4"
+    >
+      <div>
+        <h3 className="text-white font-bold text-sm">Paris</h3>
+        <p className="text-white/90 text-xs">From $599</p>
+      </div>
+    </CardBackgroundZoom>
+  </Preview>
+  
+  <Preview background="dots" code={`<CardBackgroundZoom>Destination 2</CardBackgroundZoom>`}>
+    <CardBackgroundZoom 
+      backgroundImage="https://images.unsplash.com/photo-1513635269975-59663e0ac1ad?w=300&h=200&fit=crop"
+      className="rounded-lg h-40 flex items-end p-4"
+    >
+      <div>
+        <h3 className="text-white font-bold text-sm">London</h3>
+        <p className="text-white/90 text-xs">From $499</p>
+      </div>
+    </CardBackgroundZoom>
+  </Preview>
+  
+  <Preview background="dots" code={`<CardBackgroundZoom>Destination 3</CardBackgroundZoom>`}>
+    <CardBackgroundZoom 
+      backgroundImage="https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=300&h=200&fit=crop"
+      className="rounded-lg h-40 flex items-end p-4"
+    >
+      <div>
+        <h3 className="text-white font-bold text-sm">Tokyo</h3>
+        <p className="text-white/90 text-xs">From $899</p>
+      </div>
+    </CardBackgroundZoom>
+  </Preview>
+</PreviewGrid>
+
+## Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `backgroundImage` | `string` | Required | Background image URL |
+| `scale` | `number` | `1.1` | Zoom scale factor |
+| `duration` | `number` | `0.6` | Animation duration in seconds |
+| `className` | `string` | `undefined` | Additional CSS classes |

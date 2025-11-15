@@ -1,0 +1,154 @@
+---
+title: Hover Lift Card
+description: Card that lifts up on hover with shadow effect.
+---
+
+import { Tab, Tabs } from 'fumadocs-ui/components/tabs';
+import { Preview, PreviewGrid } from '@/components/preview';
+import { CardHoverLift } from '@/registry/new-york/animations/cards/hover-lift';
+
+## Overview
+
+The `CardHoverLift` creates a subtle lift effect on hover, making cards feel interactive and responsive. Perfect for product cards, blog posts, and interactive elements.
+
+## Preview
+
+<Preview
+  background="grid"
+  code={`import { CardHoverLift } from "@/components/animations/cards/hover-lift"
+
+<CardHoverLift className="overflow-hidden bg-white dark:bg-neutral-900 rounded-lg border">
+  <img src="/product.jpg" alt="Product" className="w-full h-48 object-cover" />
+  <div className="p-6">
+    <h3 className="text-lg font-semibold mb-2">Product Name</h3>
+    <p className="text-neutral-600 dark:text-neutral-400">
+      Hover over this card to see the lift effect
+    </p>
+    <p className="text-lg font-bold mt-4">$99.99</p>
+  </div>
+</CardHoverLift>`}
+>
+  <CardHoverLift className="overflow-hidden bg-white dark:bg-neutral-900 rounded-lg border border-neutral-200 dark:border-neutral-800 max-w-sm">
+    <img src="https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=400&h=300&fit=crop" alt="Product" className="w-full h-48 object-cover" />
+    <div className="p-6">
+      <h3 className="text-lg font-semibold mb-2">Wireless Headphones</h3>
+      <div className="text-neutral-600 dark:text-neutral-400 text-sm">
+        Premium sound quality with active noise cancellation
+      </div>
+      <div className="text-lg font-bold mt-4">$99.99</div>
+    </div>
+  </CardHoverLift>
+</Preview>
+
+## Installation
+
+<Tabs items={['CLI', 'Manual']}>
+  <Tab value="CLI">
+    ```bash
+    npx shadcn add https://animbits.dev/r/animations/cards/hover-lift
+    ```
+  </Tab>
+  <Tab value="Manual">
+    ```tsx title="components/animations/cards/hover-lift.tsx"
+    "use client"
+    
+    import * as React from "react"
+    import { motion, HTMLMotionProps } from "framer-motion"
+    import { cn } from "@/lib/utils"
+    import { useHoverLift } from "@/lib/hooks"
+    
+    export interface CardHoverLiftProps extends HTMLMotionProps<"div"> {
+      liftDistance?: number
+      duration?: number
+      addShadow?: boolean
+    }
+    
+    export function CardHoverLift({
+      children,
+      className,
+      liftDistance = 8,
+      duration = 0.2,
+      addShadow = true,
+      ...props
+    }: CardHoverLiftProps) {
+      const liftProps = useHoverLift({
+        liftDistance,
+        duration,
+        addShadow,
+      })
+    
+      return (
+        <motion.div
+          {...liftProps}
+          className={cn("cursor-pointer", className)}
+          {...props}
+        >
+          {children}
+        </motion.div>
+      )
+    }
+    ```
+  </Tab>
+</Tabs>
+
+## Usage
+
+```tsx
+import { CardHoverLift } from "@/components/animations/cards/hover-lift"
+
+<CardHoverLift className="p-6 bg-white rounded-lg border">
+  <h3>Card Title</h3>
+  <p>Card content</p>
+</CardHoverLift>
+```
+
+## Examples
+
+### Product Grid
+
+<PreviewGrid cols={2}>
+  <Preview
+    background="dots"
+    code={`<CardHoverLift>Product 1</CardHoverLift>`}
+  >
+    <CardHoverLift className="overflow-hidden bg-white dark:bg-neutral-900 rounded-lg border border-neutral-200 dark:border-neutral-800">
+      <img src="https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=300&h=200&fit=crop" alt="Watch" className="w-full h-32 object-cover" />
+      <div className="p-4">
+        <h3 className="font-semibold text-sm">Smart Watch</h3>
+        <p className="text-lg font-bold mt-2">$299</p>
+      </div>
+    </CardHoverLift>
+  </Preview>
+  
+  <Preview
+    background="dots"
+    code={`<CardHoverLift>Product 2</CardHoverLift>`}
+  >
+    <CardHoverLift className="overflow-hidden bg-white dark:bg-neutral-900 rounded-lg border border-neutral-200 dark:border-neutral-800">
+      <img src="https://images.unsplash.com/photo-1572635196237-14b3f281503f?w=300&h=200&fit=crop" alt="Sunglasses" className="w-full h-32 object-cover" />
+      <div className="p-4">
+        <h3 className="font-semibold text-sm">Sunglasses</h3>
+        <p className="text-lg font-bold mt-2">$149</p>
+      </div>
+    </CardHoverLift>
+  </Preview>
+
+</PreviewGrid>
+
+
+## Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `liftDistance` | `number` | `8` | Lift distance in pixels |
+| `duration` | `number` | `0.2` | Animation duration in seconds |
+| `addShadow` | `boolean` | `true` | Whether to add shadow on lift |
+| `className` | `string` | `undefined` | Additional CSS classes |
+
+## Use Cases
+
+- Product cards in e-commerce
+- Blog post previews
+- Feature cards
+- Portfolio items
+- Interactive dashboards

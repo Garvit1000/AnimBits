@@ -1,4 +1,15 @@
 {
   "title": "Cards",
-  "pages": ["index"]
+  "pages": [
+    "hover-lift",
+    "hover-glow",
+    "tilt",
+    "parallax-tilt",
+    "flip",
+    "slide-in",
+    "fade-in",
+    "scale-in",
+    "background-zoom",
+    "grayscale"
+  ]
 }
