@@ -1,0 +1,160 @@
+---
+title: Spin Icon
+description: Continuous rotation animation for icons.
+---
+
+import { Tab, Tabs } from 'fumadocs-ui/components/tabs';
+import { Preview } from '@/components/preview';
+import { SpinIcon } from '@/registry/new-york/animations/icons/spin';
+import { Loader, Loader2, RefreshCw, RotateCcw } from 'lucide-react';
+
+## Overview
+
+The `SpinIcon` component creates a continuous rotation animation. Perfect for loading indicators, refresh buttons, and processing states.
+
+## Preview
+
+<Preview
+  background="grid"
+  code={`import { SpinIcon } from "@/components/animations/icons/spin"
+import { Loader } from "lucide-react"
+
+<SpinIcon duration={1} direction="clockwise">
+  <Loader className="w-8 h-8 text-blue-500" />
+</SpinIcon>`}
+>
+  <div className="flex gap-8 items-center justify-center">
+    <SpinIcon duration={1} direction="clockwise">
+      <Loader className="w-8 h-8 text-blue-500" />
+    </SpinIcon>
+    <SpinIcon duration={2} direction="clockwise">
+      <Loader2 className="w-8 h-8 text-green-500" />
+    </SpinIcon>
+    <SpinIcon duration={1.5} direction="counterclockwise">
+      <RefreshCw className="w-8 h-8 text-purple-500" />
+    </SpinIcon>
+  </div>
+</Preview>
+
+## Installation
+
+<Tabs items={['CLI', 'Manual']}>
+  <Tab value="CLI">
+    ```bash
+    npx shadcn add https://animbits.dev/r/animations/icons/spin
+    ```
+  </Tab>
+  <Tab value="Manual">
+    ```tsx title="components/animations/icons/spin.tsx"
+    "use client"
+
+    import { motion, type HTMLMotionProps } from "framer-motion"
+
+    interface SpinIconProps extends Omit<HTMLMotionProps<"div">, "animate"> {
+      children: React.ReactNode
+      duration?: number
+      direction?: "clockwise" | "counterclockwise"
+    }
+
+    export function SpinIcon({
+      children,
+      duration = 1,
+      direction = "clockwise",
+      ...props
+    }: SpinIconProps) {
+      const rotation = direction === "clockwise" ? 360 : -360
+
+      return (
+        <motion.div
+          animate={{ rotate: rotation }}
+          transition={{
+            duration,
+            ease: "linear",
+            repeat: Infinity,
+          }}
+          {...props}
+        >
+          {children}
+        </motion.div>
+      )
+    }
+    ```
+  </Tab>
+</Tabs>
+
+## Usage
+
+```tsx
+import { SpinIcon } from "@/components/animations/icons/spin"
+import { Loader } from "lucide-react"
+
+export default function Example() {
+  return (
+    <SpinIcon duration={1} direction="clockwise">
+      <Loader className="w-6 h-6" />
+    </SpinIcon>
+  )
+}
+```
+
+## Examples
+
+### Default Speed
+
+<Preview
+  background="dots"
+  code={`<SpinIcon duration={1} direction="clockwise">
+  <Loader className="w-12 h-12 text-blue-500" />
+</SpinIcon>`}
+>
+  <SpinIcon duration={1} direction="clockwise">
+    <Loader className="w-12 h-12 text-blue-500" />
+  </SpinIcon>
+</Preview>
+
+### Slow Spin
+
+<Preview
+  background="dots"
+  code={`<SpinIcon duration={2} direction="clockwise">
+  <Loader2 className="w-12 h-12 text-green-500" />
+</SpinIcon>`}
+>
+  <SpinIcon duration={2} direction="clockwise">
+    <Loader2 className="w-12 h-12 text-green-500" />
+  </SpinIcon>
+</Preview>
+
+### Fast Spin
+
+<Preview
+  background="dots"
+  code={`<SpinIcon duration={0.5} direction="clockwise">
+  <RefreshCw className="w-12 h-12 text-purple-500" />
+</SpinIcon>`}
+>
+  <SpinIcon duration={0.5} direction="clockwise">
+    <RefreshCw className="w-12 h-12 text-purple-500" />
+  </SpinIcon>
+</Preview>
+
+### Counterclockwise
+
+<Preview
+  background="dots"
+  code={`<SpinIcon duration={1.5} direction="counterclockwise">
+  <RotateCcw className="w-12 h-12 text-orange-500" />
+</SpinIcon>`}
+>
+  <SpinIcon duration={1.5} direction="counterclockwise">
+    <RotateCcw className="w-12 h-12 text-orange-500" />
+  </SpinIcon>
+</Preview>
+
+## Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `children` | `ReactNode` | - | The icon element to animate |
+| `duration` | `number` | `1` | Duration of one rotation in seconds |
+| `direction` | `"clockwise"` \| `"counterclockwise"` | `"clockwise"` | Direction of rotation |

@@ -1,0 +1,165 @@
+---
+title: Rotate Icon
+description: One-shot 360° rotation animation for icons.
+---
+
+import { Tab, Tabs } from 'fumadocs-ui/components/tabs';
+import { Preview } from '@/components/preview';
+import { RotateIcon } from '@/registry/new-york/animations/icons/rotate';
+import { RefreshCw, RotateCcw, Loader } from 'lucide-react';
+
+## Overview
+
+The `RotateIcon` component creates a one-shot 360° rotation triggered by hover, tap, or mount. Perfect for refresh actions and interactive feedback.
+
+## Preview
+
+<Preview
+  background="grid"
+  code={`import { RotateIcon } from "@/components/animations/icons/rotate"
+import { RefreshCw } from "lucide-react"
+
+<RotateIcon trigger="hover" direction="clockwise">
+  <RefreshCw className="w-8 h-8 text-blue-500" />
+</RotateIcon>`}
+>
+  <div className="flex gap-8 items-center justify-center">
+    <RotateIcon trigger="hover" direction="clockwise" className="cursor-pointer">
+      <RefreshCw className="w-8 h-8 text-blue-500" />
+    </RotateIcon>
+    <RotateIcon trigger="tap" direction="counterclockwise">
+      <RotateCcw className="w-8 h-8 text-green-500" />
+    </RotateIcon>
+    <RotateIcon trigger="mount" direction="clockwise">
+      <Loader className="w-8 h-8 text-purple-500" />
+    </RotateIcon>
+  </div>
+</Preview>
+
+## Installation
+
+<Tabs items={['CLI', 'Manual']}>
+  <Tab value="CLI">
+    ```bash
+    npx shadcn add https://animbits.dev/r/animations/icons/rotate
+    ```
+  </Tab>
+  <Tab value="Manual">
+    ```tsx title="components/animations/icons/rotate.tsx"
+    "use client"
+
+    import { motion, type HTMLMotionProps } from "framer-motion"
+    import { rotateVariants } from "@/lib/animation-presets"
+    import { useState } from "react"
+
+    interface RotateIconProps extends Omit<HTMLMotionProps<"div">, "animate"> {
+      children: React.ReactNode
+      trigger?: "hover" | "tap" | "mount"
+      direction?: "clockwise" | "counterclockwise"
+    }
+
+    export function RotateIcon({
+      children,
+      trigger = "hover",
+      direction = "clockwise",
+      ...props
+    }: RotateIconProps) {
+      const [key, setKey] = useState(0)
+      const rotation = direction === "clockwise" ? 360 : -360
+
+      const customVariants = {
+        initial: { rotate: 0 },
+        animate: { rotate: rotation },
+      }
+
+      const handleTrigger = () => {
+        setKey((prev) => prev + 1)
+      }
+
+      return (
+        <motion.div
+          key={key}
+          variants={customVariants}
+          initial="initial"
+          animate={trigger === "mount" ? "animate" : undefined}
+          whileHover={trigger === "hover" ? "animate" : undefined}
+          whileTap={trigger === "tap" ? "animate" : undefined}
+          onHoverStart={trigger === "hover" ? handleTrigger : undefined}
+          onTap={trigger === "tap" ? handleTrigger : undefined}
+          transition={{ duration: 0.5, ease: "easeInOut" }}
+          {...props}
+        >
+          {children}
+        </motion.div>
+      )
+    }
+    ```
+
+    **Dependencies:**
+    - `rotateVariants` from `@/lib/animation-presets`
+  </Tab>
+</Tabs>
+
+## Usage
+
+```tsx
+import { RotateIcon } from "@/components/animations/icons/rotate"
+import { RefreshCw } from "lucide-react"
+
+export default function Example() {
+  return (
+    <RotateIcon trigger="hover" direction="clockwise">
+      <RefreshCw className="w-6 h-6" />
+    </RotateIcon>
+  )
+}
+```
+
+## Examples
+
+### Clockwise Rotation
+
+<Preview
+  background="dots"
+  code={`<RotateIcon trigger="hover" direction="clockwise" className="cursor-pointer">
+  <RefreshCw className="w-12 h-12 text-blue-500" />
+</RotateIcon>`}
+>
+  <RotateIcon trigger="hover" direction="clockwise" className="cursor-pointer">
+    <RefreshCw className="w-12 h-12 text-blue-500" />
+  </RotateIcon>
+</Preview>
+
+### Counterclockwise Rotation
+
+<Preview
+  background="dots"
+  code={`<RotateIcon trigger="tap" direction="counterclockwise">
+  <RotateCcw className="w-12 h-12 text-green-500" />
+</RotateIcon>`}
+>
+  <RotateIcon trigger="tap" direction="counterclockwise">
+    <RotateCcw className="w-12 h-12 text-green-500" />
+  </RotateIcon>
+</Preview>
+
+### Mount Trigger
+
+<Preview
+  background="dots"
+  code={`<RotateIcon trigger="mount" direction="clockwise">
+  <Loader className="w-12 h-12 text-purple-500" />
+</RotateIcon>`}
+>
+  <RotateIcon trigger="mount" direction="clockwise">
+    <Loader className="w-12 h-12 text-purple-500" />
+  </RotateIcon>
+</Preview>
+
+## Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `children` | `ReactNode` | - | The icon element to animate |
+| `trigger` | `"hover"` \| `"tap"` \| `"mount"` | `"hover"` | When to trigger the rotation animation |
+| `direction` | `"clockwise"` \| `"counterclockwise"` | `"clockwise"` | Rotation direction |

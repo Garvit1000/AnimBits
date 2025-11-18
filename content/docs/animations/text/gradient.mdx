@@ -1,0 +1,75 @@
+---
+title: Gradient Text
+description: Text with animated gradient colors.
+---
+
+import { Tab, Tabs } from 'fumadocs-ui/components/tabs';
+import { Preview, PreviewGrid } from '@/components/preview';
+import { TextGradient } from '@/registry/new-york/animations/text/gradient';
+
+## Overview
+
+The `TextGradient` creates smooth animated gradient text effects.
+
+## Preview
+
+<Preview
+  background="default"
+  code={`import { TextGradient } from "@/components/animations/text/gradient"
+
+<TextGradient className="text-4xl font-bold">
+  Beautiful Gradient Text
+</TextGradient>`}
+>
+  <TextGradient className="text-4xl font-bold">Beautiful Gradient Text</TextGradient>
+</Preview>
+
+## Installation
+
+<Tabs items={['CLI', 'Manual']}>
+  <Tab value="CLI">
+    ```bash
+    npx shadcn add https://animbits.dev/r/animations/text/gradient
+    ```
+  </Tab>
+  <Tab value="Manual">
+    See component source code in the registry.
+  </Tab>
+</Tabs>
+
+## Usage
+
+```tsx
+import { TextGradient } from "@/components/animations/text/gradient"
+
+<TextGradient>Gradient Text</TextGradient>
+```
+
+## Examples
+
+### Custom Gradients
+
+<PreviewGrid cols={2}>
+  <Preview background="dots" code={`<TextGradient gradient="linear-gradient(90deg, #ff0080, #ff8c00, #40e0d0)">Sunset</TextGradient>`}>
+    <TextGradient gradient="linear-gradient(90deg, #ff0080, #ff8c00, #40e0d0)" className="text-2xl font-bold">Sunset Colors</TextGradient>
+  </Preview>
+  
+  <Preview background="dots" code={`<TextGradient gradient="linear-gradient(90deg, #667eea, #764ba2)">Purple</TextGradient>`}>
+    <TextGradient gradient="linear-gradient(90deg, #667eea, #764ba2)" className="text-2xl font-bold">Purple Dream</TextGradient>
+  </Preview>
+</PreviewGrid>
+
+### Static Gradient
+
+<Preview background="default" code={`<TextGradient animate={false}>Static</TextGradient>`}>
+  <TextGradient animate={false} className="text-3xl font-bold">Static Gradient</TextGradient>
+</Preview>
+
+## Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `children` | `string` | Required | Text to display |
+| `gradient` | `string` | `"linear-gradient(90deg, #3b82f6, #8b5cf6, #ec4899)"` | CSS gradient |
+| `animate` | `boolean` | `true` | Animate the gradient |
+| `duration` | `number` | `3` | Animation duration (seconds) |

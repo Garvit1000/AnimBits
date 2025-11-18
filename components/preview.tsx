@@ -1,4 +1,3 @@
-
 "use client"
 
 import * as React from "react"
@@ -35,23 +34,23 @@ export function Preview({
   }
 
   const backgroundStyles = {
-    default: "bg-slate-50 dark:bg-slate-950/50",
-    grid: "bg-slate-50 dark:bg-slate-950/50 bg-[linear-gradient(to_right,rgb(148_163_184_/_0.1)_1px,transparent_1px),linear-gradient(to_bottom,rgb(148_163_184_/_0.1)_1px,transparent_1px)] dark:bg-[linear-gradient(to_right,rgb(148_163_184_/_0.05)_1px,transparent_1px),linear-gradient(to_bottom,rgb(148_163_184_/_0.05)_1px,transparent_1px)] bg-[size:24px_24px]",
-    dots: "bg-slate-50 dark:bg-slate-950/50 bg-[radial-gradient(rgb(148_163_184_/_0.15)_1px,transparent_1px)] dark:bg-[radial-gradient(rgb(148_163_184_/_0.05)_1px,transparent_1px)] bg-[size:16px_16px]",
-    gradient: "bg-gradient-to-br from-slate-50 via-slate-100 to-slate-50 dark:from-slate-950 dark:via-slate-900 dark:to-slate-950",
+    default: "bg-background",
+    grid: "bg-background bg-[linear-gradient(to_right,hsl(var(--border))_1px,transparent_1px),linear-gradient(to_bottom,hsl(var(--border))_1px,transparent_1px)] bg-[size:4rem_4rem]",
+    dots: "bg-background bg-[radial-gradient(hsl(var(--border))_1px,transparent_1px)] bg-[size:1rem_1rem]",
+    gradient: "bg-gradient-to-br from-background via-muted/30 to-background",
   }
 
   return (
-    <div className="not-prose relative my-6 overflow-hidden rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900/50 shadow-sm">
+    <div className="group relative my-6 overflow-hidden rounded-lg border">
       {/* Header */}
-      <div className="flex items-center justify-between border-b border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-900/50 px-4">
-        <div className="flex h-12 items-center gap-2">
+      <div className="flex items-center justify-between border-b bg-muted/40 px-4 py-3">
+        <div className="flex items-center gap-1">
           <button
             onClick={() => setActiveTab("preview")}
-            className={`relative h-10 rounded-lg px-4 text-sm font-medium transition-all ${
+            className={`relative inline-flex h-8 items-center justify-center rounded-md px-3 text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 ${
               activeTab === "preview"
-                ? "bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 shadow-sm"
-                : "text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100"
+                ? "bg-background text-foreground shadow-sm"
+                : "text-muted-foreground hover:bg-background/60 hover:text-foreground"
             }`}
           >
             Preview
@@ -59,10 +58,10 @@ export function Preview({
           {code && (
             <button
               onClick={() => setActiveTab("code")}
-              className={`relative h-10 rounded-lg px-4 text-sm font-medium transition-all ${
+              className={`relative inline-flex h-8 items-center justify-center rounded-md px-3 text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 ${
                 activeTab === "code"
-                  ? "bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 shadow-sm"
-                  : "text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100"
+                  ? "bg-background text-foreground shadow-sm"
+                  : "text-muted-foreground hover:bg-background/60 hover:text-foreground"
               }`}
             >
               Code
@@ -70,14 +69,14 @@ export function Preview({
           )}
         </div>
         
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-1">
           {activeTab === "preview" && (
             <button
               onClick={handleReplay}
-              className="flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium text-slate-700 dark:text-slate-300 transition-all hover:bg-white dark:hover:bg-slate-800 hover:shadow-sm"
+              className="inline-flex h-8 items-center justify-center gap-2 rounded-md px-3 text-sm font-medium text-muted-foreground ring-offset-background transition-colors hover:bg-background/60 hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
               title="Replay animation"
             >
-              <RotateCcw className="h-4 w-4" />
+              <RotateCcw className="h-3.5 w-3.5" />
               <span className="hidden sm:inline">Replay</span>
             </button>
           )}
@@ -85,16 +84,16 @@ export function Preview({
           {code && showCopy && activeTab === "code" && (
             <button
               onClick={handleCopy}
-              className="flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium text-slate-700 dark:text-slate-300 transition-all hover:bg-white dark:hover:bg-slate-800 hover:shadow-sm"
+              className="inline-flex h-8 items-center justify-center gap-2 rounded-md px-3 text-sm font-medium text-muted-foreground ring-offset-background transition-colors hover:bg-background/60 hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
             >
               {copied ? (
                 <>
-                  <Check className="h-4 w-4 text-emerald-500" />
+                  <Check className="h-3.5 w-3.5" />
                   <span className="hidden sm:inline">Copied!</span>
                 </>
               ) : (
                 <>
-                  <Copy className="h-4 w-4" />
+                  <Copy className="h-3.5 w-3.5" />
                   <span className="hidden sm:inline">Copy</span>
                 </>
               )}
@@ -106,16 +105,16 @@ export function Preview({
       {/* Content */}
       {activeTab === "preview" ? (
         <div
-          className={`flex min-h-[350px] items-center justify-center p-10 ${backgroundStyles[background]} ${className}`}
+          className={`flex min-h-[350px] w-full items-center justify-center p-10 ${backgroundStyles[background]} ${className}`}
         >
-          <div key={key}>
+          <div key={key} className="w-full flex items-center justify-center">
             {children}
           </div>
         </div>
       ) : (
-        <div className="max-h-[500px] overflow-auto bg-slate-50 dark:bg-slate-950">
-          <pre className="p-6 text-sm leading-relaxed">
-            <code className="text-slate-800 dark:text-slate-200 font-mono">{code}</code>
+        <div className="max-h-[500px] overflow-auto">
+          <pre className="p-6">
+            <code className="relative rounded bg-muted px-[0.3rem] py-[0.2rem] font-mono text-sm">{code}</code>
           </pre>
         </div>
       )}
@@ -138,7 +137,7 @@ export function PreviewGrid({
   }
 
   return (
-    <div className={`not-prose grid gap-4 ${gridCols[cols]}`}>
+    <div className={`grid gap-4 ${gridCols[cols]}`}>
       {children}
     </div>
   )

@@ -1,0 +1,228 @@
+---
+title: Morph Icon
+description: An icon that morphs between different states.
+---
+
+import { Tab, Tabs } from 'fumadocs-ui/components/tabs';
+import { Preview } from '@/components/preview';
+import { MorphIcon } from '@/registry/new-york/animations/icons/morph';
+
+## Overview
+
+The `MorphIcon` component smoothly morphs between different SVG path states. Perfect for play/pause toggles, menu/close buttons, and state transitions.
+
+## Preview
+
+<Preview
+  background="grid"
+  code={`import { MorphIcon } from "@/components/animations/icons/morph"
+
+<MorphIcon 
+  paths={[
+    "M5 3l14 9-14 9V3z",
+    "M6 4h4v16H6V4zm8 0h4v16h-4V4z"
+  ]}
+  viewBox="0 0 24 24"
+  className="w-8 h-8"
+  interval={2}
+/>`}
+>
+  <div className="flex gap-8 items-center justify-center">
+    <MorphIcon 
+      paths={[
+        "M5 3l14 9-14 9V3z",
+        "M6 4h4v16H6V4zm8 0h4v16h-4V4z"
+      ]}
+      viewBox="0 0 24 24"
+      className="w-8 h-8"
+      interval={2}
+    />
+    <MorphIcon 
+      paths={[
+        "M4 6h16M4 12h16M4 18h16",
+        "M6 18L18 6M6 6l12 12"
+      ]}
+      viewBox="0 0 24 24"
+      className="w-8 h-8"
+      interval={2}
+    />
+  </div>
+</Preview>
+
+## Installation
+
+<Tabs items={['CLI', 'Manual']}>
+  <Tab value="CLI">
+    ```bash
+    npx shadcn add https://animbits.dev/r/animations/icons/morph
+    ```
+  </Tab>
+  <Tab value="Manual">
+    ```tsx title="components/animations/icons/morph.tsx"
+    "use client"
+
+    import * as React from "react"
+    import { motion, SVGMotionProps } from "framer-motion"
+    import { cn } from "@/lib/utils"
+
+    export interface MorphIconProps extends Omit<SVGMotionProps<SVGSVGElement>, "children"> {
+      paths: string[]
+      duration?: number
+      interval?: number
+      strokeColor?: string
+      strokeWidth?: number
+    }
+
+    export function MorphIcon({
+      paths,
+      className,
+      duration = 0.3,
+      interval = 2,
+      strokeColor = "currentColor",
+      strokeWidth = 2,
+      ...props
+    }: MorphIconProps) {
+      const [currentIndex, setCurrentIndex] = React.useState(0)
+
+      React.useEffect(() => {
+        const timer = setInterval(() => {
+          setCurrentIndex((prev) => (prev + 1) % paths.length)
+        }, interval * 1000)
+
+        return () => clearInterval(timer)
+      }, [paths.length, interval])
+
+      return (
+        <motion.svg
+          className={cn(className)}
+          fill="none"
+          stroke={strokeColor}
+          strokeWidth={strokeWidth}
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          {...props}
+        >
+          <motion.path
+            d={paths[currentIndex]}
+            animate={{ d: paths[currentIndex] }}
+            transition={{ duration, ease: "easeInOut" }}
+          />
+        </motion.svg>
+      )
+    }
+    ```
+  </Tab>
+</Tabs>
+
+## Usage
+
+```tsx
+import { MorphIcon } from "@/components/animations/icons/morph"
+
+export default function Example() {
+  return (
+    <MorphIcon 
+      paths={[
+        "M5 3l14 9-14 9V3z", // play
+        "M6 4h4v16H6V4zm8 0h4v16h-4V4z" // pause
+      ]}
+      viewBox="0 0 24 24"
+      className="w-6 h-6"
+    />
+  )
+}
+```
+
+## Examples
+
+### Play/Pause Toggle
+
+<Preview
+  background="dots"
+  code={`<MorphIcon 
+  paths={[
+    "M5 3l14 9-14 9V3z",
+    "M6 4h4v16H6V4zm8 0h4v16h-4V4z"
+  ]}
+  viewBox="0 0 24 24"
+  className="w-12 h-12 text-blue-500"
+  interval={2}
+/>`}
+>
+  <MorphIcon 
+    paths={[
+      "M5 3l14 9-14 9V3z",
+      "M6 4h4v16H6V4zm8 0h4v16h-4V4z"
+    ]}
+    viewBox="0 0 24 24"
+    className="w-12 h-12 text-blue-500"
+    interval={2}
+    duration={0.3}
+  />
+</Preview>
+
+### Menu/Close Toggle
+
+<Preview
+  background="dots"
+  code={`<MorphIcon 
+  paths={[
+    "M4 6h16M4 12h16M4 18h16",
+    "M6 18L18 6M6 6l12 12"
+  ]}
+  viewBox="0 0 24 24"
+  className="w-12 h-12 text-green-500"
+  interval={2}
+/>`}
+>
+  <MorphIcon 
+    paths={[
+      "M4 6h16M4 12h16M4 18h16",
+      "M6 18L18 6M6 6l12 12"
+    ]}
+    viewBox="0 0 24 24"
+    className="w-12 h-12 text-green-500"
+    interval={2}
+    duration={0.3}
+  />
+</Preview>
+
+### Multiple States
+
+<Preview
+  background="dots"
+  code={`<MorphIcon 
+  paths={[
+    "M12 2L2 7l10 5 10-5-10-5z",
+    "M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5",
+    "M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"
+  ]}
+  viewBox="0 0 24 24"
+  className="w-12 h-12 text-purple-500"
+  interval={1.5}
+/>`}
+>
+  <MorphIcon 
+    paths={[
+      "M12 2L2 7l10 5 10-5-10-5z",
+      "M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5",
+      "M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"
+    ]}
+    viewBox="0 0 24 24"
+    className="w-12 h-12 text-purple-500"
+    interval={1.5}
+    duration={0.4}
+  />
+</Preview>
+
+## Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `paths` | `string[]` | - | Array of SVG path data strings to morph between |
+| `duration` | `number` | `0.3` | Animation duration in seconds |
+| `interval` | `number` | `2` | Interval between morphs in seconds |
+| `strokeColor` | `string` | `"currentColor"` | Stroke color |
+| `strokeWidth` | `number` | `2` | Stroke width |
+| `viewBox` | `string` | - | SVG viewBox attribute |
+| `className` | `string` | - | Additional CSS classes |

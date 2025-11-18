@@ -1,4 +1,15 @@
 {
   "title": "Loaders",
-  "pages": ["index"]
+  "pages": [
+    "index",
+    "spinner",
+    "dots",
+    "bars",
+    "pulse",
+    "orbit",
+    "morphing",
+    "gooey-blobs",
+    "skeleton",
+    "liquid-progress"
+  ]
 }

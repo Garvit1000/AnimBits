@@ -1,0 +1,174 @@
+---
+title: Scale In Icon
+description: Entrance animation with scale effect for icons.
+---
+
+import { Tab, Tabs } from 'fumadocs-ui/components/tabs';
+import { Preview } from '@/components/preview';
+import { ScaleInIcon } from '@/registry/new-york/animations/icons/scale-in';
+import { Zap, Star, Sparkles, Circle, Square, Triangle, Hexagon } from 'lucide-react';
+
+## Overview
+
+The `ScaleInIcon` component creates a scale-in entrance animation. Perfect for revealing icons with a smooth zoom effect.
+
+## Preview
+
+<Preview
+  background="grid"
+  code={`import { ScaleInIcon } from "@/components/animations/icons/scale-in"
+import { Zap } from "lucide-react"
+
+<ScaleInIcon delay={0} from={0.8}>
+  <Zap className="w-8 h-8 text-yellow-500" />
+</ScaleInIcon>`}
+>
+  <div className="flex gap-8 items-center justify-center">
+    <ScaleInIcon delay={0} from={0.8}>
+      <Zap className="w-8 h-8 text-yellow-500" />
+    </ScaleInIcon>
+    <ScaleInIcon delay={0.2} from={0.5}>
+      <Star className="w-8 h-8 text-blue-500" />
+    </ScaleInIcon>
+    <ScaleInIcon delay={0.4} from={0.3}>
+      <Sparkles className="w-8 h-8 text-purple-500" />
+    </ScaleInIcon>
+  </div>
+</Preview>
+
+## Installation
+
+<Tabs items={['CLI', 'Manual']}>
+  <Tab value="CLI">
+    ```bash
+    npx shadcn add https://animbits.dev/r/animations/icons/scale-in
+    ```
+  </Tab>
+  <Tab value="Manual">
+    ```tsx title="components/animations/icons/scale-in.tsx"
+    "use client"
+
+    import { motion, type HTMLMotionProps } from "framer-motion"
+    import { scaleInVariants, createDelayedTransition } from "@/lib/animation-presets"
+
+    interface ScaleInIconProps extends Omit<HTMLMotionProps<"div">, "animate"> {
+      children: React.ReactNode
+      delay?: number
+      duration?: number
+      from?: number
+    }
+
+    export function ScaleInIcon({
+      children,
+      delay = 0,
+      duration = 0.3,
+      from = 0.9,
+      ...props
+    }: ScaleInIconProps) {
+      const customVariants = {
+        hidden: { opacity: 0, scale: from },
+        visible: { opacity: 1, scale: 1 },
+      }
+
+      return (
+        <motion.div
+          variants={customVariants}
+          initial="hidden"
+          animate="visible"
+          transition={createDelayedTransition(delay, duration)}
+          {...props}
+        >
+          {children}
+        </motion.div>
+      )
+    }
+    ```
+
+    **Dependencies:**
+    - `scaleInVariants` and `createDelayedTransition` from `@/lib/animation-presets`
+  </Tab>
+</Tabs>
+
+## Usage
+
+```tsx
+import { ScaleInIcon } from "@/components/animations/icons/scale-in"
+import { Zap } from "lucide-react"
+
+export default function Example() {
+  return (
+    <ScaleInIcon delay={0.1} duration={0.3} from={0.8}>
+      <Zap className="w-6 h-6" />
+    </ScaleInIcon>
+  )
+}
+```
+
+## Examples
+
+### Subtle Scale
+
+<Preview
+  background="dots"
+  code={`<ScaleInIcon from={0.9}>
+  <Zap className="w-10 h-10 text-yellow-500" />
+</ScaleInIcon>`}
+>
+  <ScaleInIcon from={0.9}>
+    <Zap className="w-10 h-10 text-yellow-500" />
+  </ScaleInIcon>
+</Preview>
+
+### Medium Scale
+
+<Preview
+  background="dots"
+  code={`<ScaleInIcon from={0.5}>
+  <Star className="w-10 h-10 text-blue-500" />
+</ScaleInIcon>`}
+>
+  <ScaleInIcon from={0.5}>
+    <Star className="w-10 h-10 text-blue-500" />
+  </ScaleInIcon>
+</Preview>
+
+### Dramatic Scale
+
+<Preview
+  background="dots"
+  code={`<ScaleInIcon from={0.2}>
+  <Sparkles className="w-10 h-10 text-purple-500" />
+</ScaleInIcon>`}
+>
+  <ScaleInIcon from={0.2}>
+    <Sparkles className="w-10 h-10 text-purple-500" />
+  </ScaleInIcon>
+</Preview>
+
+### Staggered Icons
+
+<Preview
+  background="dots"
+  code={`<div className="flex gap-4">
+  <ScaleInIcon delay={0} from={0.5}><Circle className="w-8 h-8" /></ScaleInIcon>
+  <ScaleInIcon delay={0.1} from={0.5}><Square className="w-8 h-8" /></ScaleInIcon>
+  <ScaleInIcon delay={0.2} from={0.5}><Triangle className="w-8 h-8" /></ScaleInIcon>
+  <ScaleInIcon delay={0.3} from={0.5}><Hexagon className="w-8 h-8" /></ScaleInIcon>
+</div>`}
+>
+  <div className="flex gap-4 items-center justify-center">
+    <ScaleInIcon delay={0} from={0.5}><Circle className="w-8 h-8 text-red-500" /></ScaleInIcon>
+    <ScaleInIcon delay={0.1} from={0.5}><Square className="w-8 h-8 text-orange-500" /></ScaleInIcon>
+    <ScaleInIcon delay={0.2} from={0.5}><Triangle className="w-8 h-8 text-yellow-500" /></ScaleInIcon>
+    <ScaleInIcon delay={0.3} from={0.5}><Hexagon className="w-8 h-8 text-green-500" /></ScaleInIcon>
+  </div>
+</Preview>
+
+## Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `children` | `ReactNode` | - | The icon element to animate |
+| `delay` | `number` | `0` | Delay before animation starts in seconds |
+| `duration` | `number` | `0.3` | Animation duration in seconds |
+| `from` | `number` | `0.9` | Initial scale value |

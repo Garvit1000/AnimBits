@@ -1,4 +1,11 @@
 {
   "title": "Transitions",
-  "pages": ["index"]
+  "pages": [
+    "index",
+    "theme-toggle-circular",
+    "theme-toggle-slide-top",
+    "theme-toggle-slide-bottom",
+    "theme-toggle-slide-left",
+    "theme-toggle-slide-right"
+  ]
 }

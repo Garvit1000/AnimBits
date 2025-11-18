@@ -1,0 +1,121 @@
+---
+title: Spinner Loader
+description: A circular spinning loader.
+---
+
+import { Tab, Tabs } from 'fumadocs-ui/components/tabs';
+import { Preview } from '@/components/preview';
+import { LoaderSpinner } from '@/registry/new-york/animations/loaders/spinner';
+
+## Overview
+
+The `LoaderSpinner` component creates a classic circular spinning loader. Perfect for loading states, processing indicators, and async operations.
+
+## Preview
+
+<Preview
+  background="grid"
+  code={`import { LoaderSpinner } from "@/components/animations/loaders/spinner"
+
+<LoaderSpinner />`}
+>
+  <div className="flex gap-8 items-center justify-center">
+    <LoaderSpinner />
+    <LoaderSpinner size={60} color="#3b82f6" borderWidth={6} />
+    <LoaderSpinner size={50} color="#10b981" duration={0.8} />
+  </div>
+</Preview>
+
+## Installation
+
+<Tabs items={['CLI', 'Manual']}>
+  <Tab value="CLI">
+    ```bash
+    npx shadcn add https://animbits.dev/r/animations/loaders/spinner
+    ```
+  </Tab>
+  <Tab value="Manual">
+    ```tsx title="components/animations/loaders/spinner.tsx"
+    "use client"
+
+    import * as React from "react"
+    import { motion, HTMLMotionProps } from "framer-motion"
+    import { cn } from "@/lib/utils"
+
+    export interface LoaderSpinnerProps extends Omit<HTMLMotionProps<"div">, "children"> {
+      size?: number
+      color?: string
+      borderWidth?: number
+      duration?: number
+    }
+
+    export function LoaderSpinner({
+      className,
+      size = 40,
+      color = "currentColor",
+      borderWidth = 4,
+      duration = 1,
+      ...props
+    }: LoaderSpinnerProps) {
+      return (
+        <motion.div
+          className={cn("rounded-full", className)}
+          style={{
+            width: size,
+            height: size,
+            border: `${borderWidth}px solid transparent`,
+            borderTopColor: color,
+            borderRightColor: color,
+          }}
+          animate={{ rotate: 360 }}
+          transition={{
+            duration,
+            ease: "linear",
+            repeat: Infinity,
+          }}
+          {...props}
+        />
+      )
+    }
+    ```
+  </Tab>
+</Tabs>
+
+## Usage
+
+```tsx
+import { LoaderSpinner } from "@/components/animations/loaders/spinner"
+
+export default function Example() {
+  return <LoaderSpinner />
+}
+```
+
+## Examples
+
+### Default
+
+<Preview background="dots" code={`<LoaderSpinner />`}>
+  <LoaderSpinner />
+</Preview>
+
+### Large Blue Spinner
+
+<Preview background="dots" code={`<LoaderSpinner size={60} color="#3b82f6" borderWidth={6} />`}>
+  <LoaderSpinner size={60} color="#3b82f6" borderWidth={6} />
+</Preview>
+
+### Fast Green Spinner
+
+<Preview background="dots" code={`<LoaderSpinner size={50} color="#10b981" duration={0.6} />`}>
+  <LoaderSpinner size={50} color="#10b981" duration={0.6} />
+</Preview>
+
+## Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `size` | `number` | `40` | Size of the spinner in pixels |
+| `color` | `string` | `"currentColor"` | Color of the spinner |
+| `borderWidth` | `number` | `4` | Border width in pixels |
+| `duration` | `number` | `1` | Animation duration in seconds |

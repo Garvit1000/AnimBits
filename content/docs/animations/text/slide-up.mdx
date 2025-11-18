@@ -1,0 +1,77 @@
+---
+title: Slide Up Text
+description: Text that slides up word by word or character by character.
+---
+
+import { Tab, Tabs } from 'fumadocs-ui/components/tabs';
+import { Preview, PreviewGrid } from '@/components/preview';
+import { TextSlideUp } from '@/registry/new-york/animations/text/slide-up';
+
+## Overview
+
+The `TextSlideUp` creates a staggered slide-up effect for text.
+
+## Preview
+
+<Preview
+  background="default"
+  code={`import { TextSlideUp } from "@/components/animations/text/slide-up"
+
+<TextSlideUp className="text-2xl font-bold">
+  This text slides up word by word
+</TextSlideUp>`}
+>
+  <TextSlideUp className="text-2xl font-bold">This text slides up word by word</TextSlideUp>
+</Preview>
+
+## Installation
+
+<Tabs items={['CLI', 'Manual']}>
+  <Tab value="CLI">
+    ```bash
+    npx shadcn add https://animbits.dev/r/animations/text/slide-up
+    ```
+  </Tab>
+  <Tab value="Manual">
+    See component source code in the registry.
+  </Tab>
+</Tabs>
+
+## Usage
+
+```tsx
+import { TextSlideUp } from "@/components/animations/text/slide-up"
+
+<TextSlideUp>Hello World</TextSlideUp>
+```
+
+## Examples
+
+### By Character
+
+<Preview background="dots" code={`<TextSlideUp by="character">Character animation</TextSlideUp>`}>
+  <TextSlideUp by="character" className="text-xl">Character by character slide</TextSlideUp>
+</Preview>
+
+### Custom Distance
+
+<PreviewGrid cols={2}>
+  <Preview background="default" code={`<TextSlideUp distance={10}>Small</TextSlideUp>`}>
+    <TextSlideUp distance={10} className="text-lg">Small slide distance</TextSlideUp>
+  </Preview>
+  
+  <Preview background="default" code={`<TextSlideUp distance={40}>Large</TextSlideUp>`}>
+    <TextSlideUp distance={40} className="text-lg">Large slide distance</TextSlideUp>
+  </Preview>
+</PreviewGrid>
+
+## Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `children` | `string` | Required | Text to animate |
+| `duration` | `number` | `0.5` | Animation duration (seconds) |
+| `delay` | `number` | `0` | Initial delay |
+| `by` | `"word" \| "character"` | `"word"` | Animation unit |
+| `staggerDelay` | `number` | `0.03` | Delay between units |
+| `distance` | `number` | `20` | Slide distance (pixels) |

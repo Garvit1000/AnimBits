@@ -1,4 +1,15 @@
 {
   "title": "Text",
-  "pages": ["index"]
+  "pages": [
+    "index",
+    "typewriter",
+    "gradient",
+    "scramble",
+    "fade-in",
+    "blur-in",
+    "slide-up",
+    "split-reveal",
+    "shimmer",
+    "word-carousel"
+  ]
 }

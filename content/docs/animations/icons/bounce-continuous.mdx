@@ -1,0 +1,141 @@
+---
+title: Bounce Continuous
+description: Continuous bouncing animation for icons.
+---
+
+import { Tab, Tabs } from 'fumadocs-ui/components/tabs';
+import { Preview } from '@/components/preview';
+import { BounceContinuous } from '@/registry/new-york/animations/icons/bounce-continuous';
+import { ArrowDown, ChevronDown, MoveDown } from 'lucide-react';
+
+## Overview
+
+The `BounceContinuous` component creates a continuous bouncing animation. Perfect for scroll indicators, download icons, and attention-grabbing elements.
+
+## Preview
+
+<Preview
+  background="grid"
+  code={`import { BounceContinuous } from "@/components/animations/icons/bounce-continuous"
+import { ArrowDown } from "lucide-react"
+
+<BounceContinuous duration={1}>
+  <ArrowDown className="w-8 h-8 text-blue-500" />
+</BounceContinuous>`}
+>
+  <div className="flex gap-8 items-center justify-center">
+    <BounceContinuous duration={1}>
+      <ArrowDown className="w-8 h-8 text-blue-500" />
+    </BounceContinuous>
+    <BounceContinuous duration={1.5}>
+      <ChevronDown className="w-8 h-8 text-green-500" />
+    </BounceContinuous>
+    <BounceContinuous duration={0.8}>
+      <MoveDown className="w-8 h-8 text-purple-500" />
+    </BounceContinuous>
+  </div>
+</Preview>
+
+## Installation
+
+<Tabs items={['CLI', 'Manual']}>
+  <Tab value="CLI">
+    ```bash
+    npx shadcn add https://animbits.dev/r/animations/icons/bounce-continuous
+    ```
+  </Tab>
+  <Tab value="Manual">
+    ```tsx title="components/animations/icons/bounce-continuous.tsx"
+    "use client"
+
+    import { motion, type HTMLMotionProps } from "framer-motion"
+    import { bounceContinuousVariants, createContinuousTransition } from "@/lib/animation-presets"
+
+    interface BounceContinuousProps extends Omit<HTMLMotionProps<"div">, "animate"> {
+      children: React.ReactNode
+      duration?: number
+    }
+
+    export function BounceContinuous({
+      children,
+      duration = 1,
+      ...props
+    }: BounceContinuousProps) {
+      return (
+        <motion.div
+          variants={bounceContinuousVariants}
+          initial="initial"
+          animate="animate"
+          transition={createContinuousTransition(duration, "easeInOut")}
+          {...props}
+        >
+          {children}
+        </motion.div>
+      )
+    }
+    ```
+  </Tab>
+</Tabs>
+
+## Usage
+
+```tsx
+import { BounceContinuous } from "@/components/animations/icons/bounce-continuous"
+import { ArrowDown } from "lucide-react"
+
+export default function Example() {
+  return (
+    <BounceContinuous duration={1}>
+      <ArrowDown className="w-6 h-6" />
+    </BounceContinuous>
+  )
+}
+```
+
+## Examples
+
+### Default Speed
+
+<Preview
+  background="dots"
+  code={`<BounceContinuous>
+  <ArrowDown className="w-10 h-10 text-blue-500" />
+</BounceContinuous>`}
+>
+  <BounceContinuous>
+    <ArrowDown className="w-10 h-10 text-blue-500" />
+  </BounceContinuous>
+</Preview>
+
+### Slow Bounce
+
+<Preview
+  background="dots"
+  code={`<BounceContinuous duration={2}>
+  <ChevronDown className="w-10 h-10 text-green-500" />
+</BounceContinuous>`}
+>
+  <BounceContinuous duration={2}>
+    <ChevronDown className="w-10 h-10 text-green-500" />
+  </BounceContinuous>
+</Preview>
+
+### Fast Bounce
+
+<Preview
+  background="dots"
+  code={`<BounceContinuous duration={0.5}>
+  <MoveDown className="w-10 h-10 text-purple-500" />
+</BounceContinuous>`}
+>
+  <BounceContinuous duration={0.5}>
+    <MoveDown className="w-10 h-10 text-purple-500" />
+  </BounceContinuous>
+</Preview>
+
+## Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `children` | `ReactNode` | - | The icon element to animate |
+| `duration` | `number` | `1` | Duration of one bounce cycle in seconds |

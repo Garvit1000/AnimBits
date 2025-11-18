@@ -1,0 +1,130 @@
+---
+title: Bars Loader
+description: A bars loader with animated height.
+---
+
+import { Tab, Tabs } from 'fumadocs-ui/components/tabs';
+import { Preview } from '@/components/preview';
+import { LoaderBars } from '@/registry/new-york/animations/loaders/bars';
+
+## Overview
+
+The `LoaderBars` component creates animated bars with varying heights. Perfect for audio visualizer-style loading indicators.
+
+## Preview
+
+<Preview
+  background="grid"
+  code={`import { LoaderBars } from "@/components/animations/loaders/bars"
+
+<LoaderBars />`}
+>
+  <div className="flex gap-8 items-center justify-center">
+    <LoaderBars />
+    <LoaderBars count={7} barHeight={40} color="#3b82f6" />
+    <LoaderBars count={4} barWidth={6} barHeight={35} color="#10b981" />
+  </div>
+</Preview>
+
+## Installation
+
+<Tabs items={['CLI', 'Manual']}>
+  <Tab value="CLI">
+    ```bash
+    npx shadcn add https://animbits.dev/r/animations/loaders/bars
+    ```
+  </Tab>
+  <Tab value="Manual">
+    ```tsx title="components/animations/loaders/bars.tsx"
+    "use client"
+
+    import * as React from "react"
+    import { motion, HTMLMotionProps } from "framer-motion"
+    import { cn } from "@/lib/utils"
+
+    export interface LoaderBarsProps extends Omit<HTMLMotionProps<"div">, "children"> {
+      barWidth?: number
+      barHeight?: number
+      color?: string
+      count?: number
+      gap?: number
+      duration?: number
+    }
+
+    export function LoaderBars({
+      className,
+      barWidth = 4,
+      barHeight = 30,
+      color = "currentColor",
+      count = 5,
+      gap = 4,
+      duration = 1,
+      ...props
+    }: LoaderBarsProps) {
+      return (
+        <div className={cn("flex items-end", className)} style={{ gap }}>
+          {Array.from({ length: count }).map((_, index) => (
+            <motion.div
+              key={index}
+              style={{
+                width: barWidth,
+                backgroundColor: color,
+              }}
+              animate={{
+                height: [barHeight * 0.3, barHeight, barHeight * 0.3],
+              }}
+              transition={{
+                duration,
+                ease: "easeInOut",
+                repeat: Infinity,
+                delay: index * (duration / count),
+              }}
+            />
+          ))}
+        </div>
+      )
+    }
+    ```
+  </Tab>
+</Tabs>
+
+## Usage
+
+```tsx
+import { LoaderBars } from "@/components/animations/loaders/bars"
+
+export default function Example() {
+  return <LoaderBars />
+}
+```
+
+## Examples
+
+### Default
+
+<Preview background="dots" code={`<LoaderBars />`}>
+  <LoaderBars />
+</Preview>
+
+### Seven Blue Bars
+
+<Preview background="dots" code={`<LoaderBars count={7} barHeight={40} color="#3b82f6" />`}>
+  <LoaderBars count={7} barHeight={40} color="#3b82f6" />
+</Preview>
+
+### Thick Green Bars
+
+<Preview background="dots" code={`<LoaderBars count={4} barWidth={6} barHeight={35} color="#10b981" />`}>
+  <LoaderBars count={4} barWidth={6} barHeight={35} color="#10b981" />
+</Preview>
+
+## Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `barWidth` | `number` | `4` | Width of each bar in pixels |
+| `barHeight` | `number` | `30` | Height of each bar in pixels |
+| `color` | `string` | `"currentColor"` | Color of the bars |
+| `count` | `number` | `5` | Number of bars |
+| `gap` | `number` | `4` | Gap between bars in pixels |
+| `duration` | `number` | `1` | Animation duration in seconds |

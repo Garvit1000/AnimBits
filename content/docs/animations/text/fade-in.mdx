@@ -1,0 +1,76 @@
+---
+title: Fade In Text
+description: Text that fades in word by word or character by character.
+---
+
+import { Tab, Tabs } from 'fumadocs-ui/components/tabs';
+import { Preview, PreviewGrid } from '@/components/preview';
+import { TextFadeIn } from '@/registry/new-york/animations/text/fade-in';
+
+## Overview
+
+The `TextFadeIn` creates a staggered fade-in effect for text.
+
+## Preview
+
+<Preview
+  background="default"
+  code={`import { TextFadeIn } from "@/components/animations/text/fade-in"
+
+<TextFadeIn className="text-2xl font-bold">
+  This text fades in word by word
+</TextFadeIn>`}
+>
+  <TextFadeIn className="text-2xl font-bold">This text fades in word by word</TextFadeIn>
+</Preview>
+
+## Installation
+
+<Tabs items={['CLI', 'Manual']}>
+  <Tab value="CLI">
+    ```bash
+    npx shadcn add https://animbits.dev/r/animations/text/fade-in
+    ```
+  </Tab>
+  <Tab value="Manual">
+    See component source code in the registry.
+  </Tab>
+</Tabs>
+
+## Usage
+
+```tsx
+import { TextFadeIn } from "@/components/animations/text/fade-in"
+
+<TextFadeIn>Hello World</TextFadeIn>
+```
+
+## Examples
+
+### By Character
+
+<Preview background="dots" code={`<TextFadeIn by="character">Character by character</TextFadeIn>`}>
+  <TextFadeIn by="character" className="text-xl">Character by character animation</TextFadeIn>
+</Preview>
+
+### Custom Stagger
+
+<PreviewGrid cols={2}>
+  <Preview background="default" code={`<TextFadeIn staggerDelay={0.01}>Fast</TextFadeIn>`}>
+    <TextFadeIn staggerDelay={0.01} className="text-lg">Fast stagger effect</TextFadeIn>
+  </Preview>
+  
+  <Preview background="default" code={`<TextFadeIn staggerDelay={0.1}>Slow</TextFadeIn>`}>
+    <TextFadeIn staggerDelay={0.1} className="text-lg">Slow stagger effect</TextFadeIn>
+  </Preview>
+</PreviewGrid>
+
+## Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `children` | `string` | Required | Text to animate |
+| `duration` | `number` | `0.5` | Fade duration (seconds) |
+| `delay` | `number` | `0` | Initial delay |
+| `by` | `"word" \| "character"` | `"word"` | Animation unit |
+| `staggerDelay` | `number` | `0.03` | Delay between units |

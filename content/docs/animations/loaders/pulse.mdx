@@ -1,0 +1,119 @@
+---
+title: Pulse Loader
+description: A pulsing circle loader.
+---
+
+import { Tab, Tabs } from 'fumadocs-ui/components/tabs';
+import { Preview } from '@/components/preview';
+import { LoaderPulse } from '@/registry/new-york/animations/loaders/pulse';
+
+## Overview
+
+The `LoaderPulse` component creates a pulsing circle animation. Perfect for subtle loading indicators and status displays.
+
+## Preview
+
+<Preview
+  background="grid"
+  code={`import { LoaderPulse } from "@/components/animations/loaders/pulse"
+
+<LoaderPulse />`}
+>
+  <div className="flex gap-8 items-center justify-center">
+    <LoaderPulse />
+    <LoaderPulse size={80} color="#3b82f6" duration={2} />
+    <LoaderPulse size={50} color="#10b981" duration={1} />
+  </div>
+</Preview>
+
+## Installation
+
+<Tabs items={['CLI', 'Manual']}>
+  <Tab value="CLI">
+    ```bash
+    npx shadcn add https://animbits.dev/r/animations/loaders/pulse
+    ```
+  </Tab>
+  <Tab value="Manual">
+    ```tsx title="components/animations/loaders/pulse.tsx"
+    "use client"
+
+    import * as React from "react"
+    import { motion, HTMLMotionProps } from "framer-motion"
+    import { cn } from "@/lib/utils"
+
+    export interface LoaderPulseProps extends HTMLMotionProps<"div"> {
+      size?: number
+      color?: string
+      duration?: number
+    }
+
+    export function LoaderPulse({
+      className,
+      size = 60,
+      color = "currentColor",
+      duration = 1.5,
+      ...props
+    }: LoaderPulseProps) {
+      return (
+        <motion.div
+          className={cn("rounded-full", className)}
+          style={{
+            width: size,
+            height: size,
+            backgroundColor: color,
+          }}
+          animate={{
+            scale: [1, 1.2, 1],
+            opacity: [0.5, 1, 0.5],
+          }}
+          transition={{
+            duration,
+            ease: "easeInOut",
+            repeat: Infinity,
+          }}
+          {...props}
+        />
+      )
+    }
+    ```
+  </Tab>
+</Tabs>
+
+## Usage
+
+```tsx
+import { LoaderPulse } from "@/components/animations/loaders/pulse"
+
+export default function Example() {
+  return <LoaderPulse />
+}
+```
+
+## Examples
+
+### Default
+
+<Preview background="dots" code={`<LoaderPulse />`}>
+  <LoaderPulse />
+</Preview>
+
+### Large Blue Pulse
+
+<Preview background="dots" code={`<LoaderPulse size={80} color="#3b82f6" duration={2} />`}>
+  <LoaderPulse size={80} color="#3b82f6" duration={2} />
+</Preview>
+
+### Fast Green Pulse
+
+<Preview background="dots" code={`<LoaderPulse size={50} color="#10b981" duration={1} />`}>
+  <LoaderPulse size={50} color="#10b981" duration={1} />
+</Preview>
+
+## Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `size` | `number` | `60` | Size of the circle in pixels |
+| `color` | `string` | `"currentColor"` | Color of the pulse |
+| `duration` | `number` | `1.5` | Animation duration in seconds |

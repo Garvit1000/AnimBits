@@ -1,0 +1,81 @@
+---
+title: Shimmer Text
+description: Text with smooth gradient shimmer effect.
+---
+
+import { Tab, Tabs } from 'fumadocs-ui/components/tabs';
+import { Preview, PreviewGrid } from '@/components/preview';
+import { TextShimmer } from '@/registry/new-york/animations/text/shimmer';
+
+## Overview
+
+The `TextShimmer` creates a smooth gradient shimmer effect using pure CSS for 60fps performance.
+
+## Preview
+
+<Preview
+  background="default"
+  code={`import { TextShimmer } from "@/components/animations/text/shimmer"
+
+<TextShimmer className="text-4xl font-bold">
+  Shimmer Effect
+</TextShimmer>`}
+>
+  <TextShimmer className="text-4xl font-bold">Shimmer Effect</TextShimmer>
+</Preview>
+
+## Installation
+
+<Tabs items={['CLI', 'Manual']}>
+  <Tab value="CLI">
+    ```bash
+    npx shadcn add https://animbits.dev/r/animations/text/shimmer
+    ```
+  </Tab>
+  <Tab value="Manual">
+    Requires the `useShimmer` hook from `@/lib/hooks`.
+  </Tab>
+</Tabs>
+
+## Usage
+
+```tsx
+import { TextShimmer } from "@/components/animations/text/shimmer"
+
+<TextShimmer>Shimmer Text</TextShimmer>
+```
+
+## Examples
+
+### Custom Colors
+
+<PreviewGrid cols={2}>
+  <Preview background="dots" code={`<TextShimmer colors={["transparent", "rgba(59, 130, 246, 0.8)", "transparent"]}>Blue</TextShimmer>`}>
+    <TextShimmer colors={["transparent", "rgba(59, 130, 246, 0.8)", "transparent"]} className="text-2xl font-bold">Blue Shimmer</TextShimmer>
+  </Preview>
+  
+  <Preview background="dots" code={`<TextShimmer colors={["transparent", "rgba(236, 72, 153, 0.8)", "transparent"]}>Pink</TextShimmer>`}>
+    <TextShimmer colors={["transparent", "rgba(236, 72, 153, 0.8)", "transparent"]} className="text-2xl font-bold">Pink Shimmer</TextShimmer>
+  </Preview>
+</PreviewGrid>
+
+### Different Speeds
+
+<PreviewGrid cols={2}>
+  <Preview background="default" code={`<TextShimmer duration={1}>Fast</TextShimmer>`}>
+    <TextShimmer duration={1} className="text-xl font-bold">Fast Shimmer</TextShimmer>
+  </Preview>
+  
+  <Preview background="default" code={`<TextShimmer duration={5}>Slow</TextShimmer>`}>
+    <TextShimmer duration={5} className="text-xl font-bold">Slow Shimmer</TextShimmer>
+  </Preview>
+</PreviewGrid>
+
+## Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `children` | `string` | Required | Text to display |
+| `duration` | `number` | `2` | Animation duration (seconds) |
+| `colors` | `string[]` | `["transparent", "rgba(255,255,255,0.8)", "transparent"]` | Shimmer colors |
+| `as` | `string` | `"p"` | HTML element to render |

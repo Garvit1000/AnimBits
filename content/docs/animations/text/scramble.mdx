@@ -1,0 +1,69 @@
+---
+title: Scramble Text
+description: Text that decodes from random characters.
+---
+
+import { Tab, Tabs } from 'fumadocs-ui/components/tabs';
+import { Preview, PreviewGrid } from '@/components/preview';
+import { TextScramble } from '@/registry/new-york/animations/text/scramble';
+
+## Overview
+
+The `TextScramble` creates a hacker-style text decoding effect.
+
+## Preview
+
+<Preview
+  background="default"
+  code={`import { TextScramble } from "@/components/animations/text/scramble"
+
+<TextScramble className="text-3xl font-bold">
+  DECODING TEXT
+</TextScramble>`}
+>
+  <TextScramble className="text-3xl font-bold">DECODING TEXT</TextScramble>
+</Preview>
+
+## Installation
+
+<Tabs items={['CLI', 'Manual']}>
+  <Tab value="CLI">
+    ```bash
+    npx shadcn add https://animbits.dev/r/animations/text/scramble
+    ```
+  </Tab>
+  <Tab value="Manual">
+    Requires the `useScramble` hook from `@/lib/hooks`.
+  </Tab>
+</Tabs>
+
+## Usage
+
+```tsx
+import { TextScramble } from "@/components/animations/text/scramble"
+
+<TextScramble>Decode Me</TextScramble>
+```
+
+## Examples
+
+### Different Speeds
+
+<PreviewGrid cols={2}>
+  <Preview background="dots" code={`<TextScramble duration={0.5}>Fast</TextScramble>`}>
+    <TextScramble duration={0.5} className="text-xl font-mono">FAST DECODE</TextScramble>
+  </Preview>
+  
+  <Preview background="dots" code={`<TextScramble duration={2}>Slow</TextScramble>`}>
+    <TextScramble duration={2} className="text-xl font-mono">SLOW DECODE</TextScramble>
+  </Preview>
+</PreviewGrid>
+
+## Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `children` | `string` | Required | Text to decode |
+| `duration` | `number` | `1` | Decode duration (seconds) |
+| `delay` | `number` | `0` | Delay before animation |
+| `scrambleChars` | `string` | `"!@#$%^&*"` | Characters to use for scrambling |

@@ -1,0 +1,151 @@
+---
+title: Pulse Icon
+description: Continuous pulsing animation for icons.
+---
+
+import { Tab, Tabs } from 'fumadocs-ui/components/tabs';
+import { Preview } from '@/components/preview';
+import { PulseIcon } from '@/registry/new-york/animations/icons/pulse';
+import { Heart, Bell, Radio } from 'lucide-react';
+
+## Overview
+
+The `PulseIcon` component creates a continuous pulsing animation. Perfect for notifications, live indicators, and drawing attention to important icons.
+
+## Preview
+
+<Preview
+  background="grid"
+  code={`import { PulseIcon } from "@/components/animations/icons/pulse"
+import { Heart } from "lucide-react"
+
+<PulseIcon trigger="always" duration={0.8}>
+  <Heart className="w-8 h-8 text-red-500 fill-red-500" />
+</PulseIcon>`}
+>
+  <div className="flex gap-8 items-center justify-center">
+    <PulseIcon trigger="always" duration={0.8}>
+      <Heart className="w-8 h-8 text-red-500 fill-red-500" />
+    </PulseIcon>
+    <PulseIcon trigger="hover" duration={0.8} className="cursor-pointer">
+      <Bell className="w-8 h-8 text-blue-500" />
+    </PulseIcon>
+    <PulseIcon trigger="always" duration={1.2}>
+      <Radio className="w-8 h-8 text-green-500" />
+    </PulseIcon>
+  </div>
+</Preview>
+
+## Installation
+
+<Tabs items={['CLI', 'Manual']}>
+  <Tab value="CLI">
+    ```bash
+    npx shadcn add https://animbits.dev/r/animations/icons/pulse
+    ```
+  </Tab>
+  <Tab value="Manual">
+    ```tsx title="components/animations/icons/pulse.tsx"
+    "use client"
+
+    import { motion, type HTMLMotionProps } from "framer-motion"
+    import { pulseVariants, createContinuousTransition } from "@/lib/animation-presets"
+
+    interface PulseIconProps extends Omit<HTMLMotionProps<"div">, "animate"> {
+      children: React.ReactNode
+      trigger?: "mount" | "hover" | "always"
+      duration?: number
+    }
+
+    export function PulseIcon({
+      children,
+      trigger = "always",
+      duration = 0.8,
+      ...props
+    }: PulseIconProps) {
+      const animate = trigger === "always" ? "animate" : undefined
+      const whileHover = trigger === "hover" ? "animate" : undefined
+
+      return (
+        <motion.div
+          variants={pulseVariants}
+          initial="initial"
+          animate={animate}
+          whileHover={whileHover}
+          transition={createContinuousTransition(duration, "easeInOut")}
+          {...props}
+        >
+          {children}
+        </motion.div>
+      )
+    }
+    ```
+
+    **Dependencies:**
+    - `pulseVariants` and `createContinuousTransition` from `@/lib/animation-presets`
+  </Tab>
+</Tabs>
+
+## Usage
+
+```tsx
+import { PulseIcon } from "@/components/animations/icons/pulse"
+import { Heart } from "lucide-react"
+
+export default function Example() {
+  return (
+    <PulseIcon trigger="always" duration={0.8}>
+      <Heart className="w-6 h-6" />
+    </PulseIcon>
+  )
+}
+```
+
+## Examples
+
+### Always Pulsing
+
+<Preview
+  background="dots"
+  code={`<PulseIcon trigger="always" duration={0.8}>
+  <Heart className="w-12 h-12 text-red-500 fill-red-500" />
+</PulseIcon>`}
+>
+  <PulseIcon trigger="always" duration={0.8}>
+    <Heart className="w-12 h-12 text-red-500 fill-red-500" />
+  </PulseIcon>
+</Preview>
+
+### Pulse on Hover
+
+<Preview
+  background="dots"
+  code={`<PulseIcon trigger="hover" duration={0.8} className="cursor-pointer">
+  <Bell className="w-12 h-12 text-blue-500" />
+</PulseIcon>`}
+>
+  <PulseIcon trigger="hover" duration={0.8} className="cursor-pointer">
+    <Bell className="w-12 h-12 text-blue-500" />
+  </PulseIcon>
+</Preview>
+
+### Slow Pulse
+
+<Preview
+  background="dots"
+  code={`<PulseIcon trigger="always" duration={1.5}>
+  <Radio className="w-12 h-12 text-green-500" />
+</PulseIcon>`}
+>
+  <PulseIcon trigger="always" duration={1.5}>
+    <Radio className="w-12 h-12 text-green-500" />
+  </PulseIcon>
+</Preview>
+
+## Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `children` | `ReactNode` | - | The icon element to animate |
+| `trigger` | `"mount"` \| `"hover"` \| `"always"` | `"always"` | When to trigger the pulse animation |
+| `duration` | `number` | `0.8` | Duration of one pulse cycle in seconds |

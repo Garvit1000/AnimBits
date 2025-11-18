@@ -1,0 +1,153 @@
+---
+title: Pop Icon
+description: One-shot pop effect (scale from 0 to 1) for icons.
+---
+
+import { Tab, Tabs } from 'fumadocs-ui/components/tabs';
+import { Preview } from '@/components/preview';
+import { PopIcon } from '@/registry/new-york/animations/icons/pop';
+import { Star, Heart, Sparkles } from 'lucide-react';
+
+## Overview
+
+The `PopIcon` component creates a bouncy pop effect with overshoot. Perfect for celebratory moments, favorites, and attention-grabbing interactions.
+
+## Preview
+
+<Preview
+  background="grid"
+  code={`import { PopIcon } from "@/components/animations/icons/pop"
+import { Star } from "lucide-react"
+
+<PopIcon trigger="mount">
+  <Star className="w-8 h-8 text-yellow-500 fill-yellow-500" />
+</PopIcon>`}
+>
+  <div className="flex gap-8 items-center justify-center">
+    <PopIcon trigger="mount">
+      <Star className="w-8 h-8 text-yellow-500 fill-yellow-500" />
+    </PopIcon>
+    <PopIcon trigger="hover" className="cursor-pointer">
+      <Heart className="w-8 h-8 text-red-500 fill-red-500" />
+    </PopIcon>
+    <PopIcon trigger="tap">
+      <Sparkles className="w-8 h-8 text-purple-500" />
+    </PopIcon>
+  </div>
+</Preview>
+
+## Installation
+
+<Tabs items={['CLI', 'Manual']}>
+  <Tab value="CLI">
+    ```bash
+    npx shadcn add https://animbits.dev/r/animations/icons/pop
+    ```
+  </Tab>
+  <Tab value="Manual">
+    ```tsx title="components/animations/icons/pop.tsx"
+    "use client"
+
+    import { motion, type HTMLMotionProps } from "framer-motion"
+    import { popVariants } from "@/lib/animation-presets"
+    import { useState } from "react"
+
+    interface PopIconProps extends Omit<HTMLMotionProps<"div">, "animate"> {
+      children: React.ReactNode
+      trigger?: "hover" | "tap" | "mount"
+    }
+
+    export function PopIcon({
+      children,
+      trigger = "mount",
+      ...props
+    }: PopIconProps) {
+      const [key, setKey] = useState(0)
+
+      const handleTrigger = () => {
+        setKey((prev) => prev + 1)
+      }
+
+      return (
+        <motion.div
+          key={key}
+          variants={popVariants}
+          initial="initial"
+          animate={trigger === "mount" ? "animate" : undefined}
+          whileHover={trigger === "hover" ? "animate" : undefined}
+          whileTap={trigger === "tap" ? "animate" : undefined}
+          onHoverStart={trigger === "hover" ? handleTrigger : undefined}
+          onTap={trigger === "tap" ? handleTrigger : undefined}
+          transition={{ duration: 0.4, ease: [0.68, -0.55, 0.265, 1.55] }}
+          {...props}
+        >
+          {children}
+        </motion.div>
+      )
+    }
+    ```
+  </Tab>
+</Tabs>
+
+## Usage
+
+```tsx
+import { PopIcon } from "@/components/animations/icons/pop"
+import { Star } from "lucide-react"
+
+export default function Example() {
+  return (
+    <PopIcon trigger="mount">
+      <Star className="w-6 h-6" />
+    </PopIcon>
+  )
+}
+```
+
+## Examples
+
+### Mount Trigger
+
+<Preview
+  background="dots"
+  code={`<PopIcon trigger="mount">
+  <Star className="w-12 h-12 text-yellow-500 fill-yellow-500" />
+</PopIcon>`}
+>
+  <PopIcon trigger="mount">
+    <Star className="w-12 h-12 text-yellow-500 fill-yellow-500" />
+  </PopIcon>
+</Preview>
+
+### Hover Trigger
+
+<Preview
+  background="dots"
+  code={`<PopIcon trigger="hover" className="cursor-pointer">
+  <Heart className="w-12 h-12 text-red-500 fill-red-500" />
+</PopIcon>`}
+>
+  <PopIcon trigger="hover" className="cursor-pointer">
+    <Heart className="w-12 h-12 text-red-500 fill-red-500" />
+  </PopIcon>
+</Preview>
+
+### Tap Trigger
+
+<Preview
+  background="dots"
+  code={`<PopIcon trigger="tap">
+  <Sparkles className="w-12 h-12 text-purple-500" />
+</PopIcon>`}
+>
+  <PopIcon trigger="tap">
+    <Sparkles className="w-12 h-12 text-purple-500" />
+  </PopIcon>
+</Preview>
+
+## Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `children` | `ReactNode` | - | The icon element to animate |
+| `trigger` | `"hover"` \| `"tap"` \| `"mount"` | `"mount"` | When to trigger the pop animation |

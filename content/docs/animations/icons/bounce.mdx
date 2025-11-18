@@ -1,0 +1,153 @@
+---
+title: Bounce Icon
+description: One-shot bounce animation for icons triggered by interaction.
+---
+
+import { Tab, Tabs } from 'fumadocs-ui/components/tabs';
+import { Preview } from '@/components/preview';
+import { BounceIcon } from '@/registry/new-york/animations/icons/bounce';
+import { Star, Heart, Sparkles } from 'lucide-react';
+
+## Overview
+
+The `BounceIcon` component creates a one-shot bounce animation triggered by hover, tap, or mount. Perfect for adding playful feedback to interactive icons.
+
+## Preview
+
+<Preview
+  background="grid"
+  code={`import { BounceIcon } from "@/components/animations/icons/bounce"
+import { Star } from "lucide-react"
+
+<BounceIcon trigger="hover">
+  <Star className="w-8 h-8 text-yellow-500 fill-yellow-500" />
+</BounceIcon>`}
+>
+  <div className="flex gap-8 items-center justify-center">
+    <BounceIcon trigger="hover" className="cursor-pointer">
+      <Star className="w-8 h-8 text-yellow-500 fill-yellow-500" />
+    </BounceIcon>
+    <BounceIcon trigger="tap">
+      <Heart className="w-8 h-8 text-red-500 fill-red-500" />
+    </BounceIcon>
+    <BounceIcon trigger="mount">
+      <Sparkles className="w-8 h-8 text-purple-500" />
+    </BounceIcon>
+  </div>
+</Preview>
+
+## Installation
+
+<Tabs items={['CLI', 'Manual']}>
+  <Tab value="CLI">
+    ```bash
+    npx shadcn add https://animbits.dev/r/animations/icons/bounce
+    ```
+  </Tab>
+  <Tab value="Manual">
+    ```tsx title="components/animations/icons/bounce.tsx"
+    "use client"
+
+    import { motion, type HTMLMotionProps } from "framer-motion"
+    import { bounceVariants } from "@/lib/animation-presets"
+    import { useState } from "react"
+
+    interface BounceIconProps extends Omit<HTMLMotionProps<"div">, "animate"> {
+      children: React.ReactNode
+      trigger?: "hover" | "tap" | "mount"
+    }
+
+    export function BounceIcon({
+      children,
+      trigger = "hover",
+      ...props
+    }: BounceIconProps) {
+      const [key, setKey] = useState(0)
+
+      const handleTrigger = () => {
+        setKey((prev) => prev + 1)
+      }
+
+      return (
+        <motion.div
+          key={key}
+          variants={bounceVariants}
+          initial="initial"
+          animate={trigger === "mount" ? "animate" : undefined}
+          whileHover={trigger === "hover" ? "animate" : undefined}
+          whileTap={trigger === "tap" ? "animate" : undefined}
+          onHoverStart={trigger === "hover" ? handleTrigger : undefined}
+          onTap={trigger === "tap" ? handleTrigger : undefined}
+          transition={{ duration: 0.6, ease: "easeInOut" }}
+          {...props}
+        >
+          {children}
+        </motion.div>
+      )
+    }
+    ```
+  </Tab>
+</Tabs>
+
+## Usage
+
+```tsx
+import { BounceIcon } from "@/components/animations/icons/bounce"
+import { Star } from "lucide-react"
+
+export default function Example() {
+  return (
+    <BounceIcon trigger="hover">
+      <Star className="w-6 h-6" />
+    </BounceIcon>
+  )
+}
+```
+
+## Examples
+
+### Hover Trigger
+
+<Preview
+  background="dots"
+  code={`<BounceIcon trigger="hover" className="cursor-pointer">
+  <Star className="w-10 h-10 text-yellow-500 fill-yellow-500" />
+</BounceIcon>`}
+>
+  <BounceIcon trigger="hover" className="cursor-pointer">
+    <Star className="w-10 h-10 text-yellow-500 fill-yellow-500" />
+  </BounceIcon>
+</Preview>
+
+### Tap Trigger
+
+<Preview
+  background="dots"
+  code={`<BounceIcon trigger="tap">
+  <Heart className="w-10 h-10 text-red-500 fill-red-500" />
+</BounceIcon>`}
+>
+  <BounceIcon trigger="tap">
+    <Heart className="w-10 h-10 text-red-500 fill-red-500" />
+  </BounceIcon>
+</Preview>
+
+### Mount Trigger
+
+<Preview
+  background="dots"
+  code={`<BounceIcon trigger="mount">
+  <Sparkles className="w-10 h-10 text-purple-500" />
+</BounceIcon>`}
+>
+  <BounceIcon trigger="mount">
+    <Sparkles className="w-10 h-10 text-purple-500" />
+  </BounceIcon>
+</Preview>
+
+## Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `children` | `ReactNode` | - | The icon element to animate |
+| `trigger` | `"hover"` \| `"tap"` \| `"mount"` | `"hover"` | When to trigger the bounce animation |

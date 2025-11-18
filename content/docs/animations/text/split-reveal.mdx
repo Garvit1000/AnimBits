@@ -1,0 +1,75 @@
+---
+title: Split Reveal Text
+description: Text that reveals with a vertical split effect.
+---
+
+import { Tab, Tabs } from 'fumadocs-ui/components/tabs';
+import { Preview, PreviewGrid } from '@/components/preview';
+import { TextSplitReveal } from '@/registry/new-york/animations/text/split-reveal';
+
+## Overview
+
+The `TextSplitReveal` reveals text with a dramatic vertical split effect.
+
+## Preview
+
+<Preview
+  background="default"
+  code={`import { TextSplitReveal } from "@/components/animations/text/split-reveal"
+
+<TextSplitReveal className="text-4xl font-bold">
+  SPLIT REVEAL
+</TextSplitReveal>`}
+>
+  <TextSplitReveal className="text-4xl font-bold">SPLIT REVEAL</TextSplitReveal>
+</Preview>
+
+## Installation
+
+<Tabs items={['CLI', 'Manual']}>
+  <Tab value="CLI">
+    ```bash
+    npx shadcn add https://animbits.dev/r/animations/text/split-reveal
+    ```
+  </Tab>
+  <Tab value="Manual">
+    See component source code in the registry.
+  </Tab>
+</Tabs>
+
+## Usage
+
+```tsx
+import { TextSplitReveal } from "@/components/animations/text/split-reveal"
+
+<TextSplitReveal>Split Text</TextSplitReveal>
+```
+
+## Examples
+
+### Different Timings
+
+<PreviewGrid cols={2}>
+  <Preview background="dots" code={`<TextSplitReveal staggerDelay={0.05}>Fast</TextSplitReveal>`}>
+    <TextSplitReveal staggerDelay={0.05} className="text-2xl font-bold">FAST SPLIT</TextSplitReveal>
+  </Preview>
+  
+  <Preview background="dots" code={`<TextSplitReveal staggerDelay={0.3}>Slow</TextSplitReveal>`}>
+    <TextSplitReveal staggerDelay={0.3} className="text-2xl font-bold">SLOW SPLIT</TextSplitReveal>
+  </Preview>
+</PreviewGrid>
+
+### Hero Text
+
+<Preview background="gradient" code={`<TextSplitReveal>HERO TITLE</TextSplitReveal>`}>
+  <TextSplitReveal className="text-5xl font-black text-white">HERO TITLE</TextSplitReveal>
+</Preview>
+
+## Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `children` | `string` | Required | Text to reveal |
+| `duration` | `number` | `0.6` | Animation duration (seconds) |
+| `delay` | `number` | `0` | Initial delay |
+| `staggerDelay` | `number` | `0.1` | Delay between halves |

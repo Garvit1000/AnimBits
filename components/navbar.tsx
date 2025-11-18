@@ -69,7 +69,7 @@ export function Navbar() {
           </button>
           
           <Link
-            href="https://twitter.com/mannupaaji"
+            href="https://twitter.com/Garvit1000"
             target="_blank"
             rel="noopener noreferrer"
             className="p-2 text-neutral-600 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-neutral-50 hover:bg-neutral-100 dark:hover:bg-neutral-900 rounded-md transition-colors"

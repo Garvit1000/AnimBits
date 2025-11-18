@@ -1,0 +1,139 @@
+---
+title: Orbit Loader
+description: A loader with particles orbiting in a circle.
+---
+
+import { Tab, Tabs } from 'fumadocs-ui/components/tabs';
+import { Preview } from '@/components/preview';
+import { LoaderOrbit } from '@/registry/new-york/animations/loaders/orbit';
+
+## Overview
+
+The `LoaderOrbit` component creates particles orbiting in a circular path. Perfect for sophisticated loading indicators.
+
+## Preview
+
+<Preview
+  background="grid"
+  code={`import { LoaderOrbit } from "@/components/animations/loaders/orbit"
+
+<LoaderOrbit />`}
+>
+  <div className="flex gap-8 items-center justify-center">
+    <LoaderOrbit />
+    <LoaderOrbit size={60} particleCount={5} color="#3b82f6" />
+    <LoaderOrbit size={50} particleCount={4} particleSize={10} color="#10b981" />
+  </div>
+</Preview>
+
+## Installation
+
+<Tabs items={['CLI', 'Manual']}>
+  <Tab value="CLI">
+    ```bash
+    npx shadcn add https://animbits.dev/r/animations/loaders/orbit
+    ```
+  </Tab>
+  <Tab value="Manual">
+    ```tsx title="components/animations/loaders/orbit.tsx"
+    "use client"
+
+    import * as React from "react"
+    import { motion, HTMLMotionProps } from "framer-motion"
+    import { cn } from "@/lib/utils"
+
+    export interface LoaderOrbitProps extends Omit<HTMLMotionProps<"div">, "children"> {
+      size?: number
+      particleSize?: number
+      particleCount?: number
+      color?: string
+      duration?: number
+    }
+
+    export function LoaderOrbit({
+      className,
+      size = 40,
+      particleSize = 8,
+      particleCount = 3,
+      color = "currentColor",
+      duration = 1.5,
+      ...props
+    }: LoaderOrbitProps) {
+      return (
+        <motion.div
+          className={cn("relative", className)}
+          style={{ width: size, height: size } as React.CSSProperties}
+          animate={{ rotate: 360 }}
+          transition={{
+            duration,
+            ease: "linear",
+            repeat: Infinity,
+          }}
+        >
+          {Array.from({ length: particleCount }).map((_, index) => {
+            const angle = (360 / particleCount) * index
+            const radius = size / 2 - particleSize
+            const x = Math.cos((angle * Math.PI) / 180) * radius
+            const y = Math.sin((angle * Math.PI) / 180) * radius
+            
+            return (
+              <div
+                key={index}
+                className="absolute rounded-full"
+                style={{
+                  width: particleSize,
+                  height: particleSize,
+                  backgroundColor: color,
+                  left: "50%",
+                  top: "50%",
+                  transform: `translate(${x}px, ${y}px) translate(-50%, -50%)`,
+                } as React.CSSProperties}
+              />
+            )
+          })}
+        </motion.div>
+      )
+    }
+    ```
+  </Tab>
+</Tabs>
+
+## Usage
+
+```tsx
+import { LoaderOrbit } from "@/components/animations/loaders/orbit"
+
+export default function Example() {
+  return <LoaderOrbit />
+}
+```
+
+## Examples
+
+### Default
+
+<Preview background="dots" code={`<LoaderOrbit />`}>
+  <LoaderOrbit />
+</Preview>
+
+### Five Blue Particles
+
+<Preview background="dots" code={`<LoaderOrbit size={60} particleCount={5} color="#3b82f6" />`}>
+  <LoaderOrbit size={60} particleCount={5} color="#3b82f6" />
+</Preview>
+
+### Large Green Particles
+
+<Preview background="dots" code={`<LoaderOrbit size={50} particleCount={4} particleSize={10} color="#10b981" />`}>
+  <LoaderOrbit size={50} particleCount={4} particleSize={10} color="#10b981" />
+</Preview>
+
+## Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `size` | `number` | `40` | Size of the orbit in pixels |
+| `particleSize` | `number` | `8` | Size of particles in pixels |
+| `particleCount` | `number` | `3` | Number of particles |
+| `color` | `string` | `"currentColor"` | Color of the particles |
+| `duration` | `number` | `1.5` | Animation duration in seconds |

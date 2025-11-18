@@ -1,0 +1,231 @@
+---
+title: Stroke Draw Icon
+description: An icon that draws itself stroke by stroke.
+---
+
+import { Tab, Tabs } from 'fumadocs-ui/components/tabs';
+import { Callout } from 'fumadocs-ui/components/callout';
+import { Preview } from '@/components/preview';
+import { StrokeDrawIcon } from '@/registry/new-york/animations/icons/stroke-draw';
+
+## Overview
+
+The `StrokeDrawIcon` component animates SVG paths by drawing them stroke by stroke. Built using the `useStrokeDraw` hook, perfect for revealing icons with a hand-drawn effect.
+
+<Callout type="info">
+  **Uses primitive hook:** This component uses `useStrokeDraw` internally. You can use that hook directly on any SVG path for the same effect.
+</Callout>
+
+## Preview
+
+<Preview
+  background="grid"
+  code={`import { StrokeDrawIcon } from "@/components/animations/icons/stroke-draw"
+
+<StrokeDrawIcon 
+  pathData="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"
+  viewBox="0 0 24 24"
+  className="w-8 h-8"
+  duration={2}
+/>`}
+>
+  <div className="flex gap-8 items-center justify-center">
+    <StrokeDrawIcon 
+      pathData="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"
+      viewBox="0 0 24 24"
+      className="w-8 h-8"
+      duration={2}
+    />
+    <StrokeDrawIcon 
+      pathData="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"
+      viewBox="0 0 24 24"
+      className="w-8 h-8"
+      strokeColor="red"
+      duration={2}
+    />
+    <StrokeDrawIcon 
+      pathData="M22 11.08V12a10 10 0 1 1-5.93-9.14"
+      viewBox="0 0 24 24"
+      className="w-8 h-8"
+      duration={2}
+    />
+  </div>
+</Preview>
+
+## Installation
+
+<Tabs items={['CLI', 'Manual']}>
+  <Tab value="CLI">
+    ```bash
+    npx shadcn add https://animbits.dev/r/animations/icons/stroke-draw
+    ```
+  </Tab>
+  <Tab value="Manual">
+    ```tsx title="components/animations/icons/stroke-draw.tsx"
+    "use client"
+
+    import * as React from "react"
+    import { motion } from "framer-motion"
+    import { cn } from "@/lib/utils"
+    import { useStrokeDraw, type UseStrokeDrawOptions } from "@/lib/hooks/use-stroke-draw"
+
+    export interface StrokeDrawIconProps extends Omit<React.SVGProps<SVGSVGElement>, "children">, UseStrokeDrawOptions {
+      pathData: string
+      strokeColor?: string
+      strokeWidth?: number
+    }
+
+    export function StrokeDrawIcon({
+      pathData,
+      className,
+      duration,
+      delay,
+      repeat,
+      ease,
+      strokeColor = "currentColor",
+      strokeWidth = 2,
+      ...props
+    }: StrokeDrawIconProps) {
+      const strokeProps = useStrokeDraw({ duration, delay, repeat, ease })
+
+      return (
+        <motion.svg
+          className={cn(className)}
+          fill="none"
+          stroke={strokeColor}
+          strokeWidth={strokeWidth}
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          viewBox={props.viewBox || "0 0 24 24"}
+          width={props.width}
+          height={props.height}
+        >
+          <motion.path d={pathData} {...strokeProps} />
+        </motion.svg>
+      )
+    }
+    ```
+
+    **Dependencies:**
+    - `useStrokeDraw` hook from `@/lib/hooks/use-stroke-draw`
+  </Tab>
+</Tabs>
+
+## Usage
+
+```tsx
+import { StrokeDrawIcon } from "@/components/animations/icons/stroke-draw"
+
+export default function Example() {
+  return (
+    <StrokeDrawIcon 
+      pathData="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"
+      viewBox="0 0 24 24"
+      className="w-6 h-6"
+    />
+  )
+}
+```
+
+## Examples
+
+### Layers Icon
+
+<Preview
+  background="dots"
+  code={`<StrokeDrawIcon 
+  pathData="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"
+  viewBox="0 0 24 24"
+  className="w-12 h-12"
+  duration={2}
+/>`}
+>
+  <StrokeDrawIcon 
+    pathData="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"
+    viewBox="0 0 24 24"
+    className="w-12 h-12"
+    strokeColor="currentColor"
+    duration={2}
+  />
+</Preview>
+
+### Heart Icon
+
+<Preview
+  background="dots"
+  code={`<StrokeDrawIcon 
+  pathData="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"
+  viewBox="0 0 24 24"
+  className="w-12 h-12"
+  strokeColor="red"
+  duration={2.5}
+/>`}
+>
+  <StrokeDrawIcon 
+    pathData="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"
+    viewBox="0 0 24 24"
+    className="w-12 h-12"
+    strokeColor="red"
+    duration={2.5}
+  />
+</Preview>
+
+### Check Circle Icon
+
+<Preview
+  background="dots"
+  code={`<StrokeDrawIcon 
+  pathData="M22 11.08V12a10 10 0 1 1-5.93-9.14M22 4L12 14.01l-3-3"
+  viewBox="0 0 24 24"
+  className="w-12 h-12"
+  strokeColor="green"
+  duration={2}
+/>`}
+>
+  <StrokeDrawIcon 
+    pathData="M22 11.08V12a10 10 0 1 1-5.93-9.14M22 4L12 14.01l-3-3"
+    viewBox="0 0 24 24"
+    className="w-12 h-12"
+    strokeColor="green"
+    duration={2}
+  />
+</Preview>
+
+## Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `pathData` | `string` | - | SVG path data |
+| `strokeColor` | `string` | `"currentColor"` | Stroke color |
+| `strokeWidth` | `number` | `2` | Stroke width |
+| `duration` | `number` | `1` | Animation duration in seconds |
+| `delay` | `number` | `0` | Delay before animation starts in seconds |
+| `repeat` | `boolean` | `false` | Whether to repeat the animation |
+| `ease` | `string` | `"easeInOut"` | Easing function |
+| `viewBox` | `string` | `"0 0 24 24"` | SVG viewBox attribute |
+| `className` | `string` | - | Additional CSS classes |
+
+## Using the Hook Directly
+
+This component is built using the `useStrokeDraw()` hook. You can use the hook directly for more control:
+
+```tsx
+import { useStrokeDraw } from "@/lib/hooks/use-stroke-draw"
+import { motion } from "framer-motion"
+
+export function CustomStrokeIcon() {
+  const strokeProps = useStrokeDraw({ duration: 2, delay: 0.5 })
+  
+  return (
+    <svg viewBox="0 0 24 24" className="w-12 h-12">
+      <motion.path 
+        d="M12 2L2 7l10 5 10-5-10-5z" 
+        stroke="currentColor"
+        strokeWidth={2}
+        fill="none"
+        {...strokeProps} 
+      />
+    </svg>
+  )
+}
+```

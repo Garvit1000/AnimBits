@@ -1,0 +1,140 @@
+---
+title: Gooey Blobs Loader
+description: A gooey blobs loader with merging effect.
+---
+
+import { Tab, Tabs } from 'fumadocs-ui/components/tabs';
+import { Preview } from '@/components/preview';
+import { LoaderGooeyBlobs } from '@/registry/new-york/animations/loaders/gooey-blobs';
+
+## Overview
+
+The `LoaderGooeyBlobs` component creates blobs that appear to merge together with a gooey effect. Perfect for organic, fluid loading indicators.
+
+## Preview
+
+<Preview
+  background="grid"
+  code={`import { LoaderGooeyBlobs } from "@/components/animations/loaders/gooey-blobs"
+
+<LoaderGooeyBlobs />`}
+>
+  <div className="flex gap-8 items-center justify-center">
+    <LoaderGooeyBlobs />
+    <LoaderGooeyBlobs size={30} color="#3b82f6" duration={2} />
+    <LoaderGooeyBlobs size={25} color="#10b981" duration={1} />
+  </div>
+</Preview>
+
+## Installation
+
+<Tabs items={['CLI', 'Manual']}>
+  <Tab value="CLI">
+    ```bash
+    npx shadcn add https://animbits.dev/r/animations/loaders/gooey-blobs
+    ```
+  </Tab>
+  <Tab value="Manual">
+    ```tsx title="components/animations/loaders/gooey-blobs.tsx"
+    "use client"
+
+    import * as React from "react"
+    import { motion, HTMLMotionProps } from "framer-motion"
+    import { cn } from "@/lib/utils"
+
+    export interface LoaderGooeyBlobsProps extends Omit<HTMLMotionProps<"div">, "children"> {
+      size?: number
+      color?: string
+      duration?: number
+    }
+
+    export function LoaderGooeyBlobs({
+      className,
+      size = 20,
+      color = "currentColor",
+      duration = 1.5,
+      ...props
+    }: LoaderGooeyBlobsProps) {
+      return (
+        <div className={cn("flex items-center gap-2", className)}>
+          <svg width="0" height="0">
+            <defs>
+              <filter id="gooey">
+                <feGaussianBlur in="SourceGraphic" stdDeviation="3" result="blur" />
+                <feColorMatrix
+                  in="blur"
+                  mode="matrix"
+                  values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 18 -7"
+                  result="gooey"
+                />
+                <feBlend in="SourceGraphic" in2="gooey" />
+              </filter>
+            </defs>
+          </svg>
+          <div style={{ filter: "url(#gooey)" } as React.CSSProperties} className="flex gap-1">
+            {[0, 1, 2].map((index) => (
+              <motion.div
+                key={index}
+                className="rounded-full"
+                style={{
+                  width: size,
+                  height: size,
+                  backgroundColor: color,
+                }}
+                animate={{
+                  x: [0, 15, 0, -15, 0],
+                  scale: [1, 1.2, 1, 1.2, 1],
+                }}
+                transition={{
+                  duration,
+                  ease: "easeInOut",
+                  repeat: Infinity,
+                  delay: index * 0.2,
+                }}
+              />
+            ))}
+          </div>
+        </div>
+      )
+    }
+    ```
+  </Tab>
+</Tabs>
+
+## Usage
+
+```tsx
+import { LoaderGooeyBlobs } from "@/components/animations/loaders/gooey-blobs"
+
+export default function Example() {
+  return <LoaderGooeyBlobs />
+}
+```
+
+## Examples
+
+### Default
+
+<Preview background="dots" code={`<LoaderGooeyBlobs />`}>
+  <LoaderGooeyBlobs />
+</Preview>
+
+### Large Blue Blobs
+
+<Preview background="dots" code={`<LoaderGooeyBlobs size={30} color="#3b82f6" duration={2} />`}>
+  <LoaderGooeyBlobs size={30} color="#3b82f6" duration={2} />
+</Preview>
+
+### Fast Green Blobs
+
+<Preview background="dots" code={`<LoaderGooeyBlobs size={25} color="#10b981" duration={1} />`}>
+  <LoaderGooeyBlobs size={25} color="#10b981" duration={1} />
+</Preview>
+
+## Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `size` | `number` | `20` | Size of each blob in pixels |
+| `color` | `string` | `"currentColor"` | Color of the blobs |
+| `duration` | `number` | `1.5` | Animation duration in seconds |

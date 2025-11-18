@@ -1,4 +1,19 @@
 {
   "title": "Icons",
-  "pages": ["index"]
+  "pages": [
+    "index",
+    "bounce",
+    "bounce-continuous",
+    "fade-in",
+    "heartbeat",
+    "morph",
+    "pop",
+    "pulse",
+    "rotate",
+    "scale-in",
+    "shake",
+    "spin",
+    "stroke-draw",
+    "wiggle"
+  ]
 }

@@ -1,0 +1,74 @@
+---
+title: Word Carousel Text
+description: Text that cycles through an array of words.
+---
+
+import { Tab, Tabs } from 'fumadocs-ui/components/tabs';
+import { Preview } from '@/components/preview';
+import { TextWordCarousel } from '@/registry/new-york/animations/text/word-carousel';
+
+## Overview
+
+The `TextWordCarousel` cycles through an array of words with smooth transitions.
+
+## Preview
+
+<Preview
+  background="default"
+  code={`import { TextWordCarousel } from "@/components/animations/text/word-carousel"
+
+<div className="text-2xl font-bold">
+  Build <TextWordCarousel words={["Fast", "Modern", "Beautiful"]} className="text-blue-500" /> websites
+</div>`}
+>
+  <div className="text-2xl font-bold">
+    Build <TextWordCarousel words={["Fast", "Modern", "Beautiful"]} className="text-blue-500" /> websites
+  </div>
+</Preview>
+
+## Installation
+
+<Tabs items={['CLI', 'Manual']}>
+  <Tab value="CLI">
+    ```bash
+    npx shadcn add https://animbits.dev/r/animations/text/word-carousel
+    ```
+  </Tab>
+  <Tab value="Manual">
+    Requires the `useWordCarousel` hook from `@/lib/hooks`.
+  </Tab>
+</Tabs>
+
+## Usage
+
+```tsx
+import { TextWordCarousel } from "@/components/animations/text/word-carousel"
+
+<TextWordCarousel words={["Fast", "Modern", "Beautiful"]} />
+```
+
+## Examples
+
+### Tech Stack
+
+<Preview background="dots" code={`<TextWordCarousel words={["React", "Next.js", "TypeScript"]} />`}>
+  <div className="text-xl">
+    Built with <TextWordCarousel words={["React", "Next.js", "TypeScript", "Tailwind"]} className="font-bold text-purple-500" />
+  </div>
+</Preview>
+
+### Custom Interval
+
+<Preview background="default" code={`<TextWordCarousel words={["Slow", "Change"]} interval={3} />`}>
+  <div className="text-xl">
+    <TextWordCarousel words={["Slow", "Steady", "Smooth"]} interval={3} className="font-bold text-green-500" /> transitions
+  </div>
+</Preview>
+
+## Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `words` | `string[]` | Required | Array of words to cycle through |
+| `interval` | `number` | `2` | Time between words (seconds) |
+| `duration` | `number` | `0.3` | Transition duration (seconds) |

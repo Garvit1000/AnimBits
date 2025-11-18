@@ -1,0 +1,129 @@
+---
+title: Dots Loader
+description: A bouncing dots loader.
+---
+
+import { Tab, Tabs } from 'fumadocs-ui/components/tabs';
+import { Preview } from '@/components/preview';
+import { LoaderDots } from '@/registry/new-york/animations/loaders/dots';
+
+## Overview
+
+The `LoaderDots` component creates a bouncing dots animation. Perfect for loading states with a playful feel.
+
+## Preview
+
+<Preview
+  background="grid"
+  code={`import { LoaderDots } from "@/components/animations/loaders/dots"
+
+<LoaderDots />`}
+>
+  <div className="flex gap-8 items-center justify-center">
+    <LoaderDots />
+    <LoaderDots size={12} count={5} color="#3b82f6" />
+    <LoaderDots size={8} count={4} color="#10b981" duration={0.8} />
+  </div>
+</Preview>
+
+## Installation
+
+<Tabs items={['CLI', 'Manual']}>
+  <Tab value="CLI">
+    ```bash
+    npx shadcn add https://animbits.dev/r/animations/loaders/dots
+    ```
+  </Tab>
+  <Tab value="Manual">
+    ```tsx title="components/animations/loaders/dots.tsx"
+    "use client"
+
+    import * as React from "react"
+    import { motion, HTMLMotionProps } from "framer-motion"
+    import { cn } from "@/lib/utils"
+
+    export interface LoaderDotsProps extends Omit<HTMLMotionProps<"div">, "children"> {
+      size?: number
+      color?: string
+      count?: number
+      gap?: number
+      duration?: number
+    }
+
+    export function LoaderDots({
+      className,
+      size = 10,
+      color = "currentColor",
+      count = 3,
+      gap = 8,
+      duration = 1.2,
+      ...props
+    }: LoaderDotsProps) {
+      return (
+        <div className={cn("flex items-center", className)} style={{ gap }}>
+          {Array.from({ length: count }).map((_, index) => (
+            <motion.div
+              key={index}
+              className="rounded-full"
+              style={{
+                width: size,
+                height: size,
+                backgroundColor: color,
+              }}
+              animate={{
+                y: [0, -size * 1.5, 0],
+              }}
+              transition={{
+                duration,
+                ease: "easeInOut",
+                repeat: Infinity,
+                delay: index * (duration / count),
+              }}
+            />
+          ))}
+        </div>
+      )
+    }
+    ```
+  </Tab>
+</Tabs>
+
+## Usage
+
+```tsx
+import { LoaderDots } from "@/components/animations/loaders/dots"
+
+export default function Example() {
+  return <LoaderDots />
+}
+```
+
+## Examples
+
+### Default
+
+<Preview background="dots" code={`<LoaderDots />`}>
+  <LoaderDots />
+</Preview>
+
+### Five Blue Dots
+
+<Preview background="dots" code={`<LoaderDots size={12} count={5} color="#3b82f6" />`}>
+  <LoaderDots size={12} count={5} color="#3b82f6" />
+</Preview>
+
+### Fast Green Dots
+
+<Preview background="dots" code={`<LoaderDots size={8} count={4} color="#10b981" duration={0.8} />`}>
+  <LoaderDots size={8} count={4} color="#10b981" duration={0.8} />
+</Preview>
+
+## Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `size` | `number` | `10` | Size of each dot in pixels |
+| `color` | `string` | `"currentColor"` | Color of the dots |
+| `count` | `number` | `3` | Number of dots |
+| `gap` | `number` | `8` | Gap between dots in pixels |
+| `duration` | `number` | `1.2` | Animation duration in seconds |

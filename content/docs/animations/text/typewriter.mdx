@@ -1,0 +1,76 @@
+---
+title: Typewriter Text
+description: Text that types out character by character with optional cursor.
+---
+
+import { Tab, Tabs } from 'fumadocs-ui/components/tabs';
+import { Preview, PreviewGrid } from '@/components/preview';
+import { TextTypewriter } from '@/registry/new-york/animations/text/typewriter';
+
+## Overview
+
+The `TextTypewriter` creates a classic typewriter effect with optional blinking cursor.
+
+## Preview
+
+<Preview
+  background="default"
+  code={`import { TextTypewriter } from "@/components/animations/text/typewriter"
+
+<TextTypewriter className="text-2xl font-bold">
+  Hello, I'm a typewriter effect!
+</TextTypewriter>`}
+>
+  <TextTypewriter className="text-2xl font-bold">Hello, I'm a typewriter effect!</TextTypewriter>
+</Preview>
+
+## Installation
+
+<Tabs items={['CLI', 'Manual']}>
+  <Tab value="CLI">
+    ```bash
+    npx shadcn add https://animbits.dev/r/animations/text/typewriter
+    ```
+  </Tab>
+  <Tab value="Manual">
+    See component source code in the registry.
+  </Tab>
+</Tabs>
+
+## Usage
+
+```tsx
+import { TextTypewriter } from "@/components/animations/text/typewriter"
+
+<TextTypewriter>Hello World</TextTypewriter>
+```
+
+## Examples
+
+### Different Speeds
+
+<PreviewGrid cols={2}>
+  <Preview background="dots" code={`<TextTypewriter speed={20}>Slow typing</TextTypewriter>`}>
+    <TextTypewriter speed={20}>Slow typing effect</TextTypewriter>
+  </Preview>
+  
+  <Preview background="dots" code={`<TextTypewriter speed={50}>Fast typing</TextTypewriter>`}>
+    <TextTypewriter speed={50}>Fast typing effect</TextTypewriter>
+  </Preview>
+</PreviewGrid>
+
+### Without Cursor
+
+<Preview background="default" code={`<TextTypewriter cursor={false}>No cursor</TextTypewriter>`}>
+  <TextTypewriter cursor={false} className="text-lg">Typing without a cursor</TextTypewriter>
+</Preview>
+
+## Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `children` | `string` | Required | Text to animate |
+| `delay` | `number` | `0` | Delay before animation starts (seconds) |
+| `speed` | `number` | `30` | Typing speed (characters per second) |
+| `cursor` | `boolean` | `true` | Show blinking cursor |
+| `cursorChar` | `string` | `"\|"` | Cursor character |

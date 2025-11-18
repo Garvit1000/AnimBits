@@ -1,0 +1,120 @@
+---
+title: Morphing Loader
+description: A morphing shape loader that transitions between different forms.
+---
+
+import { Tab, Tabs } from 'fumadocs-ui/components/tabs';
+import { Preview } from '@/components/preview';
+import { LoaderMorphing } from '@/registry/new-york/animations/loaders/morphing';
+
+## Overview
+
+The `LoaderMorphing` component creates a shape that morphs between different forms while rotating. Perfect for creative loading indicators.
+
+## Preview
+
+<Preview
+  background="grid"
+  code={`import { LoaderMorphing } from "@/components/animations/loaders/morphing"
+
+<LoaderMorphing />`}
+>
+  <div className="flex gap-8 items-center justify-center">
+    <LoaderMorphing />
+    <LoaderMorphing size={60} color="#3b82f6" duration={3} />
+    <LoaderMorphing size={50} color="#10b981" duration={1.5} />
+  </div>
+</Preview>
+
+## Installation
+
+<Tabs items={['CLI', 'Manual']}>
+  <Tab value="CLI">
+    ```bash
+    npx shadcn add https://animbits.dev/r/animations/loaders/morphing
+    ```
+  </Tab>
+  <Tab value="Manual">
+    ```tsx title="components/animations/loaders/morphing.tsx"
+    "use client"
+
+    import * as React from "react"
+    import { motion, HTMLMotionProps } from "framer-motion"
+    import { cn } from "@/lib/utils"
+
+    export interface LoaderMorphingProps extends Omit<HTMLMotionProps<"div">, "children"> {
+      size?: number
+      color?: string
+      duration?: number
+    }
+
+    export function LoaderMorphing({
+      className,
+      size = 40,
+      color = "currentColor",
+      duration = 2,
+      ...props
+    }: LoaderMorphingProps) {
+      return (
+        <motion.div
+          className={cn(className)}
+          style={{
+            width: size,
+            height: size,
+            backgroundColor: color,
+          }}
+          animate={{
+            borderRadius: ["20%", "50%", "20%", "50%", "20%"],
+            rotate: [0, 90, 180, 270, 360],
+            scale: [1, 1.2, 1, 1.2, 1],
+          }}
+          transition={{
+            duration,
+            ease: "easeInOut",
+            repeat: Infinity,
+          }}
+          {...props}
+        />
+      )
+    }
+    ```
+  </Tab>
+</Tabs>
+
+## Usage
+
+```tsx
+import { LoaderMorphing } from "@/components/animations/loaders/morphing"
+
+export default function Example() {
+  return <LoaderMorphing />
+}
+```
+
+## Examples
+
+### Default
+
+<Preview background="dots" code={`<LoaderMorphing />`}>
+  <LoaderMorphing />
+</Preview>
+
+### Large Blue Morphing
+
+<Preview background="dots" code={`<LoaderMorphing size={60} color="#3b82f6" duration={3} />`}>
+  <LoaderMorphing size={60} color="#3b82f6" duration={3} />
+</Preview>
+
+### Fast Green Morphing
+
+<Preview background="dots" code={`<LoaderMorphing size={50} color="#10b981" duration={1.5} />`}>
+  <LoaderMorphing size={50} color="#10b981" duration={1.5} />
+</Preview>
+
+## Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `size` | `number` | `40` | Size of the loader in pixels |
+| `color` | `string` | `"currentColor"` | Color of the loader |
+| `duration` | `number` | `2` | Animation duration in seconds |

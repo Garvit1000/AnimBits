@@ -1,0 +1,166 @@
+---
+title: Shake Icon
+description: One-shot shake animation (horizontal shake) for icons.
+---
+
+import { Tab, Tabs } from 'fumadocs-ui/components/tabs';
+import { Preview } from '@/components/preview';
+import { ShakeIcon } from '@/registry/new-york/animations/icons/shake';
+import { AlertTriangle, AlertCircle, Info } from 'lucide-react';
+
+## Overview
+
+The `ShakeIcon` component creates a horizontal shake animation. Perfect for error states, alerts, and drawing attention to warnings.
+
+## Preview
+
+<Preview
+  background="grid"
+  code={`import { ShakeIcon } from "@/components/animations/icons/shake"
+import { AlertTriangle } from "lucide-react"
+
+<ShakeIcon trigger="hover" intensity={10}>
+  <AlertTriangle className="w-8 h-8 text-yellow-500" />
+</ShakeIcon>`}
+>
+  <div className="flex gap-8 items-center justify-center">
+    <ShakeIcon trigger="hover" intensity={10} className="cursor-pointer">
+      <AlertTriangle className="w-8 h-8 text-yellow-500" />
+    </ShakeIcon>
+    <ShakeIcon trigger="tap" intensity={15}>
+      <AlertCircle className="w-8 h-8 text-red-500" />
+    </ShakeIcon>
+    <ShakeIcon trigger="mount" intensity={8}>
+      <Info className="w-8 h-8 text-blue-500" />
+    </ShakeIcon>
+  </div>
+</Preview>
+
+## Installation
+
+<Tabs items={['CLI', 'Manual']}>
+  <Tab value="CLI">
+    ```bash
+    npx shadcn add https://animbits.dev/r/animations/icons/shake
+    ```
+  </Tab>
+  <Tab value="Manual">
+    ```tsx title="components/animations/icons/shake.tsx"
+    "use client"
+
+    import { motion, type HTMLMotionProps } from "framer-motion"
+    import { shakeVariants } from "@/lib/animation-presets"
+    import { useState } from "react"
+
+    interface ShakeIconProps extends Omit<HTMLMotionProps<"div">, "animate"> {
+      children: React.ReactNode
+      trigger?: "hover" | "tap" | "mount"
+      intensity?: number
+    }
+
+    export function ShakeIcon({
+      children,
+      trigger = "hover",
+      intensity = 10,
+      ...props
+    }: ShakeIconProps) {
+      const [key, setKey] = useState(0)
+
+      const customVariants = {
+        initial: { x: 0 },
+        animate: {
+          x: [0, -intensity, intensity, -intensity, intensity, 0],
+        },
+      }
+
+      const handleTrigger = () => {
+        setKey((prev) => prev + 1)
+      }
+
+      return (
+        <motion.div
+          key={key}
+          variants={customVariants}
+          initial="initial"
+          animate={trigger === "mount" ? "animate" : undefined}
+          whileHover={trigger === "hover" ? "animate" : undefined}
+          whileTap={trigger === "tap" ? "animate" : undefined}
+          onHoverStart={trigger === "hover" ? handleTrigger : undefined}
+          onTap={trigger === "tap" ? handleTrigger : undefined}
+          transition={{ duration: 0.4, ease: "easeInOut" }}
+          {...props}
+        >
+          {children}
+        </motion.div>
+      )
+    }
+    ```
+
+    **Dependencies:**
+    - `shakeVariants` from `@/lib/animation-presets`
+  </Tab>
+</Tabs>
+
+## Usage
+
+```tsx
+import { ShakeIcon } from "@/components/animations/icons/shake"
+import { AlertTriangle } from "lucide-react"
+
+export default function Example() {
+  return (
+    <ShakeIcon trigger="hover" intensity={10}>
+      <AlertTriangle className="w-6 h-6" />
+    </ShakeIcon>
+  )
+}
+```
+
+## Examples
+
+### Hover Trigger
+
+<Preview
+  background="dots"
+  code={`<ShakeIcon trigger="hover" intensity={10} className="cursor-pointer">
+  <AlertTriangle className="w-12 h-12 text-yellow-500" />
+</ShakeIcon>`}
+>
+  <ShakeIcon trigger="hover" intensity={10} className="cursor-pointer">
+    <AlertTriangle className="w-12 h-12 text-yellow-500" />
+  </ShakeIcon>
+</Preview>
+
+### Tap Trigger
+
+<Preview
+  background="dots"
+  code={`<ShakeIcon trigger="tap" intensity={15}>
+  <AlertCircle className="w-12 h-12 text-red-500" />
+</ShakeIcon>`}
+>
+  <ShakeIcon trigger="tap" intensity={15}>
+    <AlertCircle className="w-12 h-12 text-red-500" />
+  </ShakeIcon>
+</Preview>
+
+### Subtle Shake
+
+<Preview
+  background="dots"
+  code={`<ShakeIcon trigger="hover" intensity={5} className="cursor-pointer">
+  <Info className="w-12 h-12 text-blue-500" />
+</ShakeIcon>`}
+>
+  <ShakeIcon trigger="hover" intensity={5} className="cursor-pointer">
+    <Info className="w-12 h-12 text-blue-500" />
+  </ShakeIcon>
+</Preview>
+
+## Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `children` | `ReactNode` | - | The icon element to animate |
+| `trigger` | `"hover"` \| `"tap"` \| `"mount"` | `"hover"` | When to trigger the shake animation |
+| `intensity` | `number` | `10` | Shake intensity (distance in pixels) |

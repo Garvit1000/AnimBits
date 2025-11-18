@@ -1,0 +1,222 @@
+---
+title: Theme Toggle Circular
+description: Circular ripple animation for theme toggle using View Transitions API.
+---
+
+import { Tab, Tabs } from 'fumadocs-ui/components/tabs';
+import { Callout } from 'fumadocs-ui/components/callout';
+import { Preview } from '@/components/preview';
+
+## Overview
+
+The `ThemeToggleCircular` component creates an expanding circle effect from the click position when toggling themes. Uses the native View Transitions API for smooth, hardware-accelerated animations.
+
+<Callout type="info">
+  **Browser Support:** View Transitions API is supported in Chrome 111+, Edge 111+, and Opera 97+. Falls back to instant theme changes in unsupported browsers.
+</Callout>
+
+## Installation
+
+<Tabs items={['CLI', 'Manual']}>
+  <Tab value="CLI">
+    ```bash
+    npx shadcn add https://animbits.dev/r/animations/transitions/theme-toggle-circular
+    ```
+  </Tab>
+  <Tab value="Manual">
+    ```tsx title="components/animations/transitions/theme-toggle-circular.tsx"
+    "use client"
+
+    import * as React from "react"
+
+    export interface ThemeToggleCircularProps {
+      children: React.ReactNode
+      onToggle?: () => void
+      theme?: "light" | "dark"
+      className?: string
+    }
+
+    export function ThemeToggleCircular({
+      children,
+      onToggle,
+      theme,
+      className,
+    }: ThemeToggleCircularProps) {
+      const handleClick = async (e: React.MouseEvent<HTMLDivElement>) => {
+        if (!document.startViewTransition) {
+          onToggle?.()
+          return
+        }
+
+        const x = e.clientX
+        const y = e.clientY
+
+        document.documentElement.style.setProperty('--x', `${x}px`)
+        document.documentElement.style.setProperty('--y', `${y}px`)
+
+        const transition = document.startViewTransition(() => {
+          onToggle?.()
+        })
+
+        await transition.ready
+      }
+
+      return (
+        <div onClick={handleClick} className={className}>
+          {children}
+        </div>
+      )
+    }
+    ```
+
+    **Required CSS** (add to `globals.css`):
+    ```css
+    ::view-transition-old(root),
+    ::view-transition-new(root) {
+      animation: none;
+      mix-blend-mode: normal;
+    }
+
+    ::view-transition-old(root) {
+      z-index: 1;
+    }
+
+    ::view-transition-new(root) {
+      z-index: 999;
+    }
+
+    .dark::view-transition-old(root) {
+      z-index: 999;
+    }
+
+    .dark::view-transition-new(root) {
+      z-index: 1;
+    }
+
+    ::view-transition-new(root) {
+      animation: circle 0.5s;
+    }
+
+    @keyframes circle {
+      from {
+        clip-path: circle(0% at var(--x) var(--y));
+      }
+      to {
+        clip-path: circle(150% at var(--x) var(--y));
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      ::view-transition-group(*),
+      ::view-transition-old(*),
+      ::view-transition-new(*) {
+        animation: none !important;
+      }
+    }
+    ```
+  </Tab>
+</Tabs>
+
+## Usage
+
+### With next-themes
+
+```tsx
+"use client"
+
+import { useTheme } from "next-themes"
+import { ThemeToggleCircular } from "@/components/animations/transitions/theme-toggle-circular"
+import { Moon, Sun } from "lucide-react"
+import { Button } from "@/components/ui/button"
+
+export function ThemeToggle() {
+  const { theme, setTheme } = useTheme()
+  
+  return (
+    <ThemeToggleCircular 
+      onToggle={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
+    >
+      <Button variant="ghost" size="icon">
+        <Sun className="h-5 w-5 rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
+        <Moon className="absolute h-5 w-5 rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
+      </Button>
+    </ThemeToggleCircular>
+  )
+}
+```
+
+### With Custom State
+
+```tsx
+"use client"
+
+import { useState } from "react"
+import { ThemeToggleCircular } from "@/components/animations/transitions/theme-toggle-circular"
+
+export function ThemeToggle() {
+  const [theme, setTheme] = useState<"light" | "dark">("light")
+  
+  return (
+    <ThemeToggleCircular 
+      theme={theme}
+      onToggle={() => setTheme(prev => prev === 'dark' ? 'light' : 'dark')}
+    >
+      <button className="p-2 rounded-md hover:bg-accent">
+        {theme === 'dark' ? '🌞' : '🌙'}
+      </button>
+    </ThemeToggleCircular>
+  )
+}
+```
+
+## Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `children` | `ReactNode` | - | The trigger element (button, icon, etc.) |
+| `onToggle` | `() => void` | - | Callback when theme should toggle |
+| `theme` | `"light"` \| `"dark"` | - | Current theme (optional) |
+| `className` | `string` | - | Additional CSS classes |
+
+## Customization
+
+### Animation Duration
+
+```css
+@keyframes circle {
+  from {
+    clip-path: circle(0% at var(--x) var(--y));
+  }
+  to {
+    clip-path: circle(150% at var(--x) var(--y));
+  }
+}
+
+/* Change duration */
+::view-transition-new(root) {
+  animation: circle 0.8s; /* Slower */
+}
+```
+
+### Custom Easing
+
+```css
+::view-transition-new(root) {
+  animation: circle 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
+```
+
+## Features
+
+- ✅ Hardware accelerated (GPU)
+- ✅ Respects `prefers-reduced-motion`
+- ✅ Graceful fallback for unsupported browsers
+- ✅ Minimal bundle size (~1KB)
+- ✅ Framework agnostic
+
+## Browser Support
+
+- Chrome 111+
+- Edge 111+
+- Opera 97+
+- Falls back to instant theme change in other browsers
