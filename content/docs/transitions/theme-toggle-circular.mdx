@@ -6,14 +6,24 @@ description: Circular ripple animation for theme toggle using View Transitions A
 import { Tab, Tabs } from 'fumadocs-ui/components/tabs';
 import { Callout } from 'fumadocs-ui/components/callout';
 import { Preview } from '@/components/preview';
+import { TransitionDemo } from '@/components/transition-demo';
+import { ThemeToggleCircular } from '@/registry/new-york/animations/transitions/theme-toggle-circular';
 
 ## Overview
 
-The `ThemeToggleCircular` component creates an expanding circle effect from the click position when toggling themes. Uses the native View Transitions API for smooth, hardware-accelerated animations.
+The `ThemeToggleCircular` component creates an expanding circle effect from the click position when toggling themes. Uses the native View Transitions API for smooth, hardware-accelerated animations with customizable speed and blur.
 
 <Callout type="info">
   **Browser Support:** View Transitions API is supported in Chrome 111+, Edge 111+, and Opera 97+. Falls back to instant theme changes in unsupported browsers.
 </Callout>
+
+## Interactive Demo
+
+Try it live! Adjust the speed and blur sliders, then click the button to see the transition effect.
+
+<Preview background="grid">
+  <TransitionDemo TransitionComponent={ThemeToggleCircular} />
+</Preview>
 
 ## Installation
 
@@ -34,6 +44,8 @@ The `ThemeToggleCircular` component creates an expanding circle effect from the 
       onToggle?: () => void
       theme?: "light" | "dark"
       className?: string
+      speed?: number
+      blur?: number
     }
 
     export function ThemeToggleCircular({
@@ -41,6 +53,8 @@ The `ThemeToggleCircular` component creates an expanding circle effect from the 
       onToggle,
       theme,
       className,
+      speed = 0.5,
+      blur = 0,
     }: ThemeToggleCircularProps) {
       const handleClick = async (e: React.MouseEvent<HTMLDivElement>) => {
         if (!document.startViewTransition) {
@@ -53,6 +67,8 @@ The `ThemeToggleCircular` component creates an expanding circle effect from the 
 
         document.documentElement.style.setProperty('--x', `${x}px`)
         document.documentElement.style.setProperty('--y', `${y}px`)
+        document.documentElement.style.setProperty('--transition-speed', `${speed}s`)
+        document.documentElement.style.setProperty('--transition-blur', `${blur}px`)
 
         const transition = document.startViewTransition(() => {
           onToggle?.()
@@ -71,6 +87,11 @@ The `ThemeToggleCircular` component creates an expanding circle effect from the 
 
     **Required CSS** (add to `globals.css`):
     ```css
+    :root {
+      --transition-speed: 0.5s;
+      --transition-blur: 0px;
+    }
+
     ::view-transition-old(root),
     ::view-transition-new(root) {
       animation: none;
@@ -94,7 +115,8 @@ The `ThemeToggleCircular` component creates an expanding circle effect from the 
     }
 
     ::view-transition-new(root) {
-      animation: circle 0.5s;
+      animation: circle var(--transition-speed);
+      filter: blur(var(--transition-blur));
     }
 
     @keyframes circle {
@@ -176,33 +198,65 @@ export function ThemeToggle() {
 | `children` | `ReactNode` | - | The trigger element (button, icon, etc.) |
 | `onToggle` | `() => void` | - | Callback when theme should toggle |
 | `theme` | `"light"` \| `"dark"` | - | Current theme (optional) |
+| `speed` | `number` | `0.5` | Animation speed in seconds |
+| `blur` | `number` | `0` | Blur amount in pixels |
 | `className` | `string` | - | Additional CSS classes |
 
-## Customization
+## Examples
 
-### Animation Duration
+### Fast Transition
 
-```css
-@keyframes circle {
-  from {
-    clip-path: circle(0% at var(--x) var(--y));
-  }
-  to {
-    clip-path: circle(150% at var(--x) var(--y));
-  }
-}
-
-/* Change duration */
-::view-transition-new(root) {
-  animation: circle 0.8s; /* Slower */
-}
+```tsx
+<ThemeToggleCircular 
+  speed={0.2}
+  onToggle={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
+>
+  <Button>Toggle</Button>
+</ThemeToggleCircular>
 ```
+
+### Slow Transition
+
+```tsx
+<ThemeToggleCircular 
+  speed={1.5}
+  onToggle={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
+>
+  <Button>Toggle</Button>
+</ThemeToggleCircular>
+```
+
+### With Blur Effect
+
+```tsx
+<ThemeToggleCircular 
+  speed={0.5}
+  blur={10}
+  onToggle={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
+>
+  <Button>Toggle</Button>
+</ThemeToggleCircular>
+```
+
+### Heavy Blur
+
+```tsx
+<ThemeToggleCircular 
+  speed={0.8}
+  blur={20}
+  onToggle={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
+>
+  <Button>Toggle</Button>
+</ThemeToggleCircular>
+```
+
+## Customization
 
 ### Custom Easing
 
 ```css
 ::view-transition-new(root) {
-  animation: circle 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  animation: circle var(--transition-speed) cubic-bezier(0.68, -0.55, 0.265, 1.55);
 }
 ```
 

@@ -22,12 +22,12 @@ The `MagneticButton` creates a magnetic attraction effect where the button smoot
   background="grid"
   code={`import { MagneticButton } from "@/components/animations/buttons/magnetic"
 
-<MagneticButton className="px-8 py-4 bg-blue-500 text-white rounded-lg">
-  Follow Your Cursor
+<MagneticButton className="inline-flex h-11 items-center gap-2 rounded-lg bg-blue-600 px-6 text-sm font-semibold text-white">
+  Hover Me
 </MagneticButton>`}
 >
-  <MagneticButton className="px-8 py-4 bg-blue-500 text-white rounded-lg">
-    Follow Your Cursor
+  <MagneticButton className="inline-flex h-11 items-center gap-2 rounded-lg bg-blue-600 px-6 text-sm font-semibold text-white">
+    Hover Me
   </MagneticButton>
 </Preview>
 
@@ -77,8 +77,8 @@ The `MagneticButton` creates a magnetic attraction effect where the button smoot
 ```tsx
 import { MagneticButton } from "@/components/animations/buttons/magnetic"
 
-<MagneticButton className="px-8 py-4 bg-blue-500 text-white rounded-lg">
-  Follow Your Cursor
+<MagneticButton className="inline-flex h-11 items-center gap-2 rounded-lg bg-blue-600 px-6 text-sm font-semibold text-white">
+  Hover Me
 </MagneticButton>
 ```
 
@@ -86,12 +86,18 @@ import { MagneticButton } from "@/components/animations/buttons/magnetic"
 
 ```tsx
 // Subtle magnetic effect
-<MagneticButton strength={15}>
+<MagneticButton 
+  strength={15}
+  className="inline-flex h-11 items-center gap-2 rounded-lg bg-blue-600 px-6 text-sm font-semibold text-white"
+>
   Subtle Pull
 </MagneticButton>
 
 // Strong magnetic effect
-<MagneticButton strength={60}>
+<MagneticButton 
+  strength={60}
+  className="inline-flex h-11 items-center gap-2 rounded-lg bg-purple-600 px-6 text-sm font-semibold text-white"
+>
   Strong Pull
 </MagneticButton>
 ```
@@ -103,7 +109,7 @@ import { MagneticButton } from "@/components/animations/buttons/magnetic"
   strength={40}
   stiffness={300}
   damping={20}
-  className="px-6 py-3 bg-purple-500 text-white rounded-lg"
+  className="inline-flex h-11 items-center gap-2 rounded-lg bg-purple-600 px-6 text-sm font-semibold text-white"
 >
   Snappy Response
 </MagneticButton>
@@ -125,9 +131,9 @@ import { MagneticButton } from "@/components/animations/buttons/magnetic"
 ```tsx
 <MagneticButton 
   strength={50}
-  className="px-12 py-6 bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-full text-xl font-bold"
+  className="inline-flex h-11 items-center gap-2 rounded-lg bg-gradient-to-r from-purple-600 to-pink-600 px-6 text-sm font-semibold text-white"
 >
-  Get Started Free
+  Get Started
 </MagneticButton>
 ```
 
@@ -137,9 +143,9 @@ import { MagneticButton } from "@/components/animations/buttons/magnetic"
 <MagneticButton 
   strength={40}
   stiffness={200}
-  className="p-4 bg-white rounded-full shadow-lg"
+  className="inline-flex h-11 w-11 items-center justify-center rounded-lg bg-white shadow-lg border border-neutral-200"
 >
-  <HeartIcon className="w-6 h-6" />
+  <HeartIcon className="h-5 w-5 text-neutral-700" />
 </MagneticButton>
 ```
 
@@ -147,12 +153,22 @@ import { MagneticButton } from "@/components/animations/buttons/magnetic"
 
 ```tsx
 // Smooth & Slow
-<MagneticButton strength={40} stiffness={80} damping={25}>
+<MagneticButton 
+  strength={40} 
+  stiffness={80} 
+  damping={25}
+  className="inline-flex h-11 items-center gap-2 rounded-lg bg-blue-600 px-6 text-sm font-semibold text-white"
+>
   Smooth
 </MagneticButton>
 
 // Snappy & Responsive
-<MagneticButton strength={35} stiffness={300} damping={15}>
+<MagneticButton 
+  strength={35} 
+  stiffness={300} 
+  damping={15}
+  className="inline-flex h-11 items-center gap-2 rounded-lg bg-blue-600 px-6 text-sm font-semibold text-white"
+>
   Snappy
 </MagneticButton>
 ```

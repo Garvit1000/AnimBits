@@ -1,14 +1,14 @@
-"use client"
+"use client";
 
-import * as React from "react"
-import { RotateCcw, Copy, Check } from "lucide-react"
+import * as React from "react";
+import { RotateCcw, Copy, Check } from "lucide-react";
 
 interface PreviewProps {
-  children: React.ReactNode
-  code?: string
-  className?: string
-  showCopy?: boolean
-  background?: "default" | "grid" | "dots" | "gradient"
+  children: React.ReactNode;
+  code?: string;
+  className?: string;
+  showCopy?: boolean;
+  background?: "default" | "grid" | "dots" | "gradient";
 }
 
 export function Preview({
@@ -18,27 +18,29 @@ export function Preview({
   showCopy = true,
   background = "default",
 }: PreviewProps) {
-  const [activeTab, setActiveTab] = React.useState<"preview" | "code">("preview")
-  const [copied, setCopied] = React.useState(false)
-  const [key, setKey] = React.useState(0)
+  const [activeTab, setActiveTab] = React.useState<"preview" | "code">(
+    "preview",
+  );
+  const [copied, setCopied] = React.useState(false);
+  const [key, setKey] = React.useState(0);
 
   const handleCopy = async () => {
-    if (!code) return
-    await navigator.clipboard.writeText(code)
-    setCopied(true)
-    setTimeout(() => setCopied(false), 2000)
-  }
+    if (!code) return;
+    await navigator.clipboard.writeText(code);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
 
   const handleReplay = () => {
-    setKey(prev => prev + 1)
-  }
+    setKey((prev) => prev + 1);
+  };
 
   const backgroundStyles = {
     default: "bg-background",
     grid: "bg-background bg-[linear-gradient(to_right,hsl(var(--border))_1px,transparent_1px),linear-gradient(to_bottom,hsl(var(--border))_1px,transparent_1px)] bg-[size:4rem_4rem]",
     dots: "bg-background bg-[radial-gradient(hsl(var(--border))_1px,transparent_1px)] bg-[size:1rem_1rem]",
     gradient: "bg-gradient-to-br from-background via-muted/30 to-background",
-  }
+  };
 
   return (
     <div className="group relative my-6 overflow-hidden rounded-lg border">
@@ -68,7 +70,7 @@ export function Preview({
             </button>
           )}
         </div>
-        
+
         <div className="flex items-center gap-1">
           {activeTab === "preview" && (
             <button
@@ -80,7 +82,7 @@ export function Preview({
               <span className="hidden sm:inline">Replay</span>
             </button>
           )}
-          
+
           {code && showCopy && activeTab === "code" && (
             <button
               onClick={handleCopy}
@@ -105,40 +107,38 @@ export function Preview({
       {/* Content */}
       {activeTab === "preview" ? (
         <div
-          className={`flex min-h-[350px] w-full items-center justify-center p-10 ${backgroundStyles[background]} ${className}`}
+          className={`flex min-h-[200px] w-full items-center justify-center p-10 ${backgroundStyles[background]} ${className}`}
         >
-          <div key={key} className="w-full flex items-center justify-center">
+          <div key={key} className="flex items-center justify-center">
             {children}
           </div>
         </div>
       ) : (
         <div className="max-h-[500px] overflow-auto">
           <pre className="p-6">
-            <code className="relative rounded bg-muted px-[0.3rem] py-[0.2rem] font-mono text-sm">{code}</code>
+            <code className="relative rounded bg-muted px-[0.3rem] py-[0.2rem] font-mono text-sm">
+              {code}
+            </code>
           </pre>
         </div>
       )}
     </div>
-  )
+  );
 }
 
 export function PreviewGrid({
   children,
   cols = 2,
 }: {
-  children: React.ReactNode
-  cols?: 1 | 2 | 3 | 4
+  children: React.ReactNode;
+  cols?: 1 | 2 | 3 | 4;
 }) {
   const gridCols = {
     1: "grid-cols-1",
     2: "grid-cols-1 md:grid-cols-2",
     3: "grid-cols-1 md:grid-cols-2 lg:grid-cols-3",
     4: "grid-cols-1 md:grid-cols-2 lg:grid-cols-4",
-  }
+  };
 
-  return (
-    <div className={`grid gap-4 ${gridCols[cols]}`}>
-      {children}
-    </div>
-  )
+  return <div className={`grid gap-4 ${gridCols[cols]}`}>{children}</div>;
 }

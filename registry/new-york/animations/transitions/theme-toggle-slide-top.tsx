@@ -19,6 +19,16 @@ export interface ThemeToggleSlideTopProps {
    * Optional class name
    */
   className?: string
+  /**
+   * Animation speed in seconds
+   * @default 0.5
+   */
+  speed?: number
+  /**
+   * Blur amount in pixels
+   * @default 0
+   */
+  blur?: number
 }
 
 /**
@@ -37,6 +47,8 @@ export function ThemeToggleSlideTop({
   onToggle,
   theme,
   className,
+  speed = 0.5,
+  blur = 0,
 }: ThemeToggleSlideTopProps) {
   const handleClick = async () => {
     // Check if View Transitions API is supported
@@ -44,6 +56,10 @@ export function ThemeToggleSlideTop({
       onToggle?.()
       return
     }
+
+    // Set CSS variables for speed and blur
+    document.documentElement.style.setProperty('--transition-speed', `${speed}s`)
+    document.documentElement.style.setProperty('--transition-blur', `${blur}px`)
 
     // Add custom class for this specific transition
     document.documentElement.classList.add('theme-slide-top')
@@ -65,12 +81,19 @@ export function ThemeToggleSlideTop({
 
 // Add to your global CSS:
 /*
+:root {
+  --transition-speed: 0.5s;
+  --transition-blur: 0px;
+}
+
 .theme-slide-top::view-transition-old(root) {
-  animation: slide-out-top 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+  animation: slide-out-top var(--transition-speed) cubic-bezier(0.4, 0, 0.2, 1);
+  filter: blur(var(--transition-blur));
 }
 
 .theme-slide-top::view-transition-new(root) {
-  animation: slide-in-top 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+  animation: slide-in-top var(--transition-speed) cubic-bezier(0.4, 0, 0.2, 1);
+  filter: blur(var(--transition-blur));
 }
 
 @keyframes slide-out-top {

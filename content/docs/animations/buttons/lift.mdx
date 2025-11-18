@@ -22,12 +22,12 @@ The `LiftButton` component creates a button that lifts up on hover with an optio
   background="grid"
   code={`import { LiftButton } from "@/components/animations/buttons/lift"
 
-<LiftButton className="px-6 py-3 bg-blue-500 text-white rounded-lg">
-  Hover me!
+<LiftButton className="inline-flex h-11 items-center gap-2 rounded-lg bg-blue-600 px-6 text-sm font-semibold text-white">
+  Hover Me
 </LiftButton>`}
 >
-  <LiftButton className="px-6 py-3 bg-blue-500 text-white rounded-lg">
-    Hover me!
+  <LiftButton className="inline-flex h-11 items-center gap-2 rounded-lg bg-blue-600 px-6 text-sm font-semibold text-white">
+    Hover Me
   </LiftButton>
 </Preview>
 
@@ -87,8 +87,8 @@ import { LiftButton } from "@/components/animations/buttons/lift"
 
 export function Example() {
   return (
-    <LiftButton className="px-6 py-3 bg-blue-500 text-white rounded-lg">
-      Hover me!
+    <LiftButton className="inline-flex h-11 items-center gap-2 rounded-lg bg-blue-600 px-6 text-sm font-semibold text-white">
+      Hover Me
     </LiftButton>
   )
 }
@@ -142,9 +142,9 @@ export function Example() {
 ```tsx
 <LiftButton 
   liftHeight={12}
-  className="px-8 py-4 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-full font-semibold text-lg"
+  className="inline-flex h-11 items-center gap-2 rounded-lg bg-gradient-to-r from-blue-600 to-purple-600 px-6 text-sm font-semibold text-white"
 >
-  Get Started Free
+  Get Started
 </LiftButton>
 ```
 
@@ -153,9 +153,9 @@ export function Example() {
 ```tsx
 <LiftButton 
   liftHeight={6}
-  className="p-3 bg-white border border-gray-200 rounded-lg"
+  className="inline-flex h-11 w-11 items-center justify-center rounded-lg bg-white border border-neutral-200 shadow-sm"
 >
-  <HeartIcon className="w-5 h-5" />
+  <HeartIcon className="h-5 w-5 text-neutral-700" />
 </LiftButton>
 ```
 
@@ -164,9 +164,9 @@ export function Example() {
 ```tsx
 <LiftButton 
   liftHeight={4}
-  className="px-4 py-2 bg-gray-100 text-gray-700 rounded"
+  className="inline-flex h-11 items-center gap-2 rounded-lg bg-neutral-100 px-6 text-sm font-semibold text-neutral-700"
 >
-  Subtle Effect
+  Subtle
 </LiftButton>
 ```
 
@@ -175,9 +175,9 @@ export function Example() {
 ```tsx
 <LiftButton 
   liftHeight={20}
-  className="px-6 py-3 bg-red-500 text-white rounded-lg"
+  className="inline-flex h-11 items-center gap-2 rounded-lg bg-red-600 px-6 text-sm font-semibold text-white"
 >
-  Dramatic Lift
+  Dramatic
 </LiftButton>
 ```
 
@@ -193,9 +193,12 @@ export function CustomElement() {
   const liftProps = useHoverLift({ liftDistance: 12 })
   
   return (
-    <motion.div {...liftProps} className="card">
-      <h3>Any Element</h3>
-      <p>Can have lift effect</p>
+    <motion.div 
+      {...liftProps} 
+      className="inline-flex items-center gap-2 rounded-lg bg-white border border-neutral-200 p-6 shadow-sm"
+    >
+      <h3 className="font-semibold">Any Element</h3>
+      <p className="text-sm text-neutral-600">Can have lift effect</p>
     </motion.div>
   )
 }
@@ -220,7 +223,7 @@ export function LiftAndGlow() {
   }
   
   return (
-    <motion.button {...combined} className="px-6 py-3 bg-blue-500 text-white rounded-lg">
+    <motion.button {...combined} className="inline-flex h-11 items-center gap-2 rounded-lg bg-blue-600 px-6 text-sm font-semibold text-white">
       Lift + Glow
     </motion.button>
   )

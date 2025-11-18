@@ -19,6 +19,16 @@ export interface ThemeToggleCircularProps {
    * Optional class name
    */
   className?: string
+  /**
+   * Animation speed in seconds
+   * @default 0.5
+   */
+  speed?: number
+  /**
+   * Blur amount in pixels
+   * @default 0
+   */
+  blur?: number
 }
 
 /**
@@ -49,6 +59,8 @@ export function ThemeToggleCircular({
   onToggle,
   theme,
   className,
+  speed = 0.5,
+  blur = 0,
 }: ThemeToggleCircularProps) {
   const handleClick = async (e: React.MouseEvent<HTMLDivElement>) => {
     // Check if View Transitions API is supported
@@ -62,9 +74,11 @@ export function ThemeToggleCircular({
     const x = e.clientX
     const y = e.clientY
 
-    // Set CSS variables for circle origin
+    // Set CSS variables for circle origin, speed, and blur
     document.documentElement.style.setProperty('--x', `${x}px`)
     document.documentElement.style.setProperty('--y', `${y}px`)
+    document.documentElement.style.setProperty('--transition-speed', `${speed}s`)
+    document.documentElement.style.setProperty('--transition-blur', `${blur}px`)
 
     // Start view transition
     const transition = document.startViewTransition(() => {

@@ -1,0 +1,195 @@
+---
+title: Theme Toggle Slide Left
+description: Left to right slide animation for theme toggle using View Transitions API.
+---
+
+import { Tab, Tabs } from 'fumadocs-ui/components/tabs';
+import { Callout } from 'fumadocs-ui/components/callout';
+import { Preview } from '@/components/preview';
+import { TransitionDemo } from '@/components/transition-demo';
+import { ThemeToggleSlideLeft } from '@/registry/new-york/animations/transitions/theme-toggle-slide-left';
+
+## Overview
+
+The `ThemeToggleSlideLeft` component creates a slide-right effect from the left when toggling themes. Uses the native View Transitions API with customizable speed and blur.
+
+<Callout type="info">
+  **Browser Support:** View Transitions API is supported in Chrome 111+, Edge 111+, and Opera 97+. Falls back to instant theme changes in unsupported browsers.
+</Callout>
+
+## Interactive Demo
+
+Try it live! Adjust the speed and blur sliders, then click the button to see the transition effect.
+
+<Preview background="grid">
+  <TransitionDemo TransitionComponent={ThemeToggleSlideLeft} />
+</Preview>
+
+## Installation
+
+<Tabs items={['CLI', 'Manual']}>
+  <Tab value="CLI">
+    ```bash
+    npx shadcn add https://animbits.dev/r/animations/transitions/theme-toggle-slide-left
+    ```
+  </Tab>
+  <Tab value="Manual">
+    ```tsx title="components/animations/transitions/theme-toggle-slide-left.tsx"
+    "use client"
+
+    import * as React from "react"
+
+    export interface ThemeToggleSlideLeftProps {
+      children: React.ReactNode
+      onToggle?: () => void
+      theme?: "light" | "dark"
+      className?: string
+      speed?: number
+      blur?: number
+    }
+
+    export function ThemeToggleSlideLeft({
+      children,
+      onToggle,
+      theme,
+      className,
+      speed = 0.5,
+      blur = 0,
+    }: ThemeToggleSlideLeftProps) {
+      const handleClick = async () => {
+        if (!document.startViewTransition) {
+          onToggle?.()
+          return
+        }
+
+        document.documentElement.style.setProperty('--transition-speed', `${speed}s`)
+        document.documentElement.style.setProperty('--transition-blur', `${blur}px`)
+
+        document.documentElement.classList.add('theme-slide-left')
+
+        const transition = document.startViewTransition(() => {
+          onToggle?.()
+        })
+
+        await transition.finished
+        document.documentElement.classList.remove('theme-slide-left')
+      }
+
+      return (
+        <div onClick={handleClick} className={className}>
+          {children}
+        </div>
+      )
+    }
+    ```
+
+    **Required CSS** (add to `globals.css`):
+    ```css
+    :root {
+      --transition-speed: 0.5s;
+      --transition-blur: 0px;
+    }
+
+    .theme-slide-left::view-transition-old(root) {
+      animation: slide-out-left var(--transition-speed) cubic-bezier(0.4, 0, 0.2, 1);
+      filter: blur(var(--transition-blur));
+    }
+
+    .theme-slide-left::view-transition-new(root) {
+      animation: slide-in-left var(--transition-speed) cubic-bezier(0.4, 0, 0.2, 1);
+      filter: blur(var(--transition-blur));
+    }
+
+    @keyframes slide-out-left {
+      to {
+        transform: translateX(-100%);
+      }
+    }
+
+    @keyframes slide-in-left {
+      from {
+        transform: translateX(-100%);
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .theme-slide-left::view-transition-group(*),
+      .theme-slide-left::view-transition-old(*),
+      .theme-slide-left::view-transition-new(*) {
+        animation: none !important;
+      }
+    }
+    ```
+  </Tab>
+</Tabs>
+
+## Usage
+
+### With next-themes
+
+```tsx
+"use client"
+
+import { useTheme } from "next-themes"
+import { ThemeToggleSlideLeft } from "@/components/animations/transitions/theme-toggle-slide-left"
+import { Button } from "@/components/ui/button"
+
+export function ThemeToggle() {
+  const { theme, setTheme } = useTheme()
+  
+  return (
+    <ThemeToggleSlideLeft 
+      onToggle={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
+      speed={0.5}
+      blur={0}
+    >
+      <Button>Toggle Theme</Button>
+    </ThemeToggleSlideLeft>
+  )
+}
+```
+
+## Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `children` | `ReactNode` | - | The trigger element (button, icon, etc.) |
+| `onToggle` | `() => void` | - | Callback when theme should toggle |
+| `theme` | `"light"` \| `"dark"` | - | Current theme (optional) |
+| `speed` | `number` | `0.5` | Animation speed in seconds |
+| `blur` | `number` | `0` | Blur amount in pixels |
+| `className` | `string` | - | Additional CSS classes |
+
+## Examples
+
+### Fast Transition
+
+```tsx
+<ThemeToggleSlideLeft speed={0.2}>
+  <Button>Toggle</Button>
+</ThemeToggleSlideLeft>
+```
+
+### With Blur
+
+```tsx
+<ThemeToggleSlideLeft speed={0.5} blur={10}>
+  <Button>Toggle</Button>
+</ThemeToggleSlideLeft>
+```
+
+### Slow with Heavy Blur
+
+```tsx
+<ThemeToggleSlideLeft speed={1.2} blur={20}>
+  <Button>Toggle</Button>
+</ThemeToggleSlideLeft>
+```
+
+## Features
+
+- ✅ Hardware accelerated (GPU)
+- ✅ Respects `prefers-reduced-motion`
+- ✅ Graceful fallback for unsupported browsers
+- ✅ Customizable speed and blur
+- ✅ Minimal bundle size

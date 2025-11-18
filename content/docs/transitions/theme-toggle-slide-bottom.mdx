@@ -1,0 +1,195 @@
+---
+title: Theme Toggle Slide Bottom
+description: Bottom to top slide animation for theme toggle using View Transitions API.
+---
+
+import { Tab, Tabs } from 'fumadocs-ui/components/tabs';
+import { Callout } from 'fumadocs-ui/components/callout';
+import { Preview } from '@/components/preview';
+import { TransitionDemo } from '@/components/transition-demo';
+import { ThemeToggleSlideBottom } from '@/registry/new-york/animations/transitions/theme-toggle-slide-bottom';
+
+## Overview
+
+The `ThemeToggleSlideBottom` component creates a slide-up effect from the bottom when toggling themes. Uses the native View Transitions API with customizable speed and blur.
+
+<Callout type="info">
+  **Browser Support:** View Transitions API is supported in Chrome 111+, Edge 111+, and Opera 97+. Falls back to instant theme changes in unsupported browsers.
+</Callout>
+
+## Interactive Demo
+
+Try it live! Adjust the speed and blur sliders, then click the button to see the transition effect.
+
+<Preview background="grid">
+  <TransitionDemo TransitionComponent={ThemeToggleSlideBottom} />
+</Preview>
+
+## Installation
+
+<Tabs items={['CLI', 'Manual']}>
+  <Tab value="CLI">
+    ```bash
+    npx shadcn add https://animbits.dev/r/animations/transitions/theme-toggle-slide-bottom
+    ```
+  </Tab>
+  <Tab value="Manual">
+    ```tsx title="components/animations/transitions/theme-toggle-slide-bottom.tsx"
+    "use client"
+
+    import * as React from "react"
+
+    export interface ThemeToggleSlideBottomProps {
+      children: React.ReactNode
+      onToggle?: () => void
+      theme?: "light" | "dark"
+      className?: string
+      speed?: number
+      blur?: number
+    }
+
+    export function ThemeToggleSlideBottom({
+      children,
+      onToggle,
+      theme,
+      className,
+      speed = 0.5,
+      blur = 0,
+    }: ThemeToggleSlideBottomProps) {
+      const handleClick = async () => {
+        if (!document.startViewTransition) {
+          onToggle?.()
+          return
+        }
+
+        document.documentElement.style.setProperty('--transition-speed', `${speed}s`)
+        document.documentElement.style.setProperty('--transition-blur', `${blur}px`)
+
+        document.documentElement.classList.add('theme-slide-bottom')
+
+        const transition = document.startViewTransition(() => {
+          onToggle?.()
+        })
+
+        await transition.finished
+        document.documentElement.classList.remove('theme-slide-bottom')
+      }
+
+      return (
+        <div onClick={handleClick} className={className}>
+          {children}
+        </div>
+      )
+    }
+    ```
+
+    **Required CSS** (add to `globals.css`):
+    ```css
+    :root {
+      --transition-speed: 0.5s;
+      --transition-blur: 0px;
+    }
+
+    .theme-slide-bottom::view-transition-old(root) {
+      animation: slide-out-bottom var(--transition-speed) cubic-bezier(0.4, 0, 0.2, 1);
+      filter: blur(var(--transition-blur));
+    }
+
+    .theme-slide-bottom::view-transition-new(root) {
+      animation: slide-in-bottom var(--transition-speed) cubic-bezier(0.4, 0, 0.2, 1);
+      filter: blur(var(--transition-blur));
+    }
+
+    @keyframes slide-out-bottom {
+      to {
+        transform: translateY(100%);
+      }
+    }
+
+    @keyframes slide-in-bottom {
+      from {
+        transform: translateY(100%);
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .theme-slide-bottom::view-transition-group(*),
+      .theme-slide-bottom::view-transition-old(*),
+      .theme-slide-bottom::view-transition-new(*) {
+        animation: none !important;
+      }
+    }
+    ```
+  </Tab>
+</Tabs>
+
+## Usage
+
+### With next-themes
+
+```tsx
+"use client"
+
+import { useTheme } from "next-themes"
+import { ThemeToggleSlideBottom } from "@/components/animations/transitions/theme-toggle-slide-bottom"
+import { Button } from "@/components/ui/button"
+
+export function ThemeToggle() {
+  const { theme, setTheme } = useTheme()
+  
+  return (
+    <ThemeToggleSlideBottom 
+      onToggle={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
+      speed={0.5}
+      blur={0}
+    >
+      <Button>Toggle Theme</Button>
+    </ThemeToggleSlideBottom>
+  )
+}
+```
+
+## Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `children` | `ReactNode` | - | The trigger element (button, icon, etc.) |
+| `onToggle` | `() => void` | - | Callback when theme should toggle |
+| `theme` | `"light"` \| `"dark"` | - | Current theme (optional) |
+| `speed` | `number` | `0.5` | Animation speed in seconds |
+| `blur` | `number` | `0` | Blur amount in pixels |
+| `className` | `string` | - | Additional CSS classes |
+
+## Examples
+
+### Fast Transition
+
+```tsx
+<ThemeToggleSlideBottom speed={0.2}>
+  <Button>Toggle</Button>
+</ThemeToggleSlideBottom>
+```
+
+### With Blur
+
+```tsx
+<ThemeToggleSlideBottom speed={0.5} blur={10}>
+  <Button>Toggle</Button>
+</ThemeToggleSlideBottom>
+```
+
+### Slow with Heavy Blur
+
+```tsx
+<ThemeToggleSlideBottom speed={1.2} blur={20}>
+  <Button>Toggle</Button>
+</ThemeToggleSlideBottom>
+```
+
+## Features
+
+- ✅ Hardware accelerated (GPU)
+- ✅ Respects `prefers-reduced-motion`
+- ✅ Graceful fallback for unsupported browsers
+- ✅ Customizable speed and blur
+- ✅ Minimal bundle size

@@ -19,6 +19,16 @@ export interface ThemeToggleSlideBottomProps {
    * Optional class name
    */
   className?: string
+  /**
+   * Animation speed in seconds
+   * @default 0.5
+   */
+  speed?: number
+  /**
+   * Blur amount in pixels
+   * @default 0
+   */
+  blur?: number
 }
 
 /**
@@ -37,6 +47,8 @@ export function ThemeToggleSlideBottom({
   onToggle,
   theme,
   className,
+  speed = 0.5,
+  blur = 0,
 }: ThemeToggleSlideBottomProps) {
   const handleClick = async () => {
     // Check if View Transitions API is supported
@@ -44,6 +56,10 @@ export function ThemeToggleSlideBottom({
       onToggle?.()
       return
     }
+
+    // Set CSS variables for speed and blur
+    document.documentElement.style.setProperty('--transition-speed', `${speed}s`)
+    document.documentElement.style.setProperty('--transition-blur', `${blur}px`)
 
     document.documentElement.classList.add('theme-slide-bottom')
 
@@ -64,12 +80,19 @@ export function ThemeToggleSlideBottom({
 
 // Add to your global CSS:
 /*
+:root {
+  --transition-speed: 0.5s;
+  --transition-blur: 0px;
+}
+
 .theme-slide-bottom::view-transition-old(root) {
-  animation: slide-out-bottom 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+  animation: slide-out-bottom var(--transition-speed) cubic-bezier(0.4, 0, 0.2, 1);
+  filter: blur(var(--transition-blur));
 }
 
 .theme-slide-bottom::view-transition-new(root) {
-  animation: slide-in-bottom 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+  animation: slide-in-bottom var(--transition-speed) cubic-bezier(0.4, 0, 0.2, 1);
+  filter: blur(var(--transition-blur));
 }
 
 @keyframes slide-out-bottom {

@@ -1,0 +1,208 @@
+---
+title: Stagger Fade List
+description: List component with staggered fade-in animation.
+---
+
+import { Tab, Tabs } from 'fumadocs-ui/components/tabs';
+import { Preview } from '@/components/preview';
+import { StaggerFadeList } from '@/registry/new-york/animations/lists/stagger-fade';
+
+## Overview
+
+The `StaggerFadeList` component creates a sequential fade-in effect for list items. Perfect for subtle, elegant content reveals.
+
+## Preview
+
+<Preview
+  background="grid"
+  code={`import { StaggerFadeList } from "@/components/animations/lists/stagger-fade"
+
+const items = ["Item 1", "Item 2", "Item 3", "Item 4"]
+
+<StaggerFadeList staggerDelay={0.1}>
+  {items.map((item, i) => (
+    <div key={i} className="p-4 bg-white dark:bg-neutral-900 rounded-lg border mb-2">
+      {item}
+    </div>
+  ))}
+</StaggerFadeList>`}
+>
+  <StaggerFadeList staggerDelay={0.1} className="w-full max-w-md">
+    {["Card 1", "Card 2", "Card 3", "Card 4"].map((item, i) => (
+      <div key={i} className="p-4 bg-white dark:bg-neutral-900 rounded-lg border border-neutral-200 dark:border-neutral-800 mb-2">
+        <div className="font-medium">{item}</div>
+        <div className="text-sm text-neutral-600 dark:text-neutral-400 mt-1">Fading in sequentially</div>
+      </div>
+    ))}
+  </StaggerFadeList>
+</Preview>
+
+## Installation
+
+<Tabs items={['CLI', 'Manual']}>
+  <Tab value="CLI">
+    ```bash
+    npx shadcn add https://animbits.dev/r/animations/lists/stagger-fade
+    ```
+  </Tab>
+  <Tab value="Manual">
+    ```tsx title="components/animations/lists/stagger-fade.tsx"
+    "use client"
+
+    import * as React from "react"
+    import { motion, HTMLMotionProps } from "framer-motion"
+    import { cn } from "@/lib/utils"
+
+    export interface StaggerFadeListProps extends Omit<HTMLMotionProps<"div">, "children"> {
+      children: React.ReactNode[]
+      staggerDelay?: number
+      duration?: number
+      from?: number
+      as?: keyof JSX.IntrinsicElements
+    }
+
+    export function StaggerFadeList({
+      children,
+      staggerDelay = 0.1,
+      duration = 0.4,
+      from = 0,
+      as: Component = "div",
+      className,
+      ...props
+    }: StaggerFadeListProps) {
+      const childrenArray = React.Children.toArray(children)
+
+      const MotionComponent = motion[Component as keyof typeof motion] as any
+
+      return (
+        <MotionComponent className={cn(className)} {...props}>
+          {childrenArray.map((child, index) => (
+            <motion.div
+              key={index}
+              initial={{ opacity: from }}
+              animate={{ opacity: 1 }}
+              transition={{
+                duration,
+                delay: index * staggerDelay,
+                ease: "easeOut",
+              }}
+            >
+              {child}
+            </motion.div>
+          ))}
+        </MotionComponent>
+      )
+    }
+    ```
+  </Tab>
+</Tabs>
+
+## Usage
+
+```tsx
+import { StaggerFadeList } from "@/components/animations/lists/stagger-fade"
+
+const items = ["Item 1", "Item 2", "Item 3"]
+
+export default function Example() {
+  return (
+    <StaggerFadeList staggerDelay={0.1}>
+      {items.map((item, index) => (
+        <div key={index} className="p-4 border rounded-lg">
+          {item}
+        </div>
+      ))}
+    </StaggerFadeList>
+  )
+}
+```
+
+## Examples
+
+### Default Fade
+
+<Preview
+  background="dots"
+  code={`<StaggerFadeList>
+  {items.map((item, i) => <div key={i}>{item}</div>)}
+</StaggerFadeList>`}
+>
+  <StaggerFadeList className="w-full max-w-md">
+    {["Feature 1", "Feature 2", "Feature 3"].map((item, i) => (
+      <div key={i} className="p-3 bg-blue-50 dark:bg-blue-950 rounded-lg mb-2">
+        {item}
+      </div>
+    ))}
+  </StaggerFadeList>
+</Preview>
+
+### Fast Stagger
+
+<Preview
+  background="dots"
+  code={`<StaggerFadeList staggerDelay={0.05} duration={0.2}>
+  {items.map((item, i) => <div key={i}>{item}</div>)}
+</StaggerFadeList>`}
+>
+  <StaggerFadeList staggerDelay={0.05} duration={0.2} className="w-full max-w-md">
+    {["Quick 1", "Quick 2", "Quick 3", "Quick 4"].map((item, i) => (
+      <div key={i} className="p-3 bg-green-50 dark:bg-green-950 rounded-lg mb-2">
+        {item}
+      </div>
+    ))}
+  </StaggerFadeList>
+</Preview>
+
+### Slow Reveal
+
+<Preview
+  background="dots"
+  code={`<StaggerFadeList staggerDelay={0.2} duration={0.6}>
+  {items.map((item, i) => <div key={i}>{item}</div>)}
+</StaggerFadeList>`}
+>
+  <StaggerFadeList staggerDelay={0.2} duration={0.6} className="w-full max-w-md">
+    {["Slow 1", "Slow 2", "Slow 3"].map((item, i) => (
+      <div key={i} className="p-3 bg-purple-50 dark:bg-purple-950 rounded-lg mb-2">
+        {item}
+      </div>
+    ))}
+  </StaggerFadeList>
+</Preview>
+
+### Grid Layout
+
+<Preview
+  background="dots"
+  code={`<StaggerFadeList as="div" className="grid grid-cols-3 gap-4">
+  {items.map((item, i) => <div key={i}>{item}</div>)}
+</StaggerFadeList>`}
+>
+  <StaggerFadeList as="div" className="grid grid-cols-3 gap-4 w-full max-w-md">
+    {["1", "2", "3", "4", "5", "6"].map((item, i) => (
+      <div key={i} className="p-6 bg-orange-50 dark:bg-orange-950 rounded-lg text-center">
+        {item}
+      </div>
+    ))}
+  </StaggerFadeList>
+</Preview>
+
+## Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `children` | `ReactNode[]` | - | Array of items to animate |
+| `staggerDelay` | `number` | `0.1` | Delay between each item in seconds |
+| `duration` | `number` | `0.4` | Animation duration in seconds |
+| `from` | `number` | `0` | Initial opacity value |
+| `as` | `keyof JSX.IntrinsicElements` | `"div"` | Container element type |
+| `className` | `string` | - | Additional CSS classes |
+
+## Use Cases
+
+- Image galleries
+- Comment threads
+- Notification lists
+- Timeline events
+- Stats dashboards
+- Portfolio items

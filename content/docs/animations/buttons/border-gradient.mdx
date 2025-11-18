@@ -17,14 +17,15 @@ The `BorderGradientButton` creates an animated gradient border that continuously
   background="default"
   code={`import { BorderGradientButton } from "@/components/animations/buttons/border-gradient"
 
-<BorderGradientButton className="px-6 py-3 bg-white dark:bg-neutral-900 text-black dark:text-white rounded-lg">
-  Gradient Border
+<BorderGradientButton className="inline-flex h-11 items-center gap-2 rounded-lg bg-white dark:bg-neutral-900 px-6 text-sm font-semibold text-neutral-900 dark:text-white">
+  Hover Me
 </BorderGradientButton>`}
 >
-  <BorderGradientButton className="px-6 py-3 bg-white dark:bg-neutral-900 text-black dark:text-white rounded-lg">
-    Gradient Border
+  <BorderGradientButton className="inline-flex h-11 items-center gap-2 rounded-lg bg-white dark:bg-neutral-900 px-6 text-sm font-semibold text-neutral-900 dark:text-white">
+    Hover Me
   </BorderGradientButton>
 </Preview>
+
 
 ## Installation
 
@@ -184,8 +185,8 @@ The `BorderGradientButton` creates an animated gradient border that continuously
 ```tsx
 import { BorderGradientButton } from "@/components/animations/buttons/border-gradient"
 
-<BorderGradientButton className="px-6 py-3 bg-white dark:bg-neutral-900 text-black dark:text-white rounded-lg">
-  Gradient Border
+<BorderGradientButton className="inline-flex h-11 items-center gap-2 rounded-lg bg-white dark:bg-neutral-900 px-6 text-sm font-semibold text-neutral-900 dark:text-white">
+  Hover Me
 </BorderGradientButton>
 ```
 
@@ -197,14 +198,14 @@ import { BorderGradientButton } from "@/components/animations/buttons/border-gra
   background="grid"
   code={`<BorderGradientButton 
   colors={["#ff0080", "#ff8c00", "#40e0d0"]}
-  className="px-6 py-3 bg-white dark:bg-neutral-900 rounded-lg"
+  className="px-6 py-2.5 bg-white dark:bg-neutral-900 rounded-lg font-semibold"
 >
   Custom Colors
 </BorderGradientButton>`}
 >
   <BorderGradientButton 
     colors={["#ff0080", "#ff8c00", "#40e0d0"]}
-    className="px-6 py-3 bg-white dark:bg-neutral-900 text-black dark:text-white rounded-lg"
+    className="inline-flex h-11 items-center gap-2 rounded-lg bg-white dark:bg-neutral-900 px-6 text-sm font-semibold text-neutral-900 dark:text-white"
   >
     Custom Colors
   </BorderGradientButton>
@@ -213,7 +214,7 @@ import { BorderGradientButton } from "@/components/animations/buttons/border-gra
 ```tsx
 <BorderGradientButton 
   colors={["#ff0080", "#ff8c00", "#40e0d0"]}
-  className="px-6 py-3 bg-white dark:bg-neutral-900 rounded-lg"
+  className="px-6 py-2.5 bg-white dark:bg-neutral-900 rounded-lg font-semibold"
 >
   Custom Colors
 </BorderGradientButton>
@@ -228,7 +229,7 @@ import { BorderGradientButton } from "@/components/animations/buttons/border-gra
   Fast Animation
 </BorderGradientButton>`}
   >
-    <BorderGradientButton duration={1} className="px-6 py-3 bg-white dark:bg-neutral-900 text-black dark:text-white rounded-lg">
+    <BorderGradientButton duration={1} className="inline-flex h-11 items-center gap-2 rounded-lg bg-white dark:bg-neutral-900 px-6 text-sm font-semibold text-neutral-900 dark:text-white">
       Fast Animation
     </BorderGradientButton>
   </Preview>
@@ -239,7 +240,7 @@ import { BorderGradientButton } from "@/components/animations/buttons/border-gra
   Slow Animation
 </BorderGradientButton>`}
   >
-    <BorderGradientButton duration={4} className="px-6 py-3 bg-white dark:bg-neutral-900 text-black dark:text-white rounded-lg">
+    <BorderGradientButton duration={4} className="inline-flex h-11 items-center gap-2 rounded-lg bg-white dark:bg-neutral-900 px-6 text-sm font-semibold text-neutral-900 dark:text-white">
       Slow Animation
     </BorderGradientButton>
   </Preview>
@@ -262,22 +263,22 @@ import { BorderGradientButton } from "@/components/animations/buttons/border-gra
 <PreviewGrid cols={2}>
   <Preview
     background="dots"
-    code={`<BorderGradientButton className="px-6 py-3 rounded-full">
+    code={`<BorderGradientButton className="px-4 py-2 rounded-full">
   Pill Shape
 </BorderGradientButton>`}
   >
-    <BorderGradientButton className="px-6 py-3 bg-white dark:bg-neutral-900 text-black dark:text-white rounded-full">
+    <BorderGradientButton className="inline-flex h-11 items-center gap-2 rounded-full bg-white dark:bg-neutral-900 px-6 text-sm font-semibold text-neutral-900 dark:text-white">
       Pill Shape
     </BorderGradientButton>
   </Preview>
   
   <Preview
     background="dots"
-    code={`<BorderGradientButton className="px-6 py-3 rounded-none">
+    code={`<BorderGradientButton className="px-4 py-2 rounded-none">
   Sharp
 </BorderGradientButton>`}
   >
-    <BorderGradientButton className="px-6 py-3 bg-white dark:bg-neutral-900 text-black dark:text-white rounded-none">
+    <BorderGradientButton className="inline-flex h-11 items-center gap-2 rounded-none bg-white dark:bg-neutral-900 px-6 text-sm font-semibold text-neutral-900 dark:text-white">
       Sharp
     </BorderGradientButton>
   </Preview>
@@ -285,17 +286,17 @@ import { BorderGradientButton } from "@/components/animations/buttons/border-gra
 
 ```tsx
 // Pill shape
-<BorderGradientButton className="px-6 py-3 rounded-full">
+<BorderGradientButton className="inline-flex h-11 items-center gap-2 rounded-full bg-white dark:bg-neutral-900 px-6 text-sm font-semibold text-neutral-900 dark:text-white">
   Pill Shape
 </BorderGradientButton>
 
 // Rounded corners
-<BorderGradientButton className="px-6 py-3 rounded-lg">
+<BorderGradientButton className="inline-flex h-11 items-center gap-2 rounded-lg bg-white dark:bg-neutral-900 px-6 text-sm font-semibold text-neutral-900 dark:text-white">
   Rounded
 </BorderGradientButton>
 
 // Sharp corners
-<BorderGradientButton className="px-6 py-3 rounded-none">
+<BorderGradientButton className="inline-flex h-11 items-center gap-2 rounded-none bg-white dark:bg-neutral-900 px-6 text-sm font-semibold text-neutral-900 dark:text-white">
   Sharp
 </BorderGradientButton>
 ```
@@ -315,7 +316,7 @@ import { BorderGradientButton } from "@/components/animations/buttons/border-gra
     <BorderGradientButton 
       colors={["#ff0000", "#ff7f00", "#ffff00", "#00ff00", "#0000ff", "#8b00ff"]}
       duration={3}
-      className="px-6 py-3 bg-white dark:bg-neutral-900 text-black dark:text-white rounded-lg"
+      className="inline-flex h-11 items-center gap-2 rounded-lg bg-white dark:bg-neutral-900 px-6 text-sm font-semibold text-neutral-900 dark:text-white"
     >
       Rainbow
     </BorderGradientButton>
@@ -331,7 +332,7 @@ import { BorderGradientButton } from "@/components/animations/buttons/border-gra
   >
     <BorderGradientButton 
       colors={["#10b981", "#06b6d4", "#3b82f6"]}
-      className="px-6 py-3 bg-white dark:bg-neutral-900 text-black dark:text-white rounded-lg"
+      className="inline-flex h-11 items-center gap-2 rounded-lg bg-white dark:bg-neutral-900 px-6 text-sm font-semibold text-neutral-900 dark:text-white"
     >
       Ocean
     </BorderGradientButton>

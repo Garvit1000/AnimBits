@@ -19,6 +19,16 @@ export interface ThemeToggleSlideLeftProps {
    * Optional class name
    */
   className?: string
+  /**
+   * Animation speed in seconds
+   * @default 0.5
+   */
+  speed?: number
+  /**
+   * Blur amount in pixels
+   * @default 0
+   */
+  blur?: number
 }
 
 /**
@@ -37,6 +47,8 @@ export function ThemeToggleSlideLeft({
   onToggle,
   theme,
   className,
+  speed = 0.5,
+  blur = 0,
 }: ThemeToggleSlideLeftProps) {
   const handleClick = async () => {
     // Check if View Transitions API is supported
@@ -44,6 +56,10 @@ export function ThemeToggleSlideLeft({
       onToggle?.()
       return
     }
+
+    // Set CSS variables for speed and blur
+    document.documentElement.style.setProperty('--transition-speed', `${speed}s`)
+    document.documentElement.style.setProperty('--transition-blur', `${blur}px`)
 
     document.documentElement.classList.add('theme-slide-left')
 
@@ -64,12 +80,19 @@ export function ThemeToggleSlideLeft({
 
 // Add to your global CSS:
 /*
+:root {
+  --transition-speed: 0.5s;
+  --transition-blur: 0px;
+}
+
 .theme-slide-left::view-transition-old(root) {
-  animation: slide-out-left 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+  animation: slide-out-left var(--transition-speed) cubic-bezier(0.4, 0, 0.2, 1);
+  filter: blur(var(--transition-blur));
 }
 
 .theme-slide-left::view-transition-new(root) {
-  animation: slide-in-left 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+  animation: slide-in-left var(--transition-speed) cubic-bezier(0.4, 0, 0.2, 1);
+  filter: blur(var(--transition-blur));
 }
 
 @keyframes slide-out-left {

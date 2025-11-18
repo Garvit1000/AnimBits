@@ -1,0 +1,224 @@
+---
+title: Slide In List
+description: List component with staggered slide-in animation.
+---
+
+import { Tab, Tabs } from 'fumadocs-ui/components/tabs';
+import { Preview } from '@/components/preview';
+import { SlideInList } from '@/registry/new-york/animations/lists/slide-in';
+
+## Overview
+
+The `SlideInList` component creates a staggered slide-in effect for list items. Perfect for revealing content progressively from any direction.
+
+## Preview
+
+<Preview
+  background="grid"
+  code={`import { SlideInList } from "@/components/animations/lists/slide-in"
+
+const items = ["Item 1", "Item 2", "Item 3", "Item 4"]
+
+<SlideInList direction="left" staggerDelay={0.1}>
+  {items.map((item, i) => (
+    <div key={i} className="p-4 bg-white dark:bg-neutral-900 rounded-lg border mb-2">
+      {item}
+    </div>
+  ))}
+</SlideInList>`}
+>
+  <SlideInList direction="left" staggerDelay={0.1} className="w-full max-w-md">
+    {["Product Card 1", "Product Card 2", "Product Card 3", "Product Card 4"].map((item, i) => (
+      <div key={i} className="p-4 bg-white dark:bg-neutral-900 rounded-lg border border-neutral-200 dark:border-neutral-800 mb-2">
+        <div className="font-medium">{item}</div>
+        <div className="text-sm text-neutral-600 dark:text-neutral-400 mt-1">Description text here</div>
+      </div>
+    ))}
+  </SlideInList>
+</Preview>
+
+## Installation
+
+<Tabs items={['CLI', 'Manual']}>
+  <Tab value="CLI">
+    ```bash
+    npx shadcn add https://animbits.dev/r/animations/lists/slide-in
+    ```
+  </Tab>
+  <Tab value="Manual">
+    ```tsx title="components/animations/lists/slide-in.tsx"
+    "use client"
+
+    import * as React from "react"
+    import { motion, HTMLMotionProps } from "framer-motion"
+    import { cn } from "@/lib/utils"
+
+    export interface SlideInListProps extends Omit<HTMLMotionProps<"div">, "children"> {
+      children: React.ReactNode[]
+      direction?: "left" | "right" | "top" | "bottom"
+      staggerDelay?: number
+      duration?: number
+      distance?: number
+      as?: keyof JSX.IntrinsicElements
+    }
+
+    export function SlideInList({
+      children,
+      direction = "left",
+      staggerDelay = 0.1,
+      duration = 0.3,
+      distance = 20,
+      as: Component = "div",
+      className,
+      ...props
+    }: SlideInListProps) {
+      const childrenArray = React.Children.toArray(children)
+
+      const getInitialPosition = () => {
+        switch (direction) {
+          case "left":
+            return { x: -distance, y: 0 }
+          case "right":
+            return { x: distance, y: 0 }
+          case "top":
+            return { x: 0, y: -distance }
+          case "bottom":
+            return { x: 0, y: distance }
+        }
+      }
+
+      const MotionComponent = motion[Component as keyof typeof motion] as any
+
+      return (
+        <MotionComponent className={cn(className)} {...props}>
+          {childrenArray.map((child, index) => (
+            <motion.div
+              key={index}
+              initial={{ ...getInitialPosition(), opacity: 0 }}
+              animate={{ x: 0, y: 0, opacity: 1 }}
+              transition={{
+                duration,
+                delay: index * staggerDelay,
+                ease: "easeOut",
+              }}
+            >
+              {child}
+            </motion.div>
+          ))}
+        </MotionComponent>
+      )
+    }
+    ```
+  </Tab>
+</Tabs>
+
+## Usage
+
+```tsx
+import { SlideInList } from "@/components/animations/lists/slide-in"
+
+const items = ["Item 1", "Item 2", "Item 3"]
+
+export default function Example() {
+  return (
+    <SlideInList direction="left" staggerDelay={0.1}>
+      {items.map((item, index) => (
+        <div key={index} className="p-4 border rounded-lg">
+          {item}
+        </div>
+      ))}
+    </SlideInList>
+  )
+}
+```
+
+## Examples
+
+### Slide from Left
+
+<Preview
+  background="dots"
+  code={`<SlideInList direction="left">
+  {items.map((item, i) => <div key={i}>{item}</div>)}
+</SlideInList>`}
+>
+  <SlideInList direction="left" className="w-full max-w-md">
+    {["Feature 1", "Feature 2", "Feature 3"].map((item, i) => (
+      <div key={i} className="p-3 bg-blue-50 dark:bg-blue-950 rounded-lg mb-2">
+        {item}
+      </div>
+    ))}
+  </SlideInList>
+</Preview>
+
+### Slide from Right
+
+<Preview
+  background="dots"
+  code={`<SlideInList direction="right">
+  {items.map((item, i) => <div key={i}>{item}</div>)}
+</SlideInList>`}
+>
+  <SlideInList direction="right" className="w-full max-w-md">
+    {["Option A", "Option B", "Option C"].map((item, i) => (
+      <div key={i} className="p-3 bg-green-50 dark:bg-green-950 rounded-lg mb-2">
+        {item}
+      </div>
+    ))}
+  </SlideInList>
+</Preview>
+
+### Slide from Top
+
+<Preview
+  background="dots"
+  code={`<SlideInList direction="top">
+  {items.map((item, i) => <div key={i}>{item}</div>)}
+</SlideInList>`}
+>
+  <SlideInList direction="top" className="w-full max-w-md">
+    {["Task 1", "Task 2", "Task 3"].map((item, i) => (
+      <div key={i} className="p-3 bg-purple-50 dark:bg-purple-950 rounded-lg mb-2">
+        {item}
+      </div>
+    ))}
+  </SlideInList>
+</Preview>
+
+### Fast Stagger
+
+<Preview
+  background="dots"
+  code={`<SlideInList direction="left" staggerDelay={0.05} duration={0.2}>
+  {items.map((item, i) => <div key={i}>{item}</div>)}
+</SlideInList>`}
+>
+  <SlideInList direction="left" staggerDelay={0.05} duration={0.2} className="w-full max-w-md">
+    {["Quick 1", "Quick 2", "Quick 3", "Quick 4"].map((item, i) => (
+      <div key={i} className="p-3 bg-orange-50 dark:bg-orange-950 rounded-lg mb-2">
+        {item}
+      </div>
+    ))}
+  </SlideInList>
+</Preview>
+
+## Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `children` | `ReactNode[]` | - | Array of items to animate |
+| `direction` | `"left"` \| `"right"` \| `"top"` \| `"bottom"` | `"left"` | Direction to slide from |
+| `staggerDelay` | `number` | `0.1` | Delay between each item in seconds |
+| `duration` | `number` | `0.3` | Animation duration in seconds |
+| `distance` | `number` | `20` | Distance to slide in pixels |
+| `as` | `keyof JSX.IntrinsicElements` | `"div"` | Container element type |
+| `className` | `string` | - | Additional CSS classes |
+
+## Use Cases
+
+- Product grids
+- Feature lists
+- Navigation menus
+- Blog post listings
+- Search results
+- Dashboard widgets
