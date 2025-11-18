@@ -11,7 +11,7 @@ import { ThemeToggleCircular } from '@/registry/new-york/animations/transitions/
 
 ## Overview
 
-The `ThemeToggleCircular` component creates an expanding circle effect from the click position when toggling themes. Uses the native View Transitions API for smooth, hardware-accelerated animations with customizable speed and blur.
+The `ThemeToggleCircular` component creates an expanding circle effect from the click position when toggling themes. The new theme always expands from the click point, creating a natural ripple effect. Uses the native View Transitions API for smooth, hardware-accelerated animations with customizable speed and blur.
 
 <Callout type="info">
   **Browser Support:** View Transitions API is supported in Chrome 111+, Edge 111+, and Opera 97+. Falls back to instant theme changes in unsupported browsers.
@@ -56,29 +56,62 @@ Try it live! Adjust the speed and blur sliders, then click the button to see the
       speed = 0.5,
       blur = 0,
     }: ThemeToggleCircularProps) {
+      const [isTransitioning, setIsTransitioning] = React.useState(false)
+
       const handleClick = async (e: React.MouseEvent<HTMLDivElement>) => {
+        // Prevent multiple simultaneous transitions
+        if (isTransitioning) return
+
+        // Check if View Transitions API is supported
         if (!document.startViewTransition) {
           onToggle?.()
           return
         }
 
+        setIsTransitioning(true)
+
+        // Get click coordinates
         const x = e.clientX
         const y = e.clientY
 
+        // Determine current theme state BEFORE any changes
+        const isDark = document.documentElement.classList.contains("dark")
+        const targetTheme = isDark ? "to-light" : "to-dark"
+
+        // Set CSS variables for circle origin, speed, and blur
         document.documentElement.style.setProperty('--x', `${x}px`)
         document.documentElement.style.setProperty('--y', `${y}px`)
         document.documentElement.style.setProperty('--transition-speed', `${speed}s`)
         document.documentElement.style.setProperty('--transition-blur', `${blur}px`)
 
-        const transition = document.startViewTransition(() => {
-          onToggle?.()
-        })
+        // Set transition direction BEFORE starting the transition
+        document.documentElement.setAttribute('data-theme-transition', targetTheme)
 
-        await transition.ready
+        // Start view transition with proper error handling
+        try {
+          const transition = document.startViewTransition(() => {
+            // This callback MUST be synchronous and update the DOM
+            onToggle?.()
+          })
+
+          // Wait for transition to completely finish
+          await transition.finished
+        } catch (error) {
+          // Transition was skipped or interrupted
+          console.error('Theme transition error:', error)
+        } finally {
+          // Always clean up after transition (success or failure)
+          document.documentElement.removeAttribute('data-theme-transition')
+          setIsTransitioning(false)
+        }
       }
 
       return (
-        <div onClick={handleClick} className={className}>
+        <div 
+          onClick={handleClick} 
+          className={className}
+          style={{ pointerEvents: isTransitioning ? 'none' : 'auto' }}
+        >
           {children}
         </div>
       )
@@ -87,38 +120,65 @@ Try it live! Adjust the speed and blur sliders, then click the button to see the
 
     **Required CSS** (add to `globals.css`):
     ```css
+    /* Circular ripple animation origin variables */
     :root {
       --transition-speed: 0.5s;
       --transition-blur: 0px;
+      --x: 50%;
+      --y: 50%;
     }
 
+    /* Base View Transition Configuration */
+    ::view-transition-group(root) {
+      animation: none;
+      isolation: isolate;
+      overflow: hidden;
+    }
+
+    ::view-transition-image-pair(root) {
+      isolation: isolate;
+      overflow: hidden;
+    }
+
+    /* Apply blur if specified */
     ::view-transition-old(root),
     ::view-transition-new(root) {
+      filter: blur(var(--transition-blur));
+      overflow: hidden;
+      backface-visibility: hidden;
+      contain: paint;
+    }
+
+    /* Light → Dark: Dark theme expands from click position */
+    [data-theme-transition="to-dark"]::view-transition-old(root) {
       animation: none;
+      z-index: -1;
       mix-blend-mode: normal;
     }
 
-    ::view-transition-old(root) {
+    [data-theme-transition="to-dark"]::view-transition-new(root) {
+      animation: circle var(--transition-speed) ease-in-out;
+      will-change: clip-path;
+      mix-blend-mode: normal;
       z-index: 1;
+      transform: translateZ(0);
     }
 
-    ::view-transition-new(root) {
-      z-index: 999;
-    }
-
-    .dark::view-transition-old(root) {
-      z-index: 999;
-    }
-
-    .dark::view-transition-new(root) {
+    /* Dark → Light: Dark shrinks away, revealing light underneath */
+    [data-theme-transition="to-light"]::view-transition-old(root) {
+      animation: circle-reverse var(--transition-speed) ease-in-out;
+      will-change: clip-path;
       z-index: 1;
+      transform: translateZ(0);
     }
 
-    ::view-transition-new(root) {
-      animation: circle var(--transition-speed);
-      filter: blur(var(--transition-blur));
+    [data-theme-transition="to-light"]::view-transition-new(root) {
+      animation: none;
+      mix-blend-mode: normal;
+      z-index: -1;
     }
 
+    /* Circle expand animation */
     @keyframes circle {
       from {
         clip-path: circle(0% at var(--x) var(--y));
@@ -128,6 +188,17 @@ Try it live! Adjust the speed and blur sliders, then click the button to see the
       }
     }
 
+    /* Circle shrink animation */
+    @keyframes circle-reverse {
+      from {
+        clip-path: circle(150% at var(--x) var(--y));
+      }
+      to {
+        clip-path: circle(0% at var(--x) var(--y));
+      }
+    }
+
+    /* Disable animations for reduced motion preference */
     @media (prefers-reduced-motion: reduce) {
       ::view-transition-group(*),
       ::view-transition-old(*),
@@ -152,12 +223,21 @@ import { Moon, Sun } from "lucide-react"
 import { Button } from "@/components/ui/button"
 
 export function ThemeToggle() {
-  const { theme, setTheme } = useTheme()
+  const { setTheme } = useTheme()
+  
+  const toggleTheme = () => {
+    const isDark = document.documentElement.classList.contains("dark")
+    if (isDark) {
+      document.documentElement.classList.remove("dark")
+      setTheme("light")
+    } else {
+      document.documentElement.classList.add("dark")
+      setTheme("dark")
+    }
+  }
   
   return (
-    <ThemeToggleCircular 
-      onToggle={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
-    >
+    <ThemeToggleCircular onToggle={toggleTheme}>
       <Button variant="ghost" size="icon">
         <Sun className="h-5 w-5 rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
         <Moon className="absolute h-5 w-5 rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
@@ -178,11 +258,21 @@ import { ThemeToggleCircular } from "@/components/animations/transitions/theme-t
 export function ThemeToggle() {
   const [theme, setTheme] = useState<"light" | "dark">("light")
   
+  const toggleTheme = () => {
+    const isDark = document.documentElement.classList.contains("dark")
+    const newTheme = isDark ? "light" : "dark"
+    
+    setTheme(newTheme)
+    
+    if (isDark) {
+      document.documentElement.classList.remove("dark")
+    } else {
+      document.documentElement.classList.add("dark")
+    }
+  }
+  
   return (
-    <ThemeToggleCircular 
-      theme={theme}
-      onToggle={() => setTheme(prev => prev === 'dark' ? 'light' : 'dark')}
-    >
+    <ThemeToggleCircular theme={theme} onToggle={toggleTheme}>
       <button className="p-2 rounded-md hover:bg-accent">
         {theme === 'dark' ? '🌞' : '🌙'}
       </button>
@@ -209,7 +299,7 @@ export function ThemeToggle() {
 ```tsx
 <ThemeToggleCircular 
   speed={0.2}
-  onToggle={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
+  onToggle={toggleTheme}
 >
   <Button>Toggle</Button>
 </ThemeToggleCircular>
@@ -220,7 +310,7 @@ export function ThemeToggle() {
 ```tsx
 <ThemeToggleCircular 
   speed={1.5}
-  onToggle={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
+  onToggle={toggleTheme}
 >
   <Button>Toggle</Button>
 </ThemeToggleCircular>
@@ -232,7 +322,7 @@ export function ThemeToggle() {
 <ThemeToggleCircular 
   speed={0.5}
   blur={10}
-  onToggle={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
+  onToggle={toggleTheme}
 >
   <Button>Toggle</Button>
 </ThemeToggleCircular>
@@ -244,7 +334,7 @@ export function ThemeToggle() {
 <ThemeToggleCircular 
   speed={0.8}
   blur={20}
-  onToggle={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
+  onToggle={toggleTheme}
 >
   <Button>Toggle</Button>
 </ThemeToggleCircular>
@@ -254,17 +344,41 @@ export function ThemeToggle() {
 
 ### Custom Easing
 
+You can customize the easing function for different animation feels:
+
 ```css
-::view-transition-new(root) {
+/* Bouncy effect */
+[data-theme-transition="to-dark"]::view-transition-new(root) {
   animation: circle var(--transition-speed) cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
+
+[data-theme-transition="to-light"]::view-transition-old(root) {
+  animation: circle-reverse var(--transition-speed) cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
+```
+
+### Different Speeds Per Direction
+
+```css
+/* Faster when going to dark */
+[data-theme-transition="to-dark"]::view-transition-new(root) {
+  animation: circle 0.3s ease-out;
+}
+
+/* Slower when going to light */
+[data-theme-transition="to-light"]::view-transition-old(root) {
+  animation: circle-reverse 0.7s ease-in;
 }
 ```
 
 ## Features
 
-- ✅ Hardware accelerated (GPU)
+- ✅ Hardware accelerated (GPU transforms and clip-path)
+- ✅ Bidirectional animations (new theme always expands)
+- ✅ Click position tracking for natural ripple effect
 - ✅ Respects `prefers-reduced-motion`
 - ✅ Graceful fallback for unsupported browsers
+- ✅ Prevents double-clicks during transition
 - ✅ Minimal bundle size (~1KB)
 - ✅ Framework agnostic
 
@@ -274,3 +388,19 @@ export function ThemeToggle() {
 - Edge 111+
 - Opera 97+
 - Falls back to instant theme change in other browsers
+
+## How It Works
+
+The component uses a bidirectional approach to ensure the **new theme always expands** from the click position:
+
+### Light → Dark
+- **OLD** (light): Stays static in the background (z-index: -1)
+- **NEW** (dark): Expands with `circle` animation from click point (z-index: 1)
+- **Result**: Dark theme appears to grow from your click
+
+### Dark → Light  
+- **OLD** (dark): Shrinks with `circle-reverse` animation (z-index: 1)
+- **NEW** (light): Stays static in the background (z-index: -1)
+- **Result**: Dark shrinks away, revealing light underneath (appears as light expanding)
+
+This creates a consistent visual experience where clicking always makes the new theme appear to expand outward from your cursor.

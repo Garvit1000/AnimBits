@@ -132,36 +132,63 @@
    View Transitions API - Theme Toggle Animations
    ============================================ */
 
+/* Prevent flash by setting html background */
+html {
+    background-color: hsl(var(--background));
+}
+
 /* Circular ripple animation origin variables */
 :root {
+    --transition-speed: 0.5s;
+    --transition-blur: 0px;
     --x: 50%;
     --y: 50%;
 }
 
 /* Base View Transition Configuration */
 ::view-transition-group(root) {
-    animation-duration: 0.5s;
-    animation-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+    animation: none;
+    isolation: isolate;
+    overflow: hidden;
+}
+
+/* Prevent flash by ensuring proper layering */
+::view-transition-image-pair(root) {
+    isolation: isolate;
+    overflow: hidden;
 }
 
 /* Default - Circular ripple animation */
-::view-transition-new(root) {
-    animation-name: reveal-theme-circular;
-    will-change: clip-path;
+/* Going TO dark mode (light → dark) */
+[data-theme-transition="to-dark"]::view-transition-old(root) {
+    animation: none;
+    z-index: -1;
+    mix-blend-mode: normal;
 }
 
-::view-transition-old(root),
-.dark::view-transition-old(root) {
+[data-theme-transition="to-dark"]::view-transition-new(root) {
+    animation: circle var(--transition-speed) ease-in-out;
+    will-change: clip-path;
+    mix-blend-mode: normal;
+    z-index: 1;
+    transform: translateZ(0);
+}
+
+/* Going TO light mode (dark → light) */
+[data-theme-transition="to-light"]::view-transition-old(root) {
+    animation: circle-reverse var(--transition-speed) ease-in-out;
+    will-change: clip-path;
+    z-index: 1;
+    transform: translateZ(0);
+}
+
+[data-theme-transition="to-light"]::view-transition-new(root) {
     animation: none;
+    mix-blend-mode: normal;
     z-index: -1;
 }
 
-.dark::view-transition-new(root) {
-    animation-name: reveal-theme-circular;
-    will-change: clip-path;
-}
-
-@keyframes reveal-theme-circular {
+@keyframes circle {
     from {
         clip-path: circle(0% at var(--x) var(--y));
     }
@@ -170,87 +197,12 @@
     }
 }
 
-/* Slide from Top */
-.theme-slide-top::view-transition-old(root) {
-    animation: slide-out-top 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.theme-slide-top::view-transition-new(root) {
-    animation: slide-in-top 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-@keyframes slide-out-top {
-    to {
-        transform: translateY(-100%);
-    }
-}
-
-@keyframes slide-in-top {
+@keyframes circle-reverse {
     from {
-        transform: translateY(-100%);
+        clip-path: circle(150% at var(--x) var(--y));
     }
-}
-
-/* Slide from Bottom */
-.theme-slide-bottom::view-transition-old(root) {
-    animation: slide-out-bottom 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.theme-slide-bottom::view-transition-new(root) {
-    animation: slide-in-bottom 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-@keyframes slide-out-bottom {
     to {
-        transform: translateY(100%);
-    }
-}
-
-@keyframes slide-in-bottom {
-    from {
-        transform: translateY(100%);
-    }
-}
-
-/* Slide from Left */
-.theme-slide-left::view-transition-old(root) {
-    animation: slide-out-left 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.theme-slide-left::view-transition-new(root) {
-    animation: slide-in-left 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-@keyframes slide-out-left {
-    to {
-        transform: translateX(-100%);
-    }
-}
-
-@keyframes slide-in-left {
-    from {
-        transform: translateX(-100%);
-    }
-}
-
-/* Slide from Right */
-.theme-slide-right::view-transition-old(root) {
-    animation: slide-out-right 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.theme-slide-right::view-transition-new(root) {
-    animation: slide-in-right 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-@keyframes slide-out-right {
-    to {
-        transform: translateX(100%);
-    }
-}
-
-@keyframes slide-in-right {
-    from {
-        transform: translateX(100%);
+        clip-path: circle(0% at var(--x) var(--y));
     }
 }
 
@@ -263,67 +215,20 @@
 }
 
 /* View Transitions API Styles */
-:root {
-    --transition-speed: 0.5s;
-    --transition-blur: 0px;
-    --x: 50%;
-    --y: 50%;
-}
 
 /* Prevent flash during transitions */
-::view-transition-group(root) {
-    animation-duration: var(--transition-speed);
-}
-
 ::view-transition-group(*) {
-    animation-timing-function: ease-in-out;
-}
-
-/* Circular Transition */
-::view-transition-old(root),
-::view-transition-new(root) {
     animation: none;
-    mix-blend-mode: normal;
-    overflow: clip;
-    backface-visibility: hidden;
-}
-
-::view-transition-old(root) {
-    z-index: 1;
-    animation: none;
-}
-
-::view-transition-new(root) {
-    z-index: 999;
-    animation: circle var(--transition-speed) ease-in-out;
-}
-
-.dark::view-transition-old(root) {
-    z-index: 999;
-    animation: none;
-}
-
-.dark::view-transition-new(root) {
-    z-index: 1;
-    animation: circle var(--transition-speed) ease-in-out;
-}
-
-::view-transition-image-pair(root) {
     isolation: isolate;
 }
 
+/* Apply blur if specified */
 ::view-transition-old(root),
 ::view-transition-new(root) {
     filter: blur(var(--transition-blur));
-}
-
-@keyframes circle {
-    from {
-        clip-path: circle(0% at var(--x) var(--y));
-    }
-    to {
-        clip-path: circle(150% at var(--x) var(--y));
-    }
+    overflow: hidden;
+    backface-visibility: hidden;
+    contain: paint;
 }
 
 /* Slide Transitions */

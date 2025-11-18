@@ -1,30 +1,40 @@
-"use client"
+"use client";
 
-import * as React from "react"
-import { Moon, Sun } from "lucide-react"
-import { Button } from "@/components/ui/button"
-import { Badge } from "@/components/ui/badge"
-import { ThemeToggleCircular } from "@/registry/new-york/animations/transitions/theme-toggle-circular"
-import { ThemeToggleSlideTop } from "@/registry/new-york/animations/transitions/theme-toggle-slide-top"
-import { ThemeToggleSlideBottom } from "@/registry/new-york/animations/transitions/theme-toggle-slide-bottom"
-import { ThemeToggleSlideLeft } from "@/registry/new-york/animations/transitions/theme-toggle-slide-left"
-import { ThemeToggleSlideRight } from "@/registry/new-york/animations/transitions/theme-toggle-slide-right"
+import * as React from "react";
+import { Moon, Sun } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { ThemeToggleCircular } from "@/registry/new-york/animations/transitions/theme-toggle-circular";
+import { ThemeToggleSlideTop } from "@/registry/new-york/animations/transitions/theme-toggle-slide-top";
+import { ThemeToggleSlideBottom } from "@/registry/new-york/animations/transitions/theme-toggle-slide-bottom";
+import { ThemeToggleSlideLeft } from "@/registry/new-york/animations/transitions/theme-toggle-slide-left";
+import { ThemeToggleSlideRight } from "@/registry/new-york/animations/transitions/theme-toggle-slide-right";
 
 export default function ThemeToggleDemoPage() {
-  const [theme, setTheme] = React.useState<"light" | "dark">("light")
+  const [theme, setTheme] = React.useState<"light" | "dark">("light");
 
   const toggleTheme = () => {
-    const newTheme = theme === "dark" ? "light" : "dark"
-    setTheme(newTheme)
-    document.documentElement.classList.toggle("dark")
-  }
+    // Determine the NEW theme based on current DOM state, not React state
+    const isDark = document.documentElement.classList.contains("dark");
+    const newTheme = isDark ? "light" : "dark";
+
+    // Update React state
+    setTheme(newTheme);
+
+    // Explicitly set or remove the dark class instead of toggling
+    if (isDark) {
+      document.documentElement.classList.remove("dark");
+    } else {
+      document.documentElement.classList.add("dark");
+    }
+  };
 
   const ThemeIcon = () => (
     <div className="relative h-5 w-5">
       <Sun className="absolute inset-0 h-5 w-5 rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
       <Moon className="absolute inset-0 h-5 w-5 rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
     </div>
-  )
+  );
 
   return (
     <div className="min-h-screen bg-background">
@@ -32,10 +42,12 @@ export default function ThemeToggleDemoPage() {
         <div className="text-center space-y-4 mb-16">
           <h1 className="text-4xl font-bold">AnimBits Theme Toggle</h1>
           <p className="text-muted-foreground max-w-2xl mx-auto">
-            Click any button to toggle theme with different transition animations
+            Click any button to toggle theme with different transition
+            animations
           </p>
           <Badge variant="outline">
-            Current Theme: <span className="ml-1 font-bold capitalize">{theme}</span>
+            Current Theme:{" "}
+            <span className="ml-1 font-bold capitalize">{theme}</span>
           </Badge>
         </div>
 
@@ -86,5 +98,5 @@ export default function ThemeToggleDemoPage() {
         </div>
       </div>
     </div>
-  )
+  );
 }

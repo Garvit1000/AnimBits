@@ -1,0 +1,402 @@
+---
+title: Page Transition Fade
+description: Smooth fade transition between page navigations using View Transitions API.
+---
+
+import { Tab, Tabs } from 'fumadocs-ui/components/tabs';
+import { Callout } from 'fumadocs-ui/components/callout';
+import { Preview } from '@/components/preview';
+
+## Overview
+
+The `PageTransitionFade` component creates a smooth fade-in/fade-out effect when navigating between pages. Uses the native View Transitions API for hardware-accelerated animations with customizable duration and easing.
+
+<Callout type="info">
+  **Browser Support:** View Transitions API is supported in Chrome 111+, Edge 111+, and Opera 97+. Falls back to instant navigation in unsupported browsers.
+</Callout>
+
+## Installation
+
+<Tabs items={['CLI', 'Manual']}>
+  <Tab value="CLI">
+    ```bash
+    npx shadcn add https://animbits.dev/r/animations/pages/page-transition-fade
+    ```
+  </Tab>
+  <Tab value="Manual">
+    **Step 1:** Create the component
+
+    ```tsx title="components/animations/pages/page-transition-fade.tsx"
+    "use client"
+
+    import * as React from "react"
+    import { usePathname } from "next/navigation"
+
+    export interface PageTransitionFadeProps {
+      children: React.ReactNode
+      duration?: number
+      ease?: string
+    }
+
+    export function PageTransitionFade({
+      children,
+      duration = 0.3,
+      ease = "ease-in-out",
+    }: PageTransitionFadeProps) {
+      const pathname = usePathname()
+
+      React.useEffect(() => {
+        if (!document.startViewTransition) return
+
+        document.documentElement.style.setProperty('--page-transition-duration', `${duration}s`)
+        document.documentElement.style.setProperty('--page-transition-ease', ease)
+      }, [pathname, duration, ease])
+
+      return <>{children}</>
+    }
+    ```
+
+    **Step 2:** Create navigation wrapper
+
+    ```tsx title="components/animations/pages/page-transition-link.tsx"
+    "use client"
+
+    import * as React from "react"
+    import { useRouter } from "next/navigation"
+    import Link, { LinkProps } from "next/link"
+
+    interface PageTransitionLinkProps extends LinkProps {
+      children: React.ReactNode
+      className?: string
+    }
+
+    export function PageTransitionLink({
+      href,
+      children,
+      className,
+      ...props
+    }: PageTransitionLinkProps) {
+      const router = useRouter()
+
+      const handleClick = async (e: React.MouseEvent<HTMLAnchorElement>) => {
+        e.preventDefault()
+
+        if (!document.startViewTransition) {
+          router.push(href.toString())
+          return
+        }
+
+        const transition = document.startViewTransition(() => {
+          router.push(href.toString())
+        })
+
+        await transition.ready
+      }
+
+      return (
+        <Link 
+          href={href} 
+          onClick={handleClick} 
+          className={className}
+          {...props}
+        >
+          {children}
+        </Link>
+      )
+    }
+    ```
+
+    **Step 3:** Add required CSS to `globals.css`
+
+    ```css
+    /* Page Transition - Fade */
+    :root {
+      --page-transition-duration: 0.3s;
+      --page-transition-ease: ease-in-out;
+    }
+
+    ::view-transition-old(root) {
+      animation: fade-out var(--page-transition-duration) var(--page-transition-ease);
+    }
+
+    ::view-transition-new(root) {
+      animation: fade-in var(--page-transition-duration) var(--page-transition-ease);
+    }
+
+    @keyframes fade-out {
+      from {
+        opacity: 1;
+      }
+      to {
+        opacity: 0;
+      }
+    }
+
+    @keyframes fade-in {
+      from {
+        opacity: 0;
+      }
+      to {
+        opacity: 1;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      ::view-transition-group(*),
+      ::view-transition-old(*),
+      ::view-transition-new(*) {
+        animation: none !important;
+      }
+    }
+    ```
+  </Tab>
+</Tabs>
+
+## Usage
+
+### Setup in Layout
+
+Wrap your application with the `PageTransitionFade` component:
+
+```tsx title="app/layout.tsx"
+import { PageTransitionFade } from "@/components/animations/pages/page-transition-fade"
+
+export default function RootLayout({
+  children,
+}: {
+  children: React.ReactNode
+}) {
+  return (
+    <html lang="en">
+      <body>
+        <PageTransitionFade>
+          {children}
+        </PageTransitionFade>
+      </body>
+    </html>
+  )
+}
+```
+
+### Using Transition Links
+
+Replace standard Next.js `Link` components with `PageTransitionLink`:
+
+```tsx
+import { PageTransitionLink } from "@/components/animations/pages/page-transition-link"
+
+export function Navigation() {
+  return (
+    <nav className="flex gap-4">
+      <PageTransitionLink href="/" className="hover:text-blue-600">
+        Home
+      </PageTransitionLink>
+      <PageTransitionLink href="/about" className="hover:text-blue-600">
+        About
+      </PageTransitionLink>
+      <PageTransitionLink href="/contact" className="hover:text-blue-600">
+        Contact
+      </PageTransitionLink>
+    </nav>
+  )
+}
+```
+
+### Programmatic Navigation
+
+```tsx
+"use client"
+
+import { useRouter } from "next/navigation"
+
+export function NavigateButton() {
+  const router = useRouter()
+
+  const handleNavigate = async () => {
+    if (!document.startViewTransition) {
+      router.push('/destination')
+      return
+    }
+
+    const transition = document.startViewTransition(() => {
+      router.push('/destination')
+    })
+
+    await transition.ready
+  }
+
+  return (
+    <button onClick={handleNavigate} className="inline-flex h-11 items-center gap-2 rounded-lg bg-blue-600 px-6 text-sm font-semibold text-white">
+      Navigate
+    </button>
+  )
+}
+```
+
+## Props
+
+### PageTransitionFade
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `children` | `ReactNode` | - | The page content |
+| `duration` | `number` | `0.3` | Transition duration in seconds |
+| `ease` | `string` | `"ease-in-out"` | CSS easing function |
+
+### PageTransitionLink
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `href` | `string` | - | Destination URL |
+| `children` | `ReactNode` | - | Link content |
+| `className` | `string` | - | Additional CSS classes |
+| `...props` | `LinkProps` | - | All Next.js Link props |
+
+## Examples
+
+### Fast Fade
+
+```tsx
+<PageTransitionFade duration={0.15}>
+  {children}
+</PageTransitionFade>
+```
+
+### Slow Fade
+
+```tsx
+<PageTransitionFade duration={0.6}>
+  {children}
+</PageTransitionFade>
+```
+
+### Custom Easing
+
+```tsx
+<PageTransitionFade 
+  duration={0.4}
+  ease="cubic-bezier(0.4, 0, 0.2, 1)"
+>
+  {children}
+</PageTransitionFade>
+```
+
+### With Custom Timing
+
+```tsx
+<PageTransitionFade 
+  duration={0.5}
+  ease="cubic-bezier(0.68, -0.55, 0.265, 1.55)"
+>
+  {children}
+</PageTransitionFade>
+```
+
+## Advanced Usage
+
+### Per-Page Transitions
+
+You can customize transitions for specific pages by using data attributes:
+
+```tsx title="app/special-page/page.tsx"
+export default function SpecialPage() {
+  return (
+    <div data-transition="special">
+      <h1>Special Page</h1>
+      <p>This page has a custom transition</p>
+    </div>
+  )
+}
+```
+
+Then in your CSS:
+
+```css
+[data-transition="special"]::view-transition-old(root) {
+  animation: fade-out 0.8s ease-out;
+}
+
+[data-transition="special"]::view-transition-new(root) {
+  animation: fade-in 0.8s ease-in;
+}
+```
+
+### Crossfade Effect
+
+For a smooth crossfade without overlap:
+
+```css
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation-duration: 0.3s;
+  animation-timing-function: ease-in-out;
+}
+
+::view-transition-old(root) {
+  animation-name: fade-out;
+}
+
+::view-transition-new(root) {
+  animation-name: fade-in;
+  animation-delay: 0.15s; /* Start halfway through old fade */
+}
+```
+
+## Combining with Loading States
+
+```tsx
+"use client"
+
+import { useState } from "react"
+import { useRouter } from "next/navigation"
+import { PageTransitionLink } from "@/components/page-transition-link"
+
+export function NavigationWithLoading() {
+  const [isNavigating, setIsNavigating] = useState(false)
+
+  return (
+    <div className="relative">
+      {isNavigating && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+          <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-white"></div>
+        </div>
+      )}
+      
+      <PageTransitionLink 
+        href="/destination"
+        onClick={() => setIsNavigating(true)}
+        className="inline-flex h-11 items-center gap-2 rounded-lg bg-blue-600 px-6 text-sm font-semibold text-white"
+      >
+        Navigate
+      </PageTransitionLink>
+    </div>
+  )
+}
+```
+
+## Features
+
+- ✅ Hardware accelerated (GPU)
+- ✅ Respects `prefers-reduced-motion`
+- ✅ Graceful fallback for unsupported browsers
+- ✅ Works with Next.js App Router
+- ✅ Minimal bundle size (~0.5KB)
+- ✅ Customizable duration and easing
+
+## Browser Support
+
+- Chrome 111+
+- Edge 111+
+- Opera 97+
+- Falls back to instant navigation in other browsers
+
+## Performance Tips
+
+1. **Keep transitions short**: 200-400ms is ideal for page transitions
+2. **Use simple animations**: Fade is performant and widely supported
+3. **Avoid heavy JavaScript**: Let the browser handle the animation
+4. **Test on mobile**: Ensure smooth performance on lower-end devices
+
+<Callout type="warn">
+  **Note:** Page transitions using View Transitions API require the same-origin policy. Cross-origin navigations will not have transition effects.
+</Callout>

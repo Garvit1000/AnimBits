@@ -1,40 +1,40 @@
-"use client"
+"use client";
 
-import * as React from "react"
+import * as React from "react";
 
 export interface ThemeToggleSlideTopProps {
   /**
    * The element to trigger the theme toggle
    */
-  children: React.ReactNode
+  children: React.ReactNode;
   /**
    * Callback when theme is toggled
    */
-  onToggle?: () => void
+  onToggle?: () => void;
   /**
    * Current theme
    */
-  theme?: "light" | "dark"
+  theme?: "light" | "dark";
   /**
    * Optional class name
    */
-  className?: string
+  className?: string;
   /**
    * Animation speed in seconds
    * @default 0.5
    */
-  speed?: number
+  speed?: number;
   /**
    * Blur amount in pixels
    * @default 0
    */
-  blur?: number
+  blur?: number;
 }
 
 /**
  * Top to bottom slide animation for theme toggle using View Transitions API.
- * The new theme slides down from the top of the screen.
- * 
+ * The new theme slides in from the top of the screen.
+ *
  * @example
  * ```tsx
  * <ThemeToggleSlideTop onToggle={() => setTheme(theme === 'dark' ? 'light' : 'dark')}>
@@ -50,61 +50,53 @@ export function ThemeToggleSlideTop({
   speed = 0.5,
   blur = 0,
 }: ThemeToggleSlideTopProps) {
+  const [isTransitioning, setIsTransitioning] = React.useState(false);
+
   const handleClick = async () => {
+    // Prevent multiple simultaneous transitions
+    if (isTransitioning) return;
+
     // Check if View Transitions API is supported
     if (!document.startViewTransition) {
-      onToggle?.()
-      return
+      onToggle?.();
+      return;
     }
 
-    // Set CSS variables for speed and blur
-    document.documentElement.style.setProperty('--transition-speed', `${speed}s`)
-    document.documentElement.style.setProperty('--transition-blur', `${blur}px`)
+    setIsTransitioning(true);
 
-    // Add custom class for this specific transition
-    document.documentElement.classList.add('theme-slide-top')
+    // Set CSS variables for speed and blur
+    document.documentElement.style.setProperty(
+      "--transition-speed",
+      `${speed}s`,
+    );
+    document.documentElement.style.setProperty(
+      "--transition-blur",
+      `${blur}px`,
+    );
+
+    document.documentElement.classList.add("theme-slide-top");
 
     const transition = document.startViewTransition(() => {
-      onToggle?.()
-    })
+      onToggle?.();
+    });
 
-    await transition.finished
-    document.documentElement.classList.remove('theme-slide-top')
-  }
+    try {
+      await transition.finished;
+    } catch (error) {
+      console.warn("Theme transition interrupted:", error);
+    } finally {
+      document.documentElement.classList.remove("theme-slide-top");
+      setIsTransitioning(false);
+    }
+  };
 
   return (
-    <div onClick={handleClick} className={className}>
+    <div
+      onClick={handleClick}
+      className={className}
+      style={{ pointerEvents: isTransitioning ? "none" : "auto" }}
+    >
       {children}
     </div>
-  )
+  );
 }
-
-// Add to your global CSS:
-/*
-:root {
-  --transition-speed: 0.5s;
-  --transition-blur: 0px;
-}
-
-.theme-slide-top::view-transition-old(root) {
-  animation: slide-out-top var(--transition-speed) cubic-bezier(0.4, 0, 0.2, 1);
-  filter: blur(var(--transition-blur));
-}
-
-.theme-slide-top::view-transition-new(root) {
-  animation: slide-in-top var(--transition-speed) cubic-bezier(0.4, 0, 0.2, 1);
-  filter: blur(var(--transition-blur));
-}
-
-@keyframes slide-out-top {
-  to {
-    transform: translateY(-100%);
-  }
-}
-
-@keyframes slide-in-top {
-  from {
-    transform: translateY(-100%);
-  }
-}
-*/
