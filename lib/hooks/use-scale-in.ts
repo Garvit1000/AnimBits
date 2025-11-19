@@ -1,60 +1,60 @@
-import { type MotionProps } from "framer-motion"
+import { type MotionProps, type Easing } from "framer-motion";
 
 export interface UseScaleInOptions {
   /**
    * Animation duration (in seconds)
    * @default 0.5
    */
-  duration?: number
-  
+  duration?: number;
+
   /**
    * Delay before animation starts (in seconds)
    * @default 0
    */
-  delay?: number
-  
+  delay?: number;
+
   /**
    * Initial scale (0 = invisible, 1 = normal size)
    * @default 0.8
    */
-  from?: number
-  
+  from?: number;
+
   /**
    * Final scale
    * @default 1
    */
-  to?: number
-  
+  to?: number;
+
   /**
    * Initial opacity
    * @default 0
    */
-  initialOpacity?: number
-  
+  initialOpacity?: number;
+
   /**
    * Animation easing
    * @default "easeOut"
    */
-  ease?: string | number[]
-  
+  ease?: Easing | Easing[];
+
   /**
    * Whether to animate once or always
    * @default "once"
    */
-  viewport?: "once" | "always"
+  viewport?: "once" | "always";
 }
 
 /**
  * Component-agnostic scale-in animation hook
- * 
+ *
  * Returns MotionProps that can be spread onto any motion component
  * to add a scale-in entrance animation with optional fade.
- * 
+ *
  * @example
  * ```tsx
  * import { useScaleIn } from "@/lib/hooks"
  * import { motion } from "framer-motion"
- * 
+ *
  * function MyCard() {
  *   const scaleProps = useScaleIn({ from: 0.5, duration: 0.6 })
  *   return (
@@ -74,7 +74,7 @@ export function useScaleIn(options: UseScaleInOptions = {}): MotionProps {
     initialOpacity = 0,
     ease = "easeOut",
     viewport = "once",
-  } = options
+  } = options;
 
   return {
     initial: {
@@ -93,5 +93,5 @@ export function useScaleIn(options: UseScaleInOptions = {}): MotionProps {
       delay,
       ease,
     },
-  }
+  };
 }

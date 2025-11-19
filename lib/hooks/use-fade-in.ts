@@ -1,54 +1,54 @@
-import { type MotionProps } from "framer-motion"
+import { type MotionProps, type Easing } from "framer-motion";
 
 export interface UseFadeInOptions {
   /**
    * Animation duration (in seconds)
    * @default 0.5
    */
-  duration?: number
-  
+  duration?: number;
+
   /**
    * Delay before animation starts (in seconds)
    * @default 0
    */
-  delay?: number
-  
+  delay?: number;
+
   /**
    * Initial opacity
    * @default 0
    */
-  from?: number
-  
+  from?: number;
+
   /**
    * Final opacity
    * @default 1
    */
-  to?: number
-  
+  to?: number;
+
   /**
    * Animation easing
    * @default "easeOut"
    */
-  ease?: string | number[]
-  
+  ease?: Easing | Easing[];
+
   /**
    * Whether to animate once or always
    * @default "once"
    */
-  viewport?: "once" | "always"
+  viewport?: "once" | "always";
 }
 
 /**
  * Component-agnostic fade-in animation hook
- * 
+ *
  * Returns MotionProps that can be spread onto any motion component
  * to add a fade-in entrance animation.
- * 
+ *
  * @example
  * ```tsx
  * import { useFadeIn } from "@/lib/hooks"
  * import { motion } from "framer-motion"
- * 
+ *
  * function MyCard() {
  *   const fadeProps = useFadeIn({ duration: 0.6, delay: 0.2 })
  *   return (
@@ -67,7 +67,7 @@ export function useFadeIn(options: UseFadeInOptions = {}): MotionProps {
     to = 1,
     ease = "easeOut",
     viewport = "once",
-  } = options
+  } = options;
 
   return {
     initial: {
@@ -84,5 +84,5 @@ export function useFadeIn(options: UseFadeInOptions = {}): MotionProps {
       delay,
       ease,
     },
-  }
+  };
 }

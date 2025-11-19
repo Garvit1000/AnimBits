@@ -1,33 +1,33 @@
-import { type MotionProps } from "framer-motion"
+import { type MotionProps, type Easing } from "framer-motion";
 
 export interface UseStrokeDrawOptions {
   /**
    * Animation duration in seconds
    * @default 1.5
    */
-  duration?: number
+  duration?: number;
   /**
    * Delay before animation starts in seconds
    * @default 0
    */
-  delay?: number
+  delay?: number;
   /**
    * Whether to repeat the animation
    * @default false
    */
-  repeat?: boolean
+  repeat?: boolean;
   /**
    * Easing function
    * @default "easeInOut"
    */
-  ease?: string | number[]
+  ease?: Easing | Easing[];
 }
 
 /**
  * Component-agnostic stroke draw animation hook for SVG paths
  * Animates SVG path from 0 to full length
  * Works with any SVG path element via Framer Motion
- * 
+ *
  * @example
  * ```tsx
  * // Use with SVG path
@@ -35,13 +35,13 @@ export interface UseStrokeDrawOptions {
  * <svg>
  *   <motion.path d="M..." {...strokeProps} />
  * </svg>
- * 
+ *
  * // Custom duration and delay
  * const strokeProps = useStrokeDraw({ duration: 2, delay: 0.5 })
  * <svg>
  *   <motion.path d="M..." {...strokeProps} />
  * </svg>
- * 
+ *
  * // Repeating animation
  * const strokeProps = useStrokeDraw({ repeat: true })
  * <svg>
@@ -55,7 +55,7 @@ export function useStrokeDraw(options: UseStrokeDrawOptions = {}): MotionProps {
     delay = 0,
     repeat = false,
     ease = "easeInOut",
-  } = options
+  } = options;
 
   return {
     initial: { pathLength: 0, opacity: 0 },
@@ -66,5 +66,5 @@ export function useStrokeDraw(options: UseStrokeDrawOptions = {}): MotionProps {
       repeat: repeat ? Infinity : 0,
       repeatDelay: 1,
     },
-  }
+  };
 }

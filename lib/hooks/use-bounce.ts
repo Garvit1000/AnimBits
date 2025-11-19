@@ -1,54 +1,54 @@
-import { type MotionProps } from "framer-motion"
+import { type MotionProps, type Easing } from "framer-motion";
 
 export interface UseBounceOptions {
   /**
    * Bounce height (in pixels, negative moves up)
    * @default -20
    */
-  bounceHeight?: number
-  
+  bounceHeight?: number;
+
   /**
    * Animation duration for one bounce cycle (in seconds)
    * @default 0.6
    */
-  duration?: number
-  
+  duration?: number;
+
   /**
    * Animation easing for bounce effect
    * @default [0.68, -0.55, 0.265, 1.55]
    */
-  ease?: string | number[]
-  
+  ease?: Easing | Easing[];
+
   /**
    * Number of times to repeat (Infinity for continuous)
    * @default Infinity
    */
-  repeat?: number
-  
+  repeat?: number;
+
   /**
    * Delay before animation starts (in seconds)
    * @default 0
    */
-  delay?: number
-  
+  delay?: number;
+
   /**
    * Whether to bounce on hover instead of continuous
    * @default false
    */
-  onHover?: boolean
+  onHover?: boolean;
 }
 
 /**
  * Component-agnostic bounce animation hook
- * 
+ *
  * Returns MotionProps that can be spread onto any motion component
  * to add a bounce animation (continuous or on hover).
- * 
+ *
  * @example
  * ```tsx
  * import { useBounce } from "@/lib/hooks"
  * import { motion } from "framer-motion"
- * 
+ *
  * function BouncyIcon() {
  *   const bounceProps = useBounce({ bounceHeight: -30 })
  *   return (
@@ -57,7 +57,7 @@ export interface UseBounceOptions {
  *     </motion.div>
  *   )
  * }
- * 
+ *
  * // Bounce on hover
  * function HoverBounce() {
  *   const bounceProps = useBounce({ onHover: true })
@@ -73,7 +73,7 @@ export function useBounce(options: UseBounceOptions = {}): MotionProps {
     repeat = Infinity,
     delay = 0,
     onHover = false,
-  } = options
+  } = options;
 
   if (onHover) {
     return {
@@ -84,7 +84,7 @@ export function useBounce(options: UseBounceOptions = {}): MotionProps {
         duration,
         ease,
       },
-    }
+    };
   }
 
   return {
@@ -97,5 +97,5 @@ export function useBounce(options: UseBounceOptions = {}): MotionProps {
       repeat,
       delay,
     },
-  }
+  };
 }
