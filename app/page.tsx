@@ -3,7 +3,7 @@ import { Navbar } from "@/components/navbar";
 import { Badge } from "@/components/ui/badge";
 import { BentoGrid, BentoGridItem } from "@/components/ui/bento-grid";
 import { ContainerTextFlip } from "@/components/ui/container-text-flip";
-import { Button } from "@/components/ui/button";
+
 import { TextShimmer } from "@/registry/new-york/animations/text/shimmer";
 import { RippleButton } from "@/registry/new-york/animations/buttons/ripple";
 import { CardParallaxTilt } from "@/registry/new-york/animations/cards/parallax-tilt";
@@ -11,7 +11,7 @@ import { LoaderOrbit } from "@/registry/new-york/animations/loaders/orbit";
 import { LoaderMorphing } from "@/registry/new-york/animations/loaders/morphing";
 import { HeartbeatIcon } from "@/registry/new-york/animations/icons/heartbeat";
 import { StaggerFadeList } from "@/registry/new-york/animations/lists/stagger-fade";
-import { PageTransitionFade } from "@/registry/new-york/animations/pages/page-transition-fade";
+
 import { ThemeToggleCircular } from "@/registry/new-york/animations/transitions/theme-toggle-circular";
 import DatabaseWithRestApi from "@/components/ui/database-with-rest-api";
 import { TestimonialsColumn } from "@/components/testimonials-columns-1";
@@ -42,7 +42,6 @@ const testimonials = [
 ];
 
 export default function Home() {
-
   return (
     <div className="min-h-screen bg-white dark:bg-neutral-950">
       <Navbar />
@@ -249,7 +248,10 @@ export default function Home() {
 
           <BentoGrid className="mx-auto max-w-7xl">
             {/* Text */}
-            <Link href="/docs/animations/text/shimmer" className="row-span-1 group/item block h-full w-full">
+            <Link
+              href="/docs/animations/text/shimmer"
+              className="row-span-1 group/item block h-full w-full"
+            >
               <BentoGridItem
                 title="Text"
                 description="Shimmer, Scramble, and more"
@@ -273,7 +275,10 @@ export default function Home() {
             </Link>
 
             {/* Icons (Replaces Text Scramble) */}
-            <Link href="/docs/animations/icons/heartbeat" className="row-span-1 group/item block h-full w-full">
+            <Link
+              href="/docs/animations/icons/heartbeat"
+              className="row-span-1 group/item block h-full w-full"
+            >
               <BentoGridItem
                 title="Icons"
                 description="Heartbeat, Pulse, Spin"
@@ -289,7 +294,10 @@ export default function Home() {
             </Link>
 
             {/* Lists (Replaces Word Carousel) */}
-            <Link href="/docs/animations/lists/stagger-fade" className="row-span-1 group/item block h-full w-full">
+            <Link
+              href="/docs/animations/lists/stagger-fade"
+              className="row-span-1 group/item block h-full w-full"
+            >
               <BentoGridItem
                 title="Lists"
                 description="Staggered animations"
@@ -297,7 +305,10 @@ export default function Home() {
                   <div className="flex h-full min-h-[6rem] w-full items-center justify-center">
                     <StaggerFadeList className="space-y-2 w-32">
                       {[1, 2, 3].map((i) => (
-                        <div key={i} className="h-2 w-full rounded bg-neutral-200 dark:bg-neutral-700" />
+                        <div
+                          key={i}
+                          className="h-2 w-full rounded bg-neutral-200 dark:bg-neutral-700"
+                        />
                       ))}
                     </StaggerFadeList>
                   </div>
@@ -307,7 +318,10 @@ export default function Home() {
             </Link>
 
             {/* Cards (Parallax Tilt) */}
-            <Link href="/docs/animations/cards/parallax-tilt" className="row-span-1 md:col-span-2 md:row-span-2 group/item block h-full w-full">
+            <Link
+              href="/docs/animations/cards/parallax-tilt"
+              className="row-span-1 md:col-span-2 md:row-span-2 group/item block h-full w-full"
+            >
               <BentoGridItem
                 title="Cards"
                 description="3D Tilt, Hover effects"
@@ -340,7 +354,10 @@ export default function Home() {
             </Link>
 
             {/* Buttons (Ripple) */}
-            <Link href="/docs/animations/buttons/ripple" className="row-span-1 group/item block h-full w-full">
+            <Link
+              href="/docs/animations/buttons/ripple"
+              className="row-span-1 group/item block h-full w-full"
+            >
               <BentoGridItem
                 title="Buttons"
                 description="Ripple, Magnetic, and more"
@@ -356,7 +373,10 @@ export default function Home() {
             </Link>
 
             {/* Transitions (Replaces Magnetic Button) */}
-            <Link href="/docs/transitions/theme-toggle-circular" className="row-span-1 group/item block h-full w-full">
+            <Link
+              href="/docs/transitions/theme-toggle-circular"
+              className="row-span-1 group/item block h-full w-full"
+            >
               <BentoGridItem
                 title="Transitions"
                 description="Theme toggles and more"
@@ -372,7 +392,10 @@ export default function Home() {
             </Link>
 
             {/* Loaders (Orbit) */}
-            <Link href="/docs/animations/loaders/orbit" className="row-span-1 group/item block h-full w-full">
+            <Link
+              href="/docs/animations/loaders/orbit"
+              className="row-span-1 group/item block h-full w-full"
+            >
               <BentoGridItem
                 title="Loaders"
                 description="Orbit, Gooey, Morphing"
@@ -391,14 +414,19 @@ export default function Home() {
             </Link>
 
             {/* Pages (Replaces Gooey Blobs) */}
-            <Link href="/docs/animations/pages/page-transition-fade" className="row-span-1 group/item block h-full w-full">
+            <Link
+              href="/docs/animations/pages/page-transition-fade"
+              className="row-span-1 group/item block h-full w-full"
+            >
               <BentoGridItem
                 title="Pages"
                 description="Smooth page transitions"
                 header={
                   <div className="flex h-full min-h-[6rem] w-full items-center justify-center">
                     <div className="rounded-lg border border-neutral-200 p-4 dark:border-neutral-800">
-                      <span className="text-sm font-medium">Page Transition</span>
+                      <span className="text-sm font-medium">
+                        Page Transition
+                      </span>
                     </div>
                   </div>
                 }
@@ -407,7 +435,10 @@ export default function Home() {
             </Link>
 
             {/* Morphing (Keep as extra loader example) */}
-            <Link href="/docs/animations/loaders/morphing" className="row-span-1 group/item block h-full w-full">
+            <Link
+              href="/docs/animations/loaders/morphing"
+              className="row-span-1 group/item block h-full w-full"
+            >
               <BentoGridItem
                 title="Morphing"
                 description="Shape-shifting animation"
