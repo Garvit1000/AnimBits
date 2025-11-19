@@ -1,6 +1,7 @@
 "use client"
 
-import { motion, type HTMLMotionProps } from "framer-motion"
+import * as motion from "framer-motion/client"
+import type { HTMLMotionProps } from "framer-motion"
 import { rotateVariants } from "@/lib/animation-presets"
 import { useState } from "react"
 
@@ -54,7 +55,6 @@ export function RotateIcon({
       animate={trigger === "mount" ? "animate" : undefined}
       whileHover={trigger === "hover" ? "animate" : undefined}
       whileTap={trigger === "tap" ? "animate" : undefined}
-      onHoverStart={trigger === "hover" ? handleTrigger : undefined}
       onTap={trigger === "tap" ? handleTrigger : undefined}
       transition={{ duration: 0.5, ease: "easeInOut" }}
       {...props}

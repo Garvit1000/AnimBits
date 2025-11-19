@@ -1,6 +1,7 @@
 "use client"
 
-import { motion, type HTMLMotionProps } from "framer-motion"
+import * as motion from "framer-motion/client"
+import type { HTMLMotionProps } from "framer-motion"
 import { bounceVariants } from "@/lib/animation-presets"
 import { useState } from "react"
 
@@ -42,7 +43,6 @@ export function BounceIcon({
       animate={trigger === "mount" ? "animate" : undefined}
       whileHover={trigger === "hover" ? "animate" : undefined}
       whileTap={trigger === "tap" ? "animate" : undefined}
-      onHoverStart={trigger === "hover" ? handleTrigger : undefined}
       onTap={trigger === "tap" ? handleTrigger : undefined}
       transition={{ duration: 0.6, ease: "easeInOut" }}
       {...props}

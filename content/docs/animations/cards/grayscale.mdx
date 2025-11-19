@@ -16,49 +16,52 @@ The `CardGrayscale` creates a smooth grayscale to color transition effect on hov
 <Preview
   background="default"
   code={`import { CardGrayscale } from "@/components/animations/cards/grayscale"
+import { ArrowRight } from "lucide-react"
 
-<div className="relative w-full max-w-2xl h-80 rounded-xl overflow-hidden flex">
+<div className="relative w-full max-w-2xl min-h-[320px] rounded-2xl overflow-hidden flex shadow-xl bg-white dark:bg-neutral-950 border border-neutral-200 dark:border-neutral-800">
   {/* Left side - Image with grayscale effect */}
-  <CardGrayscale className="w-1/2">
+  <CardGrayscale className="w-1/2 shrink-0">
     <img 
-      src="/mountain.jpg" 
-      alt="Mountain" 
+      src="https://images.unsplash.com/photo-1523712999610-f77fbcfc3843?q=80&w=1000&auto=format&fit=crop" 
+      alt="Forest Path" 
       className="absolute inset-0 w-full h-full object-cover" 
     />
   </CardGrayscale>
   
   {/* Right side - Content */}
-  <div className="w-1/2 bg-white dark:bg-neutral-900 p-8 flex flex-col justify-center">
-    <h2 className="text-2xl font-bold mb-3">Mountain Vista</h2>
-    <div className="text-neutral-600 dark:text-neutral-400 mb-6">
-      Experience breathtaking views and pristine wilderness. 
-      Hover over the image to reveal the full color.
+  <div className="w-1/2 p-8 flex flex-col justify-center">
+    <div className="uppercase tracking-wide text-sm text-indigo-500 font-semibold mb-1">Explore Nature</div>
+    <h2 className="text-3xl font-bold mb-3 text-neutral-900 dark:text-white leading-tight">Into the Wild</h2>
+    <div className="text-neutral-600 dark:text-neutral-400 mb-6 leading-relaxed">
+      Discover the hidden paths of the ancient forest. Hover over the image to bring the vibrant colors of nature to life.
     </div>
-    <button className="inline-flex h-11 items-center gap-2 rounded-lg bg-blue-600 px-6 text-sm font-semibold text-white hover:bg-blue-700 transition-colors">
-      Explore More
+    <button className="group inline-flex h-10 w-fit items-center gap-2 rounded-full bg-neutral-900 dark:bg-white px-6 text-sm font-medium text-white dark:text-neutral-900 hover:bg-neutral-800 dark:hover:bg-neutral-100 transition-all">
+      Start Journey
+      <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
     </button>
   </div>
 </div>`}
 >
-  <div className="relative w-full max-w-2xl h-80 rounded-xl overflow-hidden flex border border-neutral-200 dark:border-neutral-800">
+  <div className="relative w-full max-w-2xl min-h-[320px] rounded-2xl overflow-hidden flex shadow-xl bg-white dark:bg-neutral-950 border border-neutral-200 dark:border-neutral-800">
     {/* Left side - Image with grayscale effect */}
-    <CardGrayscale className="w-1/2">
+    <CardGrayscale className="w-1/2 shrink-0">
       <img 
-        src="https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800&h=600&fit=crop" 
-        alt="Mountain landscape" 
+        src="https://images.unsplash.com/photo-1523712999610-f77fbcfc3843?q=80&w=1000&auto=format&fit=crop" 
+        alt="Forest Path" 
         className="absolute inset-0 w-full h-full object-cover" 
       />
     </CardGrayscale>
     
     {/* Right side - Content */}
-    <div className="w-1/2 bg-white dark:bg-neutral-900 p-8 flex flex-col justify-center">
-      <h2 className="text-2xl font-bold mb-3">Mountain Vista</h2>
-      <div className="text-neutral-600 dark:text-neutral-400 mb-6">
-        Experience breathtaking views and pristine wilderness. 
-        Hover over the image to reveal the full color.
+    <div className="w-1/2 p-8 flex flex-col justify-center">
+      <div className="uppercase tracking-wide text-sm text-indigo-500 font-semibold mb-1">Explore Nature</div>
+      <h2 className="text-3xl font-bold mb-3 text-neutral-900 dark:text-white leading-tight">Into the Wild</h2>
+      <div className="text-neutral-600 dark:text-neutral-400 mb-6 leading-relaxed">
+        Discover the hidden paths of the ancient forest. Hover over the image to bring the vibrant colors of nature to life.
       </div>
-      <button className="inline-flex h-11 items-center gap-2 rounded-lg bg-blue-600 px-6 text-sm font-semibold text-white hover:bg-blue-700 transition-colors">
-        Explore More
+      <button className="group inline-flex h-10 w-fit items-center gap-2 rounded-full bg-neutral-900 dark:bg-white px-6 text-sm font-medium text-white dark:text-neutral-900 hover:bg-neutral-800 dark:hover:bg-neutral-100 transition-all">
+        Start Journey
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-4 h-4 transition-transform group-hover:translate-x-1"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
       </button>
     </div>
   </div>
@@ -77,7 +80,8 @@ The `CardGrayscale` creates a smooth grayscale to color transition effect on hov
     "use client"
     
     import * as React from "react"
-    import { motion, HTMLMotionProps } from "framer-motion"
+    import * as motion from "framer-motion/client"
+    import type { HTMLMotionProps } from "framer-motion"
     import { cn } from "@/lib/utils"
     
     export interface CardGrayscaleProps extends Omit<HTMLMotionProps<"div">, "children"> {

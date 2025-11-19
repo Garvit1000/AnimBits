@@ -48,13 +48,22 @@ import { Bell } from "lucide-react"
     ```tsx title="components/animations/icons/wiggle.tsx"
     "use client"
 
-    import { motion, type HTMLMotionProps } from "framer-motion"
+    import * as motion from "framer-motion/client"
+    import type { HTMLMotionProps } from "framer-motion"
     import { wiggleVariants } from "@/lib/animation-presets"
     import { useState } from "react"
 
     interface WiggleIconProps extends Omit<HTMLMotionProps<"div">, "animate"> {
       children: React.ReactNode
+      /**
+       * When to trigger the wiggle animation
+       * @default "hover"
+       */
       trigger?: "hover" | "tap" | "mount"
+      /**
+       * Wiggle intensity (rotation angle in degrees)
+       * @default 10
+       */
       intensity?: number
     }
 
@@ -85,7 +94,6 @@ import { Bell } from "lucide-react"
           animate={trigger === "mount" ? "animate" : undefined}
           whileHover={trigger === "hover" ? "animate" : undefined}
           whileTap={trigger === "tap" ? "animate" : undefined}
-          onHoverStart={trigger === "hover" ? handleTrigger : undefined}
           onTap={trigger === "tap" ? handleTrigger : undefined}
           transition={{ duration: 0.5, ease: "easeInOut" }}
           {...props}

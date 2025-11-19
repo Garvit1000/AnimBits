@@ -1,6 +1,7 @@
 "use client"
 
-import { motion, type HTMLMotionProps } from "framer-motion"
+import * as motion from "framer-motion/client"
+import type { HTMLMotionProps } from "framer-motion"
 import { pulseVariants, createContinuousTransition } from "@/lib/animation-presets"
 
 interface PulseIconProps extends Omit<HTMLMotionProps<"div">, "animate"> {

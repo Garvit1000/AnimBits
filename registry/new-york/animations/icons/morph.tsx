@@ -1,7 +1,8 @@
 "use client"
 
 import * as React from "react"
-import { motion, SVGMotionProps } from "framer-motion"
+import * as motion from "framer-motion/client"
+import type { SVGMotionProps } from "framer-motion"
 import { cn } from "@/lib/utils"
 
 export interface MorphIconProps extends Omit<SVGMotionProps<SVGSVGElement>, "children"> {

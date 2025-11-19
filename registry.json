@@ -8,8 +8,15 @@
       "type": "registry:lib",
       "title": "Animation Primitive Hooks",
       "description": "Component-agnostic animation hooks that work with any element via Framer Motion",
-      "tags": ["hooks", "primitive", "core", "utilities"],
-      "dependencies": ["framer-motion"],
+      "tags": [
+        "hooks",
+        "primitive",
+        "core",
+        "utilities"
+      ],
+      "dependencies": [
+        "framer-motion"
+      ],
       "files": [
         {
           "path": "lib/hooks/use-hover-lift.ts",
@@ -82,8 +89,15 @@
       "type": "registry:component",
       "title": "Pulse Icon",
       "description": "Continuous pulsing animation for icons",
-      "tags": ["icon", "continuous", "pulse", "loop"],
-      "dependencies": ["framer-motion"],
+      "tags": [
+        "icon",
+        "continuous",
+        "pulse",
+        "loop"
+      ],
+      "dependencies": [
+        "framer-motion"
+      ],
       "files": [
         {
           "path": "registry/new-york/animations/icons/pulse.tsx",
@@ -96,8 +110,15 @@
       "type": "registry:component",
       "title": "Bounce Icon",
       "description": "One-shot bounce animation for icons with configurable triggers",
-      "tags": ["icon", "one-shot", "bounce", "interactive"],
-      "dependencies": ["framer-motion"],
+      "tags": [
+        "icon",
+        "one-shot",
+        "bounce",
+        "interactive"
+      ],
+      "dependencies": [
+        "framer-motion"
+      ],
       "files": [
         {
           "path": "registry/new-york/animations/icons/bounce.tsx",
@@ -110,8 +131,15 @@
       "type": "registry:component",
       "title": "Bounce Continuous",
       "description": "Continuous bouncing animation for icons",
-      "tags": ["icon", "continuous", "bounce", "loop"],
-      "dependencies": ["framer-motion"],
+      "tags": [
+        "icon",
+        "continuous",
+        "bounce",
+        "loop"
+      ],
+      "dependencies": [
+        "framer-motion"
+      ],
       "files": [
         {
           "path": "registry/new-york/animations/icons/bounce-continuous.tsx",
@@ -124,8 +152,16 @@
       "type": "registry:component",
       "title": "Spin Icon",
       "description": "Continuous rotation animation for icons",
-      "tags": ["icon", "continuous", "spin", "rotate", "loop"],
-      "dependencies": ["framer-motion"],
+      "tags": [
+        "icon",
+        "continuous",
+        "spin",
+        "rotate",
+        "loop"
+      ],
+      "dependencies": [
+        "framer-motion"
+      ],
       "files": [
         {
           "path": "registry/new-york/animations/icons/spin.tsx",
@@ -138,8 +174,15 @@
       "type": "registry:component",
       "title": "Wiggle Icon",
       "description": "One-shot wiggle animation (rotate left-right) for icons",
-      "tags": ["icon", "one-shot", "wiggle", "interactive"],
-      "dependencies": ["framer-motion"],
+      "tags": [
+        "icon",
+        "one-shot",
+        "wiggle",
+        "interactive"
+      ],
+      "dependencies": [
+        "framer-motion"
+      ],
       "files": [
         {
           "path": "registry/new-york/animations/icons/wiggle.tsx",
@@ -152,8 +195,15 @@
       "type": "registry:component",
       "title": "Shake Icon",
       "description": "One-shot shake animation (horizontal shake) for icons",
-      "tags": ["icon", "one-shot", "shake", "interactive"],
-      "dependencies": ["framer-motion"],
+      "tags": [
+        "icon",
+        "one-shot",
+        "shake",
+        "interactive"
+      ],
+      "dependencies": [
+        "framer-motion"
+      ],
       "files": [
         {
           "path": "registry/new-york/animations/icons/shake.tsx",
@@ -166,8 +216,16 @@
       "type": "registry:component",
       "title": "Heartbeat Icon",
       "description": "Continuous heartbeat rhythm animation for icons",
-      "tags": ["icon", "continuous", "heartbeat", "pulse", "loop"],
-      "dependencies": ["framer-motion"],
+      "tags": [
+        "icon",
+        "continuous",
+        "heartbeat",
+        "pulse",
+        "loop"
+      ],
+      "dependencies": [
+        "framer-motion"
+      ],
       "files": [
         {
           "path": "registry/new-york/animations/icons/heartbeat.tsx",
@@ -180,8 +238,14 @@
       "type": "registry:component",
       "title": "Fade In Icon",
       "description": "Entrance animation with fade effect for icons",
-      "tags": ["icon", "entrance", "fade"],
-      "dependencies": ["framer-motion"],
+      "tags": [
+        "icon",
+        "entrance",
+        "fade"
+      ],
+      "dependencies": [
+        "framer-motion"
+      ],
       "files": [
         {
           "path": "registry/new-york/animations/icons/fade-in.tsx",
@@ -194,8 +258,14 @@
       "type": "registry:component",
       "title": "Scale In Icon",
       "description": "Entrance animation with scale effect for icons",
-      "tags": ["icon", "entrance", "scale"],
-      "dependencies": ["framer-motion"],
+      "tags": [
+        "icon",
+        "entrance",
+        "scale"
+      ],
+      "dependencies": [
+        "framer-motion"
+      ],
       "files": [
         {
           "path": "registry/new-york/animations/icons/scale-in.tsx",
@@ -208,8 +278,15 @@
       "type": "registry:component",
       "title": "Pop Icon",
       "description": "One-shot pop effect (scale from 0 to 1) for icons",
-      "tags": ["icon", "one-shot", "pop", "scale"],
-      "dependencies": ["framer-motion"],
+      "tags": [
+        "icon",
+        "one-shot",
+        "pop",
+        "scale"
+      ],
+      "dependencies": [
+        "framer-motion"
+      ],
       "files": [
         {
           "path": "registry/new-york/animations/icons/pop.tsx",
@@ -222,8 +299,15 @@
       "type": "registry:component",
       "title": "Rotate Icon",
       "description": "One-shot 360° rotation animation for icons",
-      "tags": ["icon", "one-shot", "rotate", "interactive"],
-      "dependencies": ["framer-motion"],
+      "tags": [
+        "icon",
+        "one-shot",
+        "rotate",
+        "interactive"
+      ],
+      "dependencies": [
+        "framer-motion"
+      ],
       "files": [
         {
           "path": "registry/new-york/animations/icons/rotate.tsx",
@@ -236,8 +320,16 @@
       "type": "registry:component",
       "title": "Stroke Draw Icon",
       "description": "SVG path stroke drawing animation for icons",
-      "tags": ["icon", "stroke", "draw", "svg", "entrance"],
-      "dependencies": ["framer-motion"],
+      "tags": [
+        "icon",
+        "stroke",
+        "draw",
+        "svg",
+        "entrance"
+      ],
+      "dependencies": [
+        "framer-motion"
+      ],
       "files": [
         {
           "path": "registry/new-york/animations/icons/stroke-draw.tsx",
@@ -250,8 +342,15 @@
       "type": "registry:component",
       "title": "Press Button",
       "description": "Button with press-down effect on tap",
-      "tags": ["button", "interactive", "press", "tap"],
-      "dependencies": ["framer-motion"],
+      "tags": [
+        "button",
+        "interactive",
+        "press",
+        "tap"
+      ],
+      "dependencies": [
+        "framer-motion"
+      ],
       "files": [
         {
           "path": "registry/new-york/animations/buttons/press.tsx",
@@ -264,8 +363,15 @@
       "type": "registry:component",
       "title": "Glow Button",
       "description": "Button with glow effect on hover",
-      "tags": ["button", "interactive", "glow", "hover"],
-      "dependencies": ["framer-motion"],
+      "tags": [
+        "button",
+        "interactive",
+        "glow",
+        "hover"
+      ],
+      "dependencies": [
+        "framer-motion"
+      ],
       "files": [
         {
           "path": "registry/new-york/animations/buttons/glow.tsx",
@@ -278,8 +384,15 @@
       "type": "registry:component",
       "title": "Lift Button",
       "description": "Button that lifts up on hover",
-      "tags": ["button", "interactive", "lift", "hover"],
-      "dependencies": ["framer-motion"],
+      "tags": [
+        "button",
+        "interactive",
+        "lift",
+        "hover"
+      ],
+      "dependencies": [
+        "framer-motion"
+      ],
       "files": [
         {
           "path": "registry/new-york/animations/buttons/lift.tsx",
@@ -292,8 +405,15 @@
       "type": "registry:component",
       "title": "Shine Button",
       "description": "Button with shine sweep effect on hover",
-      "tags": ["button", "interactive", "shine", "hover"],
-      "dependencies": ["framer-motion"],
+      "tags": [
+        "button",
+        "interactive",
+        "shine",
+        "hover"
+      ],
+      "dependencies": [
+        "framer-motion"
+      ],
       "files": [
         {
           "path": "registry/new-york/animations/buttons/shine.tsx",
@@ -306,8 +426,14 @@
       "type": "registry:component",
       "title": "Fade In Button",
       "description": "Button with fade-in entrance animation",
-      "tags": ["button", "entrance", "fade"],
-      "dependencies": ["framer-motion"],
+      "tags": [
+        "button",
+        "entrance",
+        "fade"
+      ],
+      "dependencies": [
+        "framer-motion"
+      ],
       "files": [
         {
           "path": "registry/new-york/animations/buttons/fade-in.tsx",
@@ -320,8 +446,14 @@
       "type": "registry:component",
       "title": "Slide In Button",
       "description": "Button with slide-in entrance animation",
-      "tags": ["button", "entrance", "slide"],
-      "dependencies": ["framer-motion"],
+      "tags": [
+        "button",
+        "entrance",
+        "slide"
+      ],
+      "dependencies": [
+        "framer-motion"
+      ],
       "files": [
         {
           "path": "registry/new-york/animations/buttons/slide-in.tsx",
@@ -334,8 +466,15 @@
       "type": "registry:component",
       "title": "Ripple Button",
       "description": "Button with touch-aware ripple effect on click",
-      "tags": ["button", "interactive", "ripple", "click"],
-      "dependencies": ["framer-motion"],
+      "tags": [
+        "button",
+        "interactive",
+        "ripple",
+        "click"
+      ],
+      "dependencies": [
+        "framer-motion"
+      ],
       "files": [
         {
           "path": "registry/new-york/animations/buttons/ripple.tsx",
@@ -348,8 +487,15 @@
       "type": "registry:component",
       "title": "Magnetic Button",
       "description": "Button with cursor-following magnetic attraction effect",
-      "tags": ["button", "interactive", "magnetic", "hover"],
-      "dependencies": ["framer-motion"],
+      "tags": [
+        "button",
+        "interactive",
+        "magnetic",
+        "hover"
+      ],
+      "dependencies": [
+        "framer-motion"
+      ],
       "files": [
         {
           "path": "registry/new-york/animations/buttons/magnetic.tsx",
@@ -362,8 +508,15 @@
       "type": "registry:component",
       "title": "Border Gradient Button",
       "description": "Button with animated gradient border",
-      "tags": ["button", "gradient", "border", "continuous"],
-      "dependencies": ["framer-motion"],
+      "tags": [
+        "button",
+        "gradient",
+        "border",
+        "continuous"
+      ],
+      "dependencies": [
+        "framer-motion"
+      ],
       "files": [
         {
           "path": "registry/new-york/animations/buttons/border-gradient.tsx",
@@ -376,8 +529,15 @@
       "type": "registry:component",
       "title": "Hover Lift Card",
       "description": "Card that lifts with shadow on hover",
-      "tags": ["card", "interactive", "lift", "hover"],
-      "dependencies": ["framer-motion"],
+      "tags": [
+        "card",
+        "interactive",
+        "lift",
+        "hover"
+      ],
+      "dependencies": [
+        "framer-motion"
+      ],
       "files": [
         {
           "path": "registry/new-york/animations/cards/hover-lift.tsx",
@@ -390,8 +550,15 @@
       "type": "registry:component",
       "title": "Hover Glow Card",
       "description": "Card with glow effect on hover",
-      "tags": ["card", "interactive", "glow", "hover"],
-      "dependencies": ["framer-motion"],
+      "tags": [
+        "card",
+        "interactive",
+        "glow",
+        "hover"
+      ],
+      "dependencies": [
+        "framer-motion"
+      ],
       "files": [
         {
           "path": "registry/new-york/animations/cards/hover-glow.tsx",
@@ -404,8 +571,14 @@
       "type": "registry:component",
       "title": "Fade In Card",
       "description": "Card with fade-in animation on mount",
-      "tags": ["card", "entrance", "fade"],
-      "dependencies": ["framer-motion"],
+      "tags": [
+        "card",
+        "entrance",
+        "fade"
+      ],
+      "dependencies": [
+        "framer-motion"
+      ],
       "files": [
         {
           "path": "registry/new-york/animations/cards/fade-in.tsx",
@@ -418,8 +591,14 @@
       "type": "registry:component",
       "title": "Scale In Card",
       "description": "Card with scale-in animation on mount",
-      "tags": ["card", "entrance", "scale"],
-      "dependencies": ["framer-motion"],
+      "tags": [
+        "card",
+        "entrance",
+        "scale"
+      ],
+      "dependencies": [
+        "framer-motion"
+      ],
       "files": [
         {
           "path": "registry/new-york/animations/cards/scale-in.tsx",
@@ -432,8 +611,14 @@
       "type": "registry:component",
       "title": "Slide In Card",
       "description": "Card that slides in from any direction on mount",
-      "tags": ["card", "entrance", "slide"],
-      "dependencies": ["framer-motion"],
+      "tags": [
+        "card",
+        "entrance",
+        "slide"
+      ],
+      "dependencies": [
+        "framer-motion"
+      ],
       "files": [
         {
           "path": "registry/new-york/animations/cards/slide-in.tsx",
@@ -446,8 +631,16 @@
       "type": "registry:component",
       "title": "Flip Card",
       "description": "Card with 3D flip animation on hover",
-      "tags": ["card", "interactive", "flip", "hover", "3d"],
-      "dependencies": ["framer-motion"],
+      "tags": [
+        "card",
+        "interactive",
+        "flip",
+        "hover",
+        "3d"
+      ],
+      "dependencies": [
+        "framer-motion"
+      ],
       "files": [
         {
           "path": "registry/new-york/animations/cards/flip.tsx",
@@ -460,8 +653,16 @@
       "type": "registry:component",
       "title": "Tilt Card",
       "description": "Card with mouse-tracking tilt effect",
-      "tags": ["card", "interactive", "tilt", "hover", "3d"],
-      "dependencies": ["framer-motion"],
+      "tags": [
+        "card",
+        "interactive",
+        "tilt",
+        "hover",
+        "3d"
+      ],
+      "dependencies": [
+        "framer-motion"
+      ],
       "files": [
         {
           "path": "registry/new-york/animations/cards/tilt.tsx",
@@ -474,8 +675,17 @@
       "type": "registry:component",
       "title": "Parallax Tilt Card",
       "description": "Card with 3D parallax tilt effect and depth",
-      "tags": ["card", "interactive", "parallax", "tilt", "hover", "3d"],
-      "dependencies": ["framer-motion"],
+      "tags": [
+        "card",
+        "interactive",
+        "parallax",
+        "tilt",
+        "hover",
+        "3d"
+      ],
+      "dependencies": [
+        "framer-motion"
+      ],
       "files": [
         {
           "path": "registry/new-york/animations/cards/parallax-tilt.tsx",
@@ -488,8 +698,15 @@
       "type": "registry:component",
       "title": "Frosted Glass Card",
       "description": "Card with frosted glass blur effect",
-      "tags": ["card", "glass", "blur", "backdrop"],
-      "dependencies": ["framer-motion"],
+      "tags": [
+        "card",
+        "glass",
+        "blur",
+        "backdrop"
+      ],
+      "dependencies": [
+        "framer-motion"
+      ],
       "files": [
         {
           "path": "registry/new-york/animations/cards/frosted-glass.tsx",
@@ -502,8 +719,16 @@
       "type": "registry:component",
       "title": "Background Zoom Card",
       "description": "Card with background image zoom on hover",
-      "tags": ["card", "interactive", "zoom", "hover", "background"],
-      "dependencies": ["framer-motion"],
+      "tags": [
+        "card",
+        "interactive",
+        "zoom",
+        "hover",
+        "background"
+      ],
+      "dependencies": [
+        "framer-motion"
+      ],
       "files": [
         {
           "path": "registry/new-york/animations/cards/background-zoom.tsx",
@@ -516,8 +741,15 @@
       "type": "registry:component",
       "title": "Fade In Text",
       "description": "Text that fades in word by word or character by character",
-      "tags": ["text", "entrance", "fade", "stagger"],
-      "dependencies": ["framer-motion"],
+      "tags": [
+        "text",
+        "entrance",
+        "fade",
+        "stagger"
+      ],
+      "dependencies": [
+        "framer-motion"
+      ],
       "files": [
         {
           "path": "registry/new-york/animations/text/fade-in.tsx",
@@ -530,8 +762,15 @@
       "type": "registry:component",
       "title": "Slide Up Text",
       "description": "Text that slides up word by word or character by character",
-      "tags": ["text", "entrance", "slide", "stagger"],
-      "dependencies": ["framer-motion"],
+      "tags": [
+        "text",
+        "entrance",
+        "slide",
+        "stagger"
+      ],
+      "dependencies": [
+        "framer-motion"
+      ],
       "files": [
         {
           "path": "registry/new-york/animations/text/slide-up.tsx",
@@ -544,8 +783,14 @@
       "type": "registry:component",
       "title": "Typewriter Text",
       "description": "Text with typewriter effect and optional blinking cursor",
-      "tags": ["text", "typewriter", "animation"],
-      "dependencies": ["framer-motion"],
+      "tags": [
+        "text",
+        "typewriter",
+        "animation"
+      ],
+      "dependencies": [
+        "framer-motion"
+      ],
       "files": [
         {
           "path": "registry/new-york/animations/text/typewriter.tsx",
@@ -558,8 +803,15 @@
       "type": "registry:component",
       "title": "Gradient Text",
       "description": "Text with animated gradient effect",
-      "tags": ["text", "gradient", "continuous", "loop"],
-      "dependencies": ["framer-motion"],
+      "tags": [
+        "text",
+        "gradient",
+        "continuous",
+        "loop"
+      ],
+      "dependencies": [
+        "framer-motion"
+      ],
       "files": [
         {
           "path": "registry/new-york/animations/text/gradient.tsx",
@@ -572,8 +824,15 @@
       "type": "registry:component",
       "title": "Blur In Text",
       "description": "Text that blurs in word by word or character by character",
-      "tags": ["text", "entrance", "blur", "stagger"],
-      "dependencies": ["framer-motion"],
+      "tags": [
+        "text",
+        "entrance",
+        "blur",
+        "stagger"
+      ],
+      "dependencies": [
+        "framer-motion"
+      ],
       "files": [
         {
           "path": "registry/new-york/animations/text/blur-in.tsx",
@@ -586,8 +845,15 @@
       "type": "registry:component",
       "title": "Shimmer Text",
       "description": "Text with gradient shimmer sweep animation",
-      "tags": ["text", "shimmer", "gradient", "continuous"],
-      "dependencies": ["framer-motion"],
+      "tags": [
+        "text",
+        "shimmer",
+        "gradient",
+        "continuous"
+      ],
+      "dependencies": [
+        "framer-motion"
+      ],
       "files": [
         {
           "path": "registry/new-york/animations/text/shimmer.tsx",
@@ -600,8 +866,15 @@
       "type": "registry:component",
       "title": "Scramble Text",
       "description": "Hacker-style text scramble decode animation",
-      "tags": ["text", "scramble", "decode", "entrance"],
-      "dependencies": ["framer-motion"],
+      "tags": [
+        "text",
+        "scramble",
+        "decode",
+        "entrance"
+      ],
+      "dependencies": [
+        "framer-motion"
+      ],
       "files": [
         {
           "path": "registry/new-york/animations/text/scramble.tsx",
@@ -614,8 +887,15 @@
       "type": "registry:component",
       "title": "Word Carousel Text",
       "description": "Rotating word carousel animation",
-      "tags": ["text", "carousel", "rotate", "continuous"],
-      "dependencies": ["framer-motion"],
+      "tags": [
+        "text",
+        "carousel",
+        "rotate",
+        "continuous"
+      ],
+      "dependencies": [
+        "framer-motion"
+      ],
       "files": [
         {
           "path": "registry/new-york/animations/text/word-carousel.tsx",
@@ -628,8 +908,15 @@
       "type": "registry:component",
       "title": "Split Reveal Text",
       "description": "Text reveals with vertical split effect",
-      "tags": ["text", "split", "reveal", "entrance"],
-      "dependencies": ["framer-motion"],
+      "tags": [
+        "text",
+        "split",
+        "reveal",
+        "entrance"
+      ],
+      "dependencies": [
+        "framer-motion"
+      ],
       "files": [
         {
           "path": "registry/new-york/animations/text/split-reveal.tsx",
@@ -642,8 +929,15 @@
       "type": "registry:component",
       "title": "Spinner Loader",
       "description": "Circular spinning loader",
-      "tags": ["loader", "spinner", "loading", "continuous"],
-      "dependencies": ["framer-motion"],
+      "tags": [
+        "loader",
+        "spinner",
+        "loading",
+        "continuous"
+      ],
+      "dependencies": [
+        "framer-motion"
+      ],
       "files": [
         {
           "path": "registry/new-york/animations/loaders/spinner.tsx",
@@ -656,8 +950,15 @@
       "type": "registry:component",
       "title": "Dots Loader",
       "description": "Bouncing dots loader",
-      "tags": ["loader", "dots", "loading", "continuous"],
-      "dependencies": ["framer-motion"],
+      "tags": [
+        "loader",
+        "dots",
+        "loading",
+        "continuous"
+      ],
+      "dependencies": [
+        "framer-motion"
+      ],
       "files": [
         {
           "path": "registry/new-york/animations/loaders/dots.tsx",
@@ -670,8 +971,15 @@
       "type": "registry:component",
       "title": "Bars Loader",
       "description": "Animated height bars loader",
-      "tags": ["loader", "bars", "loading", "continuous"],
-      "dependencies": ["framer-motion"],
+      "tags": [
+        "loader",
+        "bars",
+        "loading",
+        "continuous"
+      ],
+      "dependencies": [
+        "framer-motion"
+      ],
       "files": [
         {
           "path": "registry/new-york/animations/loaders/bars.tsx",
@@ -684,8 +992,15 @@
       "type": "registry:component",
       "title": "Pulse Loader",
       "description": "Pulsing circle loader",
-      "tags": ["loader", "pulse", "loading", "continuous"],
-      "dependencies": ["framer-motion"],
+      "tags": [
+        "loader",
+        "pulse",
+        "loading",
+        "continuous"
+      ],
+      "dependencies": [
+        "framer-motion"
+      ],
       "files": [
         {
           "path": "registry/new-york/animations/loaders/pulse.tsx",
@@ -698,8 +1013,16 @@
       "type": "registry:component",
       "title": "Skeleton Loader",
       "description": "Shimmer skeleton loader for content placeholders",
-      "tags": ["loader", "skeleton", "shimmer", "loading", "continuous"],
-      "dependencies": ["framer-motion"],
+      "tags": [
+        "loader",
+        "skeleton",
+        "shimmer",
+        "loading",
+        "continuous"
+      ],
+      "dependencies": [
+        "framer-motion"
+      ],
       "files": [
         {
           "path": "registry/new-york/animations/loaders/skeleton.tsx",
@@ -712,8 +1035,16 @@
       "type": "registry:component",
       "title": "Orbit Loader",
       "description": "Spinning particles in orbit animation",
-      "tags": ["loader", "orbit", "particles", "loading", "continuous"],
-      "dependencies": ["framer-motion"],
+      "tags": [
+        "loader",
+        "orbit",
+        "particles",
+        "loading",
+        "continuous"
+      ],
+      "dependencies": [
+        "framer-motion"
+      ],
       "files": [
         {
           "path": "registry/new-york/animations/loaders/orbit.tsx",
@@ -726,8 +1057,16 @@
       "type": "registry:component",
       "title": "Gooey Blobs Loader",
       "description": "Organic merging blobs animation",
-      "tags": ["loader", "gooey", "blobs", "loading", "continuous"],
-      "dependencies": ["framer-motion"],
+      "tags": [
+        "loader",
+        "gooey",
+        "blobs",
+        "loading",
+        "continuous"
+      ],
+      "dependencies": [
+        "framer-motion"
+      ],
       "files": [
         {
           "path": "registry/new-york/animations/loaders/gooey-blobs.tsx",
@@ -740,8 +1079,16 @@
       "type": "registry:component",
       "title": "Morphing Loader",
       "description": "Shape-shifting morphing animation",
-      "tags": ["loader", "morphing", "shapes", "loading", "continuous"],
-      "dependencies": ["framer-motion"],
+      "tags": [
+        "loader",
+        "morphing",
+        "shapes",
+        "loading",
+        "continuous"
+      ],
+      "dependencies": [
+        "framer-motion"
+      ],
       "files": [
         {
           "path": "registry/new-york/animations/loaders/morphing.tsx",
@@ -754,8 +1101,15 @@
       "type": "registry:component",
       "title": "Slide In List",
       "description": "List with staggered slide-in animation for items",
-      "tags": ["list", "entrance", "slide", "stagger"],
-      "dependencies": ["framer-motion"],
+      "tags": [
+        "list",
+        "entrance",
+        "slide",
+        "stagger"
+      ],
+      "dependencies": [
+        "framer-motion"
+      ],
       "files": [
         {
           "path": "registry/new-york/animations/lists/slide-in.tsx",
@@ -768,8 +1122,15 @@
       "type": "registry:component",
       "title": "Stagger Fade List",
       "description": "List with staggered fade-in animation for items",
-      "tags": ["list", "entrance", "fade", "stagger"],
-      "dependencies": ["framer-motion"],
+      "tags": [
+        "list",
+        "entrance",
+        "fade",
+        "stagger"
+      ],
+      "dependencies": [
+        "framer-motion"
+      ],
       "files": [
         {
           "path": "registry/new-york/animations/lists/stagger-fade.tsx",
@@ -782,8 +1143,15 @@
       "type": "registry:component",
       "title": "Page Transition",
       "description": "Smooth page transition with fade and slide",
-      "tags": ["page", "transition", "fade", "slide"],
-      "dependencies": ["framer-motion"],
+      "tags": [
+        "page",
+        "transition",
+        "fade",
+        "slide"
+      ],
+      "dependencies": [
+        "framer-motion"
+      ],
       "files": [
         {
           "path": "registry/new-york/animations/pages/page-transition.tsx",
@@ -796,8 +1164,14 @@
       "type": "registry:component",
       "title": "Slide Transition",
       "description": "Page transition with directional slide effect",
-      "tags": ["page", "transition", "slide"],
-      "dependencies": ["framer-motion"],
+      "tags": [
+        "page",
+        "transition",
+        "slide"
+      ],
+      "dependencies": [
+        "framer-motion"
+      ],
       "files": [
         {
           "path": "registry/new-york/animations/pages/slide-transition.tsx",

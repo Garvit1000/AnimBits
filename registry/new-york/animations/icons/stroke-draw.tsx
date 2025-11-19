@@ -1,7 +1,7 @@
 "use client"
 
 import * as React from "react"
-import { motion } from "framer-motion"
+import * as motion from "framer-motion/client"
 import { cn } from "@/lib/utils"
 import { useStrokeDraw, type UseStrokeDrawOptions } from "@/lib/hooks/use-stroke-draw"
 

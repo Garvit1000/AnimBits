@@ -1,26 +1,24 @@
-"use client"
+import Link from "next/link";
+import { Navbar } from "@/components/navbar";
+import { Badge } from "@/components/ui/badge";
+import { BentoGrid, BentoGridItem } from "@/components/ui/bento-grid";
+import { ContainerTextFlip } from "@/components/ui/container-text-flip";
+import { Button } from "@/components/ui/button";
+import { TextShimmer } from "@/registry/new-york/animations/text/shimmer";
+import { RippleButton } from "@/registry/new-york/animations/buttons/ripple";
+import { CardParallaxTilt } from "@/registry/new-york/animations/cards/parallax-tilt";
+import { LoaderOrbit } from "@/registry/new-york/animations/loaders/orbit";
+import { LoaderMorphing } from "@/registry/new-york/animations/loaders/morphing";
+import { HeartbeatIcon } from "@/registry/new-york/animations/icons/heartbeat";
+import { StaggerFadeList } from "@/registry/new-york/animations/lists/stagger-fade";
+import { PageTransitionFade } from "@/registry/new-york/animations/pages/page-transition-fade";
+import { ThemeToggleCircular } from "@/registry/new-york/animations/transitions/theme-toggle-circular";
+import DatabaseWithRestApi from "@/components/ui/database-with-rest-api";
+import { TestimonialsColumn } from "@/components/testimonials-columns-1";
+import { Footer } from "@/components/footer";
 
-import { useState } from "react"
-import { Navbar } from "@/components/navbar"
-import { Badge } from "@/components/ui/badge"
-import { BentoGrid, BentoGridItem } from "@/components/ui/bento-grid"
-import { ContainerTextFlip } from "@/components/ui/container-text-flip"
-import { Button } from "@/components/ui/button"
-import { TextShimmer } from "@/registry/new-york/animations/text/shimmer"
-import { TextScramble } from "@/registry/new-york/animations/text/scramble"
-import { TextWordCarousel } from "@/registry/new-york/animations/text/word-carousel"
-import { RippleButton } from "@/registry/new-york/animations/buttons/ripple"
-import { MagneticButton } from "@/registry/new-york/animations/buttons/magnetic"
-import { CardParallaxTilt } from "@/registry/new-york/animations/cards/parallax-tilt"
-import { LoaderOrbit } from "@/registry/new-york/animations/loaders/orbit"
-import { LoaderGooeyBlobs } from "@/registry/new-york/animations/loaders/gooey-blobs"
-import { LoaderMorphing } from "@/registry/new-york/animations/loaders/morphing"
-import DatabaseWithRestApi from "@/components/ui/database-with-rest-api"
-import { TestimonialsColumn } from "@/components/testimonials-columns-1"
-import { Footer } from "@/components/footer"
-
-import { ArrowRight, Sparkles, RotateCcw } from "lucide-react"
-import { motion } from "framer-motion"
+import { ArrowRight, Sparkles, Heart } from "lucide-react";
+import * as motion from "framer-motion/client";
 
 const testimonials = [
   {
@@ -41,10 +39,9 @@ const testimonials = [
     name: "Emily Rodriguez",
     role: "Product Manager",
   },
-]
+];
 
 export default function Home() {
-  const [scrambleKey, setScrambleKey] = useState(0)
 
   return (
     <div className="min-h-screen bg-white dark:bg-neutral-950">
@@ -61,10 +58,11 @@ export default function Home() {
             <motion.div
               className="mb-8 inline-flex items-center gap-2 rounded-full px-3 py-1 text-sm relative bg-neutral-50 dark:bg-neutral-900"
               style={{
-                backgroundImage: 'linear-gradient(135deg, rgb(59 130 246) 0%, rgb(229 231 235) 30%, rgb(229 231 235) 100%)',
-                backgroundOrigin: 'border-box',
-                backgroundClip: 'padding-box, border-box',
-                border: '1px solid transparent',
+                backgroundImage:
+                  "linear-gradient(135deg, rgb(59 130 246) 0%, rgb(229 231 235) 30%, rgb(229 231 235) 100%)",
+                backgroundOrigin: "border-box",
+                backgroundClip: "padding-box, border-box",
+                border: "1px solid transparent",
               }}
               initial={{ opacity: 0, y: -20 }}
               animate={{ opacity: 1, y: 0 }}
@@ -89,7 +87,11 @@ export default function Home() {
               </h1>
               <div className="flex justify-center">
                 <ContainerTextFlip
-                  words={["Animation System", "Design System", "Component Library"]}
+                  words={[
+                    "Animation System",
+                    "Design System",
+                    "Component Library",
+                  ]}
                   className="text-3xl md:text-5xl lg:text-6xl"
                   textClassName="font-bold"
                 />
@@ -104,7 +106,8 @@ export default function Home() {
               transition={{ duration: 0.5, delay: 0.2 }}
             >
               <p className="mb-4">
-                A set of beautifully designed animations that you can install with one command.
+                A set of beautifully designed animations that you can install
+                with one command.
               </p>
               <p>
                 Stop writing repetitive Motion code. Open Source. Open Code.
@@ -226,7 +229,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Animation Showcase */}
+      {/* Animation Categories */}
       <section className="bg-neutral-50 py-20 dark:bg-neutral-900/50">
         <div className="container mx-auto px-4">
           <motion.div
@@ -237,154 +240,185 @@ export default function Home() {
             transition={{ duration: 0.5 }}
           >
             <h2 className="mb-3 text-3xl font-bold text-neutral-900 dark:text-white md:text-4xl">
-              Featured Animations
+              Categories
             </h2>
             <p className="text-base text-neutral-600 dark:text-neutral-400">
-              Copy, paste, and customize. All animations are production-ready.
+              Explore our collection of production-ready animations.
             </p>
           </motion.div>
 
           <BentoGrid className="mx-auto max-w-7xl">
-            {/* Text Shimmer */}
-            <BentoGridItem
-              title="Text Shimmer"
-              description="Smooth gradient sweep animation"
-              header={
-                <div className="flex h-full min-h-[6rem] w-full items-center justify-center">
-                  <TextShimmer
-                    className="text-4xl font-bold"
-                    colors={["transparent", "rgba(59, 130, 246, 0.9)", "transparent"]}
-                    duration={2.5}
-                  >
-                    Shimmer
-                  </TextShimmer>
-                </div>
-              }
-            />
+            {/* Text */}
+            <Link href="/docs/animations/text/shimmer" className="row-span-1 group/item block h-full w-full">
+              <BentoGridItem
+                title="Text"
+                description="Shimmer, Scramble, and more"
+                header={
+                  <div className="flex h-full min-h-[6rem] w-full items-center justify-center">
+                    <TextShimmer
+                      className="text-3xl font-bold"
+                      colors={[
+                        "transparent",
+                        "rgba(59, 130, 246, 0.9)",
+                        "transparent",
+                      ]}
+                      duration={2.5}
+                    >
+                      Text
+                    </TextShimmer>
+                  </div>
+                }
+                className="h-full"
+              />
+            </Link>
 
-            {/* Text Scramble */}
-            <BentoGridItem
-              title="Text Scramble"
-              description="Hacker-style decode effect"
-              header={
-                <div className="group relative flex h-full min-h-[6rem] w-full items-center justify-center">
-                  <TextScramble key={scrambleKey} className="text-2xl font-bold">
-                    Decode Me
-                  </TextScramble>
-                  <Button
-                    onClick={() => setScrambleKey((prev) => prev + 1)}
-                    variant="ghost"
-                    size="icon"
-                    className="absolute right-2 top-2 h-7 w-7 opacity-0 transition-opacity group-hover:opacity-100"
-                  >
-                    <RotateCcw className="h-3.5 w-3.5" />
-                  </Button>
-                </div>
-              }
-            />
+            {/* Icons (Replaces Text Scramble) */}
+            <Link href="/docs/animations/icons/heartbeat" className="row-span-1 group/item block h-full w-full">
+              <BentoGridItem
+                title="Icons"
+                description="Heartbeat, Pulse, Spin"
+                header={
+                  <div className="flex h-full min-h-[6rem] w-full items-center justify-center">
+                    <HeartbeatIcon className="text-red-500">
+                      <Heart className="h-12 w-12 fill-current" />
+                    </HeartbeatIcon>
+                  </div>
+                }
+                className="h-full"
+              />
+            </Link>
 
-            {/* Word Carousel */}
-            <BentoGridItem
-              title="Word Carousel"
-              description="Rotating word transitions"
-              header={
-                <div className="flex h-full min-h-[6rem] w-full items-center justify-center text-center">
-                  <div className="text-xl font-bold">
-                    Build{" "}
-                    <TextWordCarousel
-                      words={["Fast", "Modern", "Beautiful"]}
-                      className="text-blue-600"
+            {/* Lists (Replaces Word Carousel) */}
+            <Link href="/docs/animations/lists/stagger-fade" className="row-span-1 group/item block h-full w-full">
+              <BentoGridItem
+                title="Lists"
+                description="Staggered animations"
+                header={
+                  <div className="flex h-full min-h-[6rem] w-full items-center justify-center">
+                    <StaggerFadeList className="space-y-2 w-32">
+                      {[1, 2, 3].map((i) => (
+                        <div key={i} className="h-2 w-full rounded bg-neutral-200 dark:bg-neutral-700" />
+                      ))}
+                    </StaggerFadeList>
+                  </div>
+                }
+                className="h-full"
+              />
+            </Link>
+
+            {/* Cards (Parallax Tilt) */}
+            <Link href="/docs/animations/cards/parallax-tilt" className="row-span-1 md:col-span-2 md:row-span-2 group/item block h-full w-full">
+              <BentoGridItem
+                title="Cards"
+                description="3D Tilt, Hover effects"
+                header={
+                  <div className="flex h-full min-h-[6rem] w-full items-center justify-center p-4">
+                    <CardParallaxTilt className="w-full max-w-xs overflow-hidden rounded-lg border bg-white shadow-lg dark:border-neutral-700 dark:bg-neutral-800">
+                      <img
+                        src="https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=400&h=300&fit=crop"
+                        alt="Beautiful mountain landscape"
+                        className="h-48 w-full object-cover"
+                      />
+                      <div className="p-4">
+                        <div className="flex items-center justify-between">
+                          <div>
+                            <div className="text-sm font-semibold">
+                              Mountain View
+                            </div>
+                            <div className="text-xs text-neutral-500 dark:text-neutral-400">
+                              Premium Landscape
+                            </div>
+                          </div>
+                          <Badge>New</Badge>
+                        </div>
+                      </div>
+                    </CardParallaxTilt>
+                  </div>
+                }
+                className="h-full"
+              />
+            </Link>
+
+            {/* Buttons (Ripple) */}
+            <Link href="/docs/animations/buttons/ripple" className="row-span-1 group/item block h-full w-full">
+              <BentoGridItem
+                title="Buttons"
+                description="Ripple, Magnetic, and more"
+                header={
+                  <div className="flex h-full min-h-[6rem] w-full items-center justify-center">
+                    <RippleButton className="rounded-lg bg-blue-600 px-6 py-2.5 font-semibold text-white">
+                      Buttons
+                    </RippleButton>
+                  </div>
+                }
+                className="h-full"
+              />
+            </Link>
+
+            {/* Transitions (Replaces Magnetic Button) */}
+            <Link href="/docs/transitions/theme-toggle-circular" className="row-span-1 group/item block h-full w-full">
+              <BentoGridItem
+                title="Transitions"
+                description="Theme toggles and more"
+                header={
+                  <div className="flex h-full min-h-[6rem] w-full items-center justify-center">
+                    <ThemeToggleCircular>
+                      <div className="h-10 w-10 rounded-full bg-neutral-900 dark:bg-white" />
+                    </ThemeToggleCircular>
+                  </div>
+                }
+                className="h-full"
+              />
+            </Link>
+
+            {/* Loaders (Orbit) */}
+            <Link href="/docs/animations/loaders/orbit" className="row-span-1 group/item block h-full w-full">
+              <BentoGridItem
+                title="Loaders"
+                description="Orbit, Gooey, Morphing"
+                header={
+                  <div className="flex h-full min-h-[6rem] w-full items-center justify-center">
+                    <LoaderOrbit
+                      size={60}
+                      particleCount={4}
+                      color="#8b5cf6"
+                      particleSize={10}
                     />
                   </div>
-                </div>
-              }
-            />
+                }
+                className="h-full"
+              />
+            </Link>
 
-            {/* 3D Parallax Tilt - Large */}
-            <BentoGridItem
-              title="3D Parallax Tilt"
-              description="Mouse-tracking depth effect"
-              header={
-                <div className="flex h-full min-h-[6rem] w-full items-center justify-center p-4">
-                  <CardParallaxTilt className="w-full max-w-xs overflow-hidden rounded-lg border bg-white shadow-lg dark:border-neutral-700 dark:bg-neutral-800">
-                    <img
-                      src="https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=400&h=300&fit=crop"
-                      alt="Beautiful mountain landscape"
-                      className="h-48 w-full object-cover"
-                    />
-                    <div className="p-4">
-                      <div className="flex items-center justify-between">
-                        <div>
-                          <div className="text-sm font-semibold">Mountain View</div>
-                          <div className="text-xs text-neutral-500 dark:text-neutral-400">Premium Landscape</div>
-                        </div>
-                        <Badge>New</Badge>
-                      </div>
+            {/* Pages (Replaces Gooey Blobs) */}
+            <Link href="/docs/animations/pages/page-transition-fade" className="row-span-1 group/item block h-full w-full">
+              <BentoGridItem
+                title="Pages"
+                description="Smooth page transitions"
+                header={
+                  <div className="flex h-full min-h-[6rem] w-full items-center justify-center">
+                    <div className="rounded-lg border border-neutral-200 p-4 dark:border-neutral-800">
+                      <span className="text-sm font-medium">Page Transition</span>
                     </div>
-                  </CardParallaxTilt>
-                </div>
-              }
-              className="md:col-span-2 md:row-span-2"
-            />
+                  </div>
+                }
+                className="h-full"
+              />
+            </Link>
 
-            {/* Ripple Effect */}
-            <BentoGridItem
-              title="Ripple Effect"
-              description="Touch-aware wave animation"
-              header={
-                <div className="flex h-full min-h-[6rem] w-full items-center justify-center">
-                  <RippleButton className="rounded-lg bg-blue-600 px-6 py-2.5 font-semibold text-white">
-                    Click Me
-                  </RippleButton>
-                </div>
-              }
-            />
-
-            {/* Magnetic Button */}
-            <BentoGridItem
-              title="Magnetic Button"
-              description="Cursor-following attraction"
-              header={
-                <div className="flex h-full min-h-[6rem] w-full items-center justify-center">
-                  <MagneticButton className="rounded-lg bg-purple-600 px-6 py-2.5 font-semibold text-white">
-                    Magnetic
-                  </MagneticButton>
-                </div>
-              }
-            />
-
-            {/* Orbit Loader */}
-            <BentoGridItem
-              title="Orbit Loader"
-              description="Spinning particles"
-              header={
-                <div className="flex h-full min-h-[6rem] w-full items-center justify-center">
-                  <LoaderOrbit size={60} particleCount={4} color="#8b5cf6" particleSize={10} />
-                </div>
-              }
-            />
-
-            {/* Gooey Blobs */}
-            <BentoGridItem
-              title="Gooey Blobs"
-              description="Organic merging effect"
-              header={
-                <div className="flex h-full min-h-[6rem] w-full items-center justify-center">
-                  <LoaderGooeyBlobs size={20} color="#3b82f6" duration={2} />
-                </div>
-              }
-            />
-
-            {/* Morphing Loader */}
-            <BentoGridItem
-              title="Morphing Loader"
-              description="Shape-shifting animation"
-              header={
-                <div className="flex h-full min-h-[6rem] w-full items-center justify-center">
-                  <LoaderMorphing size={60} color="#ec4899" duration={1.5} />
-                </div>
-              }
-            />
+            {/* Morphing (Keep as extra loader example) */}
+            <Link href="/docs/animations/loaders/morphing" className="row-span-1 group/item block h-full w-full">
+              <BentoGridItem
+                title="Morphing"
+                description="Shape-shifting animation"
+                header={
+                  <div className="flex h-full min-h-[6rem] w-full items-center justify-center">
+                    <LoaderMorphing size={60} color="#ec4899" duration={1.5} />
+                  </div>
+                }
+                className="h-full"
+              />
+            </Link>
           </BentoGrid>
         </div>
       </section>
@@ -446,7 +480,8 @@ export default function Home() {
                   Install with One Command
                 </h3>
                 <p className="text-base leading-relaxed text-neutral-600 dark:text-neutral-400">
-                  Add any animation to your project with a single CLI command. No need to copy-paste code or manage dependencies manually.
+                  Add any animation to your project with a single CLI command.
+                  No need to copy-paste code or manage dependencies manually.
                 </p>
               </div>
 
@@ -466,7 +501,8 @@ export default function Home() {
                       Choose Your Animation
                     </h4>
                     <p className="text-sm text-neutral-600 dark:text-neutral-400">
-                      Browse our collection of text, button, card, and loader animations
+                      Browse our collection of text, button, card, and loader
+                      animations
                     </p>
                   </div>
                 </div>
@@ -525,8 +561,16 @@ export default function Home() {
           <div className="[mask-image:linear-gradient(to_bottom,transparent,black_25%,black_75%,transparent)] max-w-6xl mx-auto">
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               <TestimonialsColumn testimonials={testimonials} duration={15} />
-              <TestimonialsColumn testimonials={testimonials.slice().reverse()} duration={18} className="hidden md:block" />
-              <TestimonialsColumn testimonials={testimonials} duration={20} className="hidden md:block" />
+              <TestimonialsColumn
+                testimonials={testimonials.slice().reverse()}
+                duration={18}
+                className="hidden md:block"
+              />
+              <TestimonialsColumn
+                testimonials={testimonials}
+                duration={20}
+                className="hidden md:block"
+              />
             </div>
           </div>
         </div>
@@ -534,6 +578,5 @@ export default function Home() {
 
       <Footer />
     </div>
-  )
+  );
 }
-
