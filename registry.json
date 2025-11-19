@@ -102,6 +102,10 @@
         {
           "path": "registry/new-york/animations/icons/pulse.tsx",
           "type": "registry:component"
+        },
+        {
+          "path": "lib/animation-presets.ts",
+          "type": "registry:lib"
         }
       ]
     },
@@ -123,6 +127,10 @@
         {
           "path": "registry/new-york/animations/icons/bounce.tsx",
           "type": "registry:component"
+        },
+        {
+          "path": "lib/animation-presets.ts",
+          "type": "registry:lib"
         }
       ]
     },
@@ -144,6 +152,10 @@
         {
           "path": "registry/new-york/animations/icons/bounce-continuous.tsx",
           "type": "registry:component"
+        },
+        {
+          "path": "lib/animation-presets.ts",
+          "type": "registry:lib"
         }
       ]
     },
@@ -187,6 +199,10 @@
         {
           "path": "registry/new-york/animations/icons/wiggle.tsx",
           "type": "registry:component"
+        },
+        {
+          "path": "lib/animation-presets.ts",
+          "type": "registry:lib"
         }
       ]
     },
@@ -208,6 +224,10 @@
         {
           "path": "registry/new-york/animations/icons/shake.tsx",
           "type": "registry:component"
+        },
+        {
+          "path": "lib/animation-presets.ts",
+          "type": "registry:lib"
         }
       ]
     },
@@ -230,6 +250,10 @@
         {
           "path": "registry/new-york/animations/icons/heartbeat.tsx",
           "type": "registry:component"
+        },
+        {
+          "path": "lib/animation-presets.ts",
+          "type": "registry:lib"
         }
       ]
     },
@@ -250,6 +274,10 @@
         {
           "path": "registry/new-york/animations/icons/fade-in.tsx",
           "type": "registry:component"
+        },
+        {
+          "path": "lib/animation-presets.ts",
+          "type": "registry:lib"
         }
       ]
     },
@@ -270,6 +298,10 @@
         {
           "path": "registry/new-york/animations/icons/scale-in.tsx",
           "type": "registry:component"
+        },
+        {
+          "path": "lib/animation-presets.ts",
+          "type": "registry:lib"
         }
       ]
     },
@@ -291,6 +323,10 @@
         {
           "path": "registry/new-york/animations/icons/pop.tsx",
           "type": "registry:component"
+        },
+        {
+          "path": "lib/animation-presets.ts",
+          "type": "registry:lib"
         }
       ]
     },
@@ -312,6 +348,10 @@
         {
           "path": "registry/new-york/animations/icons/rotate.tsx",
           "type": "registry:component"
+        },
+        {
+          "path": "lib/animation-presets.ts",
+          "type": "registry:lib"
         }
       ]
     },
@@ -355,6 +395,10 @@
         {
           "path": "registry/new-york/animations/buttons/press.tsx",
           "type": "registry:component"
+        },
+        {
+          "path": "lib/hooks/use-press.ts",
+          "type": "registry:lib"
         }
       ]
     },
@@ -376,6 +420,10 @@
         {
           "path": "registry/new-york/animations/buttons/glow.tsx",
           "type": "registry:component"
+        },
+        {
+          "path": "lib/hooks/use-hover-glow.ts",
+          "type": "registry:lib"
         }
       ]
     },
@@ -397,6 +445,10 @@
         {
           "path": "registry/new-york/animations/buttons/lift.tsx",
           "type": "registry:component"
+        },
+        {
+          "path": "lib/hooks/use-hover-lift.ts",
+          "type": "registry:lib"
         }
       ]
     },
@@ -438,6 +490,10 @@
         {
           "path": "registry/new-york/animations/buttons/fade-in.tsx",
           "type": "registry:component"
+        },
+        {
+          "path": "lib/animation-presets.ts",
+          "type": "registry:lib"
         }
       ]
     },
@@ -458,6 +514,10 @@
         {
           "path": "registry/new-york/animations/buttons/slide-in.tsx",
           "type": "registry:component"
+        },
+        {
+          "path": "lib/animation-presets.ts",
+          "type": "registry:lib"
         }
       ]
     },
@@ -542,6 +602,10 @@
         {
           "path": "registry/new-york/animations/cards/hover-lift.tsx",
           "type": "registry:component"
+        },
+        {
+          "path": "lib/hooks/use-hover-lift.ts",
+          "type": "registry:lib"
         }
       ]
     },
@@ -563,6 +627,10 @@
         {
           "path": "registry/new-york/animations/cards/hover-glow.tsx",
           "type": "registry:component"
+        },
+        {
+          "path": "lib/hooks/use-hover-glow.ts",
+          "type": "registry:lib"
         }
       ]
     },
@@ -603,6 +671,10 @@
         {
           "path": "registry/new-york/animations/cards/scale-in.tsx",
           "type": "registry:component"
+        },
+        {
+          "path": "lib/hooks/use-scale-in.ts",
+          "type": "registry:lib"
         }
       ]
     },
@@ -623,6 +695,10 @@
         {
           "path": "registry/new-york/animations/cards/slide-in.tsx",
           "type": "registry:component"
+        },
+        {
+          "path": "lib/hooks/use-slide-in.ts",
+          "type": "registry:lib"
         }
       ]
     },
@@ -689,27 +765,6 @@
       "files": [
         {
           "path": "registry/new-york/animations/cards/parallax-tilt.tsx",
-          "type": "registry:component"
-        }
-      ]
-    },
-    {
-      "name": "@animbits/cards/frosted-glass",
-      "type": "registry:component",
-      "title": "Frosted Glass Card",
-      "description": "Card with frosted glass blur effect",
-      "tags": [
-        "card",
-        "glass",
-        "blur",
-        "backdrop"
-      ],
-      "dependencies": [
-        "framer-motion"
-      ],
-      "files": [
-        {
-          "path": "registry/new-york/animations/cards/frosted-glass.tsx",
           "type": "registry:component"
         }
       ]
@@ -1139,42 +1194,226 @@
       ]
     },
     {
-      "name": "@animbits/pages/page-transition",
+      "name": "@animbits/icons/morph",
       "type": "registry:component",
-      "title": "Page Transition",
-      "description": "Smooth page transition with fade and slide",
+      "title": "Morph Icon",
+      "description": "An icon that morphs between different states (e.g., play → pause).",
       "tags": [
-        "page",
-        "transition",
-        "fade",
-        "slide"
+        "icon",
+        "morph",
+        "svg",
+        "interactive"
       ],
       "dependencies": [
         "framer-motion"
       ],
       "files": [
         {
-          "path": "registry/new-york/animations/pages/page-transition.tsx",
+          "path": "registry/new-york/animations/icons/morph.tsx",
           "type": "registry:component"
         }
       ]
     },
     {
-      "name": "@animbits/pages/slide-transition",
+      "name": "@animbits/cards/grayscale",
       "type": "registry:component",
-      "title": "Slide Transition",
-      "description": "Page transition with directional slide effect",
+      "title": "Grayscale Card",
+      "description": "A card with grayscale to color transition effect on hover.",
       "tags": [
-        "page",
-        "transition",
-        "slide"
+        "card",
+        "interactive",
+        "grayscale",
+        "hover",
+        "image"
       ],
       "dependencies": [
         "framer-motion"
       ],
       "files": [
         {
-          "path": "registry/new-york/animations/pages/slide-transition.tsx",
+          "path": "registry/new-york/animations/cards/grayscale.tsx",
+          "type": "registry:component"
+        }
+      ]
+    },
+    {
+      "name": "@animbits/loaders/liquid-progress",
+      "type": "registry:component",
+      "title": "Liquid Progress Loader",
+      "description": "A liquid-style progress bar that fills vertically.",
+      "tags": [
+        "loader",
+        "progress",
+        "liquid",
+        "loading"
+      ],
+      "dependencies": [
+        "framer-motion"
+      ],
+      "files": [
+        {
+          "path": "registry/new-york/animations/loaders/liquid-progress.tsx",
+          "type": "registry:component"
+        }
+      ]
+    },
+    {
+      "name": "@animbits/pages/page-transition-fade",
+      "type": "registry:component",
+      "title": "Page Transition Fade",
+      "description": "Page transition component with fade effect using View Transitions API.",
+      "tags": [
+        "page",
+        "transition",
+        "fade",
+        "view-transitions"
+      ],
+      "dependencies": [],
+      "files": [
+        {
+          "path": "registry/new-york/animations/pages/page-transition-fade.tsx",
+          "type": "registry:component"
+        }
+      ]
+    },
+    {
+      "name": "@animbits/pages/page-transition-link",
+      "type": "registry:component",
+      "title": "Page Transition Link",
+      "description": "Navigation link component with View Transitions API support.",
+      "tags": [
+        "link",
+        "navigation",
+        "transition",
+        "view-transitions"
+      ],
+      "dependencies": [],
+      "files": [
+        {
+          "path": "registry/new-york/animations/pages/page-transition-link.tsx",
+          "type": "registry:component"
+        }
+      ]
+    },
+    {
+      "name": "@animbits/pages/page-transition-slide",
+      "type": "registry:component",
+      "title": "Page Transition Slide",
+      "description": "Page transition component with slide effect using View Transitions API.",
+      "tags": [
+        "page",
+        "transition",
+        "slide",
+        "view-transitions"
+      ],
+      "dependencies": [],
+      "files": [
+        {
+          "path": "registry/new-york/animations/pages/page-transition-slide.tsx",
+          "type": "registry:component"
+        }
+      ]
+    },
+    {
+      "name": "@animbits/transitions/theme-toggle-circular",
+      "type": "registry:component",
+      "title": "Theme Toggle Circular",
+      "description": "Circular ripple animation for theme toggle using View Transitions API.",
+      "tags": [
+        "transition",
+        "theme",
+        "toggle",
+        "circular",
+        "view-transitions"
+      ],
+      "dependencies": [],
+      "files": [
+        {
+          "path": "registry/new-york/animations/transitions/theme-toggle-circular.tsx",
+          "type": "registry:component"
+        }
+      ]
+    },
+    {
+      "name": "@animbits/transitions/theme-toggle-slide-bottom",
+      "type": "registry:component",
+      "title": "Theme Toggle Slide Bottom",
+      "description": "Bottom to top slide animation for theme toggle using View Transitions API.",
+      "tags": [
+        "transition",
+        "theme",
+        "toggle",
+        "slide",
+        "bottom",
+        "view-transitions"
+      ],
+      "dependencies": [],
+      "files": [
+        {
+          "path": "registry/new-york/animations/transitions/theme-toggle-slide-bottom.tsx",
+          "type": "registry:component"
+        }
+      ]
+    },
+    {
+      "name": "@animbits/transitions/theme-toggle-slide-left",
+      "type": "registry:component",
+      "title": "Theme Toggle Slide Left",
+      "description": "Left to right slide animation for theme toggle using View Transitions API.",
+      "tags": [
+        "transition",
+        "theme",
+        "toggle",
+        "slide",
+        "left",
+        "view-transitions"
+      ],
+      "dependencies": [],
+      "files": [
+        {
+          "path": "registry/new-york/animations/transitions/theme-toggle-slide-left.tsx",
+          "type": "registry:component"
+        }
+      ]
+    },
+    {
+      "name": "@animbits/transitions/theme-toggle-slide-right",
+      "type": "registry:component",
+      "title": "Theme Toggle Slide Right",
+      "description": "Right to left slide animation for theme toggle using View Transitions API.",
+      "tags": [
+        "transition",
+        "theme",
+        "toggle",
+        "slide",
+        "right",
+        "view-transitions"
+      ],
+      "dependencies": [],
+      "files": [
+        {
+          "path": "registry/new-york/animations/transitions/theme-toggle-slide-right.tsx",
+          "type": "registry:component"
+        }
+      ]
+    },
+    {
+      "name": "@animbits/transitions/theme-toggle-slide-top",
+      "type": "registry:component",
+      "title": "Theme Toggle Slide Top",
+      "description": "Top to bottom slide animation for theme toggle using View Transitions API.",
+      "tags": [
+        "transition",
+        "theme",
+        "toggle",
+        "slide",
+        "top",
+        "view-transitions"
+      ],
+      "dependencies": [],
+      "files": [
+        {
+          "path": "registry/new-york/animations/transitions/theme-toggle-slide-top.tsx",
           "type": "registry:component"
         }
       ]
