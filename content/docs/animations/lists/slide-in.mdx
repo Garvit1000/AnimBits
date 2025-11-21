@@ -16,22 +16,70 @@ The `SlideInList` component creates a staggered slide-in effect for list items. 
 <Preview
   background="grid"
   code={`import { SlideInList } from "@/components/animations/lists/slide-in"
+import { Bell, Calendar, CheckCircle, MessageSquare } from "lucide-react"
 
-const items = ["Item 1", "Item 2", "Item 3", "Item 4"]
+const notifications = [
+  {
+    icon: <Bell className="h-5 w-5 text-blue-500" />,
+    title: "New Feature Available",
+    desc: "Check out the new dashboard view",
+    time: "2m ago"
+  },
+  {
+    icon: <Calendar className="h-5 w-5 text-purple-500" />,
+    title: "Meeting Reminder",
+    desc: "Team sync in 15 minutes",
+    time: "15m ago"
+  },
+  {
+    icon: <MessageSquare className="h-5 w-5 text-green-500" />,
+    title: "New Comment",
+    desc: "Sarah commented on your post",
+    time: "1h ago"
+  },
+  {
+    icon: <CheckCircle className="h-5 w-5 text-orange-500" />,
+    title: "Task Completed",
+    desc: "Project X deployment finished",
+    time: "2h ago"
+  }
+]
 
-<SlideInList direction="left" staggerDelay={0.1}>
-  {items.map((item, i) => (
-    <div key={i} className="p-4 bg-white dark:bg-neutral-900 rounded-lg border mb-2">
-      {item}
+<SlideInList direction="left" staggerDelay={0.1} className="w-full max-w-md space-y-3">
+  {notifications.map((item, i) => (
+    <div key={i} className="flex items-start gap-4 p-4 bg-white dark:bg-neutral-900/50 rounded-xl border border-neutral-200 dark:border-neutral-800 shadow-sm hover:shadow-md transition-shadow">
+      <div className="p-2 bg-neutral-100 dark:bg-neutral-800 rounded-full">
+        {item.icon}
+      </div>
+      <div className="flex-1">
+        <div className="flex items-center justify-between">
+          <h4 className="font-semibold text-sm">{item.title}</h4>
+          <span className="text-xs text-neutral-500">{item.time}</span>
+        </div>
+        <p className="text-sm text-neutral-600 dark:text-neutral-400 mt-1">{item.desc}</p>
+      </div>
     </div>
   ))}
 </SlideInList>`}
 >
-  <SlideInList direction="left" staggerDelay={0.1} className="w-full max-w-md">
-    {["Product Card 1", "Product Card 2", "Product Card 3", "Product Card 4"].map((item, i) => (
-      <div key={i} className="p-4 bg-white dark:bg-neutral-900 rounded-lg border border-neutral-200 dark:border-neutral-800 mb-2">
-        <div className="font-medium">{item}</div>
-        <div className="text-sm text-neutral-600 dark:text-neutral-400 mt-1">Description text here</div>
+  <SlideInList direction="left" staggerDelay={0.1} className="w-full max-w-md space-y-3">
+    {[
+      { title: "New Feature Available", desc: "Check out the new dashboard view", time: "2m ago", color: "text-blue-500", bg: "bg-blue-50 dark:bg-blue-900/20" },
+      { title: "Meeting Reminder", desc: "Team sync in 15 minutes", time: "15m ago", color: "text-purple-500", bg: "bg-purple-50 dark:bg-purple-900/20" },
+      { title: "New Comment", desc: "Sarah commented on your post", time: "1h ago", color: "text-green-500", bg: "bg-green-50 dark:bg-green-900/20" },
+      { title: "Task Completed", desc: "Project X deployment finished", time: "2h ago", color: "text-orange-500", bg: "bg-orange-50 dark:bg-orange-900/20" }
+    ].map((item, i) => (
+      <div key={i} className="flex items-start gap-4 p-4 bg-white dark:bg-neutral-900/50 rounded-xl border border-neutral-200 dark:border-neutral-800 shadow-sm">
+        <div className={`p-2 rounded-full ${item.bg}`}>
+          <div className={`h-5 w-5 ${item.color} rounded-full border-2 border-current`} />
+        </div>
+        <div className="flex-1">
+          <div className="flex items-center justify-between">
+            <h4 className="font-semibold text-sm">{item.title}</h4>
+            <span className="text-xs text-neutral-500">{item.time}</span>
+          </div>
+          <p className="text-sm text-neutral-600 dark:text-neutral-400 mt-1">{item.desc}</p>
+        </div>
       </div>
     ))}
   </SlideInList>

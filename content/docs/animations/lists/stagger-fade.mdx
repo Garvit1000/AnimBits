@@ -6,6 +6,7 @@ description: List component with staggered fade-in animation.
 import { Tab, Tabs } from 'fumadocs-ui/components/tabs';
 import { Preview } from '@/components/preview';
 import { StaggerFadeList } from '@/registry/new-york/animations/lists/stagger-fade';
+import { Play, Heart, MoreHorizontal } from "lucide-react";
 
 ## Overview
 
@@ -16,22 +17,54 @@ The `StaggerFadeList` component creates a sequential fade-in effect for list ite
 <Preview
   background="grid"
   code={`import { StaggerFadeList } from "@/components/animations/lists/stagger-fade"
+import { Play, Heart, MoreHorizontal } from "lucide-react"
 
-const items = ["Item 1", "Item 2", "Item 3", "Item 4"]
+const playlist = [
+  { title: "Midnight City", artist: "M83", duration: "4:03" },
+  { title: "Starboy", artist: "The Weeknd", duration: "3:50" },
+  { title: "Get Lucky", artist: "Daft Punk", duration: "6:09" },
+  { title: "The Less I Know The Better", artist: "Tame Impala", duration: "3:36" }
+]
 
-<StaggerFadeList staggerDelay={0.1}>
-  {items.map((item, i) => (
-    <div key={i} className="p-4 bg-white dark:bg-neutral-900 rounded-lg border mb-2">
-      {item}
+<StaggerFadeList staggerDelay={0.1} className="w-full max-w-md space-y-2">
+  {playlist.map((song, i) => (
+    <div key={i} className="group flex items-center gap-4 p-3 bg-white/50 dark:bg-neutral-900/50 hover:bg-white dark:hover:bg-neutral-900 rounded-xl border border-transparent hover:border-neutral-200 dark:hover:border-neutral-800 transition-all cursor-pointer">
+      <div className="h-12 w-12 rounded-lg bg-gradient-to-br from-blue-500 to-purple-500 flex items-center justify-center text-white shadow-sm">
+        <Play className="h-5 w-5 fill-current opacity-0 group-hover:opacity-100 transition-opacity" />
+      </div>
+      <div className="flex-1 min-w-0">
+        <h4 className="font-medium text-sm truncate">{song.title}</h4>
+        <p className="text-xs text-neutral-500 truncate">{song.artist}</p>
+      </div>
+      <div className="flex items-center gap-3 text-neutral-400">
+        <span className="text-xs font-mono">{song.duration}</span>
+        <Heart className="h-4 w-4 hover:text-red-500 transition-colors" />
+        <MoreHorizontal className="h-4 w-4 hover:text-neutral-600 dark:hover:text-neutral-300 transition-colors" />
+      </div>
     </div>
   ))}
 </StaggerFadeList>`}
 >
-  <StaggerFadeList staggerDelay={0.1} className="w-full max-w-md">
-    {["Card 1", "Card 2", "Card 3", "Card 4"].map((item, i) => (
-      <div key={i} className="p-4 bg-white dark:bg-neutral-900 rounded-lg border border-neutral-200 dark:border-neutral-800 mb-2">
-        <div className="font-medium">{item}</div>
-        <div className="text-sm text-neutral-600 dark:text-neutral-400 mt-1">Fading in sequentially</div>
+  <StaggerFadeList staggerDelay={0.1} className="w-full max-w-md space-y-2">
+    {[
+      { title: "Midnight City", artist: "M83", duration: "4:03", color: "from-blue-500 to-purple-500" },
+      { title: "Starboy", artist: "The Weeknd", duration: "3:50", color: "from-red-500 to-orange-500" },
+      { title: "Get Lucky", artist: "Daft Punk", duration: "6:09", color: "from-green-500 to-emerald-500" },
+      { title: "The Less I Know The Better", artist: "Tame Impala", duration: "3:36", color: "from-pink-500 to-rose-500" }
+    ].map((song, i) => (
+      <div key={i} className="group flex items-center gap-4 p-3 bg-white/50 dark:bg-neutral-900/50 hover:bg-white dark:hover:bg-neutral-900 rounded-xl border border-transparent hover:border-neutral-200 dark:hover:border-neutral-800 transition-all cursor-pointer">
+        <div className={`h-12 w-12 rounded-lg bg-gradient-to-br ${song.color} flex items-center justify-center text-white shadow-sm`}>
+          <Play className="h-5 w-5 fill-current opacity-0 group-hover:opacity-100 transition-opacity" />
+        </div>
+        <div className="flex-1 min-w-0">
+          <h4 className="font-medium text-sm truncate">{song.title}</h4>
+          <p className="text-xs text-neutral-500 truncate">{song.artist}</p>
+        </div>
+        <div className="flex items-center gap-3 text-neutral-400">
+          <span className="text-xs font-mono">{song.duration}</span>
+          <Heart className="h-4 w-4 hover:text-red-500 transition-colors" />
+          <MoreHorizontal className="h-4 w-4 hover:text-neutral-600 dark:hover:text-neutral-300 transition-colors" />
+        </div>
       </div>
     ))}
   </StaggerFadeList>

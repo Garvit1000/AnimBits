@@ -33,7 +33,7 @@ export function useShimmer(options: UseShimmerOptions = {}): CSSProperties {
 
   // CSS keyframes animation name
   const animationName = 'shimmer'
-  
+
   // Inject keyframes if not already present
   if (typeof document !== 'undefined') {
     const styleId = 'shimmer-keyframes'

@@ -11,6 +11,43 @@ import { Preview } from '@/components/preview';
 
 The `PageTransitionSlide` component creates a smooth sliding effect when navigating between pages. Choose from left, right, top, or bottom directions. Uses the native View Transitions API for hardware-accelerated animations with customizable duration and easing.
 
+<Preview
+  background="grid"
+  code={`"use client"
+
+import { motion } from "framer-motion"
+
+// Simulated Page Transition
+export function SlidePreview() {
+  return (
+    <div className="w-full max-w-md h-64 bg-white dark:bg-neutral-900 rounded-xl border border-neutral-200 dark:border-neutral-800 shadow-sm overflow-hidden relative">
+      <motion.div 
+        initial={{ x: "100%" }}
+        animate={{ x: 0 }}
+        transition={{ duration: 0.4, ease: "easeInOut" }}
+        className="absolute inset-0 flex items-center justify-center bg-white dark:bg-neutral-900"
+      >
+        <div className="text-center">
+          <div className="h-12 w-12 bg-blue-500 rounded-full mx-auto mb-4" />
+          <h3 className="font-semibold text-lg">New Page Content</h3>
+          <p className="text-neutral-500 text-sm mt-2">Slid in from right</p>
+        </div>
+      </motion.div>
+    </div>
+  )
+}`}
+>
+  <div className="w-full max-w-md h-64 bg-white dark:bg-neutral-900 rounded-xl border border-neutral-200 dark:border-neutral-800 shadow-sm overflow-hidden relative">
+    <div className="absolute inset-0 flex items-center justify-center bg-white dark:bg-neutral-900 animate-in slide-in-from-right duration-500 fill-mode-forwards">
+      <div className="text-center">
+        <div className="h-12 w-12 bg-blue-500 rounded-full mx-auto mb-4" />
+        <h3 className="font-semibold text-lg">New Page Content</h3>
+        <p className="text-neutral-500 text-sm mt-2">Slid in from right</p>
+      </div>
+    </div>
+  </div>
+</Preview>
+
 <Callout type="info">
   **Browser Support:** View Transitions API is supported in Chrome 111+, Edge 111+, and Opera 97+. Falls back to instant navigation in unsupported browsers.
 </Callout>

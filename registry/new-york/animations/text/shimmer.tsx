@@ -51,7 +51,14 @@ export function TextShimmer({
   as: Component = "p",
   ...props
 }: TextShimmerProps) {
-  const shimmerStyle = useShimmer({ duration, colors })
+  const shimmerStyle = useShimmer({
+    duration,
+    colors: colors || [
+      "transparent",
+      "#3b82f6", // Blue-500
+      "transparent",
+    ],
+  })
 
   return (
     <Component

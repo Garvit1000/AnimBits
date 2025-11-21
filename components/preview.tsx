@@ -49,22 +49,20 @@ export function Preview({
         <div className="flex items-center gap-1">
           <button
             onClick={() => setActiveTab("preview")}
-            className={`relative inline-flex h-8 items-center justify-center rounded-md px-3 text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 ${
-              activeTab === "preview"
-                ? "bg-background text-foreground shadow-sm"
-                : "text-muted-foreground hover:bg-background/60 hover:text-foreground"
-            }`}
+            className={`relative inline-flex h-8 items-center justify-center rounded-md px-3 text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 ${activeTab === "preview"
+              ? "bg-background text-foreground shadow-sm"
+              : "text-muted-foreground hover:bg-background/60 hover:text-foreground"
+              }`}
           >
             Preview
           </button>
           {code && (
             <button
               onClick={() => setActiveTab("code")}
-              className={`relative inline-flex h-8 items-center justify-center rounded-md px-3 text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 ${
-                activeTab === "code"
-                  ? "bg-background text-foreground shadow-sm"
-                  : "text-muted-foreground hover:bg-background/60 hover:text-foreground"
-              }`}
+              className={`relative inline-flex h-8 items-center justify-center rounded-md px-3 text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 ${activeTab === "code"
+                ? "bg-background text-foreground shadow-sm"
+                : "text-muted-foreground hover:bg-background/60 hover:text-foreground"
+                }`}
             >
               Code
             </button>
@@ -107,9 +105,17 @@ export function Preview({
       {/* Content */}
       {activeTab === "preview" ? (
         <div
-          className={`flex min-h-[200px] w-full items-center justify-center p-10 ${backgroundStyles[background]} ${className}`}
+          className={`flex min-h-[350px] w-full items-center justify-center p-10 relative ${backgroundStyles[background]} ${className}`}
         >
-          <div key={key} className="flex items-center justify-center">
+          <button
+            onClick={handleReplay}
+            className="absolute right-4 top-4 z-10 inline-flex h-8 w-8 items-center justify-center rounded-md border bg-background/50 p-0 text-muted-foreground shadow-sm backdrop-blur-sm transition-all hover:bg-background hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+            title="Replay animation"
+          >
+            <RotateCcw className="h-4 w-4" />
+            <span className="sr-only">Replay</span>
+          </button>
+          <div key={key} className="flex w-full items-center justify-center">
             {children}
           </div>
         </div>
