@@ -2,6 +2,7 @@
 
 import * as React from "react";
 import { RotateCcw, Copy, Check } from "lucide-react";
+import { DynamicCodeBlock } from "fumadocs-ui/components/dynamic-codeblock";
 
 interface PreviewProps {
   children: React.ReactNode;
@@ -105,27 +106,15 @@ export function Preview({
       {/* Content */}
       {activeTab === "preview" ? (
         <div
-          className={`flex min-h-[350px] w-full items-center justify-center p-10 relative ${backgroundStyles[background]} ${className}`}
+          className={`flex min-h-[350px] w-full items-center justify-center p-10 ${backgroundStyles[background]} ${className}`}
         >
-          <button
-            onClick={handleReplay}
-            className="absolute right-4 top-4 z-10 inline-flex h-8 w-8 items-center justify-center rounded-md border bg-background/50 p-0 text-muted-foreground shadow-sm backdrop-blur-sm transition-all hover:bg-background hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-            title="Replay animation"
-          >
-            <RotateCcw className="h-4 w-4" />
-            <span className="sr-only">Replay</span>
-          </button>
           <div key={key} className="flex w-full items-center justify-center">
             {children}
           </div>
         </div>
       ) : (
         <div className="max-h-[500px] overflow-auto">
-          <pre className="p-6">
-            <code className="relative rounded bg-muted px-[0.3rem] py-[0.2rem] font-mono text-sm">
-              {code}
-            </code>
-          </pre>
+          <DynamicCodeBlock lang="tsx" code={code || ""} />
         </div>
       )}
     </div>

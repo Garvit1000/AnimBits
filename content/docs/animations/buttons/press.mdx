@@ -36,11 +36,48 @@ The `PressButton` component provides tactile press-down feedback when clicked. B
     ```
   </Tab>
   <Tab value="Manual">
+    **Step 1: Copy the hook**
+
+    ```tsx title="lib/hooks/use-press.ts"
+    import { type MotionProps, type Easing } from "framer-motion";
+
+    export interface UsePressOptions {
+      pressScale?: number;
+      duration?: number;
+      ease?: Easing | Easing[];
+      addRotation?: boolean;
+      rotationAmount?: number;
+    }
+
+    export function usePress(options: UsePressOptions = {}): MotionProps {
+      const {
+        pressScale = 0.95,
+        duration = 0.1,
+        ease = "easeInOut",
+        addRotation = false,
+        rotationAmount = 2,
+      } = options;
+
+      return {
+        whileTap: {
+          scale: pressScale,
+          rotate: addRotation ? rotationAmount : 0,
+        },
+        transition: {
+          duration,
+          ease,
+        },
+      };
+    }
+    ```
+
+    **Step 2: Copy the component**
+
     ```tsx title="components/animations/buttons/press.tsx"
     "use client"
 
     import { motion, type HTMLMotionProps } from "framer-motion"
-    import { usePress } from "@/lib/hooks"
+    import { usePress } from "@/lib/hooks/use-press"
 
     interface PressButtonProps extends Omit<HTMLMotionProps<"button">, "animate"> {
       children: React.ReactNode

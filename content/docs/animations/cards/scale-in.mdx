@@ -45,7 +45,95 @@ The `CardScaleIn` scales up from a smaller size when entering the viewport, crea
     ```
   </Tab>
   <Tab value="Manual">
-    Requires the `useScaleIn` hook from `@/lib/hooks`.
+    **Step 1: Copy the hook**
+    
+    ```tsx title="lib/hooks/use-scale-in.ts"
+    import { type MotionProps, type Easing } from "framer-motion";
+
+    export interface UseScaleInOptions {
+      duration?: number;
+      delay?: number;
+      from?: number;
+      to?: number;
+      initialOpacity?: number;
+      ease?: Easing | Easing[];
+      viewport?: "once" | "always";
+    }
+
+    export function useScaleIn(options: UseScaleInOptions = {}): MotionProps {
+      const {
+        duration = 0.5,
+        delay = 0,
+        from = 0.8,
+        to = 1,
+        initialOpacity = 0,
+        ease = "easeOut",
+        viewport = "once",
+      } = options;
+
+      return {
+        initial: {
+          scale: from,
+          opacity: initialOpacity,
+        },
+        whileInView: {
+          scale: to,
+          opacity: 1,
+        },
+        viewport: {
+          once: viewport === "once",
+        },
+        transition: {
+          duration,
+          delay,
+          ease,
+        },
+      };
+    }
+    ```
+
+    **Step 2: Copy the component**
+    
+    ```tsx title="components/animations/cards/scale-in.tsx"
+    "use client"
+
+    import { motion, type HTMLMotionProps } from "framer-motion"
+    import { useScaleIn } from "@/lib/hooks/use-scale-in"
+    import { cn } from "@/lib/utils"
+
+    interface CardScaleInProps extends HTMLMotionProps<"div"> {
+      children: React.ReactNode
+      initialScale?: number
+      duration?: number
+      delay?: number
+      className?: string
+    }
+
+    export function CardScaleIn({
+      children,
+      initialScale = 0.8,
+      duration = 0.5,
+      delay = 0,
+      className,
+      ...props
+    }: CardScaleInProps) {
+      const scaleProps = useScaleIn({
+        from: initialScale,
+        duration,
+        delay,
+      })
+
+      return (
+        <motion.div
+          {...scaleProps}
+          className={cn("bg-card text-card-foreground rounded-lg border shadow-sm", className)}
+          {...props}
+        >
+          {children}
+        </motion.div>
+      )
+    }
+    ```
   </Tab>
 </Tabs>
 

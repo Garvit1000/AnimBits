@@ -35,6 +35,19 @@ The `LoaderPulse` component creates a pulsing circle animation. Perfect for subt
     ```
   </Tab>
   <Tab value="Manual">
+    **Step 1: Add the utility**
+
+    ```tsx title="lib/utils.ts"
+    import { clsx, type ClassValue } from "clsx"
+    import { twMerge } from "tailwind-merge"
+
+    export function cn(...inputs: ClassValue[]) {
+      return twMerge(clsx(inputs))
+    }
+    ```
+
+    **Step 2: Copy the component**
+
     ```tsx title="components/animations/loaders/pulse.tsx"
     "use client"
 

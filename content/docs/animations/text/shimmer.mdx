@@ -33,7 +33,100 @@ The `TextShimmer` creates a smooth gradient shimmer effect using pure CSS for 60
     ```
   </Tab>
   <Tab value="Manual">
-    Requires the `useShimmer` hook from `@/lib/hooks`.
+    **Step 1: Copy the hook**
+
+    ```tsx title="lib/hooks/use-shimmer.ts"
+    import { type CSSProperties } from "react"
+
+    export interface UseShimmerOptions {
+      duration?: number
+      colors?: [string, string, string]
+    }
+
+    export function useShimmer(options: UseShimmerOptions = {}): CSSProperties {
+      const {
+        duration = 2.5,
+        colors = ["transparent", "rgba(255,255,255,0.8)", "transparent"],
+      } = options
+
+      const gradient = `linear-gradient(90deg, ${colors[0]} 0%, ${colors[1]} 50%, ${colors[2]} 100%)`
+      const animationName = 'shimmer'
+
+      if (typeof document !== 'undefined') {
+        const styleId = 'shimmer-keyframes'
+        if (!document.getElementById(styleId)) {
+          const style = document.createElement('style')
+          style.id = styleId
+          style.textContent = `
+            @keyframes shimmer {
+              0% { background-position: 200% center; }
+              100% { background-position: -200% center; }
+            }
+          `
+          document.head.appendChild(style)
+        }
+      }
+
+      return {
+        display: "inline-block",
+        backgroundImage: gradient,
+        backgroundSize: "200% auto",
+        WebkitBackgroundClip: "text",
+        WebkitTextFillColor: "transparent",
+        backgroundClip: "text",
+        animation: `${animationName} ${duration}s linear infinite`,
+      }
+    }
+    ```
+
+    **Step 2: Copy the utility**
+
+    ```tsx title="lib/utils.ts"
+    import { type ClassValue, clsx } from "clsx"
+    import { twMerge } from "tailwind-merge"
+
+    export function cn(...inputs: ClassValue[]) {
+      return twMerge(clsx(inputs))
+    }
+    ```
+
+    **Step 3: Copy the component**
+
+    ```tsx title="components/animations/text/shimmer.tsx"
+    "use client"
+
+    import { useShimmer } from "@/lib/hooks/use-shimmer"
+    import { cn } from "@/lib/utils"
+
+    interface TextShimmerProps extends React.HTMLAttributes<HTMLElement> {
+      children: string
+      as?: string
+      duration?: number
+      colors?: [string, string, string]
+    }
+
+    export function TextShimmer({
+      children,
+      as: Component = "p",
+      className,
+      duration,
+      colors,
+      ...props
+    }: TextShimmerProps) {
+      const shimmerStyle = useShimmer({ duration, colors })
+      const Comp = Component as any
+
+      return (
+        <Comp
+          className={cn("font-medium", className)}
+          style={shimmerStyle}
+          {...props}
+        >
+          {children}
+        </Comp>
+      )
+    }
+    ```
   </Tab>
 </Tabs>
 

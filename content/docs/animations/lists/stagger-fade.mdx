@@ -6,7 +6,7 @@ description: List component with staggered fade-in animation.
 import { Tab, Tabs } from 'fumadocs-ui/components/tabs';
 import { Preview } from '@/components/preview';
 import { StaggerFadeList } from '@/registry/new-york/animations/lists/stagger-fade';
-import { Play, Heart, MoreHorizontal } from "lucide-react";
+import { Music2, Clock } from "lucide-react";
 
 ## Overview
 
@@ -15,9 +15,9 @@ The `StaggerFadeList` component creates a sequential fade-in effect for list ite
 ## Preview
 
 <Preview
-  background="grid"
+  background="default"
   code={`import { StaggerFadeList } from "@/components/animations/lists/stagger-fade"
-import { Play, Heart, MoreHorizontal } from "lucide-react"
+import { Music2, Clock } from "lucide-react"
 
 const playlist = [
   { title: "Midnight City", artist: "M83", duration: "4:03" },
@@ -26,44 +26,42 @@ const playlist = [
   { title: "The Less I Know The Better", artist: "Tame Impala", duration: "3:36" }
 ]
 
-<StaggerFadeList staggerDelay={0.1} className="w-full max-w-md space-y-2">
+<StaggerFadeList staggerDelay={0.1} className="w-full max-w-md space-y-1">
   {playlist.map((song, i) => (
-    <div key={i} className="group flex items-center gap-4 p-3 bg-white/50 dark:bg-neutral-900/50 hover:bg-white dark:hover:bg-neutral-900 rounded-xl border border-transparent hover:border-neutral-200 dark:hover:border-neutral-800 transition-all cursor-pointer">
-      <div className="h-12 w-12 rounded-lg bg-gradient-to-br from-blue-500 to-purple-500 flex items-center justify-center text-white shadow-sm">
-        <Play className="h-5 w-5 fill-current opacity-0 group-hover:opacity-100 transition-opacity" />
+    <div key={i} className="group flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-accent transition-colors cursor-pointer">
+      <div className="flex h-10 w-10 items-center justify-center rounded-md border bg-background">
+        <Music2 className="h-4 w-4 text-muted-foreground" />
       </div>
       <div className="flex-1 min-w-0">
-        <h4 className="font-medium text-sm truncate">{song.title}</h4>
-        <p className="text-xs text-neutral-500 truncate">{song.artist}</p>
+        <p className="text-sm font-medium leading-none mb-1">{song.title}</p>
+        <p className="text-sm text-muted-foreground">{song.artist}</p>
       </div>
-      <div className="flex items-center gap-3 text-neutral-400">
-        <span className="text-xs font-mono">{song.duration}</span>
-        <Heart className="h-4 w-4 hover:text-red-500 transition-colors" />
-        <MoreHorizontal className="h-4 w-4 hover:text-neutral-600 dark:hover:text-neutral-300 transition-colors" />
+      <div className="flex items-center gap-1.5 text-muted-foreground">
+        <Clock className="h-3.5 w-3.5" />
+        <span className="text-xs font-mono tabular-nums">{song.duration}</span>
       </div>
     </div>
   ))}
 </StaggerFadeList>`}
 >
-  <StaggerFadeList staggerDelay={0.1} className="w-full max-w-md space-y-2">
+  <StaggerFadeList staggerDelay={0.1} className="w-full max-w-md space-y-1">
     {[
-      { title: "Midnight City", artist: "M83", duration: "4:03", color: "from-blue-500 to-purple-500" },
-      { title: "Starboy", artist: "The Weeknd", duration: "3:50", color: "from-red-500 to-orange-500" },
-      { title: "Get Lucky", artist: "Daft Punk", duration: "6:09", color: "from-green-500 to-emerald-500" },
-      { title: "The Less I Know The Better", artist: "Tame Impala", duration: "3:36", color: "from-pink-500 to-rose-500" }
+      { title: "Midnight City", artist: "M83", duration: "4:03" },
+      { title: "Starboy", artist: "The Weeknd", duration: "3:50" },
+      { title: "Get Lucky", artist: "Daft Punk", duration: "6:09" },
+      { title: "The Less I Know The Better", artist: "Tame Impala", duration: "3:36" }
     ].map((song, i) => (
-      <div key={i} className="group flex items-center gap-4 p-3 bg-white/50 dark:bg-neutral-900/50 hover:bg-white dark:hover:bg-neutral-900 rounded-xl border border-transparent hover:border-neutral-200 dark:hover:border-neutral-800 transition-all cursor-pointer">
-        <div className={`h-12 w-12 rounded-lg bg-gradient-to-br ${song.color} flex items-center justify-center text-white shadow-sm`}>
-          <Play className="h-5 w-5 fill-current opacity-0 group-hover:opacity-100 transition-opacity" />
+      <div key={i} className="group flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-accent transition-colors cursor-pointer">
+        <div className="flex h-10 w-10 items-center justify-center rounded-md border bg-background">
+          <Music2 className="h-4 w-4 text-muted-foreground" />
         </div>
         <div className="flex-1 min-w-0">
-          <h4 className="font-medium text-sm truncate">{song.title}</h4>
-          <p className="text-xs text-neutral-500 truncate">{song.artist}</p>
+          <p className="text-sm font-medium leading-none mb-1">{song.title}</p>
+          <p className="text-sm text-muted-foreground">{song.artist}</p>
         </div>
-        <div className="flex items-center gap-3 text-neutral-400">
-          <span className="text-xs font-mono">{song.duration}</span>
-          <Heart className="h-4 w-4 hover:text-red-500 transition-colors" />
-          <MoreHorizontal className="h-4 w-4 hover:text-neutral-600 dark:hover:text-neutral-300 transition-colors" />
+        <div className="flex items-center gap-1.5 text-muted-foreground">
+          <Clock className="h-3.5 w-3.5" />
+          <span className="text-xs font-mono tabular-nums">{song.duration}</span>
         </div>
       </div>
     ))}
@@ -79,6 +77,19 @@ const playlist = [
     ```
   </Tab>
   <Tab value="Manual">
+    **Step 1: Add the utility**
+
+    ```tsx title="lib/utils.ts"
+    import { clsx, type ClassValue } from "clsx"
+    import { twMerge } from "tailwind-merge"
+
+    export function cn(...inputs: ClassValue[]) {
+      return twMerge(clsx(inputs))
+    }
+    ```
+
+    **Step 2: Copy the component**
+
     ```tsx title="components/animations/lists/stagger-fade.tsx"
     "use client"
 
@@ -155,15 +166,18 @@ export default function Example() {
 ### Default Fade
 
 <Preview
-  background="dots"
+  background="default"
   code={`<StaggerFadeList>
   {items.map((item, i) => <div key={i}>{item}</div>)}
 </StaggerFadeList>`}
 >
-  <StaggerFadeList className="w-full max-w-md">
-    {["Feature 1", "Feature 2", "Feature 3"].map((item, i) => (
-      <div key={i} className="p-3 bg-blue-50 dark:bg-blue-950 rounded-lg mb-2">
-        {item}
+  <StaggerFadeList className="w-full max-w-md space-y-2">
+    {["Feature One", "Feature Two", "Feature Three"].map((item, i) => (
+      <div key={i} className="flex items-center gap-3 rounded-lg border bg-card p-4 text-card-foreground shadow-sm">
+        <div className="flex h-8 w-8 items-center justify-center rounded-md bg-primary/10 text-primary font-semibold text-sm">
+          {i + 1}
+        </div>
+        <p className="text-sm font-medium">{item}</p>
       </div>
     ))}
   </StaggerFadeList>
@@ -172,14 +186,14 @@ export default function Example() {
 ### Fast Stagger
 
 <Preview
-  background="dots"
+  background="default"
   code={`<StaggerFadeList staggerDelay={0.05} duration={0.2}>
   {items.map((item, i) => <div key={i}>{item}</div>)}
 </StaggerFadeList>`}
 >
-  <StaggerFadeList staggerDelay={0.05} duration={0.2} className="w-full max-w-md">
-    {["Quick 1", "Quick 2", "Quick 3", "Quick 4"].map((item, i) => (
-      <div key={i} className="p-3 bg-green-50 dark:bg-green-950 rounded-lg mb-2">
+  <StaggerFadeList staggerDelay={0.05} duration={0.2} className="w-full max-w-md space-y-1.5">
+    {["Quick One", "Quick Two", "Quick Three", "Quick Four"].map((item, i) => (
+      <div key={i} className="rounded-md border bg-muted/50 px-4 py-2.5 text-sm hover:bg-muted transition-colors">
         {item}
       </div>
     ))}
@@ -189,14 +203,14 @@ export default function Example() {
 ### Slow Reveal
 
 <Preview
-  background="dots"
+  background="default"
   code={`<StaggerFadeList staggerDelay={0.2} duration={0.6}>
   {items.map((item, i) => <div key={i}>{item}</div>)}
 </StaggerFadeList>`}
 >
-  <StaggerFadeList staggerDelay={0.2} duration={0.6} className="w-full max-w-md">
-    {["Slow 1", "Slow 2", "Slow 3"].map((item, i) => (
-      <div key={i} className="p-3 bg-purple-50 dark:bg-purple-950 rounded-lg mb-2">
+  <StaggerFadeList staggerDelay={0.2} duration={0.6} className="w-full max-w-md space-y-3">
+    {["Slow One", "Slow Two", "Slow Three"].map((item, i) => (
+      <div key={i} className="rounded-lg border-2 bg-card px-6 py-4 text-center font-medium shadow-sm">
         {item}
       </div>
     ))}
@@ -206,15 +220,16 @@ export default function Example() {
 ### Grid Layout
 
 <Preview
-  background="dots"
+  background="default"
   code={`<StaggerFadeList as="div" className="grid grid-cols-3 gap-4">
   {items.map((item, i) => <div key={i}>{item}</div>)}
 </StaggerFadeList>`}
 >
-  <StaggerFadeList as="div" className="grid grid-cols-3 gap-4 w-full max-w-md">
-    {["1", "2", "3", "4", "5", "6"].map((item, i) => (
-      <div key={i} className="p-6 bg-orange-50 dark:bg-orange-950 rounded-lg text-center">
-        {item}
+  <StaggerFadeList as="div" className="grid grid-cols-3 gap-3 w-full max-w-md">
+    {["Design", "Build", "Ship", "Test", "Deploy", "Scale"].map((item, i) => (
+      <div key={i} className="group flex aspect-square flex-col items-center justify-center gap-2 rounded-lg border bg-card p-4 shadow-sm hover:shadow-md hover:border-primary/50 transition-all cursor-pointer">
+        <span className="text-3xl font-bold text-primary">{i + 1}</span>
+        <span className="text-sm font-medium text-center">{item}</span>
       </div>
     ))}
   </StaggerFadeList>

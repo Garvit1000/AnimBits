@@ -61,6 +61,52 @@ The `StrokeDrawIcon` component animates SVG paths by drawing them stroke by stro
     ```
   </Tab>
   <Tab value="Manual">
+    **Step 1: Add the utility**
+
+    ```tsx title="lib/utils.ts"
+    import { clsx, type ClassValue } from "clsx"
+    import { twMerge } from "tailwind-merge"
+
+    export function cn(...inputs: ClassValue[]) {
+      return twMerge(clsx(inputs))
+    }
+    ```
+
+    **Step 2: Copy the hook**
+
+    ```tsx title="lib/hooks/use-stroke-draw.ts"
+    import { type MotionProps, type Easing } from "framer-motion";
+
+    export interface UseStrokeDrawOptions {
+      duration?: number;
+      delay?: number;
+      repeat?: boolean;
+      ease?: Easing | Easing[];
+    }
+
+    export function useStrokeDraw(options: UseStrokeDrawOptions = {}): MotionProps {
+      const {
+        duration = 1.5,
+        delay = 0,
+        repeat = false,
+        ease = "easeInOut",
+      } = options;
+
+      return {
+        initial: { pathLength: 0, opacity: 0 },
+        animate: { pathLength: 1, opacity: 1 },
+        transition: {
+          pathLength: { duration, delay, ease },
+          opacity: { duration: 0.2, delay },
+          repeat: repeat ? Infinity : 0,
+          repeatDelay: 1,
+        },
+      };
+    }
+    ```
+
+    **Step 3: Copy the component**
+
     ```tsx title="components/animations/icons/stroke-draw.tsx"
     "use client"
 
@@ -105,9 +151,6 @@ The `StrokeDrawIcon` component animates SVG paths by drawing them stroke by stro
       )
     }
     ```
-
-    **Dependencies:**
-    - `useStrokeDraw` hook from `@/lib/hooks/use-stroke-draw`
   </Tab>
 </Tabs>
 

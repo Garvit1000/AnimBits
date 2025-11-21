@@ -46,7 +46,132 @@ The `CardParallaxTilt` creates an advanced 3D tilt effect with shadow separation
     ```
   </Tab>
   <Tab value="Manual">
-    Requires the `useParallaxTilt` hook from `@/lib/hooks/use-parallax-tilt`.
+    **Step 1: Copy the hook**
+
+    ```tsx title="lib/hooks/use-parallax-tilt.ts"
+    import * as React from "react"
+    import { useMotionValue, useSpring, useTransform } from "framer-motion"
+
+    export interface UseParallaxTiltOptions {
+      maxTilt?: number
+      duration?: number
+      shadowIntensity?: number
+      stiffness?: number
+      damping?: number
+    }
+
+    export function useParallaxTilt(options: UseParallaxTiltOptions = {}) {
+      const {
+        maxTilt = 15,
+        duration = 0.3,
+        shadowIntensity = 0.3,
+        stiffness = 300,
+        damping = 30,
+      } = options
+
+      const ref = React.useRef<HTMLElement>(null)
+      const x = useMotionValue(0)
+      const y = useMotionValue(0)
+
+      const mouseXSpring = useSpring(x, { stiffness, damping })
+      const mouseYSpring = useSpring(y, { stiffness, damping })
+
+      const rotateX = useTransform(mouseYSpring, [-0.5, 0.5], [maxTilt, -maxTilt])
+      const rotateY = useTransform(mouseXSpring, [-0.5, 0.5], [-maxTilt, maxTilt])
+
+      const shadowX = useTransform(mouseXSpring, [-0.5, 0.5], [-20, 20])
+      const shadowY = useTransform(mouseYSpring, [-0.5, 0.5], [-20, 20])
+
+      const handleMouseMove = (e: React.MouseEvent<HTMLElement>) => {
+        if (!ref.current) return
+
+        const rect = ref.current.getBoundingClientRect()
+        const width = rect.width
+        const height = rect.height
+        const mouseX = e.clientX - rect.left
+        const mouseY = e.clientY - rect.top
+        const xPct = mouseX / width - 0.5
+        const yPct = mouseY / height - 0.5
+        x.set(xPct)
+        y.set(yPct)
+      }
+
+      const handleMouseLeave = () => {
+        x.set(0)
+        y.set(0)
+      }
+
+      const tiltProps = {
+        style: {
+          rotateX,
+          rotateY,
+          transformStyle: "preserve-3d" as const,
+          boxShadow: useTransform(
+            [shadowX, shadowY],
+            ([x, y]) => `${x}px ${y}px 30px rgba(0, 0, 0, ${shadowIntensity})`
+          ),
+        },
+        onMouseMove: handleMouseMove,
+        onMouseLeave: handleMouseLeave,
+        transition: { duration },
+      }
+
+      return { tiltProps, ref }
+    }
+    ```
+
+    **Step 2: Copy the utility**
+
+    ```tsx title="lib/utils.ts"
+    import { type ClassValue, clsx } from "clsx"
+    import { twMerge } from "tailwind-merge"
+
+    export function cn(...inputs: ClassValue[]) {
+      return twMerge(clsx(inputs))
+    }
+    ```
+
+    **Step 3: Copy the component**
+
+    ```tsx title="components/animations/cards/parallax-tilt.tsx"
+    "use client"
+
+    import { motion, HTMLMotionProps } from "framer-motion"
+    import { useParallaxTilt } from "@/lib/hooks/use-parallax-tilt"
+    import { cn } from "@/lib/utils"
+
+    interface CardParallaxTiltProps extends HTMLMotionProps<"div"> {
+      maxTilt?: number
+      shadowIntensity?: number
+      duration?: number
+    }
+
+    export function CardParallaxTilt({
+      children,
+      className,
+      maxTilt = 15,
+      shadowIntensity = 0.3,
+      duration = 0.3,
+      ...props
+    }: CardParallaxTiltProps) {
+      const { tiltProps, ref } = useParallaxTilt({
+        maxTilt,
+        shadowIntensity,
+        duration,
+      })
+
+      return (
+        <motion.div
+          ref={ref as any}
+          className={cn("relative", className)}
+          {...tiltProps}
+          {...props}
+        >
+          {children}
+        </motion.div>
+      )
+    }
+    ```
   </Tab>
 </Tabs>
 

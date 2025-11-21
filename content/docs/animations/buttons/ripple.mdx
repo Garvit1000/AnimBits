@@ -36,11 +36,25 @@ The `RippleButton` creates a Material Design-inspired ripple effect that expands
     ```
   </Tab>
   <Tab value="Manual">
+    **Step 1: Add the utility**
+
+    ```tsx title="lib/utils.ts"
+    import { clsx, type ClassValue } from "clsx"
+    import { twMerge } from "tailwind-merge"
+
+    export function cn(...inputs: ClassValue[]) {
+      return twMerge(clsx(inputs))
+    }
+    ```
+
+    **Step 2: Copy the component**
+
     ```tsx title="components/animations/buttons/ripple.tsx"
     "use client"
 
     import * as React from "react"
     import { motion, HTMLMotionProps } from "framer-motion"
+    import { cn } from "@/lib/utils"
 
     interface RippleButtonProps extends Omit<HTMLMotionProps<"button">, "onClick"> {
       children: React.ReactNode
@@ -54,6 +68,7 @@ The `RippleButton` creates a Material Design-inspired ripple effect that expands
       rippleColor = "rgba(255, 255, 255, 0.6)",
       duration = 0.6,
       onClick,
+      className,
       ...props
     }: RippleButtonProps) {
       const [ripples, setRipples] = React.useState<Array<{x: number, y: number, id: number}>>([])
@@ -80,7 +95,7 @@ The `RippleButton` creates a Material Design-inspired ripple effect that expands
       return (
         <motion.button
           ref={buttonRef}
-          className="relative overflow-hidden"
+          className={cn("relative overflow-hidden", className)}
           onClick={handleClick}
           {...props}
         >

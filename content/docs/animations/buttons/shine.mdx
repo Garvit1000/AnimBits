@@ -35,10 +35,24 @@ The `ShineButton` creates a shine/shimmer effect that sweeps across the button o
     ```
   </Tab>
   <Tab value="Manual">
+    **Step 1: Add the utility**
+
+    ```tsx title="lib/utils.ts"
+    import { clsx, type ClassValue } from "clsx"
+    import { twMerge } from "tailwind-merge"
+
+    export function cn(...inputs: ClassValue[]) {
+      return twMerge(clsx(inputs))
+    }
+    ```
+
+    **Step 2: Copy the component**
+
     ```tsx title="components/animations/buttons/shine.tsx"
     "use client"
 
     import { motion, type HTMLMotionProps } from "framer-motion"
+    import { cn } from "@/lib/utils"
 
     interface ShineButtonProps extends Omit<HTMLMotionProps<"button">, "animate"> {
       children: React.ReactNode
@@ -53,7 +67,7 @@ The `ShineButton` creates a shine/shimmer effect that sweeps across the button o
     }: ShineButtonProps) {
       return (
         <motion.button
-          className={`relative overflow-hidden ${className || ""}`}
+          className={cn("relative overflow-hidden", className)}
           whileHover="hover"
           initial="initial"
           {...props}

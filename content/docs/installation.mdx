@@ -321,44 +321,86 @@ Start by selecting your framework of choice. Then follow the instructions to ins
 
 ### Next.js
 
-AnimBits works seamlessly with Next.js 13+ (App Router). Make sure to add `"use client"` directive to components that use animations.
+AnimBits works seamlessly with Next.js 13+ (App Router).
 
-**Step 1: Install Framer Motion**
+#### Create project
 
-<Tabs items={['npm', 'pnpm', 'yarn', 'bun']}>
-  <Tab value="npm">
-    ```bash
-    npm install framer-motion
-    ```
-  </Tab>
+Start by creating a new Next.js project. You will be asked if you want to use TypeScript, Tailwind CSS, and ESLint - we recommend selecting **Yes** for all.
+
+<Tabs items={['pnpm', 'npm', 'yarn', 'bun']}>
   <Tab value="pnpm">
     ```bash
-    pnpm add framer-motion
+    pnpm create next-app@latest my-app
+    cd my-app
+    ```
+  </Tab>
+  <Tab value="npm">
+    ```bash
+    npx create-next-app@latest my-app
+    cd my-app
     ```
   </Tab>
   <Tab value="yarn">
     ```bash
-    yarn add framer-motion
+    yarn create next-app my-app
+    cd my-app
     ```
   </Tab>
   <Tab value="bun">
     ```bash
-    bun add framer-motion
+    bun create next-app my-app
+    cd my-app
     ```
   </Tab>
 </Tabs>
 
-**Step 2: Create folder structure**
+#### Install dependencies
+
+<Tabs items={['pnpm', 'npm', 'yarn', 'bun']}>
+  <Tab value="pnpm">
+    ```bash
+    pnpm add framer-motion clsx tailwind-merge
+    ```
+  </Tab>
+  <Tab value="npm">
+    ```bash
+    npm install framer-motion clsx tailwind-merge
+    ```
+  </Tab>
+  <Tab value="yarn">
+    ```bash
+    yarn add framer-motion clsx tailwind-merge
+    ```
+  </Tab>
+  <Tab value="bun">
+    ```bash
+    bun add framer-motion clsx tailwind-merge
+    ```
+  </Tab>
+</Tabs>
+
+#### Create folder structure
 
 ```bash
 mkdir -p lib/hooks lib/components components/animations
 ```
 
-**Step 3: Copy hooks and components**
+#### Add utility function
 
-Copy the animation hooks you need from the documentation into `lib/hooks/`.
+Create a `lib/utils.ts` file for class merging:
 
-**Step 4: Use in your components**
+```ts title="lib/utils.ts"
+import { type ClassValue, clsx } from "clsx"
+import { twMerge } from "tailwind-merge"
+
+export function cn(...inputs: ClassValue[]) {
+  return twMerge(clsx(inputs))
+}
+```
+
+#### Use in your components
+
+Add the `"use client"` directive to any component that uses animations.
 
 ```tsx title="components/animations/buttons/lift.tsx"
 "use client"
@@ -382,34 +424,124 @@ export default function Home() {
 
 ### Vite
 
-AnimBits works out of the box with Vite. Just ensure you have React and Framer Motion installed.
+AnimBits works seamlessly with Vite. Follow these steps to set up a new Vite project.
 
-**Step 1: Install Framer Motion**
+#### Create project
 
-<Tabs items={['npm', 'pnpm', 'yarn', 'bun']}>
-  <Tab value="npm">
-    ```bash
-    npm install framer-motion
-    ```
-  </Tab>
+Start by creating a new React project using `vite`. Select the React + TypeScript template:
+
+<Tabs items={['pnpm', 'npm', 'yarn', 'bun']}>
   <Tab value="pnpm">
     ```bash
-    pnpm add framer-motion
+    pnpm create vite@latest my-app --template react-ts
+    cd my-app
+    ```
+  </Tab>
+  <Tab value="npm">
+    ```bash
+    npm create vite@latest my-app -- --template react-ts
+    cd my-app
     ```
   </Tab>
   <Tab value="yarn">
     ```bash
-    yarn add framer-motion
+    yarn create vite my-app --template react-ts
+    cd my-app
     ```
   </Tab>
   <Tab value="bun">
     ```bash
-    bun add framer-motion
+    bun create vite my-app --template react-ts
+    cd my-app
     ```
   </Tab>
 </Tabs>
 
-**Step 2: Set up path aliases (optional but recommended)**
+#### Install dependencies
+
+<Tabs items={['pnpm', 'npm', 'yarn', 'bun']}>
+  <Tab value="pnpm">
+    ```bash
+    pnpm install
+    pnpm add framer-motion clsx tailwind-merge
+    ```
+  </Tab>
+  <Tab value="npm">
+    ```bash
+    npm install
+    npm install framer-motion clsx tailwind-merge
+    ```
+  </Tab>
+  <Tab value="yarn">
+    ```bash
+    yarn
+    yarn add framer-motion clsx tailwind-merge
+    ```
+  </Tab>
+  <Tab value="bun">
+    ```bash
+    bun install
+    bun add framer-motion clsx tailwind-merge
+    ```
+  </Tab>
+</Tabs>
+
+#### Add Tailwind CSS
+
+<Tabs items={['pnpm', 'npm', 'yarn', 'bun']}>
+  <Tab value="pnpm">
+    ```bash
+    pnpm add -D tailwindcss postcss autoprefixer
+    pnpm dlx tailwindcss init -p
+    ```
+  </Tab>
+  <Tab value="npm">
+    ```bash
+    npm install -D tailwindcss postcss autoprefixer
+    npx tailwindcss init -p
+    ```
+  </Tab>
+  <Tab value="yarn">
+    ```bash
+    yarn add -D tailwindcss postcss autoprefixer
+    yarn dlx tailwindcss init -p
+    ```
+  </Tab>
+  <Tab value="bun">
+    ```bash
+    bun add -D tailwindcss postcss autoprefixer
+    bunx tailwindcss init -p
+    ```
+  </Tab>
+</Tabs>
+
+Configure your `tailwind.config.js`:
+
+```js title="tailwind.config.js"
+/** @type {import('tailwindcss').Config} */
+export default {
+  content: [
+    "./index.html",
+    "./src/**/*.{js,ts,jsx,tsx}",
+  ],
+  theme: {
+    extend: {},
+  },
+  plugins: [],
+}
+```
+
+Replace everything in `src/index.css` with the following:
+
+```css title="src/index.css"
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+```
+
+#### Set up path aliases
+
+Update your `vite.config.ts` to use path aliases:
 
 ```ts title="vite.config.ts"
 import { defineConfig } from 'vite'
@@ -426,55 +558,63 @@ export default defineConfig({
 })
 ```
 
-**Step 3: Create folder structure**
+Update your `tsconfig.json` (or `tsconfig.app.json`) to support path aliases:
 
-```bash
-mkdir -p src/lib/hooks src/lib/components src/components/animations
+```json title="tsconfig.json"
+{
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["./src/*"]
+    }
+  }
+}
 ```
 
-**Step 4: Copy and use**
+#### Create folder structure
 
-```tsx title="src/App.tsx"
-import { motion } from "framer-motion"
-import { useHoverLift } from "@/lib/hooks/use-hover-lift"
+```bash
+mkdir -p src/lib/hooks src/components/animations
+```
 
-function App() {
-  const liftProps = useHoverLift()
-  return (
-    <motion.button {...liftProps} className="btn">
-      Hover me
-    </motion.button>
-  )
+#### Add utility function
+
+Create a `src/lib/utils.ts` file:
+
+```ts title="src/lib/utils.ts"
+import { type ClassValue, clsx } from "clsx"
+import { twMerge } from "tailwind-merge"
+
+export function cn(...inputs: ClassValue[]) {
+  return twMerge(clsx(inputs))
 }
-
-export default App
 ```
 
 ### Manual Installation
 
 For any other React framework (Remix, Gatsby, Astro with React, etc.) or custom setup.
 
-**Step 1: Install Framer Motion**
+**Step 1: Install Dependencies**
 
 <Tabs items={['npm', 'pnpm', 'yarn', 'bun']}>
   <Tab value="npm">
     ```bash
-    npm install framer-motion
+    npm install framer-motion clsx tailwind-merge
     ```
   </Tab>
   <Tab value="pnpm">
     ```bash
-    pnpm add framer-motion
+    pnpm add framer-motion clsx tailwind-merge
     ```
   </Tab>
   <Tab value="yarn">
     ```bash
-    yarn add framer-motion
+    yarn add framer-motion clsx tailwind-merge
     ```
   </Tab>
   <Tab value="bun">
     ```bash
-    bun add framer-motion
+    bun add framer-motion clsx tailwind-merge
     ```
   </Tab>
 </Tabs>
@@ -493,40 +633,6 @@ mkdir -p components/animations
 
 Browse the [hooks documentation](/docs/hooks/hover-lift) and copy the hooks you need into `lib/hooks/`.
 
-For example, create `lib/hooks/use-hover-lift.ts`:
-
-```tsx title="lib/hooks/use-hover-lift.ts"
-import { type MotionProps } from "framer-motion"
-
-export interface UseHoverLiftOptions {
-  liftDistance?: number
-  addShadow?: boolean
-  duration?: number
-  shadowStyle?: string
-}
-
-export function useHoverLift(options: UseHoverLiftOptions = {}): MotionProps {
-  const {
-    liftDistance = 8,
-    addShadow = true,
-    duration = 0.2,
-    shadowStyle = "0 10px 30px rgba(0,0,0,0.15)",
-  } = options
-
-  return {
-    initial: {
-      y: 0,
-      boxShadow: addShadow ? "0 0 0 rgba(0,0,0,0)" : undefined,
-    },
-    whileHover: {
-      y: -liftDistance,
-      boxShadow: addShadow ? shadowStyle : undefined,
-    },
-    transition: { duration },
-  }
-}
-```
-
 **Step 4: Use in your components**
 
 ```tsx
@@ -543,33 +649,31 @@ function MyComponent() {
 }
 ```
 
-**That's it!** AnimBits is framework-agnostic and works with any React setup. Just copy the code you need and customize it for your project.
-
 ### Create React App
 
 No additional setup required beyond installing Framer Motion.
 
-**Step 1: Install Framer Motion**
+**Step 1: Install Dependencies**
 
 <Tabs items={['npm', 'pnpm', 'yarn', 'bun']}>
   <Tab value="npm">
     ```bash
-    npm install framer-motion
+    npm install framer-motion clsx tailwind-merge
     ```
   </Tab>
   <Tab value="pnpm">
     ```bash
-    pnpm add framer-motion
+    pnpm add framer-motion clsx tailwind-merge
     ```
   </Tab>
   <Tab value="yarn">
     ```bash
-    yarn add framer-motion
+    yarn add framer-motion clsx tailwind-merge
     ```
   </Tab>
   <Tab value="bun">
     ```bash
-    bun add framer-motion
+    bun add framer-motion clsx tailwind-merge
     ```
   </Tab>
 </Tabs>
