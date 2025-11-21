@@ -4,16 +4,10 @@
   "homepage": "https://animbits.dev",
   "items": [
     {
-      "name": "@animbits/hooks",
+      "name": "hooks-use-hover-lift",
       "type": "registry:lib",
-      "title": "Animation Primitive Hooks",
-      "description": "Component-agnostic animation hooks that work with any element via Framer Motion",
-      "tags": [
-        "hooks",
-        "primitive",
-        "core",
-        "utilities"
-      ],
+      "title": "Use Hover Lift",
+      "description": "The use-hover-lift hook.",
       "dependencies": [
         "framer-motion"
       ],
@@ -21,63 +15,228 @@
         {
           "path": "lib/hooks/use-hover-lift.ts",
           "type": "registry:lib"
-        },
+        }
+      ]
+    },
+    {
+      "name": "hooks-use-hover-glow",
+      "type": "registry:lib",
+      "title": "Use Hover Glow",
+      "description": "The use-hover-glow hook.",
+      "dependencies": [
+        "framer-motion"
+      ],
+      "files": [
         {
           "path": "lib/hooks/use-hover-glow.ts",
           "type": "registry:lib"
-        },
+        }
+      ]
+    },
+    {
+      "name": "hooks-use-press",
+      "type": "registry:lib",
+      "title": "Use Press",
+      "description": "The use-press hook.",
+      "dependencies": [
+        "framer-motion"
+      ],
+      "files": [
         {
           "path": "lib/hooks/use-press.ts",
           "type": "registry:lib"
-        },
+        }
+      ]
+    },
+    {
+      "name": "hooks-use-fade-in",
+      "type": "registry:lib",
+      "title": "Use Fade In",
+      "description": "The use-fade-in hook.",
+      "dependencies": [
+        "framer-motion"
+      ],
+      "files": [
         {
           "path": "lib/hooks/use-fade-in.ts",
           "type": "registry:lib"
-        },
+        }
+      ]
+    },
+    {
+      "name": "hooks-use-scale-in",
+      "type": "registry:lib",
+      "title": "Use Scale In",
+      "description": "The use-scale-in hook.",
+      "dependencies": [
+        "framer-motion"
+      ],
+      "files": [
         {
           "path": "lib/hooks/use-scale-in.ts",
           "type": "registry:lib"
-        },
+        }
+      ]
+    },
+    {
+      "name": "hooks-use-slide-in",
+      "type": "registry:lib",
+      "title": "Use Slide In",
+      "description": "The use-slide-in hook.",
+      "dependencies": [
+        "framer-motion"
+      ],
+      "files": [
         {
           "path": "lib/hooks/use-slide-in.ts",
           "type": "registry:lib"
-        },
+        }
+      ]
+    },
+    {
+      "name": "hooks-use-pulse",
+      "type": "registry:lib",
+      "title": "Use Pulse",
+      "description": "The use-pulse hook.",
+      "dependencies": [
+        "framer-motion"
+      ],
+      "files": [
         {
           "path": "lib/hooks/use-pulse.ts",
           "type": "registry:lib"
-        },
+        }
+      ]
+    },
+    {
+      "name": "hooks-use-bounce",
+      "type": "registry:lib",
+      "title": "Use Bounce",
+      "description": "The use-bounce hook.",
+      "dependencies": [
+        "framer-motion"
+      ],
+      "files": [
         {
           "path": "lib/hooks/use-bounce.ts",
           "type": "registry:lib"
-        },
+        }
+      ]
+    },
+    {
+      "name": "hooks-use-shimmer",
+      "type": "registry:lib",
+      "title": "Use Shimmer",
+      "description": "The use-shimmer hook.",
+      "dependencies": [
+        "framer-motion"
+      ],
+      "files": [
         {
           "path": "lib/hooks/use-shimmer.ts",
           "type": "registry:lib"
-        },
+        }
+      ]
+    },
+    {
+      "name": "hooks-use-scramble",
+      "type": "registry:lib",
+      "title": "Use Scramble",
+      "description": "The use-scramble hook.",
+      "dependencies": [
+        "framer-motion"
+      ],
+      "files": [
         {
           "path": "lib/hooks/use-scramble.ts",
           "type": "registry:lib"
-        },
+        }
+      ]
+    },
+    {
+      "name": "hooks-use-word-carousel",
+      "type": "registry:lib",
+      "title": "Use Word Carousel",
+      "description": "The use-word-carousel hook.",
+      "dependencies": [
+        "framer-motion"
+      ],
+      "files": [
         {
           "path": "lib/hooks/use-word-carousel.ts",
           "type": "registry:lib"
-        },
+        }
+      ]
+    },
+    {
+      "name": "hooks-use-magnetic",
+      "type": "registry:lib",
+      "title": "Use Magnetic",
+      "description": "The use-magnetic hook.",
+      "dependencies": [
+        "framer-motion"
+      ],
+      "files": [
         {
           "path": "lib/hooks/use-magnetic.ts",
           "type": "registry:lib"
-        },
+        }
+      ]
+    },
+    {
+      "name": "hooks-use-parallax-tilt",
+      "type": "registry:lib",
+      "title": "Use Parallax Tilt",
+      "description": "The use-parallax-tilt hook.",
+      "dependencies": [
+        "framer-motion"
+      ],
+      "files": [
         {
           "path": "lib/hooks/use-parallax-tilt.ts",
           "type": "registry:lib"
-        },
+        }
+      ]
+    },
+    {
+      "name": "hooks-use-stroke-draw",
+      "type": "registry:lib",
+      "title": "Use Stroke Draw",
+      "description": "The use-stroke-draw hook.",
+      "dependencies": [
+        "framer-motion"
+      ],
+      "files": [
         {
           "path": "lib/hooks/use-stroke-draw.ts",
           "type": "registry:lib"
-        },
+        }
+      ]
+    },
+    {
+      "name": "hooks-index",
+      "type": "registry:lib",
+      "title": "Index",
+      "description": "The index hook.",
+      "dependencies": [
+        "framer-motion"
+      ],
+      "files": [
         {
           "path": "lib/hooks/index.ts",
           "type": "registry:lib"
-        },
+        }
+      ]
+    },
+    {
+      "name": "hooks-README.md",
+      "type": "registry:lib",
+      "title": "README.md",
+      "description": "The README.md hook.",
+      "dependencies": [
+        "framer-motion"
+      ],
+      "files": [
         {
           "path": "lib/hooks/README.md",
           "type": "registry:lib"
@@ -85,7 +244,7 @@
       ]
     },
     {
-      "name": "@animbits/icons/pulse",
+      "name": "icons-pulse",
       "type": "registry:component",
       "title": "Pulse Icon",
       "description": "Continuous pulsing animation for icons",
@@ -110,7 +269,7 @@
       ]
     },
     {
-      "name": "@animbits/icons/bounce",
+      "name": "icons-bounce",
       "type": "registry:component",
       "title": "Bounce Icon",
       "description": "One-shot bounce animation for icons with configurable triggers",
@@ -135,7 +294,7 @@
       ]
     },
     {
-      "name": "@animbits/icons/bounce-continuous",
+      "name": "icons-bounce-continuous",
       "type": "registry:component",
       "title": "Bounce Continuous",
       "description": "Continuous bouncing animation for icons",
@@ -160,7 +319,7 @@
       ]
     },
     {
-      "name": "@animbits/icons/spin",
+      "name": "icons-spin",
       "type": "registry:component",
       "title": "Spin Icon",
       "description": "Continuous rotation animation for icons",
@@ -182,7 +341,7 @@
       ]
     },
     {
-      "name": "@animbits/icons/wiggle",
+      "name": "icons-wiggle",
       "type": "registry:component",
       "title": "Wiggle Icon",
       "description": "One-shot wiggle animation (rotate left-right) for icons",
@@ -207,7 +366,7 @@
       ]
     },
     {
-      "name": "@animbits/icons/shake",
+      "name": "icons-shake",
       "type": "registry:component",
       "title": "Shake Icon",
       "description": "One-shot shake animation (horizontal shake) for icons",
@@ -232,7 +391,7 @@
       ]
     },
     {
-      "name": "@animbits/icons/heartbeat",
+      "name": "icons-heartbeat",
       "type": "registry:component",
       "title": "Heartbeat Icon",
       "description": "Continuous heartbeat rhythm animation for icons",
@@ -258,7 +417,7 @@
       ]
     },
     {
-      "name": "@animbits/icons/fade-in",
+      "name": "icons-fade-in",
       "type": "registry:component",
       "title": "Fade In Icon",
       "description": "Entrance animation with fade effect for icons",
@@ -282,7 +441,7 @@
       ]
     },
     {
-      "name": "@animbits/icons/scale-in",
+      "name": "icons-scale-in",
       "type": "registry:component",
       "title": "Scale In Icon",
       "description": "Entrance animation with scale effect for icons",
@@ -306,7 +465,7 @@
       ]
     },
     {
-      "name": "@animbits/icons/pop",
+      "name": "icons-pop",
       "type": "registry:component",
       "title": "Pop Icon",
       "description": "One-shot pop effect (scale from 0 to 1) for icons",
@@ -331,7 +490,7 @@
       ]
     },
     {
-      "name": "@animbits/icons/rotate",
+      "name": "icons-rotate",
       "type": "registry:component",
       "title": "Rotate Icon",
       "description": "One-shot 360° rotation animation for icons",
@@ -356,7 +515,7 @@
       ]
     },
     {
-      "name": "@animbits/icons/stroke-draw",
+      "name": "icons-stroke-draw",
       "type": "registry:component",
       "title": "Stroke Draw Icon",
       "description": "SVG path stroke drawing animation for icons",
@@ -378,7 +537,7 @@
       ]
     },
     {
-      "name": "@animbits/buttons/press",
+      "name": "buttons-press",
       "type": "registry:component",
       "title": "Press Button",
       "description": "Button with press-down effect on tap",
@@ -395,15 +554,14 @@
         {
           "path": "registry/new-york/animations/buttons/press.tsx",
           "type": "registry:component"
-        },
-        {
-          "path": "lib/hooks/use-press.ts",
-          "type": "registry:lib"
         }
+      ],
+      "registryDependencies": [
+        "hooks-use-press"
       ]
     },
     {
-      "name": "@animbits/buttons/glow",
+      "name": "buttons-glow",
       "type": "registry:component",
       "title": "Glow Button",
       "description": "Button with glow effect on hover",
@@ -420,15 +578,14 @@
         {
           "path": "registry/new-york/animations/buttons/glow.tsx",
           "type": "registry:component"
-        },
-        {
-          "path": "lib/hooks/use-hover-glow.ts",
-          "type": "registry:lib"
         }
+      ],
+      "registryDependencies": [
+        "hooks-use-hover-glow"
       ]
     },
     {
-      "name": "@animbits/buttons/lift",
+      "name": "buttons-lift",
       "type": "registry:component",
       "title": "Lift Button",
       "description": "Button that lifts up on hover",
@@ -445,15 +602,14 @@
         {
           "path": "registry/new-york/animations/buttons/lift.tsx",
           "type": "registry:component"
-        },
-        {
-          "path": "lib/hooks/use-hover-lift.ts",
-          "type": "registry:lib"
         }
+      ],
+      "registryDependencies": [
+        "hooks-use-hover-lift"
       ]
     },
     {
-      "name": "@animbits/buttons/shine",
+      "name": "buttons-shine",
       "type": "registry:component",
       "title": "Shine Button",
       "description": "Button with shine sweep effect on hover",
@@ -474,7 +630,7 @@
       ]
     },
     {
-      "name": "@animbits/buttons/fade-in",
+      "name": "buttons-fade-in",
       "type": "registry:component",
       "title": "Fade In Button",
       "description": "Button with fade-in entrance animation",
@@ -498,7 +654,7 @@
       ]
     },
     {
-      "name": "@animbits/buttons/slide-in",
+      "name": "buttons-slide-in",
       "type": "registry:component",
       "title": "Slide In Button",
       "description": "Button with slide-in entrance animation",
@@ -522,7 +678,7 @@
       ]
     },
     {
-      "name": "@animbits/buttons/ripple",
+      "name": "buttons-ripple",
       "type": "registry:component",
       "title": "Ripple Button",
       "description": "Button with touch-aware ripple effect on click",
@@ -543,7 +699,7 @@
       ]
     },
     {
-      "name": "@animbits/buttons/magnetic",
+      "name": "buttons-magnetic",
       "type": "registry:component",
       "title": "Magnetic Button",
       "description": "Button with cursor-following magnetic attraction effect",
@@ -564,7 +720,7 @@
       ]
     },
     {
-      "name": "@animbits/buttons/border-gradient",
+      "name": "buttons-border-gradient",
       "type": "registry:component",
       "title": "Border Gradient Button",
       "description": "Button with animated gradient border",
@@ -585,7 +741,7 @@
       ]
     },
     {
-      "name": "@animbits/cards/hover-lift",
+      "name": "cards-hover-lift",
       "type": "registry:component",
       "title": "Hover Lift Card",
       "description": "Card that lifts with shadow on hover",
@@ -602,15 +758,14 @@
         {
           "path": "registry/new-york/animations/cards/hover-lift.tsx",
           "type": "registry:component"
-        },
-        {
-          "path": "lib/hooks/use-hover-lift.ts",
-          "type": "registry:lib"
         }
+      ],
+      "registryDependencies": [
+        "hooks-use-hover-lift"
       ]
     },
     {
-      "name": "@animbits/cards/hover-glow",
+      "name": "cards-hover-glow",
       "type": "registry:component",
       "title": "Hover Glow Card",
       "description": "Card with glow effect on hover",
@@ -627,15 +782,14 @@
         {
           "path": "registry/new-york/animations/cards/hover-glow.tsx",
           "type": "registry:component"
-        },
-        {
-          "path": "lib/hooks/use-hover-glow.ts",
-          "type": "registry:lib"
         }
+      ],
+      "registryDependencies": [
+        "hooks-use-hover-glow"
       ]
     },
     {
-      "name": "@animbits/cards/fade-in",
+      "name": "cards-fade-in",
       "type": "registry:component",
       "title": "Fade In Card",
       "description": "Card with fade-in animation on mount",
@@ -655,7 +809,7 @@
       ]
     },
     {
-      "name": "@animbits/cards/scale-in",
+      "name": "cards-scale-in",
       "type": "registry:component",
       "title": "Scale In Card",
       "description": "Card with scale-in animation on mount",
@@ -671,15 +825,14 @@
         {
           "path": "registry/new-york/animations/cards/scale-in.tsx",
           "type": "registry:component"
-        },
-        {
-          "path": "lib/hooks/use-scale-in.ts",
-          "type": "registry:lib"
         }
+      ],
+      "registryDependencies": [
+        "hooks-use-scale-in"
       ]
     },
     {
-      "name": "@animbits/cards/slide-in",
+      "name": "cards-slide-in",
       "type": "registry:component",
       "title": "Slide In Card",
       "description": "Card that slides in from any direction on mount",
@@ -695,15 +848,14 @@
         {
           "path": "registry/new-york/animations/cards/slide-in.tsx",
           "type": "registry:component"
-        },
-        {
-          "path": "lib/hooks/use-slide-in.ts",
-          "type": "registry:lib"
         }
+      ],
+      "registryDependencies": [
+        "hooks-use-slide-in"
       ]
     },
     {
-      "name": "@animbits/cards/flip",
+      "name": "cards-flip",
       "type": "registry:component",
       "title": "Flip Card",
       "description": "Card with 3D flip animation on hover",
@@ -725,7 +877,7 @@
       ]
     },
     {
-      "name": "@animbits/cards/tilt",
+      "name": "cards-tilt",
       "type": "registry:component",
       "title": "Tilt Card",
       "description": "Card with mouse-tracking tilt effect",
@@ -747,7 +899,7 @@
       ]
     },
     {
-      "name": "@animbits/cards/parallax-tilt",
+      "name": "cards-parallax-tilt",
       "type": "registry:component",
       "title": "Parallax Tilt Card",
       "description": "Card with 3D parallax tilt effect and depth",
@@ -770,7 +922,7 @@
       ]
     },
     {
-      "name": "@animbits/cards/background-zoom",
+      "name": "cards-background-zoom",
       "type": "registry:component",
       "title": "Background Zoom Card",
       "description": "Card with background image zoom on hover",
@@ -792,7 +944,7 @@
       ]
     },
     {
-      "name": "@animbits/text/fade-in",
+      "name": "text-fade-in",
       "type": "registry:component",
       "title": "Fade In Text",
       "description": "Text that fades in word by word or character by character",
@@ -813,7 +965,7 @@
       ]
     },
     {
-      "name": "@animbits/text/slide-up",
+      "name": "text-slide-up",
       "type": "registry:component",
       "title": "Slide Up Text",
       "description": "Text that slides up word by word or character by character",
@@ -834,7 +986,7 @@
       ]
     },
     {
-      "name": "@animbits/text/typewriter",
+      "name": "text-typewriter",
       "type": "registry:component",
       "title": "Typewriter Text",
       "description": "Text with typewriter effect and optional blinking cursor",
@@ -854,7 +1006,7 @@
       ]
     },
     {
-      "name": "@animbits/text/gradient",
+      "name": "text-gradient",
       "type": "registry:component",
       "title": "Gradient Text",
       "description": "Text with animated gradient effect",
@@ -875,7 +1027,7 @@
       ]
     },
     {
-      "name": "@animbits/text/blur-in",
+      "name": "text-blur-in",
       "type": "registry:component",
       "title": "Blur In Text",
       "description": "Text that blurs in word by word or character by character",
@@ -896,7 +1048,7 @@
       ]
     },
     {
-      "name": "@animbits/text/shimmer",
+      "name": "text-shimmer",
       "type": "registry:component",
       "title": "Shimmer Text",
       "description": "Text with gradient shimmer sweep animation",
@@ -917,7 +1069,7 @@
       ]
     },
     {
-      "name": "@animbits/text/scramble",
+      "name": "text-scramble",
       "type": "registry:component",
       "title": "Scramble Text",
       "description": "Hacker-style text scramble decode animation",
@@ -938,7 +1090,7 @@
       ]
     },
     {
-      "name": "@animbits/text/word-carousel",
+      "name": "text-word-carousel",
       "type": "registry:component",
       "title": "Word Carousel Text",
       "description": "Rotating word carousel animation",
@@ -959,7 +1111,7 @@
       ]
     },
     {
-      "name": "@animbits/text/split-reveal",
+      "name": "text-split-reveal",
       "type": "registry:component",
       "title": "Split Reveal Text",
       "description": "Text reveals with vertical split effect",
@@ -980,7 +1132,7 @@
       ]
     },
     {
-      "name": "@animbits/loaders/spinner",
+      "name": "loaders-spinner",
       "type": "registry:component",
       "title": "Spinner Loader",
       "description": "Circular spinning loader",
@@ -1001,7 +1153,7 @@
       ]
     },
     {
-      "name": "@animbits/loaders/dots",
+      "name": "loaders-dots",
       "type": "registry:component",
       "title": "Dots Loader",
       "description": "Bouncing dots loader",
@@ -1022,7 +1174,7 @@
       ]
     },
     {
-      "name": "@animbits/loaders/bars",
+      "name": "loaders-bars",
       "type": "registry:component",
       "title": "Bars Loader",
       "description": "Animated height bars loader",
@@ -1043,7 +1195,7 @@
       ]
     },
     {
-      "name": "@animbits/loaders/pulse",
+      "name": "loaders-pulse",
       "type": "registry:component",
       "title": "Pulse Loader",
       "description": "Pulsing circle loader",
@@ -1064,7 +1216,7 @@
       ]
     },
     {
-      "name": "@animbits/loaders/skeleton",
+      "name": "loaders-skeleton",
       "type": "registry:component",
       "title": "Skeleton Loader",
       "description": "Shimmer skeleton loader for content placeholders",
@@ -1086,7 +1238,7 @@
       ]
     },
     {
-      "name": "@animbits/loaders/orbit",
+      "name": "loaders-orbit",
       "type": "registry:component",
       "title": "Orbit Loader",
       "description": "Spinning particles in orbit animation",
@@ -1108,7 +1260,7 @@
       ]
     },
     {
-      "name": "@animbits/loaders/gooey-blobs",
+      "name": "loaders-gooey-blobs",
       "type": "registry:component",
       "title": "Gooey Blobs Loader",
       "description": "Organic merging blobs animation",
@@ -1130,7 +1282,7 @@
       ]
     },
     {
-      "name": "@animbits/loaders/morphing",
+      "name": "loaders-morphing",
       "type": "registry:component",
       "title": "Morphing Loader",
       "description": "Shape-shifting morphing animation",
@@ -1152,7 +1304,7 @@
       ]
     },
     {
-      "name": "@animbits/lists/slide-in",
+      "name": "lists-slide-in",
       "type": "registry:component",
       "title": "Slide In List",
       "description": "List with staggered slide-in animation for items",
@@ -1173,7 +1325,7 @@
       ]
     },
     {
-      "name": "@animbits/lists/stagger-fade",
+      "name": "lists-stagger-fade",
       "type": "registry:component",
       "title": "Stagger Fade List",
       "description": "List with staggered fade-in animation for items",
@@ -1194,7 +1346,7 @@
       ]
     },
     {
-      "name": "@animbits/icons/morph",
+      "name": "icons-morph",
       "type": "registry:component",
       "title": "Morph Icon",
       "description": "An icon that morphs between different states (e.g., play → pause).",
@@ -1215,7 +1367,7 @@
       ]
     },
     {
-      "name": "@animbits/cards/grayscale",
+      "name": "cards-grayscale",
       "type": "registry:component",
       "title": "Grayscale Card",
       "description": "A card with grayscale to color transition effect on hover.",
@@ -1237,7 +1389,7 @@
       ]
     },
     {
-      "name": "@animbits/loaders/liquid-progress",
+      "name": "loaders-liquid-progress",
       "type": "registry:component",
       "title": "Liquid Progress Loader",
       "description": "A liquid-style progress bar that fills vertically.",
@@ -1258,7 +1410,7 @@
       ]
     },
     {
-      "name": "@animbits/pages/page-transition-fade",
+      "name": "pages-page-transition-fade",
       "type": "registry:component",
       "title": "Page Transition Fade",
       "description": "Page transition component with fade effect using View Transitions API.",
@@ -1277,7 +1429,7 @@
       ]
     },
     {
-      "name": "@animbits/pages/page-transition-link",
+      "name": "pages-page-transition-link",
       "type": "registry:component",
       "title": "Page Transition Link",
       "description": "Navigation link component with View Transitions API support.",
@@ -1296,7 +1448,7 @@
       ]
     },
     {
-      "name": "@animbits/pages/page-transition-slide",
+      "name": "pages-page-transition-slide",
       "type": "registry:component",
       "title": "Page Transition Slide",
       "description": "Page transition component with slide effect using View Transitions API.",
@@ -1315,7 +1467,7 @@
       ]
     },
     {
-      "name": "@animbits/transitions/theme-toggle-circular",
+      "name": "transitions-theme-toggle-circular",
       "type": "registry:component",
       "title": "Theme Toggle Circular",
       "description": "Circular ripple animation for theme toggle using View Transitions API.",
@@ -1335,7 +1487,7 @@
       ]
     },
     {
-      "name": "@animbits/transitions/theme-toggle-slide-bottom",
+      "name": "transitions-theme-toggle-slide-bottom",
       "type": "registry:component",
       "title": "Theme Toggle Slide Bottom",
       "description": "Bottom to top slide animation for theme toggle using View Transitions API.",
@@ -1356,7 +1508,7 @@
       ]
     },
     {
-      "name": "@animbits/transitions/theme-toggle-slide-left",
+      "name": "transitions-theme-toggle-slide-left",
       "type": "registry:component",
       "title": "Theme Toggle Slide Left",
       "description": "Left to right slide animation for theme toggle using View Transitions API.",
@@ -1377,7 +1529,7 @@
       ]
     },
     {
-      "name": "@animbits/transitions/theme-toggle-slide-right",
+      "name": "transitions-theme-toggle-slide-right",
       "type": "registry:component",
       "title": "Theme Toggle Slide Right",
       "description": "Right to left slide animation for theme toggle using View Transitions API.",
@@ -1398,7 +1550,7 @@
       ]
     },
     {
-      "name": "@animbits/transitions/theme-toggle-slide-top",
+      "name": "transitions-theme-toggle-slide-top",
       "type": "registry:component",
       "title": "Theme Toggle Slide Top",
       "description": "Top to bottom slide animation for theme toggle using View Transitions API.",
