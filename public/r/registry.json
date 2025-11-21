@@ -557,7 +557,7 @@
         }
       ],
       "registryDependencies": [
-        "hooks-use-press"
+        "https://animbits.dev/r/hooks-use-press.json"
       ]
     },
     {
@@ -581,7 +581,7 @@
         }
       ],
       "registryDependencies": [
-        "hooks-use-hover-glow"
+        "https://animbits.dev/r/hooks-use-hover-glow.json"
       ]
     },
     {
@@ -605,7 +605,7 @@
         }
       ],
       "registryDependencies": [
-        "hooks-use-hover-lift"
+        "https://animbits.dev/r/hooks-use-hover-lift.json"
       ]
     },
     {
@@ -761,7 +761,7 @@
         }
       ],
       "registryDependencies": [
-        "hooks-use-hover-lift"
+        "https://animbits.dev/r/hooks-use-hover-lift.json"
       ]
     },
     {
@@ -785,7 +785,7 @@
         }
       ],
       "registryDependencies": [
-        "hooks-use-hover-glow"
+        "https://animbits.dev/r/hooks-use-hover-glow.json"
       ]
     },
     {
@@ -828,7 +828,7 @@
         }
       ],
       "registryDependencies": [
-        "hooks-use-scale-in"
+        "https://animbits.dev/r/hooks-use-scale-in.json"
       ]
     },
     {
@@ -851,7 +851,7 @@
         }
       ],
       "registryDependencies": [
-        "hooks-use-slide-in"
+        "https://animbits.dev/r/hooks-use-slide-in.json"
       ]
     },
     {
