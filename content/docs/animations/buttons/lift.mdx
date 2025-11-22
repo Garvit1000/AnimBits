@@ -43,12 +43,82 @@ The `LiftButton` component creates a button that lifts up on hover with an optio
     **Step 1: Copy the hook**
     
     ```tsx title="lib/hooks/use-hover-lift.ts"
-    import { type MotionProps, type Easing } from "framer-motion";    export interface UseHoverLiftOptions {      liftDistance?: number;      addShadow?: boolean;      shadowIntensity?: number;      duration?: number;      ease?: Easing | Easing[];      scale?: number;    }    export function useHoverLift(options: UseHoverLiftOptions = {}): MotionProps {      const {        liftDistance = 8,        addShadow = true,        shadowIntensity = 0.3,        duration = 0.2,        ease = "easeOut",        scale = 1,      } = options;      const shadowBlur = liftDistance * 2;      const shadowSpread = Math.round(liftDistance / 4);      return {        initial: {          y: 0,          scale: 1,          boxShadow: addShadow            ? `0 2px 4px rgba(0, 0, 0, ${shadowIntensity * 0.3})`            : undefined,        },        whileHover: {          y: -liftDistance,          scale,          boxShadow: addShadow            ? `0 ${shadowBlur}px ${shadowBlur + shadowSpread}px rgba(0, 0, 0, ${shadowIntensity})`            : undefined,        },        transition: {          duration,          ease,        },      };    }    ```
+    import { type MotionProps, type Easing } from "framer-motion";
+
+    export interface UseHoverLiftOptions {
+      liftDistance?: number;
+      addShadow?: boolean;
+      shadowIntensity?: number;
+      duration?: number;
+      ease?: Easing | Easing[];
+      scale?: number;
+    }
+
+    export function useHoverLift(options: UseHoverLiftOptions = {}): MotionProps {
+      const {
+        liftDistance = 8,
+        addShadow = true,
+        shadowIntensity = 0.3,
+        duration = 0.2,
+        ease = "easeOut",
+        scale = 1,
+      } = options;
+
+      const shadowBlur = liftDistance * 2;
+      const shadowSpread = Math.round(liftDistance / 4);
+
+      return {
+        initial: {
+          y: 0,
+          scale: 1,
+          boxShadow: addShadow
+            ? `0 2px 4px rgba(0, 0, 0, ${shadowIntensity * 0.3})`
+            : undefined,
+        },
+        whileHover: {
+          y: -liftDistance,
+          scale,
+          boxShadow: addShadow
+            ? `0 ${shadowBlur}px ${shadowBlur + shadowSpread}px rgba(0, 0, 0, ${shadowIntensity})`
+            : undefined,
+        },
+        transition: {
+          duration,
+          ease,
+        },
+      };
+    }
+    ```
 
     **Step 2: Copy the component**
 
     ```tsx title="components/animations/buttons/lift.tsx"
-    "use client"    import { motion, type HTMLMotionProps } from "framer-motion"    import { useHoverLift } from "@/lib/hooks"    interface LiftButtonProps extends Omit<HTMLMotionProps<"button">, "animate"> {      children: React.ReactNode      liftHeight?: number      shadow?: boolean    }    export function LiftButton({      children,      liftHeight = 8,      shadow = true,      ...props    }: LiftButtonProps) {      const liftProps = useHoverLift({        liftDistance: liftHeight,        addShadow: shadow,      })      return (        <motion.button {...liftProps} {...props}>          {children}        </motion.button>      )    }    ```
+"use client";
+import { motion, type HTMLMotionProps } from "framer-motion";
+import { useHoverLift } from "@/lib/hooks/use-hover-lift";
+interface LiftButtonProps extends Omit<HTMLMotionProps<"button">, "animate"> {
+  children: React.ReactNode;
+  liftHeight?: number;
+  shadow?: boolean;
+}
+export function LiftButton({
+  children,
+  liftHeight = 8,
+  shadow = true,
+  ...props
+}: LiftButtonProps) {
+  const liftProps = useHoverLift({
+    liftDistance: liftHeight,
+    addShadow: shadow,
+  });
+  return (
+    <motion.button {...liftProps} {...props}>
+      {children}
+    </motion.button>
+  );
+}
+
+```
   </Tab>
 </Tabs>
 
@@ -57,7 +127,16 @@ The `LiftButton` component creates a button that lifts up on hover with an optio
 ### Basic Example
 
 ```tsx
-import { LiftButton } from "@/components/animations/buttons/lift"export function Example() {  return (    <LiftButton className="inline-flex h-11 items-center gap-2 rounded-lg bg-blue-600 px-6 text-sm font-semibold text-white">      Hover Me    </LiftButton>  )}```
+import { LiftButton } from "@/components/animations/buttons/lift"
+
+export function Example() {
+  return (
+    <LiftButton className="inline-flex h-11 items-center gap-2 rounded-lg bg-blue-600 px-6 text-sm font-semibold text-white">
+      Hover Me
+    </LiftButton>
+  )
+}
+```
 
 ## Props
 
@@ -105,34 +184,95 @@ import { LiftButton } from "@/components/animations/buttons/lift"export functio
 ### Call-to-Action Button
 
 ```tsx
-<LiftButton   liftHeight={12}  className="inline-flex h-11 items-center gap-2 rounded-lg bg-gradient-to-r from-blue-600 to-purple-600 px-6 text-sm font-semibold text-white">  Get Started</LiftButton>```
+<LiftButton 
+  liftHeight={12}
+  className="inline-flex h-11 items-center gap-2 rounded-lg bg-gradient-to-r from-blue-600 to-purple-600 px-6 text-sm font-semibold text-white"
+>
+  Get Started
+</LiftButton>
+```
 
 ### Icon Button
 
 ```tsx
-<LiftButton   liftHeight={6}  className="inline-flex h-11 w-11 items-center justify-center rounded-lg bg-white border border-neutral-200 shadow-sm">  <HeartIcon className="h-5 w-5 text-neutral-700" /></LiftButton>```
+<LiftButton 
+  liftHeight={6}
+  className="inline-flex h-11 w-11 items-center justify-center rounded-lg bg-white border border-neutral-200 shadow-sm"
+>
+  <HeartIcon className="h-5 w-5 text-neutral-700" />
+</LiftButton>
+```
 
 ### Subtle Lift
 
 ```tsx
-<LiftButton   liftHeight={4}  className="inline-flex h-11 items-center gap-2 rounded-lg bg-neutral-100 px-6 text-sm font-semibold text-neutral-700">  Subtle</LiftButton>```
+<LiftButton 
+  liftHeight={4}
+  className="inline-flex h-11 items-center gap-2 rounded-lg bg-neutral-100 px-6 text-sm font-semibold text-neutral-700"
+>
+  Subtle
+</LiftButton>
+```
 
 ### Dramatic Lift
 
 ```tsx
-<LiftButton   liftHeight={20}  className="inline-flex h-11 items-center gap-2 rounded-lg bg-red-600 px-6 text-sm font-semibold text-white">  Dramatic</LiftButton>```
+<LiftButton 
+  liftHeight={20}
+  className="inline-flex h-11 items-center gap-2 rounded-lg bg-red-600 px-6 text-sm font-semibold text-white"
+>
+  Dramatic
+</LiftButton>
+```
 
 ## Using the Hook Directly
 
 For maximum flexibility, use the `useHoverLift` hook on any element:
 
 ```tsx
-import { motion } from "framer-motion"import { useHoverLift } from "@/lib/hooks"export function CustomElement() {  const liftProps = useHoverLift({ liftDistance: 12 })  return (    <motion.div       {...liftProps}       className="inline-flex items-center gap-2 rounded-lg bg-white border border-neutral-200 p-6 shadow-sm"    >      <h3 className="font-semibold">Any Element</h3>      <p className="text-sm text-neutral-600">Can have lift effect</p>    </motion.div>  )}```
+import { motion } from "framer-motion"
+import { useHoverLift } from "@/lib/hooks"
+
+export function CustomElement() {
+  const liftProps = useHoverLift({ liftDistance: 12 })
+  
+  return (
+    <motion.div 
+      {...liftProps} 
+      className="inline-flex items-center gap-2 rounded-lg bg-white border border-neutral-200 p-6 shadow-sm"
+    >
+      <h3 className="font-semibold">Any Element</h3>
+      <p className="text-sm text-neutral-600">Can have lift effect</p>
+    </motion.div>
+  )
+}
+```
 
 ## Combining with Other Effects
 
 ```tsx
-import { motion } from "framer-motion"import { useHoverLift, useHoverGlow } from "@/lib/hooks"export function LiftAndGlow() {  const lift = useHoverLift({ liftDistance: 10 })  const glow = useHoverGlow({ glowColor: "rgba(59, 130, 246, 0.5)" })  const combined = {    ...lift,    whileHover: {      ...lift.whileHover,      ...glow.whileHover,    },  }  return (    <motion.button {...combined} className="inline-flex h-11 items-center gap-2 rounded-lg bg-blue-600 px-6 text-sm font-semibold text-white">      Lift + Glow    </motion.button>  )}```
+import { motion } from "framer-motion"
+import { useHoverLift, useHoverGlow } from "@/lib/hooks"
+
+export function LiftAndGlow() {
+  const lift = useHoverLift({ liftDistance: 10 })
+  const glow = useHoverGlow({ glowColor: "rgba(59, 130, 246, 0.5)" })
+  
+  const combined = {
+    ...lift,
+    whileHover: {
+      ...lift.whileHover,
+      ...glow.whileHover,
+    },
+  }
+  
+  return (
+    <motion.button {...combined} className="inline-flex h-11 items-center gap-2 rounded-lg bg-blue-600 px-6 text-sm font-semibold text-white">
+      Lift + Glow
+    </motion.button>
+  )
+}
+```
 
 ## Accessibility
 

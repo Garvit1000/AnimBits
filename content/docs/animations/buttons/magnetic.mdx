@@ -43,17 +43,101 @@ The `MagneticButton` creates a magnetic attraction effect where the button smoot
     **Step 1: Copy the hook**
 
     ```tsx title="lib/hooks/use-magnetic.ts"
-    import * as React from "react"    import { useMotionValue, useSpring } from "framer-motion"    export interface UseMagneticOptions {      strength?: number      stiffness?: number      damping?: number    }    export function useMagnetic(options: UseMagneticOptions = {}) {      const { strength = 30, stiffness = 150, damping = 15 } = options      const ref = React.useRef<HTMLElement>(null)      const x = useMotionValue(0)      const y = useMotionValue(0)      const springConfig = { damping, stiffness }      const springX = useSpring(x, springConfig)      const springY = useSpring(y, springConfig)      const handleMouseMove = (e: React.MouseEvent<HTMLElement>) => {        if (!ref.current) return        const rect = ref.current.getBoundingClientRect()        const centerX = rect.left + rect.width / 2        const centerY = rect.top + rect.height / 2        const distanceX = e.clientX - centerX        const distanceY = e.clientY - centerY        x.set(distanceX * (strength / 100))        y.set(distanceY * (strength / 100))      }      const handleMouseLeave = () => {        x.set(0)        y.set(0)      }      const magneticProps = {        style: { x: springX, y: springY },        onMouseMove: handleMouseMove,        onMouseLeave: handleMouseLeave,      }      return { magneticProps, ref }    }    ```
+    import * as React from "react"
+    import { useMotionValue, useSpring } from "framer-motion"
+
+    export interface UseMagneticOptions {
+      strength?: number
+      stiffness?: number
+      damping?: number
+    }
+
+    export function useMagnetic(options: UseMagneticOptions = {}) {
+      const { strength = 30, stiffness = 150, damping = 15 } = options
+
+      const ref = React.useRef<HTMLElement>(null)
+      const x = useMotionValue(0)
+      const y = useMotionValue(0)
+
+      const springConfig = { damping, stiffness }
+      const springX = useSpring(x, springConfig)
+      const springY = useSpring(y, springConfig)
+
+      const handleMouseMove = (e: React.MouseEvent<HTMLElement>) => {
+        if (!ref.current) return
+
+        const rect = ref.current.getBoundingClientRect()
+        const centerX = rect.left + rect.width / 2
+        const centerY = rect.top + rect.height / 2
+
+        const distanceX = e.clientX - centerX
+        const distanceY = e.clientY - centerY
+
+        x.set(distanceX * (strength / 100))
+        y.set(distanceY * (strength / 100))
+      }
+
+      const handleMouseLeave = () => {
+        x.set(0)
+        y.set(0)
+      }
+
+      const magneticProps = {
+        style: { x: springX, y: springY },
+        onMouseMove: handleMouseMove,
+        onMouseLeave: handleMouseLeave,
+      }
+
+      return { magneticProps, ref }
+    }
+    ```
 
     **Step 2: Copy the utility**
 
     ```tsx title="lib/utils.ts"
-    import { type ClassValue, clsx } from "clsx"    import { twMerge } from "tailwind-merge"    export function cn(...inputs: ClassValue[]) {      return twMerge(clsx(inputs))    }    ```
+    import { type ClassValue, clsx } from "clsx"
+    import { twMerge } from "tailwind-merge"
+
+    export function cn(...inputs: ClassValue[]) {
+      return twMerge(clsx(inputs))
+    }
+    ```
 
     **Step 3: Copy the component**
 
     ```tsx title="components/animations/buttons/magnetic.tsx"
-    "use client"    import * as React from "react"    import { motion, HTMLMotionProps } from "framer-motion"    import { useMagnetic, type UseMagneticOptions } from "@/lib/hooks/use-magnetic"    interface MagneticButtonProps extends Omit<HTMLMotionProps<"button">, "ref">, UseMagneticOptions {      children: React.ReactNode    }    export function MagneticButton({      children,      strength,      stiffness,      damping,      ...props    }: MagneticButtonProps) {      const { magneticProps, ref } = useMagnetic({ strength, stiffness, damping })      return (        <motion.button ref={ref as any} {...magneticProps} {...props}>          {children}        </motion.button>      )    }    ```
+"use client";
+import * as React from "react";
+import { motion, HTMLMotionProps } from "framer-motion";
+import { cn } from "@/lib/utils";
+import { useMagnetic, type UseMagneticOptions } from "@/lib/hooks/use-magnetic";
+interface MagneticButtonProps
+  extends Omit<HTMLMotionProps<"button">, "ref">,
+    UseMagneticOptions {
+  children: React.ReactNode;
+}
+export function MagneticButton({
+  children,
+  className,
+  strength,
+  stiffness,
+  damping,
+  ...props
+}: MagneticButtonProps) {
+  const { magneticProps, ref } = useMagnetic({ strength, stiffness, damping });
+  return (
+    <motion.button
+      ref={ref as any}
+      {...magneticProps}
+      className={cn(className)}
+      {...props}
+    >
+      {children}
+    </motion.button>
+  );
+}
+
+```
   </Tab>
 </Tabs>
 
@@ -62,17 +146,45 @@ The `MagneticButton` creates a magnetic attraction effect where the button smoot
 ### Basic Example
 
 ```tsx
-import { MagneticButton } from "@/components/animations/buttons/magnetic"<MagneticButton className="inline-flex h-11 items-center gap-2 rounded-lg bg-blue-600 px-6 text-sm font-semibold text-white">  Hover Me</MagneticButton>```
+import { MagneticButton } from "@/components/animations/buttons/magnetic"
+
+<MagneticButton className="inline-flex h-11 items-center gap-2 rounded-lg bg-blue-600 px-6 text-sm font-semibold text-white">
+  Hover Me
+</MagneticButton>
+```
 
 ### Custom Strength
 
 ```tsx
-<MagneticButton   strength={15}  className="inline-flex h-11 items-center gap-2 rounded-lg bg-blue-600 px-6 text-sm font-semibold text-white">  Subtle Pull</MagneticButton><MagneticButton   strength={60}  className="inline-flex h-11 items-center gap-2 rounded-lg bg-purple-600 px-6 text-sm font-semibold text-white">  Strong Pull</MagneticButton>```
+// Subtle magnetic effect
+<MagneticButton 
+  strength={15}
+  className="inline-flex h-11 items-center gap-2 rounded-lg bg-blue-600 px-6 text-sm font-semibold text-white"
+>
+  Subtle Pull
+</MagneticButton>
+
+// Strong magnetic effect
+<MagneticButton 
+  strength={60}
+  className="inline-flex h-11 items-center gap-2 rounded-lg bg-purple-600 px-6 text-sm font-semibold text-white"
+>
+  Strong Pull
+</MagneticButton>
+```
 
 ### Custom Physics
 
 ```tsx
-<MagneticButton   strength={40}  stiffness={300}  damping={20}  className="inline-flex h-11 items-center gap-2 rounded-lg bg-purple-600 px-6 text-sm font-semibold text-white">  Snappy Response</MagneticButton>```
+<MagneticButton 
+  strength={40}
+  stiffness={300}
+  damping={20}
+  className="inline-flex h-11 items-center gap-2 rounded-lg bg-purple-600 px-6 text-sm font-semibold text-white"
+>
+  Snappy Response
+</MagneticButton>
+```
 
 ## Props
 
@@ -88,17 +200,49 @@ import { MagneticButton } from "@/components/animations/buttons/magnetic"<Magne
 ### Hero CTA
 
 ```tsx
-<MagneticButton   strength={50}  className="inline-flex h-11 items-center gap-2 rounded-lg bg-gradient-to-r from-purple-600 to-pink-600 px-6 text-sm font-semibold text-white">  Get Started</MagneticButton>```
+<MagneticButton 
+  strength={50}
+  className="inline-flex h-11 items-center gap-2 rounded-lg bg-gradient-to-r from-purple-600 to-pink-600 px-6 text-sm font-semibold text-white"
+>
+  Get Started
+</MagneticButton>
+```
 
 ### Icon Button
 
 ```tsx
-<MagneticButton   strength={40}  stiffness={200}  className="inline-flex h-11 w-11 items-center justify-center rounded-lg bg-white shadow-lg border border-neutral-200">  <HeartIcon className="h-5 w-5 text-neutral-700" /></MagneticButton>```
+<MagneticButton 
+  strength={40}
+  stiffness={200}
+  className="inline-flex h-11 w-11 items-center justify-center rounded-lg bg-white shadow-lg border border-neutral-200"
+>
+  <HeartIcon className="h-5 w-5 text-neutral-700" />
+</MagneticButton>
+```
 
 ## Physics Presets
 
 ```tsx
-<MagneticButton   strength={40}   stiffness={80}   damping={25}  className="inline-flex h-11 items-center gap-2 rounded-lg bg-blue-600 px-6 text-sm font-semibold text-white">  Smooth</MagneticButton><MagneticButton   strength={35}   stiffness={300}   damping={15}  className="inline-flex h-11 items-center gap-2 rounded-lg bg-blue-600 px-6 text-sm font-semibold text-white">  Snappy</MagneticButton>```
+// Smooth & Slow
+<MagneticButton 
+  strength={40} 
+  stiffness={80} 
+  damping={25}
+  className="inline-flex h-11 items-center gap-2 rounded-lg bg-blue-600 px-6 text-sm font-semibold text-white"
+>
+  Smooth
+</MagneticButton>
+
+// Snappy & Responsive
+<MagneticButton 
+  strength={35} 
+  stiffness={300} 
+  damping={15}
+  className="inline-flex h-11 items-center gap-2 rounded-lg bg-blue-600 px-6 text-sm font-semibold text-white"
+>
+  Snappy
+</MagneticButton>
+```
 
 <Callout type="warn">
   **Mobile:** Consider disabling on touch devices where hover doesn't apply.

@@ -1,1 +1,35 @@
-"use client"import * as React from "react"import { useRouter } from "next/navigation"import Link, { LinkProps } from "next/link"export interface PageTransitionLinkProps extends Omit<LinkProps, "onClick"> {  children: React.ReactNode  className?: string  onClick?: (e: React.MouseEvent<HTMLAnchorElement>) => void}export function PageTransitionLink({  href,  children,  className,  onClick,  ...props}: PageTransitionLinkProps) {  const router = useRouter()  const handleClick = async (e: React.MouseEvent<HTMLAnchorElement>) => {    e.preventDefault()    onClick?.(e)    if (typeof document === "undefined" || !document.startViewTransition) {      router.push(href.toString())      return    }    const transition = document.startViewTransition(() => {      router.push(href.toString())    })    await transition.ready  }  return (    <Link      href={href}      onClick={handleClick}      className={className}      {...props}    >      {children}    </Link>  )}
+"use client";
+import * as React from "react";
+import { useRouter } from "next/navigation";
+import Link, { LinkProps } from "next/link";
+export interface PageTransitionLinkProps extends Omit<LinkProps, "onClick"> {
+  children: React.ReactNode;
+  className?: string;
+  onClick?: (e: React.MouseEvent<HTMLAnchorElement>) => void;
+}
+export function PageTransitionLink({
+  href,
+  children,
+  className,
+  onClick,
+  ...props
+}: PageTransitionLinkProps) {
+  const router = useRouter();
+  const handleClick = async (e: React.MouseEvent<HTMLAnchorElement>) => {
+    e.preventDefault();
+    onClick?.(e);
+    if (typeof document === "undefined" || !document.startViewTransition) {
+      router.push(href.toString());
+      return;
+    }
+    const transition = document.startViewTransition(() => {
+      router.push(href.toString());
+    });
+    await transition.ready;
+  };
+  return (
+    <Link href={href} onClick={handleClick} className={className} {...props}>
+      {children}
+    </Link>
+  );
+}

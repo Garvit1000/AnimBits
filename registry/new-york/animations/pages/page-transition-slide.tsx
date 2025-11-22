@@ -1,1 +1,30 @@
-"use client"import * as React from "react"import { usePathname } from "next/navigation"export type SlideDirection = "left" | "right" | "top" | "bottom"export interface PageTransitionSlideProps {  children: React.ReactNode  direction?: SlideDirection  duration?: number  ease?: string}export function PageTransitionSlide({  children,  direction = "left",  duration = 0.4,  ease = "ease-in-out",}: PageTransitionSlideProps) {  const pathname = usePathname()  React.useEffect(() => {    if (typeof document === "undefined" || !document.startViewTransition) {      return    }    document.documentElement.style.setProperty('--page-transition-duration', `${duration}s`)    document.documentElement.style.setProperty('--page-transition-ease', ease)    document.documentElement.setAttribute('data-slide-direction', direction)  }, [pathname, duration, ease, direction])  return <>{children}</>}
+"use client";
+import * as React from "react";
+import { usePathname } from "next/navigation";
+export type SlideDirection = "left" | "right" | "top" | "bottom";
+export interface PageTransitionSlideProps {
+  children: React.ReactNode;
+  direction?: SlideDirection;
+  duration?: number;
+  ease?: string;
+}
+export function PageTransitionSlide({
+  children,
+  direction = "left",
+  duration = 0.4,
+  ease = "ease-in-out",
+}: PageTransitionSlideProps) {
+  const pathname = usePathname();
+  React.useEffect(() => {
+    if (typeof document === "undefined" || !document.startViewTransition) {
+      return;
+    }
+    document.documentElement.style.setProperty(
+      "--page-transition-duration",
+      `${duration}s`,
+    );
+    document.documentElement.style.setProperty("--page-transition-ease", ease);
+    document.documentElement.setAttribute("data-slide-direction", direction);
+  }, [pathname, duration, ease, direction]);
+  return <>{children}</>;
+}

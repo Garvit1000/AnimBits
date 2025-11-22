@@ -38,24 +38,98 @@ The `TextWordCarousel` cycles through an array of words with smooth transitions.
     **Step 1: Copy the hook**
 
     ```tsx title="lib/hooks/use-word-carousel.ts"
-    import * as React from "react"    export interface UseWordCarouselOptions {      words: string[]      interval?: number    }    export function useWordCarousel(options: UseWordCarouselOptions) {      const { words, interval = 2 } = options      const [currentIndex, setCurrentIndex] = React.useState(0)      React.useEffect(() => {        const timer = setInterval(() => {          setCurrentIndex((prev) => (prev + 1) % words.length)        }, interval * 1000)        return () => clearInterval(timer)      }, [words.length, interval])      return {        currentWord: words[currentIndex],        currentIndex,        key: currentIndex,      }    }    ```
+    import * as React from "react"
+
+    export interface UseWordCarouselOptions {
+      words: string[]
+      interval?: number
+    }
+
+    export function useWordCarousel(options: UseWordCarouselOptions) {
+      const { words, interval = 2 } = options
+      const [currentIndex, setCurrentIndex] = React.useState(0)
+
+      React.useEffect(() => {
+        const timer = setInterval(() => {
+          setCurrentIndex((prev) => (prev + 1) % words.length)
+        }, interval * 1000)
+
+        return () => clearInterval(timer)
+      }, [words.length, interval])
+
+      return {
+        currentWord: words[currentIndex],
+        currentIndex,
+        key: currentIndex,
+      }
+    }
+    ```
 
     **Step 2: Copy the utility**
 
     ```tsx title="lib/utils.ts"
-    import { type ClassValue, clsx } from "clsx"    import { twMerge } from "tailwind-merge"    export function cn(...inputs: ClassValue[]) {      return twMerge(clsx(inputs))    }    ```
+    import { type ClassValue, clsx } from "clsx"
+    import { twMerge } from "tailwind-merge"
+
+    export function cn(...inputs: ClassValue[]) {
+      return twMerge(clsx(inputs))
+    }
+    ```
 
     **Step 3: Copy the component**
 
     ```tsx title="components/animations/text/word-carousel.tsx"
-    "use client"    import { AnimatePresence, motion, HTMLMotionProps } from "framer-motion"    import { useWordCarousel } from "@/lib/hooks/use-word-carousel"    import { cn } from "@/lib/utils"    interface TextWordCarouselProps extends HTMLMotionProps<"span"> {      words: string[]      interval?: number      className?: string    }    export function TextWordCarousel({      words,      interval = 2,      className,      ...props    }: TextWordCarouselProps) {      const { currentWord, key } = useWordCarousel({ words, interval })      return (        <span className={cn("inline-block relative overflow-hidden", className)} {...props}>          <AnimatePresence mode="wait">            <motion.span              key={key}              initial={{ y: 20, opacity: 0 }}              animate={{ y: 0, opacity: 1 }}              exit={{ y: -20, opacity: 0 }}              transition={{ duration: 0.3, ease: "easeOut" }}              className="inline-block"            >              {currentWord}            </motion.span>          </AnimatePresence>        </span>      )    }    ```
+"use client";
+import * as React from "react";
+import { motion, AnimatePresence, HTMLMotionProps } from "framer-motion";
+import { cn } from "@/lib/utils";
+import {
+  useWordCarousel,
+  type UseWordCarouselOptions,
+} from "@/lib/hooks/use-word-carousel";
+export interface TextWordCarouselProps
+  extends Omit<HTMLMotionProps<"span">, "children">,
+    UseWordCarouselOptions {
+  duration?: number;
+}
+export function TextWordCarousel({
+  words,
+  interval,
+  className,
+  duration = 0.3,
+  ...props
+}: TextWordCarouselProps) {
+  const { currentWord, key } = useWordCarousel({ words, interval });
+  return (
+    <span className={cn("inline-block relative", className)}>
+      <AnimatePresence mode="wait">
+        <motion.span
+          key={key}
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: -20 }}
+          transition={{ duration }}
+          className="inline-block"
+          {...props}
+        >
+          {currentWord}
+        </motion.span>
+      </AnimatePresence>
+    </span>
+  );
+}
+
+```
   </Tab>
 </Tabs>
 
 ## Usage
 
 ```tsx
-import { TextWordCarousel } from "@/components/animations/text/word-carousel"<TextWordCarousel words={["Fast", "Modern", "Beautiful"]} />```
+import { TextWordCarousel } from "@/components/animations/text/word-carousel"
+
+<TextWordCarousel words={["Fast", "Modern", "Beautiful"]} />
+```
 
 ## Examples
 

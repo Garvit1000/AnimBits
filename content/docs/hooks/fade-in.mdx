@@ -21,7 +21,93 @@ The `useFadeIn` hook creates a smooth fade-in entrance animation. One of the mos
     Copy and paste the hook code into your project:
 
     ```tsx title="lib/hooks/use-fade-in.ts"
-    import { type MotionProps } from "framer-motion"    export interface UseFadeInOptions {      duration?: number      delay?: number      ease?: string | number[]      viewport?: "once" | "always"    }    export function useFadeIn(options: UseFadeInOptions = {}): MotionProps {      const {        duration = 0.5,        delay = 0,        ease = "easeOut",        viewport = "once",      } = options      return {        initial: { opacity: 0 },        whileInView: { opacity: 1 },        viewport: {          once: viewport === "once",        },        transition: { duration, delay, ease },      }    }    ```
+import { type MotionProps, type Easing } from "framer-motion";
+
+export interface UseFadeInOptions {
+  duration?: number;
+
+  delay?: number;
+
+  from?: number;
+
+  to?: number;
+
+  ease?: Easing | Easing[];
+
+  viewport?: "once" | "always";
+}
+
+export function useFadeIn(options: UseFadeInOptions = {}): MotionProps {
+  const {
+    duration = 0.5,
+    delay = 0,
+    from = 0,
+    to = 1,
+    ease = "easeOut",
+    viewport = "once",
+  } = options;
+
+  return {
+    initial: {
+      opacity: from,
+    },
+    whileInView: {
+      opacity: to,
+    },
+    viewport: {
+      once: viewport === "once",
+    },
+    transition: {
+      duration,
+      delay,
+      ease,
+    },
+  };
+}
+
+```tsx
+ * import { useFadeIn } from "@/lib/hooks"
+ * import { motion } from "framer-motion"
+ *
+ * function MyCard() {
+ *   const fadeProps = useFadeIn({ duration: 0.6, delay: 0.2 })
+ *   return (
+ *     <motion.div {...fadeProps}>
+ *       Content fades in
+ *     </motion.div>
+ *   )
+ * }
+ * ```
+ */
+export function useFadeIn(options: UseFadeInOptions = {}): MotionProps {
+  const {
+    duration = 0.5,
+    delay = 0,
+    from = 0,
+    to = 1,
+    ease = "easeOut",
+    viewport = "once",
+  } = options;
+
+  return {
+    initial: {
+      opacity: from,
+    },
+    whileInView: {
+      opacity: to,
+    },
+    viewport: {
+      once: viewport === "once",
+    },
+    transition: {
+      duration,
+      delay,
+      ease,
+    },
+  };
+}
+
+```
   </Tab>
   <Tab value="CLI">
     ```bash
@@ -35,41 +121,157 @@ The `useFadeIn` hook creates a smooth fade-in entrance animation. One of the mos
 ### Basic Example
 
 ```tsx
-import { motion } from "framer-motion"import { useFadeIn } from "@/lib/hooks/use-fade-in"export function Hero() {  const fadeProps = useFadeIn()  return (    <motion.section {...fadeProps} className="hero">      <h1>Welcome</h1>      <p>This content fades in smoothly</p>    </motion.section>  )}```
+import { motion } from "framer-motion"
+import { useFadeIn } from "@/lib/hooks/use-fade-in"
+
+export function Hero() {
+  const fadeProps = useFadeIn()
+  
+  return (
+    <motion.section {...fadeProps} className="hero">
+      <h1>Welcome</h1>
+      <p>This content fades in smoothly</p>
+    </motion.section>
+  )
+}
+```
 
 ### Slow Fade
 
 ```tsx
-import { motion } from "framer-motion"import { useFadeIn } from "@/lib/hooks/use-fade-in"export function SlowReveal() {  const fadeProps = useFadeIn({     duration: 1.5    })  return (    <motion.div {...fadeProps}>      <h2>Slowly revealed content</h2>    </motion.div>  )}```
+import { motion } from "framer-motion"
+import { useFadeIn } from "@/lib/hooks/use-fade-in"
+
+export function SlowReveal() {
+  const fadeProps = useFadeIn({ 
+    duration: 1.5  // Slow, dramatic fade
+  })
+  
+  return (
+    <motion.div {...fadeProps}>
+      <h2>Slowly revealed content</h2>
+    </motion.div>
+  )
+}
+```
 
 ### Delayed Fade
 
 ```tsx
-import { motion } from "framer-motion"import { useFadeIn } from "@/lib/hooks/use-fade-in"export function DelayedContent() {  const fadeProps = useFadeIn({     delay: 0.5,      duration: 0.8   })  return (    <motion.div {...fadeProps}>      <p>Appears after a delay</p>    </motion.div>  )}```
+import { motion } from "framer-motion"
+import { useFadeIn } from "@/lib/hooks/use-fade-in"
+
+export function DelayedContent() {
+  const fadeProps = useFadeIn({ 
+    delay: 0.5,  // Wait before fading in
+    duration: 0.8 
+  })
+  
+  return (
+    <motion.div {...fadeProps}>
+      <p>Appears after a delay</p>
+    </motion.div>
+  )
+}
+```
 
 ### Staggered Fade
 
 ```tsx
-import { motion } from "framer-motion"import { useFadeIn } from "@/lib/hooks/use-fade-in"export function StaggeredList({ items }) {  return (    <div className="space-y-4">      {items.map((item, index) => {        const fadeProps = useFadeIn({           delay: index * 0.1          })        return (          <motion.div key={item.id} {...fadeProps}>            {item.content}          </motion.div>        )      })}    </div>  )}```
+import { motion } from "framer-motion"
+import { useFadeIn } from "@/lib/hooks/use-fade-in"
+
+export function StaggeredList({ items }) {
+  return (
+    <div className="space-y-4">
+      {items.map((item, index) => {
+        const fadeProps = useFadeIn({ 
+          delay: index * 0.1  // Stagger each item
+        })
+        
+        return (
+          <motion.div key={item.id} {...fadeProps}>
+            {item.content}
+          </motion.div>
+        )
+      })}
+    </div>
+  )
+}
+```
 
 ### On Different Elements
 
 <Tabs items={['Text', 'Image', 'Card', 'Modal']}>
   <Tab value="Text">
     ```tsx
-    import { motion } from "framer-motion"    import { useFadeIn } from "@/lib/hooks/use-fade-in"    export function FadeText() {      const fadeProps = useFadeIn({ duration: 0.8 })      return (        <motion.p {...fadeProps}>          This text fades in elegantly        </motion.p>      )    }    ```
+    import { motion } from "framer-motion"
+    import { useFadeIn } from "@/lib/hooks/use-fade-in"
+
+    export function FadeText() {
+      const fadeProps = useFadeIn({ duration: 0.8 })
+      
+      return (
+        <motion.p {...fadeProps}>
+          This text fades in elegantly
+        </motion.p>
+      )
+    }
+    ```
   </Tab>
   <Tab value="Image">
     ```tsx
-    import { motion } from "framer-motion"    import { useFadeIn } from "@/lib/hooks/use-fade-in"    export function FadeImage() {      const fadeProps = useFadeIn({ duration: 1 })      return (        <motion.img           {...fadeProps}          src="/image.jpg"          alt="Fades in"        />      )    }    ```
+    import { motion } from "framer-motion"
+    import { useFadeIn } from "@/lib/hooks/use-fade-in"
+
+    export function FadeImage() {
+      const fadeProps = useFadeIn({ duration: 1 })
+      
+      return (
+        <motion.img 
+          {...fadeProps}
+          src="/image.jpg"
+          alt="Fades in"
+        />
+      )
+    }
+    ```
   </Tab>
   <Tab value="Card">
     ```tsx
-    import { motion } from "framer-motion"    import { useFadeIn } from "@/lib/hooks/use-fade-in"    export function FadeCard() {      const fadeProps = useFadeIn({ delay: 0.2 })      return (        <motion.div {...fadeProps} className="card">          <h3>Card Title</h3>          <p>Card content</p>        </motion.div>      )    }    ```
+    import { motion } from "framer-motion"
+    import { useFadeIn } from "@/lib/hooks/use-fade-in"
+
+    export function FadeCard() {
+      const fadeProps = useFadeIn({ delay: 0.2 })
+      
+      return (
+        <motion.div {...fadeProps} className="card">
+          <h3>Card Title</h3>
+          <p>Card content</p>
+        </motion.div>
+      )
+    }
+    ```
   </Tab>
   <Tab value="Modal">
     ```tsx
-    import { motion } from "framer-motion"    import { useFadeIn } from "@/lib/hooks/use-fade-in"    export function Modal({ isOpen }) {      const fadeProps = useFadeIn({ duration: 0.3 })      if (!isOpen) return null      return (        <motion.div {...fadeProps} className="modal">          <h2>Modal Title</h2>          <p>Modal content</p>        </motion.div>      )    }    ```
+    import { motion } from "framer-motion"
+    import { useFadeIn } from "@/lib/hooks/use-fade-in"
+
+    export function Modal({ isOpen }) {
+      const fadeProps = useFadeIn({ duration: 0.3 })
+      
+      if (!isOpen) return null
+      
+      return (
+        <motion.div {...fadeProps} className="modal">
+          <h2>Modal Title</h2>
+          <p>Modal content</p>
+        </motion.div>
+      )
+    }
+    ```
   </Tab>
 </Tabs>
 
@@ -129,51 +331,101 @@ Returns `MotionProps` object containing:
 ### Quick Fade
 
 ```tsx
-const fadeProps = useFadeIn({  duration: 0.3,})```
+const fadeProps = useFadeIn({
+  duration: 0.3,
+})
+```
 
 ### Slow Dramatic Fade
 
 ```tsx
-const fadeProps = useFadeIn({  duration: 2,  ease: "easeInOut",})```
+const fadeProps = useFadeIn({
+  duration: 2,
+  ease: "easeInOut",
+})
+```
 
 ### Delayed Sequence
 
 ```tsx
-const fadeProps = useFadeIn({  delay: 1,  duration: 0.8,})```
+const fadeProps = useFadeIn({
+  delay: 1,
+  duration: 0.8,
+})
+```
 
 ### Repeat on Scroll
 
 ```tsx
-const fadeProps = useFadeIn({  viewport: "always",    duration: 0.6,})```
+const fadeProps = useFadeIn({
+  viewport: "always",  // Fade in every time
+  duration: 0.6,
+})
+```
 
 ## Common Use Cases
 
 ### Hero Section
 
 ```tsx
-<motion.section {...useFadeIn({ duration: 1 })}>  <h1>Welcome to our site</h1></motion.section>```
+<motion.section {...useFadeIn({ duration: 1 })}>
+  <h1>Welcome to our site</h1>
+</motion.section>
+```
 
 ### Image Gallery
 
 ```tsx
-{images.map((img, i) => (  <motion.img     key={img.id}    {...useFadeIn({ delay: i * 0.1 })}    src={img.url}  />))}```
+{images.map((img, i) => (
+  <motion.img 
+    key={img.id}
+    {...useFadeIn({ delay: i * 0.1 })}
+    src={img.url}
+  />
+))}
+```
 
 ### Modal Overlay
 
 ```tsx
-<motion.div {...useFadeIn({ duration: 0.2 })} className="overlay" />```
+<motion.div {...useFadeIn({ duration: 0.2 })} className="overlay" />
+```
 
 ### Content Sections
 
 ```tsx
-<motion.article {...useFadeIn({ delay: 0.3 })}>  <h2>Section Title</h2>  <p>Section content</p></motion.article>```
+<motion.article {...useFadeIn({ delay: 0.3 })}>
+  <h2>Section Title</h2>
+  <p>Section content</p>
+</motion.article>
+```
 
 ## Composing with Other Hooks
 
 Combine fade with other animations:
 
 ```tsx
-import { useFadeIn } from "@/lib/hooks/use-fade-in"import { useSlideIn } from "@/lib/hooks/use-slide-in"const fade = useFadeIn({ duration: 0.6 })const slide = useSlideIn({ direction: "left", distance: 30 })const combined = {  initial: {    ...fade.initial,    ...slide.initial,  },  whileInView: {    ...fade.whileInView,    ...slide.whileInView,  },  transition: fade.transition,}<motion.div {...combined}>Fade + Slide</motion.div>```
+import { useFadeIn } from "@/lib/hooks/use-fade-in"
+import { useSlideIn } from "@/lib/hooks/use-slide-in"
+
+// Fade + Slide
+const fade = useFadeIn({ duration: 0.6 })
+const slide = useSlideIn({ direction: "left", distance: 30 })
+
+const combined = {
+  initial: {
+    ...fade.initial,
+    ...slide.initial,
+  },
+  whileInView: {
+    ...fade.whileInView,
+    ...slide.whileInView,
+  },
+  transition: fade.transition,
+}
+
+<motion.div {...combined}>Fade + Slide</motion.div>
+```
 
 ## Accessibility
 

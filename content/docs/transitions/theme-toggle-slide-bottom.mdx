@@ -35,7 +35,65 @@ Try it live! Adjust the speed and blur sliders, then click the button to see the
   </Tab>
   <Tab value="Manual">
     ```tsx title="components/animations/transitions/theme-toggle-slide-bottom.tsx"
-    "use client"    import * as React from "react"    export interface ThemeToggleSlideBottomProps {      children: React.ReactNode      onToggle?: () => void      theme?: "light" | "dark"      className?: string      speed?: number      blur?: number    }    export function ThemeToggleSlideBottom({      children,      onToggle,      theme,      className,      speed = 0.5,      blur = 0,    }: ThemeToggleSlideBottomProps) {      const handleClick = async () => {        if (!document.startViewTransition) {          onToggle?.()          return        }        document.documentElement.style.setProperty('--transition-speed', `${speed}s`)        document.documentElement.style.setProperty('--transition-blur', `${blur}px`)        document.documentElement.classList.add('theme-slide-bottom')        const transition = document.startViewTransition(() => {          onToggle?.()        })        await transition.finished        document.documentElement.classList.remove('theme-slide-bottom')      }      return (        <div onClick={handleClick} className={className}>          {children}        </div>      )    }    ```
+"use client";
+import * as React from "react";
+export interface ThemeToggleSlideBottomProps {
+  children: React.ReactNode;
+  onToggle?: () => void;
+  theme?: "light" | "dark";
+  className?: string;
+  speed?: number;
+  blur?: number;
+}
+export function ThemeToggleSlideBottom({
+  children,
+  onToggle,
+  theme,
+  className,
+  speed = 0.5,
+  blur = 0,
+}: ThemeToggleSlideBottomProps) {
+  const [isTransitioning, setIsTransitioning] = React.useState(false);
+  const handleClick = async () => {
+    if (isTransitioning) return;
+    if (!document.startViewTransition) {
+      onToggle?.();
+      return;
+    }
+    setIsTransitioning(true);
+    document.documentElement.style.setProperty(
+      "--transition-speed",
+      `${speed}s`,
+    );
+    document.documentElement.style.setProperty(
+      "--transition-blur",
+      `${blur}px`,
+    );
+    document.documentElement.classList.add("theme-slide-bottom");
+    const transition = document.startViewTransition(() => {
+      onToggle?.();
+    });
+    try {
+      await transition.finished;
+    } catch (error) {
+      console.warn("Theme transition interrupted:", error);
+    } finally {
+      document.documentElement.classList.remove("theme-slide-bottom");
+      setIsTransitioning(false);
+    }
+  };
+  return (
+    <div
+      onClick={handleClick}
+      className={className}
+      style={{ pointerEvents: isTransitioning ? "none" : "auto" }}
+    >
+      {children}
+    </div>
+  );
+}
+
+```
 
     **Required CSS** (add to `globals.css`):
     ```css
@@ -82,7 +140,26 @@ Try it live! Adjust the speed and blur sliders, then click the button to see the
 ### With next-themes
 
 ```tsx
-"use client"import { useTheme } from "next-themes"import { ThemeToggleSlideBottom } from "@/components/animations/transitions/theme-toggle-slide-bottom"import { Button } from "@/components/ui/button"export function ThemeToggle() {  const { theme, setTheme } = useTheme()  return (    <ThemeToggleSlideBottom       onToggle={() => setTheme(theme === 'dark' ? 'light' : 'dark')}      speed={0.5}      blur={0}    >      <Button>Toggle Theme</Button>    </ThemeToggleSlideBottom>  )}```
+"use client"
+
+import { useTheme } from "next-themes"
+import { ThemeToggleSlideBottom } from "@/components/animations/transitions/theme-toggle-slide-bottom"
+import { Button } from "@/components/ui/button"
+
+export function ThemeToggle() {
+  const { theme, setTheme } = useTheme()
+  
+  return (
+    <ThemeToggleSlideBottom 
+      onToggle={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
+      speed={0.5}
+      blur={0}
+    >
+      <Button>Toggle Theme</Button>
+    </ThemeToggleSlideBottom>
+  )
+}
+```
 
 ## Props
 
@@ -100,17 +177,26 @@ Try it live! Adjust the speed and blur sliders, then click the button to see the
 ### Fast Transition
 
 ```tsx
-<ThemeToggleSlideBottom speed={0.2}>  <Button>Toggle</Button></ThemeToggleSlideBottom>```
+<ThemeToggleSlideBottom speed={0.2}>
+  <Button>Toggle</Button>
+</ThemeToggleSlideBottom>
+```
 
 ### With Blur
 
 ```tsx
-<ThemeToggleSlideBottom speed={0.5} blur={10}>  <Button>Toggle</Button></ThemeToggleSlideBottom>```
+<ThemeToggleSlideBottom speed={0.5} blur={10}>
+  <Button>Toggle</Button>
+</ThemeToggleSlideBottom>
+```
 
 ### Slow with Heavy Blur
 
 ```tsx
-<ThemeToggleSlideBottom speed={1.2} blur={20}>  <Button>Toggle</Button></ThemeToggleSlideBottom>```
+<ThemeToggleSlideBottom speed={1.2} blur={20}>
+  <Button>Toggle</Button>
+</ThemeToggleSlideBottom>
+```
 
 ## Features
 

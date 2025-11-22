@@ -49,19 +49,62 @@ The `CardFlip` creates a 3D flip effect on hover, perfect for revealing addition
     **Step 1: Add the utility**
 
     ```tsx title="lib/utils.ts"
-    import { clsx, type ClassValue } from "clsx"    import { twMerge } from "tailwind-merge"    export function cn(...inputs: ClassValue[]) {      return twMerge(clsx(inputs))    }    ```
+    import { clsx, type ClassValue } from "clsx"
+    import { twMerge } from "tailwind-merge"
+
+    export function cn(...inputs: ClassValue[]) {
+      return twMerge(clsx(inputs))
+    }
+    ```
 
     **Step 2: Copy the component**
 
     ```tsx title="components/animations/cards/flip.tsx"
-    "use client"    import * as React from "react"    import { motion, HTMLMotionProps } from "framer-motion"    import { cn } from "@/lib/utils"    export interface CardFlipProps extends HTMLMotionProps<"div"> {      duration?: number      axis?: "x" | "y"    }    export function CardFlip({      children,      className,      duration = 0.6,      axis = "y",      ...props    }: CardFlipProps) {      return (        <motion.div          whileHover={{            rotateY: axis === "y" ? 180 : 0,            rotateX: axis === "x" ? 180 : 0,          }}          transition={{ duration }}          style={{ transformStyle: "preserve-3d" }}          className={cn("cursor-pointer", className)}          {...props}        >          {children}        </motion.div>      )    }    ```
+"use client";
+import * as React from "react";
+import { motion, HTMLMotionProps } from "framer-motion";
+import { cn } from "@/lib/utils";
+export interface CardFlipProps extends HTMLMotionProps<"div"> {
+  duration?: number;
+  axis?: "x" | "y";
+}
+export function CardFlip({
+  children,
+  className,
+  duration = 0.6,
+  axis = "y",
+  ...props
+}: CardFlipProps) {
+  return (
+    <motion.div
+      whileHover={{
+        rotateY: axis === "y" ? 180 : 0,
+        rotateX: axis === "x" ? 180 : 0,
+      }}
+      transition={{ duration }}
+      style={{ transformStyle: "preserve-3d" }}
+      className={cn("cursor-pointer", className)}
+      {...props}
+    >
+      {children}
+    </motion.div>
+  );
+}
+
+```
   </Tab>
 </Tabs>
 
 ## Usage
 
 ```tsx
-import { CardFlip } from "@/components/animations/cards/flip"<CardFlip className="p-6 bg-white rounded-lg border">  <h3>Card Title</h3>  <p>Hover to flip!</p></CardFlip>```
+import { CardFlip } from "@/components/animations/cards/flip"
+
+<CardFlip className="p-6 bg-white rounded-lg border">
+  <h3>Card Title</h3>
+  <p>Hover to flip!</p>
+</CardFlip>
+```
 
 ## Examples
 

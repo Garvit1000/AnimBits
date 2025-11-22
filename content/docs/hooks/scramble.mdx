@@ -19,7 +19,130 @@ The `useScramble` hook creates a "decoding" text animation where random characte
 <Tabs items={['Manual', 'CLI']}>
   <Tab value="Manual">
     ```tsx title="lib/hooks/use-scramble.ts"
-    import * as React from "react"    export interface UseScrambleOptions {      text?: string      duration?: number      delay?: number      scrambleChars?: string    }    export function useScramble(options: UseScrambleOptions): string {      const {        text = "",        duration = 0.8,        delay = 0,        scrambleChars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()",      } = options      const [displayText, setDisplayText] = React.useState(text)      React.useEffect(() => {        const iterations = Math.floor(duration * 60)         let currentIteration = 0        const timeout = setTimeout(() => {          const interval = setInterval(() => {            if (currentIteration >= iterations) {              setDisplayText(text)              clearInterval(interval)              return            }            const progress = currentIteration / iterations            const newText = text              .split("")              .map((char, index) => {                if (char === " ") return " "                if (index / text.length < progress) {                  return char                }                return scrambleChars[Math.floor(Math.random() * scrambleChars.length)]              })              .join("")            setDisplayText(newText)            currentIteration++          }, (duration * 1000) / iterations)          return () => clearInterval(interval)        }, delay * 1000)        return () => clearTimeout(timeout)      }, [text, duration, delay, scrambleChars])      return displayText    }    ```
+import * as React from "react";
+
+export interface UseScrambleOptions {
+  text?: string;
+  duration?: number;
+  delay?: number;
+  scrambleChars?: string;
+}
+
+export function useScramble(options: UseScrambleOptions): string {
+  const {
+    text = "",
+    duration = 0.8,
+    delay = 0,
+    scrambleChars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()",
+  } = options;
+
+  const [displayText, setDisplayText] = React.useState(text);
+
+  React.useEffect(() => {
+    const iterations = Math.floor(duration * 60); // 60fps
+    let currentIteration = 0;
+
+    const timeout = setTimeout(() => {
+      const interval = setInterval(
+        () => {
+          if (currentIteration >= iterations) {
+            setDisplayText(text);
+            clearInterval(interval);
+            return;
+          }
+
+          const progress = currentIteration / iterations;
+          const newText = text
+            .split("")
+            .map((char, index) => {
+              if (char === " ") return " ";
+              if (index / text.length < progress) {
+                return char;
+              }
+              return scrambleChars[
+                Math.floor(Math.random() * scrambleChars.length)
+              ];
+            })
+            .join("");
+
+          setDisplayText(newText);
+          currentIteration++;
+        },
+        (duration * 1000) / iterations,
+      );
+
+      return () => clearInterval(interval);
+    }, delay * 1000);
+
+    return () => clearTimeout(timeout);
+  }, [text, duration, delay, scrambleChars]);
+
+  return displayText;
+}
+
+```tsx
+ * const displayText = useScramble({ text: "Hello World" })
+ * <div>{displayText}</div>
+ * ```
+ * 
+ * @example
+ * ```tsx
+ * const displayText = useScramble({ 
+ *   text: "Decode Me",
+ *   duration: 1.5,
+ *   delay: 0.5
+ * })
+ * <h1 className="font-mono">{displayText}</h1>
+ * ```
+ */
+export function useScramble(options: UseScrambleOptions): string {
+  const {
+    text = "",
+    duration = 0.8,
+    delay = 0,
+    scrambleChars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()",
+  } = options
+
+  const [displayText, setDisplayText] = React.useState(text)
+
+  React.useEffect(() => {
+    const iterations = Math.floor(duration * 60) // 60fps
+    let currentIteration = 0
+
+    const timeout = setTimeout(() => {
+      const interval = setInterval(() => {
+        if (currentIteration >= iterations) {
+          setDisplayText(text)
+          clearInterval(interval)
+          return
+        }
+
+        const progress = currentIteration / iterations
+        const newText = text
+          .split("")
+          .map((char, index) => {
+            if (char === " ") return " "
+            if (index / text.length < progress) {
+              return char
+            }
+            return scrambleChars[Math.floor(Math.random() * scrambleChars.length)]
+          })
+          .join("")
+
+        setDisplayText(newText)
+        currentIteration++
+      }, (duration * 1000) / iterations)
+
+      return () => clearInterval(interval)
+    }, delay * 1000)
+
+    return () => clearTimeout(timeout)
+  }, [text, duration, delay, scrambleChars])
+
+  return displayText
+}
+
+```
   </Tab>
   <Tab value="CLI">
     ```bash
@@ -33,36 +156,88 @@ The `useScramble` hook creates a "decoding" text animation where random characte
 ### Basic Example
 
 ```tsx
-import { useScramble } from "@/lib/hooks/use-scramble"export function ScrambleHeading() {  const displayText = useScramble({ text: "Hello World" })  return (    <h1 className="font-mono text-4xl">      {displayText}    </h1>  )}```
+import { useScramble } from "@/lib/hooks/use-scramble"
+
+export function ScrambleHeading() {
+  const displayText = useScramble({ text: "Hello World" })
+  
+  return (
+    <h1 className="font-mono text-4xl">
+      {displayText}
+    </h1>
+  )
+}
+```
 
 ### With Custom Duration
 
 ```tsx
-import { useScramble } from "@/lib/hooks/use-scramble"export function SlowScramble() {  const displayText = useScramble({     text: "Decoding...",    duration: 2,  })  return (    <div className="font-mono text-green-500">      {displayText}    </div>  )}```
+import { useScramble } from "@/lib/hooks/use-scramble"
+
+export function SlowScramble() {
+  const displayText = useScramble({ 
+    text: "Decoding...",
+    duration: 2,
+  })
+  
+  return (
+    <div className="font-mono text-green-500">
+      {displayText}
+    </div>
+  )
+}
+```
 
 ### With Delay
 
 ```tsx
-import { useScramble } from "@/lib/hooks/use-scramble"export function DelayedScramble() {  const displayText = useScramble({     text: "Welcome Back",    duration: 1,    delay: 0.5,   })  return <h2 className="font-mono">{displayText}</h2>}```
+import { useScramble } from "@/lib/hooks/use-scramble"
+
+export function DelayedScramble() {
+  const displayText = useScramble({ 
+    text: "Welcome Back",
+    duration: 1,
+    delay: 0.5, // Wait 0.5s before starting
+  })
+  
+  return <h2 className="font-mono">{displayText}</h2>
+}
+```
 
 ### Custom Scramble Characters
 
 <Tabs items={['Numbers Only', 'Binary', 'Symbols', 'Custom']}>
   <Tab value="Numbers Only">
     ```tsx
-    const displayText = useScramble({       text: "12345",      scrambleChars: "0123456789",    })    ```
+    const displayText = useScramble({ 
+      text: "12345",
+      scrambleChars: "0123456789",
+    })
+    ```
   </Tab>
   <Tab value="Binary">
     ```tsx
-    const displayText = useScramble({       text: "SYSTEM ONLINE",      scrambleChars: "01",    })    ```
+    const displayText = useScramble({ 
+      text: "SYSTEM ONLINE",
+      scrambleChars: "01",
+    })
+    ```
   </Tab>
   <Tab value="Symbols">
     ```tsx
-    const displayText = useScramble({       text: "ENCRYPTED",      scrambleChars: "!@#$%^&*()_+-=[]{}|;:,.<>?",    })    ```
+    const displayText = useScramble({ 
+      text: "ENCRYPTED",
+      scrambleChars: "!@#$%^&*()_+-=[]{}|;:,.<>?",
+    })
+    ```
   </Tab>
   <Tab value="Custom">
     ```tsx
-    const displayText = useScramble({       text: "MATRIX",      scrambleChars: "ｱｲｳｴｵｶｷｸｹｺｻｼｽｾｿﾀﾁﾂﾃﾄﾅﾆﾇﾈﾉﾊﾋﾌﾍﾎﾏﾐﾑﾒﾓﾔﾕﾖﾗﾘﾙﾚﾛﾜﾝ",    })    ```
+    const displayText = useScramble({ 
+      text: "MATRIX",
+      scrambleChars: "ｱｲｳｴｵｶｷｸｹｺｻｼｽｾｿﾀﾁﾂﾃﾄﾅﾆﾇﾈﾉﾊﾋﾌﾍﾎﾏﾐﾑﾒﾓﾔﾕﾖﾗﾘﾙﾚﾛﾜﾝ",
+    })
+    ```
   </Tab>
 </Tabs>
 
@@ -118,34 +293,102 @@ Returns `string` - The current animated text to display
 ### Hero Title
 
 ```tsx
-import { useScramble } from "@/lib/hooks/use-scramble"export function Hero() {  const title = useScramble({     text: "Welcome to the Future",    duration: 1.5,  })  return (    <section className="hero">      <h1 className="font-mono text-6xl font-bold">        {title}      </h1>    </section>  )}```
+import { useScramble } from "@/lib/hooks/use-scramble"
+
+export function Hero() {
+  const title = useScramble({ 
+    text: "Welcome to the Future",
+    duration: 1.5,
+  })
+  
+  return (
+    <section className="hero">
+      <h1 className="font-mono text-6xl font-bold">
+        {title}
+      </h1>
+    </section>
+  )
+}
+```
 
 ### Loading State
 
 ```tsx
-import { useScramble } from "@/lib/hooks/use-scramble"export function LoadingScramble() {  const [isLoading, setIsLoading] = React.useState(true)  const text = useScramble({     text: isLoading ? "LOADING..." : "COMPLETE",    duration: 0.6,  })  return (    <div className="font-mono text-green-400">      {text}    </div>  )}```
+import { useScramble } from "@/lib/hooks/use-scramble"
+
+export function LoadingScramble() {
+  const [isLoading, setIsLoading] = React.useState(true)
+  
+  const text = useScramble({ 
+    text: isLoading ? "LOADING..." : "COMPLETE",
+    duration: 0.6,
+  })
+  
+  return (
+    <div className="font-mono text-green-400">
+      {text}
+    </div>
+  )
+}
+```
 
 ### Staggered Multiple Lines
 
 ```tsx
-import { useScramble } from "@/lib/hooks/use-scramble"export function StaggeredScramble() {  const line1 = useScramble({ text: "System Initialized", delay: 0 })  const line2 = useScramble({ text: "Loading Modules", delay: 0.8 })  const line3 = useScramble({ text: "Ready", delay: 1.6 })  return (    <div className="font-mono space-y-2">      <div>{line1}</div>      <div>{line2}</div>      <div>{line3}</div>    </div>  )}```
+import { useScramble } from "@/lib/hooks/use-scramble"
+
+export function StaggeredScramble() {
+  const line1 = useScramble({ text: "System Initialized", delay: 0 })
+  const line2 = useScramble({ text: "Loading Modules", delay: 0.8 })
+  const line3 = useScramble({ text: "Ready", delay: 1.6 })
+  
+  return (
+    <div className="font-mono space-y-2">
+      <div>{line1}</div>
+      <div>{line2}</div>
+      <div>{line3}</div>
+    </div>
+  )
+}
+```
 
 ### Matrix Effect
 
 ```tsx
-import { useScramble } from "@/lib/hooks/use-scramble"export function MatrixText() {  const text = useScramble({     text: "ENTER THE MATRIX",    duration: 2,    scrambleChars: "ｱｲｳｴｵｶｷｸｹｺｻｼｽｾｿﾀﾁﾂﾃﾄﾅﾆﾇﾈﾉﾊﾋﾌﾍﾎﾏﾐﾑﾒﾓﾔﾕﾖﾗﾘﾙﾚﾛﾜﾝ01",  })  return (    <h1 className="font-mono text-green-500 text-4xl">      {text}    </h1>  )}```
+import { useScramble } from "@/lib/hooks/use-scramble"
+
+export function MatrixText() {
+  const text = useScramble({ 
+    text: "ENTER THE MATRIX",
+    duration: 2,
+    scrambleChars: "ｱｲｳｴｵｶｷｸｹｺｻｼｽｾｿﾀﾁﾂﾃﾄﾅﾆﾇﾈﾉﾊﾋﾌﾍﾎﾏﾐﾑﾒﾓﾔﾕﾖﾗﾘﾙﾚﾛﾜﾝ01",
+  })
+  
+  return (
+    <h1 className="font-mono text-green-500 text-4xl">
+      {text}
+    </h1>
+  )
+}
+```
 
 ## Styling Tips
 
 Works best with monospace fonts:
 
 ```tsx
-<div className="font-mono">  {displayText}</div>```
+<div className="font-mono">
+  {displayText}
+</div>
+```
 
 Add a cursor effect:
 
 ```tsx
-<div className="font-mono">  {displayText}<span className="animate-pulse">_</span></div>```
+<div className="font-mono">
+  {displayText}<span className="animate-pulse">_</span>
+</div>
+```
 
 ## Performance
 

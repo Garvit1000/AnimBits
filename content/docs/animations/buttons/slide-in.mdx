@@ -36,40 +36,110 @@ The `SlideInButton` creates a slide-in entrance animation from any direction (le
   </Tab>
   <Tab value="Manual">
     ```tsx title="components/animations/buttons/slide-in.tsx"
-    "use client"    import { motion, type HTMLMotionProps } from "framer-motion"    interface SlideInButtonProps extends Omit<HTMLMotionProps<"button">, "animate"> {      children: React.ReactNode      delay?: number      duration?: number      direction?: "left" | "right" | "up" | "down"    }    export function SlideInButton({      children,      delay = 0,      duration = 0.3,      direction = "left",      ...props    }: SlideInButtonProps) {      const customVariants = {        hidden: {          opacity: 0,          x: direction === "left" ? -20 : direction === "right" ? 20 : 0,          y: direction === "up" ? -20 : direction === "down" ? 20 : 0,        },        visible: {          opacity: 1,          x: 0,          y: 0,        },      }      return (        <motion.button          variants={customVariants}          initial="hidden"          animate="visible"          transition={{ delay, duration }}          {...props}        >          {children}        </motion.button>      )    }    ```
+"use client";
+import { motion, type HTMLMotionProps } from "framer-motion";
+import {
+  slideInVariants,
+  createDelayedTransition,
+} from "@/lib/animation-presets";
+interface SlideInButtonProps
+  extends Omit<HTMLMotionProps<"button">, "animate"> {
+  children: React.ReactNode;
+  delay?: number;
+  duration?: number;
+  direction?: "left" | "right" | "up" | "down";
+}
+export function SlideInButton({
+  children,
+  delay = 0,
+  duration = 0.3,
+  direction = "left",
+  ...props
+}: SlideInButtonProps) {
+  const customVariants = {
+    hidden: {
+      opacity: 0,
+      x: direction === "left" ? -20 : direction === "right" ? 20 : 0,
+      y: direction === "up" ? -20 : direction === "down" ? 20 : 0,
+    },
+    visible: {
+      opacity: 1,
+      x: 0,
+      y: 0,
+    },
+  };
+  return (
+    <motion.button
+      variants={customVariants}
+      initial="hidden"
+      animate="visible"
+      transition={createDelayedTransition(delay, duration)}
+      {...props}
+    >
+      {children}
+    </motion.button>
+  );
+}
+
+```
   </Tab>
 </Tabs>
 
 ## Usage
 
 ```tsx
-import { SlideInButton } from "@/components/animations/buttons/slide-in"<SlideInButton   direction="left"  className="inline-flex h-11 items-center gap-2 rounded-lg bg-blue-600 px-6 text-sm font-semibold text-white">  Slides In</SlideInButton>```
+import { SlideInButton } from "@/components/animations/buttons/slide-in"
+
+<SlideInButton 
+  direction="left"
+  className="inline-flex h-11 items-center gap-2 rounded-lg bg-blue-600 px-6 text-sm font-semibold text-white"
+>
+  Slides In
+</SlideInButton>
+```
 
 ### All Directions
 
 <Tabs items={['Left', 'Right', 'Up', 'Down']}>
   <Tab value="Left">
     ```tsx
-    <SlideInButton direction="left">      From Left    </SlideInButton>    ```
+    <SlideInButton direction="left">
+      From Left
+    </SlideInButton>
+    ```
   </Tab>
   <Tab value="Right">
     ```tsx
-    <SlideInButton direction="right">      From Right    </SlideInButton>    ```
+    <SlideInButton direction="right">
+      From Right
+    </SlideInButton>
+    ```
   </Tab>
   <Tab value="Up">
     ```tsx
-    <SlideInButton direction="up">      From Top    </SlideInButton>    ```
+    <SlideInButton direction="up">
+      From Top
+    </SlideInButton>
+    ```
   </Tab>
   <Tab value="Down">
     ```tsx
-    <SlideInButton direction="down">      From Bottom    </SlideInButton>    ```
+    <SlideInButton direction="down">
+      From Bottom
+    </SlideInButton>
+    ```
   </Tab>
 </Tabs>
 
 ### Staggered
 
 ```tsx
-<div className="flex gap-4">  <SlideInButton direction="left" delay={0}>First</SlideInButton>  <SlideInButton direction="left" delay={0.1}>Second</SlideInButton>  <SlideInButton direction="left" delay={0.2}>Third</SlideInButton></div>```
+<div className="flex gap-4">
+  <SlideInButton direction="left" delay={0}>First</SlideInButton>
+  <SlideInButton direction="left" delay={0.1}>Second</SlideInButton>
+  <SlideInButton direction="left" delay={0.2}>Third</SlideInButton>
+</div>
+```
 
 ## Props
 

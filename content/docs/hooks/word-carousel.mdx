@@ -19,7 +19,61 @@ The `useWordCarousel` hook cycles through an array of words at a specified inter
 <Tabs items={['Manual', 'CLI']}>
   <Tab value="Manual">
     ```tsx title="lib/hooks/use-word-carousel.ts"
-    import * as React from "react"    export interface UseWordCarouselOptions {      words: string[]      interval?: number    }    export function useWordCarousel(options: UseWordCarouselOptions) {      const { words, interval = 2 } = options      const [currentIndex, setCurrentIndex] = React.useState(0)      React.useEffect(() => {        const timer = setInterval(() => {          setCurrentIndex((prev) => (prev + 1) % words.length)        }, interval * 1000)        return () => clearInterval(timer)      }, [words.length, interval])      return {        currentWord: words[currentIndex],        currentIndex,        key: currentIndex,       }    }    ```
+import * as React from "react";
+
+export interface UseWordCarouselOptions {
+  words: string[];
+  interval?: number;
+}
+
+export function useWordCarousel(options: UseWordCarouselOptions) {
+  const { words, interval = 2 } = options;
+  const [currentIndex, setCurrentIndex] = React.useState(0);
+
+  React.useEffect(() => {
+    const timer = setInterval(() => {
+      setCurrentIndex((prev) => (prev + 1) % words.length);
+    }, interval * 1000);
+
+    return () => clearInterval(timer);
+  }, [words.length, interval]);
+
+  return {
+    currentWord: words[currentIndex],
+    currentIndex,
+    key: currentIndex, // For AnimatePresence
+  };
+}
+
+```tsx
+ * const { currentWord, key } = useWordCarousel({ 
+ *   words: ["Fast", "Modern", "Beautiful"] 
+ * })
+ * <AnimatePresence mode="wait">
+ *   <motion.span key={key}>{currentWord}</motion.span>
+ * </AnimatePresence>
+ * ```
+ */
+export function useWordCarousel(options: UseWordCarouselOptions) {
+  const { words, interval = 2 } = options
+  const [currentIndex, setCurrentIndex] = React.useState(0)
+
+  React.useEffect(() => {
+    const timer = setInterval(() => {
+      setCurrentIndex((prev) => (prev + 1) % words.length)
+    }, interval * 1000)
+
+    return () => clearInterval(timer)
+  }, [words.length, interval])
+
+  return {
+    currentWord: words[currentIndex],
+    currentIndex,
+    key: currentIndex, // For AnimatePresence
+  }
+}
+
+```
   </Tab>
   <Tab value="CLI">
     ```bash
@@ -33,35 +87,141 @@ The `useWordCarousel` hook cycles through an array of words at a specified inter
 ### Basic Example
 
 ```tsx
-import { motion, AnimatePresence } from "framer-motion"import { useWordCarousel } from "@/lib/hooks/use-word-carousel"export function RotatingWords() {  const { currentWord, key } = useWordCarousel({     words: ["Fast", "Modern", "Beautiful"]   })  return (    <div className="text-4xl font-bold">      Build{" "}      <AnimatePresence mode="wait">        <motion.span          key={key}          initial={{ opacity: 0, y: 20 }}          animate={{ opacity: 1, y: 0 }}          exit={{ opacity: 0, y: -20 }}          transition={{ duration: 0.3 }}          className="text-blue-500"        >          {currentWord}        </motion.span>      </AnimatePresence>      {" "}Apps    </div>  )}```
+import { motion, AnimatePresence } from "framer-motion"
+import { useWordCarousel } from "@/lib/hooks/use-word-carousel"
+
+export function RotatingWords() {
+  const { currentWord, key } = useWordCarousel({ 
+    words: ["Fast", "Modern", "Beautiful"] 
+  })
+  
+  return (
+    <div className="text-4xl font-bold">
+      Build{" "}
+      <AnimatePresence mode="wait">
+        <motion.span
+          key={key}
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: -20 }}
+          transition={{ duration: 0.3 }}
+          className="text-blue-500"
+        >
+          {currentWord}
+        </motion.span>
+      </AnimatePresence>
+      {" "}Apps
+    </div>
+  )
+}
+```
 
 ### With Custom Interval
 
 ```tsx
-import { motion, AnimatePresence } from "framer-motion"import { useWordCarousel } from "@/lib/hooks/use-word-carousel"export function SlowCarousel() {  const { currentWord, key } = useWordCarousel({     words: ["Innovative", "Scalable", "Reliable"],    interval: 3,   })  return (    <h1 className="text-6xl">      <AnimatePresence mode="wait">        <motion.span          key={key}          initial={{ opacity: 0 }}          animate={{ opacity: 1 }}          exit={{ opacity: 0 }}        >          {currentWord}        </motion.span>      </AnimatePresence>    </h1>  )}```
+import { motion, AnimatePresence } from "framer-motion"
+import { useWordCarousel } from "@/lib/hooks/use-word-carousel"
+
+export function SlowCarousel() {
+  const { currentWord, key } = useWordCarousel({ 
+    words: ["Innovative", "Scalable", "Reliable"],
+    interval: 3, // 3 seconds per word
+  })
+  
+  return (
+    <h1 className="text-6xl">
+      <AnimatePresence mode="wait">
+        <motion.span
+          key={key}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+        >
+          {currentWord}
+        </motion.span>
+      </AnimatePresence>
+    </h1>
+  )
+}
+```
 
 ### Different Transition Styles
 
 <Tabs items={['Fade', 'Slide Up', 'Slide Down', 'Scale', 'Blur']}>
   <Tab value="Fade">
     ```tsx
-    <AnimatePresence mode="wait">      <motion.span        key={key}        initial={{ opacity: 0 }}        animate={{ opacity: 1 }}        exit={{ opacity: 0 }}        transition={{ duration: 0.5 }}      >        {currentWord}      </motion.span>    </AnimatePresence>    ```
+    <AnimatePresence mode="wait">
+      <motion.span
+        key={key}
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+        transition={{ duration: 0.5 }}
+      >
+        {currentWord}
+      </motion.span>
+    </AnimatePresence>
+    ```
   </Tab>
   <Tab value="Slide Up">
     ```tsx
-    <AnimatePresence mode="wait">      <motion.span        key={key}        initial={{ opacity: 0, y: 50 }}        animate={{ opacity: 1, y: 0 }}        exit={{ opacity: 0, y: -50 }}        transition={{ duration: 0.4 }}      >        {currentWord}      </motion.span>    </AnimatePresence>    ```
+    <AnimatePresence mode="wait">
+      <motion.span
+        key={key}
+        initial={{ opacity: 0, y: 50 }}
+        animate={{ opacity: 1, y: 0 }}
+        exit={{ opacity: 0, y: -50 }}
+        transition={{ duration: 0.4 }}
+      >
+        {currentWord}
+      </motion.span>
+    </AnimatePresence>
+    ```
   </Tab>
   <Tab value="Slide Down">
     ```tsx
-    <AnimatePresence mode="wait">      <motion.span        key={key}        initial={{ opacity: 0, y: -50 }}        animate={{ opacity: 1, y: 0 }}        exit={{ opacity: 0, y: 50 }}        transition={{ duration: 0.4 }}      >        {currentWord}      </motion.span>    </AnimatePresence>    ```
+    <AnimatePresence mode="wait">
+      <motion.span
+        key={key}
+        initial={{ opacity: 0, y: -50 }}
+        animate={{ opacity: 1, y: 0 }}
+        exit={{ opacity: 0, y: 50 }}
+        transition={{ duration: 0.4 }}
+      >
+        {currentWord}
+      </motion.span>
+    </AnimatePresence>
+    ```
   </Tab>
   <Tab value="Scale">
     ```tsx
-    <AnimatePresence mode="wait">      <motion.span        key={key}        initial={{ opacity: 0, scale: 0.5 }}        animate={{ opacity: 1, scale: 1 }}        exit={{ opacity: 0, scale: 0.5 }}        transition={{ duration: 0.3 }}      >        {currentWord}      </motion.span>    </AnimatePresence>    ```
+    <AnimatePresence mode="wait">
+      <motion.span
+        key={key}
+        initial={{ opacity: 0, scale: 0.5 }}
+        animate={{ opacity: 1, scale: 1 }}
+        exit={{ opacity: 0, scale: 0.5 }}
+        transition={{ duration: 0.3 }}
+      >
+        {currentWord}
+      </motion.span>
+    </AnimatePresence>
+    ```
   </Tab>
   <Tab value="Blur">
     ```tsx
-    <AnimatePresence mode="wait">      <motion.span        key={key}        initial={{ opacity: 0, filter: "blur(10px)" }}        animate={{ opacity: 1, filter: "blur(0px)" }}        exit={{ opacity: 0, filter: "blur(10px)" }}        transition={{ duration: 0.5 }}      >        {currentWord}      </motion.span>    </AnimatePresence>    ```
+    <AnimatePresence mode="wait">
+      <motion.span
+        key={key}
+        initial={{ opacity: 0, filter: "blur(10px)" }}
+        animate={{ opacity: 1, filter: "blur(0px)" }}
+        exit={{ opacity: 0, filter: "blur(10px)" }}
+        transition={{ duration: 0.5 }}
+      >
+        {currentWord}
+      </motion.span>
+    </AnimatePresence>
+    ```
   </Tab>
 </Tabs>
 
@@ -108,32 +268,160 @@ Returns an object containing:
 ### Hero Title
 
 ```tsx
-import { motion, AnimatePresence } from "framer-motion"import { useWordCarousel } from "@/lib/hooks/use-word-carousel"export function HeroTitle() {  const { currentWord, key } = useWordCarousel({     words: ["Developers", "Designers", "Creators", "Innovators"],    interval: 2.5,  })  return (    <h1 className="text-7xl font-black">      Built for{" "}      <AnimatePresence mode="wait">        <motion.span          key={key}          initial={{ opacity: 0, y: 20 }}          animate={{ opacity: 1, y: 0 }}          exit={{ opacity: 0, y: -20 }}          className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent"        >          {currentWord}        </motion.span>      </AnimatePresence>    </h1>  )}```
+import { motion, AnimatePresence } from "framer-motion"
+import { useWordCarousel } from "@/lib/hooks/use-word-carousel"
+
+export function HeroTitle() {
+  const { currentWord, key } = useWordCarousel({ 
+    words: ["Developers", "Designers", "Creators", "Innovators"],
+    interval: 2.5,
+  })
+  
+  return (
+    <h1 className="text-7xl font-black">
+      Built for{" "}
+      <AnimatePresence mode="wait">
+        <motion.span
+          key={key}
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: -20 }}
+          className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent"
+        >
+          {currentWord}
+        </motion.span>
+      </AnimatePresence>
+    </h1>
+  )
+}
+```
 
 ### Feature Highlight
 
 ```tsx
-import { motion, AnimatePresence } from "framer-motion"import { useWordCarousel } from "@/lib/hooks/use-word-carousel"export function FeatureCarousel() {  const { currentWord, key } = useWordCarousel({     words: ["Lightning Fast", "Secure", "Scalable", "Reliable"],    interval: 3,  })  return (    <div className="text-center">      <p className="text-gray-600">Our platform is</p>      <AnimatePresence mode="wait">        <motion.h2          key={key}          initial={{ opacity: 0, scale: 0.8 }}          animate={{ opacity: 1, scale: 1 }}          exit={{ opacity: 0, scale: 0.8 }}          className="text-5xl font-bold text-blue-600"        >          {currentWord}        </motion.h2>      </AnimatePresence>    </div>  )}```
+import { motion, AnimatePresence } from "framer-motion"
+import { useWordCarousel } from "@/lib/hooks/use-word-carousel"
+
+export function FeatureCarousel() {
+  const { currentWord, key } = useWordCarousel({ 
+    words: ["Lightning Fast", "Secure", "Scalable", "Reliable"],
+    interval: 3,
+  })
+  
+  return (
+    <div className="text-center">
+      <p className="text-gray-600">Our platform is</p>
+      <AnimatePresence mode="wait">
+        <motion.h2
+          key={key}
+          initial={{ opacity: 0, scale: 0.8 }}
+          animate={{ opacity: 1, scale: 1 }}
+          exit={{ opacity: 0, scale: 0.8 }}
+          className="text-5xl font-bold text-blue-600"
+        >
+          {currentWord}
+        </motion.h2>
+      </AnimatePresence>
+    </div>
+  )
+}
+```
 
 ### Testimonial Rotation
 
 ```tsx
-import { motion, AnimatePresence } from "framer-motion"import { useWordCarousel } from "@/lib/hooks/use-word-carousel"export function RotatingTestimonials() {  const testimonials = [    "Amazing product!",    "Changed my workflow",    "Highly recommended",  ]  const { currentWord, key } = useWordCarousel({     words: testimonials,    interval: 4,  })  return (    <div className="testimonial-container">      <AnimatePresence mode="wait">        <motion.blockquote          key={key}          initial={{ opacity: 0, x: 100 }}          animate={{ opacity: 1, x: 0 }}          exit={{ opacity: 0, x: -100 }}          className="text-2xl italic"        >          "{currentWord}"        </motion.blockquote>      </AnimatePresence>    </div>  )}```
+import { motion, AnimatePresence } from "framer-motion"
+import { useWordCarousel } from "@/lib/hooks/use-word-carousel"
+
+export function RotatingTestimonials() {
+  const testimonials = [
+    "Amazing product!",
+    "Changed my workflow",
+    "Highly recommended",
+  ]
+  
+  const { currentWord, key } = useWordCarousel({ 
+    words: testimonials,
+    interval: 4,
+  })
+  
+  return (
+    <div className="testimonial-container">
+      <AnimatePresence mode="wait">
+        <motion.blockquote
+          key={key}
+          initial={{ opacity: 0, x: 100 }}
+          animate={{ opacity: 1, x: 0 }}
+          exit={{ opacity: 0, x: -100 }}
+          className="text-2xl italic"
+        >
+          "{currentWord}"
+        </motion.blockquote>
+      </AnimatePresence>
+    </div>
+  )
+}
+```
 
 ### With Progress Indicator
 
 ```tsx
-import { motion, AnimatePresence } from "framer-motion"import { useWordCarousel } from "@/lib/hooks/use-word-carousel"export function CarouselWithProgress() {  const words = ["Fast", "Secure", "Reliable"]  const { currentWord, key, currentIndex } = useWordCarousel({     words,    interval: 3,  })  return (    <div>      <AnimatePresence mode="wait">        <motion.h2          key={key}          initial={{ opacity: 0 }}          animate={{ opacity: 1 }}          exit={{ opacity: 0 }}        >          {currentWord}        </motion.h2>      </AnimatePresence>      {}      <div className="flex gap-2 mt-4">        {words.map((_, index) => (          <div            key={index}            className={`h-2 w-2 rounded-full ${              index === currentIndex ? "bg-blue-500" : "bg-gray-300"            }`}          />        ))}      </div>    </div>  )}```
+import { motion, AnimatePresence } from "framer-motion"
+import { useWordCarousel } from "@/lib/hooks/use-word-carousel"
+
+export function CarouselWithProgress() {
+  const words = ["Fast", "Secure", "Reliable"]
+  const { currentWord, key, currentIndex } = useWordCarousel({ 
+    words,
+    interval: 3,
+  })
+  
+  return (
+    <div>
+      <AnimatePresence mode="wait">
+        <motion.h2
+          key={key}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+        >
+          {currentWord}
+        </motion.h2>
+      </AnimatePresence>
+      
+      {/* Progress dots */}
+      <div className="flex gap-2 mt-4">
+        {words.map((_, index) => (
+          <div
+            key={index}
+            className={`h-2 w-2 rounded-full ${
+              index === currentIndex ? "bg-blue-500" : "bg-gray-300"
+            }`}
+          />
+        ))}
+      </div>
+    </div>
+  )
+}
+```
 
 ### Fast Rotation
 
 ```tsx
-const { currentWord, key } = useWordCarousel({   words: ["Quick", "Fast", "Rapid", "Swift"],  interval: 1, })```
+const { currentWord, key } = useWordCarousel({ 
+  words: ["Quick", "Fast", "Rapid", "Swift"],
+  interval: 1, // 1 second per word
+})
+```
 
 ### Slow Rotation
 
 ```tsx
-const { currentWord, key } = useWordCarousel({   words: ["Thoughtful", "Deliberate", "Careful"],  interval: 5, })```
+const { currentWord, key } = useWordCarousel({ 
+  words: ["Thoughtful", "Deliberate", "Careful"],
+  interval: 5, // 5 seconds per word
+})
+```
 
 ## Tips
 
@@ -142,7 +430,12 @@ const { currentWord, key } = useWordCarousel({   words: ["Thoughtful", "Deliber
 For smooth transitions, wrap the animated element in `AnimatePresence`:
 
 ```tsx
-<AnimatePresence mode="wait">  <motion.span key={key}>    {currentWord}  </motion.span></AnimatePresence>```
+<AnimatePresence mode="wait">
+  <motion.span key={key}>
+    {currentWord}
+  </motion.span>
+</AnimatePresence>
+```
 
 ### Use `mode="wait"`
 
@@ -153,7 +446,14 @@ This ensures the exit animation completes before the enter animation starts.
 For inline text, use `display: inline-block`:
 
 ```tsx
-<motion.span  key={key}  className="inline-block">  {currentWord}</motion.span>```
+<motion.span
+  key={key}
+  className="inline-block"
+  // ... animations
+>
+  {currentWord}
+</motion.span>
+```
 
 ## Performance
 

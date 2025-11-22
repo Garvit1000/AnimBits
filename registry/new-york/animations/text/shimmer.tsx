@@ -1,1 +1,28 @@
-"use client"import * as React from "react"import { cn } from "@/lib/utils"import { useShimmer, type UseShimmerOptions } from "@/lib/hooks/use-shimmer"export interface TextShimmerProps extends React.HTMLAttributes<HTMLParagraphElement>, UseShimmerOptions {  children: string  as?: "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "p" | "span" | "div"}export function TextShimmer({  children,  className,  duration,  colors,  as: Component = "p",  ...props}: TextShimmerProps) {  const shimmerStyle = useShimmer({    duration,    colors: colors || [      "transparent",      "#3b82f6",       "transparent",    ],  })  return (    <Component      style={shimmerStyle}      className={cn(className)}      {...props}    >      {children}    </Component>  )}
+"use client";
+import * as React from "react";
+import { cn } from "@/lib/utils";
+import { useShimmer, type UseShimmerOptions } from "@/lib/hooks/use-shimmer";
+export interface TextShimmerProps
+  extends React.HTMLAttributes<HTMLParagraphElement>,
+    UseShimmerOptions {
+  children: string;
+  as?: "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "p" | "span" | "div";
+}
+export function TextShimmer({
+  children,
+  className,
+  duration,
+  colors,
+  as: Component = "p",
+  ...props
+}: TextShimmerProps) {
+  const shimmerStyle = useShimmer({
+    duration,
+    colors: colors || ["transparent", "#3b82f6", "transparent"],
+  });
+  return (
+    <Component style={shimmerStyle} className={cn(className)} {...props}>
+      {children}
+    </Component>
+  );
+}

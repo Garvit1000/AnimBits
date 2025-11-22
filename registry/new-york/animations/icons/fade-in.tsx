@@ -1,1 +1,30 @@
-"use client"import * as motion from "framer-motion/client"import type { HTMLMotionProps } from "framer-motion"import { fadeInVariants, createDelayedTransition } from "@/lib/animation-presets"interface FadeInIconProps extends Omit<HTMLMotionProps<"div">, "animate"> {  children: React.ReactNode  delay?: number  duration?: number}export function FadeInIcon({  children,  delay = 0,  duration = 0.3,  ...props}: FadeInIconProps) {  return (    <motion.div      variants={fadeInVariants}      initial="hidden"      animate="visible"      transition={createDelayedTransition(delay, duration)}      {...props}    >      {children}    </motion.div>  )}
+"use client";
+import * as motion from "framer-motion/client";
+import type { HTMLMotionProps } from "framer-motion";
+import {
+  fadeInVariants,
+  createDelayedTransition,
+} from "@/lib/animation-presets";
+interface FadeInIconProps extends Omit<HTMLMotionProps<"div">, "animate"> {
+  children: React.ReactNode;
+  delay?: number;
+  duration?: number;
+}
+export function FadeInIcon({
+  children,
+  delay = 0,
+  duration = 0.3,
+  ...props
+}: FadeInIconProps) {
+  return (
+    <motion.div
+      variants={fadeInVariants}
+      initial="hidden"
+      animate="visible"
+      transition={createDelayedTransition(delay, duration)}
+      {...props}
+    >
+      {children}
+    </motion.div>
+  );
+}

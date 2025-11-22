@@ -50,24 +50,152 @@ The `CardHoverGlow` adds a glowing shadow effect on hover with customizable colo
     **Step 1: Copy the hook**
     
     ```tsx title="lib/hooks/use-hover-glow.ts"
-    import { type MotionProps, type Easing } from "framer-motion";    export interface UseHoverGlowOptions {      glowColor?: string;      glowBlur?: number;      glowSpread?: number;      duration?: number;      ease?: Easing | Easing[];      scale?: number;      innerGlow?: boolean;    }    export function useHoverGlow(options: UseHoverGlowOptions = {}): MotionProps {      const {        glowColor = "rgba(59, 130, 246, 0.5)",        glowBlur = 20,        glowSpread = 5,        duration = 0.3,        ease = "easeOut",        scale = 1.02,        innerGlow = false,      } = options;      const baseShadow = "0 2px 8px rgba(0, 0, 0, 0.1)";      const glowShadow = `0 0 ${glowBlur}px ${glowSpread}px ${glowColor}`;      const innerGlowShadow = innerGlow        ? `inset 0 0 ${glowBlur / 2}px ${glowColor}`        : "";      const hoverShadow = innerGlow        ? `${baseShadow}, ${glowShadow}, ${innerGlowShadow}`        : `${baseShadow}, ${glowShadow}`;      return {        initial: {          scale: 1,          boxShadow: baseShadow,        },        whileHover: {          scale,          boxShadow: hoverShadow,        },        transition: {          duration,          ease,        },      };    }    ```
+    import { type MotionProps, type Easing } from "framer-motion";
+
+    export interface UseHoverGlowOptions {
+      /**
+       * Glow color (CSS color value)
+       * @default "rgba(59, 130, 246, 0.5)" - Blue glow
+       */
+      glowColor?: string;
+
+      /**
+       * Glow blur radius (in pixels)
+       * @default 20
+       */
+      glowBlur?: number;
+
+      /**
+       * Glow spread (in pixels)
+       * @default 5
+       */
+      glowSpread?: number;
+
+      /**
+       * Animation duration (in seconds)
+       * @default 0.3
+       */
+      duration?: number;
+
+      /**
+       * Animation easing
+       * @default "easeOut"
+       */
+      ease?: Easing | Easing[];
+
+      /**
+       * Scale on hover (1 = no scale)
+       * @default 1.02
+       */
+      scale?: number;
+
+      /**
+       * Whether to add inner glow
+       * @default false
+       */
+      innerGlow?: boolean;
+    }
+
+    export function useHoverGlow(options: UseHoverGlowOptions = {}): MotionProps {
+      const {
+        glowColor = "rgba(59, 130, 246, 0.5)",
+        glowBlur = 20,
+        glowSpread = 5,
+        duration = 0.3,
+        ease = "easeOut",
+        scale = 1.02,
+        innerGlow = false,
+      } = options;
+
+      const baseShadow = "0 2px 8px rgba(0, 0, 0, 0.1)";
+      const glowShadow = `0 0 ${glowBlur}px ${glowSpread}px ${glowColor}`;
+      const innerGlowShadow = innerGlow
+        ? `inset 0 0 ${glowBlur / 2}px ${glowColor}`
+        : "";
+
+      const hoverShadow = innerGlow
+        ? `${baseShadow}, ${glowShadow}, ${innerGlowShadow}`
+        : `${baseShadow}, ${glowShadow}`;
+
+      return {
+        initial: {
+          scale: 1,
+          boxShadow: baseShadow,
+        },
+        whileHover: {
+          scale,
+          boxShadow: hoverShadow,
+        },
+        transition: {
+          duration,
+          ease,
+        },
+      };
+    }
+    ```
 
     **Step 2: Copy the utility function (if not already present)**
     
     ```tsx title="lib/utils.ts"
-    import { type ClassValue, clsx } from "clsx"    import { twMerge } from "tailwind-merge"    export function cn(...inputs: ClassValue[]) {      return twMerge(clsx(inputs))    }    ```
+    import { type ClassValue, clsx } from "clsx"
+    import { twMerge } from "tailwind-merge"
+
+    export function cn(...inputs: ClassValue[]) {
+      return twMerge(clsx(inputs))
+    }
+    ```
 
     **Step 3: Copy the component**
     
     ```tsx title="components/animations/cards/hover-glow.tsx"
-    "use client"    import * as React from "react"    import { motion, HTMLMotionProps } from "framer-motion"    import { cn } from "@/lib/utils"    import { useHoverGlow } from "@/lib/hooks"    export interface CardHoverGlowProps extends HTMLMotionProps<"div"> {      glowColor?: string      glowSpread?: number      duration?: number    }    export function CardHoverGlow({      children,      className,      glowColor = "rgba(59, 130, 246, 0.5)",      glowSpread = 20,      duration = 0.3,      ...props    }: CardHoverGlowProps) {      const glowProps = useHoverGlow({        glowColor,        glowBlur: glowSpread,        duration,      })      return (        <motion.div          {...glowProps}          className={cn("cursor-pointer", className)}          {...props}        >          {children}        </motion.div>      )    }    ```
+"use client";
+import * as React from "react";
+import { motion, HTMLMotionProps } from "framer-motion";
+import { cn } from "@/lib/utils";
+import { useHoverGlow } from "@/lib/hooks/use-hover-glow";
+export interface CardHoverGlowProps extends HTMLMotionProps<"div"> {
+  glowColor?: string;
+  glowSpread?: number;
+  duration?: number;
+}
+export function CardHoverGlow({
+  children,
+  className,
+  glowColor = "rgba(59, 130, 246, 0.5)",
+  glowSpread = 20,
+  duration = 0.3,
+  ...props
+}: CardHoverGlowProps) {
+  const glowProps = useHoverGlow({
+    glowColor,
+    glowBlur: glowSpread,
+    duration,
+  });
+  return (
+    <motion.div
+      {...glowProps}
+      className={cn("cursor-pointer", className)}
+      {...props}
+    >
+      {children}
+    </motion.div>
+  );
+}
+
+```
   </Tab>
 </Tabs>
 
 ## Usage
 
 ```tsx
-import { CardHoverGlow } from "@/components/animations/cards/hover-glow"<CardHoverGlow className="p-6 bg-white rounded-lg border">  <h3>Card Title</h3>  <p>Card content</p></CardHoverGlow>```
+import { CardHoverGlow } from "@/components/animations/cards/hover-glow"
+
+<CardHoverGlow className="p-6 bg-white rounded-lg border">
+  <h3>Card Title</h3>
+  <p>Card content</p>
+</CardHoverGlow>
+```
 
 ## Examples
 

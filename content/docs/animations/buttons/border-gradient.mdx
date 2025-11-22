@@ -37,14 +37,130 @@ The `BorderGradientButton` creates an animated gradient border that continuously
   </Tab>
   <Tab value="Manual">
     ```tsx title="components/animations/buttons/border-gradient.tsx"
-    "use client"    import * as React from "react"    import { motion, HTMLMotionProps } from "framer-motion"    interface BorderGradientButtonProps extends Omit<HTMLMotionProps<"button">, "children"> {      children: React.ReactNode      duration?: number      colors?: string[]    }    function cn(...classes: (string | undefined)[]) {      return classes.filter(Boolean).join(' ')    }    export function BorderGradientButton({      children,      className,      duration = 2,      colors = ["#3b82f6", "#8b5cf6", "#ec4899"],      ...props    }: BorderGradientButtonProps) {      const buttonRef = React.useRef<HTMLButtonElement>(null)      const [dimensions, setDimensions] = React.useState({         width: 0,         height: 0,         radius: 0,        perimeter: 0       })      const gradientId = React.useId()      React.useEffect(() => {        if (!buttonRef.current) return        const updateDimensions = () => {          if (buttonRef.current) {            const styles = window.getComputedStyle(buttonRef.current)            const width = buttonRef.current.offsetWidth            const height = buttonRef.current.offsetHeight            const borderRadius = parseFloat(styles.borderTopLeftRadius) ||                                parseFloat(styles.borderRadius) || 0            const maxRadius = Math.min(width, height) / 2            const actualRadius = Math.min(borderRadius, maxRadius)            const straightEdges = 2 * ((width - 2 * actualRadius) + (height - 2 * actualRadius))            const curvedEdges = 2 * Math.PI * actualRadius            const perimeter = straightEdges + curvedEdges            setDimensions({              width,              height,              radius: actualRadius,              perimeter: perimeter || 1,             })          }        }        updateDimensions()        const observer = new ResizeObserver(updateDimensions)        if (buttonRef.current) {          observer.observe(buttonRef.current)        }        return () => observer.disconnect()      }, [])      return (        <motion.button          ref={buttonRef}          className={cn("relative", className)}          {...props}        >          {}          {dimensions.width > 0 && (            <svg              className="absolute inset-0 pointer-events-none"              width={dimensions.width}              height={dimensions.height}            >              <defs>                <linearGradient id={gradientId} x1="0%" y1="0%" x2="100%" y2="100%">                  {colors.map((color, i) => (                    <stop                      key={i}                      offset={`${(i / (colors.length - 1)) * 100}%`}                      stopColor={color}                    />                  ))}                </linearGradient>              </defs>              <motion.rect                x="1"                y="1"                width={dimensions.width - 2}                height={dimensions.height - 2}                rx={dimensions.radius}                fill="none"                stroke={`url(#${gradientId})`}                strokeWidth="2"                strokeDasharray={dimensions.perimeter}                strokeDashoffset={0}                animate={{ strokeDashoffset: [0, -dimensions.perimeter] }}                transition={{                  duration,                  ease: "linear",                  repeat: Infinity,                }}                style={{                  strokeLinecap: "round",                }}              />            </svg>          )}          <span className="relative z-10">{children}</span>        </motion.button>      )    }    ```
+"use client";
+import * as React from "react";
+import { motion, HTMLMotionProps } from "framer-motion";
+interface BorderGradientButtonProps
+  extends Omit<HTMLMotionProps<"button">, "children"> {
+  children: React.ReactNode;
+  duration?: number;
+  colors?: string[];
+}
+function cn(...classes: (string | undefined)[]) {
+  return classes.filter(Boolean).join(" ");
+}
+export function BorderGradientButton({
+  children,
+  className,
+  duration = 2,
+  colors = ["#3b82f6", "#8b5cf6", "#ec4899"],
+  ...props
+}: BorderGradientButtonProps) {
+  const buttonRef = React.useRef<HTMLButtonElement>(null);
+  const [dimensions, setDimensions] = React.useState({
+    width: 0,
+    height: 0,
+    radius: 0,
+    perimeter: 0,
+  });
+  const gradientId = React.useId();
+  React.useEffect(() => {
+    if (!buttonRef.current) return;
+    const updateDimensions = () => {
+      if (buttonRef.current) {
+        const styles = window.getComputedStyle(buttonRef.current);
+        const width = buttonRef.current.offsetWidth;
+        const height = buttonRef.current.offsetHeight;
+        const borderRadius =
+          parseFloat(styles.borderTopLeftRadius) ||
+          parseFloat(styles.borderRadius) ||
+          0;
+        const maxRadius = Math.min(width, height) / 2;
+        const actualRadius = Math.min(borderRadius, maxRadius);
+        const straightEdges =
+          2 * (width - 2 * actualRadius + (height - 2 * actualRadius));
+        const curvedEdges = 2 * Math.PI * actualRadius;
+        const perimeter = straightEdges + curvedEdges;
+        setDimensions({
+          width,
+          height,
+          radius: actualRadius,
+          perimeter: perimeter || 1,
+        });
+      }
+    };
+    updateDimensions();
+    const observer = new ResizeObserver(updateDimensions);
+    if (buttonRef.current) {
+      observer.observe(buttonRef.current);
+    }
+    return () => observer.disconnect();
+  }, []);
+  return (
+    <motion.button
+      ref={buttonRef}
+      className={cn("relative", className)}
+      {...props}
+    >
+      {}
+      {dimensions.width > 0 && (
+        <svg
+          className="absolute inset-0 pointer-events-none"
+          width={dimensions.width}
+          height={dimensions.height}
+        >
+          <defs>
+            <linearGradient id={gradientId} x1="0%" y1="0%" x2="100%" y2="100%">
+              {colors.map((color, i) => (
+                <stop
+                  key={i}
+                  offset={`${(i / (colors.length - 1)) * 100}%`}
+                  stopColor={color}
+                />
+              ))}
+            </linearGradient>
+          </defs>
+          <motion.rect
+            x="1"
+            y="1"
+            width={dimensions.width - 2}
+            height={dimensions.height - 2}
+            rx={dimensions.radius}
+            fill="none"
+            stroke={`url(#${gradientId})`}
+            strokeWidth="2"
+            strokeDasharray={dimensions.perimeter}
+            strokeDashoffset={0}
+            animate={{ strokeDashoffset: [0, -dimensions.perimeter] }}
+            transition={{
+              duration,
+              ease: "linear",
+              repeat: Infinity,
+            }}
+            style={{
+              strokeLinecap: "round",
+            }}
+          />
+        </svg>
+      )}
+      <span className="relative z-10">{children}</span>
+    </motion.button>
+  );
+}
+
+```
   </Tab>
 </Tabs>
 
 ## Usage
 
 ```tsx
-import { BorderGradientButton } from "@/components/animations/buttons/border-gradient"<BorderGradientButton className="inline-flex h-11 items-center gap-2 rounded-lg bg-white dark:bg-neutral-900 px-6 text-sm font-semibold text-neutral-900 dark:text-white">  Hover Me</BorderGradientButton>```
+import { BorderGradientButton } from "@/components/animations/buttons/border-gradient"
+
+<BorderGradientButton className="inline-flex h-11 items-center gap-2 rounded-lg bg-white dark:bg-neutral-900 px-6 text-sm font-semibold text-neutral-900 dark:text-white">
+  Hover Me
+</BorderGradientButton>
+```
 
 ## Examples
 
@@ -68,7 +184,13 @@ import { BorderGradientButton } from "@/components/animations/buttons/border-gra
 </Preview>
 
 ```tsx
-<BorderGradientButton   colors={["#ff0080", "#ff8c00", "#40e0d0"]}  className="px-6 py-2.5 bg-white dark:bg-neutral-900 rounded-lg font-semibold">  Custom Colors</BorderGradientButton>```
+<BorderGradientButton 
+  colors={["#ff0080", "#ff8c00", "#40e0d0"]}
+  className="px-6 py-2.5 bg-white dark:bg-neutral-900 rounded-lg font-semibold"
+>
+  Custom Colors
+</BorderGradientButton>
+```
 
 ### Custom Duration
 
@@ -97,7 +219,16 @@ import { BorderGradientButton } from "@/components/animations/buttons/border-gra
 </PreviewGrid>
 
 ```tsx
-<BorderGradientButton duration={1}>  Fast</BorderGradientButton><BorderGradientButton duration={4}>  Slow</BorderGradientButton>```
+// Fast animation (1 second per cycle)
+<BorderGradientButton duration={1}>
+  Fast
+</BorderGradientButton>
+
+// Slow animation (4 seconds per cycle)
+<BorderGradientButton duration={4}>
+  Slow
+</BorderGradientButton>
+```
 
 ### Different Shapes
 
@@ -126,7 +257,21 @@ import { BorderGradientButton } from "@/components/animations/buttons/border-gra
 </PreviewGrid>
 
 ```tsx
-<BorderGradientButton className="inline-flex h-11 items-center gap-2 rounded-full bg-white dark:bg-neutral-900 px-6 text-sm font-semibold text-neutral-900 dark:text-white">  Pill Shape</BorderGradientButton><BorderGradientButton className="inline-flex h-11 items-center gap-2 rounded-lg bg-white dark:bg-neutral-900 px-6 text-sm font-semibold text-neutral-900 dark:text-white">  Rounded</BorderGradientButton><BorderGradientButton className="inline-flex h-11 items-center gap-2 rounded-none bg-white dark:bg-neutral-900 px-6 text-sm font-semibold text-neutral-900 dark:text-white">  Sharp</BorderGradientButton>```
+// Pill shape
+<BorderGradientButton className="inline-flex h-11 items-center gap-2 rounded-full bg-white dark:bg-neutral-900 px-6 text-sm font-semibold text-neutral-900 dark:text-white">
+  Pill Shape
+</BorderGradientButton>
+
+// Rounded corners
+<BorderGradientButton className="inline-flex h-11 items-center gap-2 rounded-lg bg-white dark:bg-neutral-900 px-6 text-sm font-semibold text-neutral-900 dark:text-white">
+  Rounded
+</BorderGradientButton>
+
+// Sharp corners
+<BorderGradientButton className="inline-flex h-11 items-center gap-2 rounded-none bg-white dark:bg-neutral-900 px-6 text-sm font-semibold text-neutral-900 dark:text-white">
+  Sharp
+</BorderGradientButton>
+```
 
 ### Color Schemes
 
@@ -167,7 +312,35 @@ import { BorderGradientButton } from "@/components/animations/buttons/border-gra
 </PreviewGrid>
 
 ```tsx
-<BorderGradientButton   colors={["#ff0000", "#ff7f00", "#ffff00", "#00ff00", "#0000ff", "#8b00ff"]}  duration={3}>  Rainbow</BorderGradientButton><BorderGradientButton   colors={["#10b981", "#06b6d4", "#3b82f6"]}>  Ocean</BorderGradientButton><BorderGradientButton   colors={["#f59e0b", "#ef4444", "#ec4899"]}>  Sunset</BorderGradientButton><BorderGradientButton   colors={["#8b5cf6", "#ec4899"]}>  Purple Pink</BorderGradientButton>```
+// Rainbow gradient
+<BorderGradientButton 
+  colors={["#ff0000", "#ff7f00", "#ffff00", "#00ff00", "#0000ff", "#8b00ff"]}
+  duration={3}
+>
+  Rainbow
+</BorderGradientButton>
+
+// Ocean theme
+<BorderGradientButton 
+  colors={["#10b981", "#06b6d4", "#3b82f6"]}
+>
+  Ocean
+</BorderGradientButton>
+
+// Sunset theme
+<BorderGradientButton 
+  colors={["#f59e0b", "#ef4444", "#ec4899"]}
+>
+  Sunset
+</BorderGradientButton>
+
+// Purple to pink
+<BorderGradientButton 
+  colors={["#8b5cf6", "#ec4899"]}
+>
+  Purple Pink
+</BorderGradientButton>
+```
 
 ## Props
 

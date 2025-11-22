@@ -64,12 +64,84 @@ export function FadePreview() {
     **Step 1:** Create the component
 
     ```tsx title="components/animations/pages/page-transition-fade.tsx"
-    "use client"    import * as React from "react"    import { usePathname } from "next/navigation"    export interface PageTransitionFadeProps {      children: React.ReactNode      duration?: number      ease?: string    }    export function PageTransitionFade({      children,      duration = 0.3,      ease = "ease-in-out",    }: PageTransitionFadeProps) {      const pathname = usePathname()      React.useEffect(() => {        if (!document.startViewTransition) return        document.documentElement.style.setProperty('--page-transition-duration', `${duration}s`)        document.documentElement.style.setProperty('--page-transition-ease', ease)      }, [pathname, duration, ease])      return <>{children}</>    }    ```
+"use client";
+import * as React from "react";
+import { usePathname } from "next/navigation";
+export interface PageTransitionFadeProps {
+  children: React.ReactNode;
+  duration?: number;
+  ease?: string;
+}
+export function PageTransitionFade({
+  children,
+  duration = 0.3,
+  ease = "ease-in-out",
+}: PageTransitionFadeProps) {
+  const pathname = usePathname();
+  React.useEffect(() => {
+    if (typeof document === "undefined" || !document.startViewTransition) {
+      return;
+    }
+    document.documentElement.style.setProperty(
+      "--page-transition-duration",
+      `${duration}s`,
+    );
+    document.documentElement.style.setProperty("--page-transition-ease", ease);
+  }, [pathname, duration, ease]);
+  return <>{children}</>;
+}
+
+```
 
     **Step 2:** Create navigation wrapper
 
     ```tsx title="components/animations/pages/page-transition-link.tsx"
-    "use client"    import * as React from "react"    import { useRouter } from "next/navigation"    import Link, { LinkProps } from "next/link"    interface PageTransitionLinkProps extends LinkProps {      children: React.ReactNode      className?: string    }    export function PageTransitionLink({      href,      children,      className,      ...props    }: PageTransitionLinkProps) {      const router = useRouter()      const handleClick = async (e: React.MouseEvent<HTMLAnchorElement>) => {        e.preventDefault()        if (!document.startViewTransition) {          router.push(href.toString())          return        }        const transition = document.startViewTransition(() => {          router.push(href.toString())        })        await transition.ready      }      return (        <Link           href={href}           onClick={handleClick}           className={className}          {...props}        >          {children}        </Link>      )    }    ```
+    "use client"
+
+    import * as React from "react"
+    import { useRouter } from "next/navigation"
+    import Link, { LinkProps } from "next/link"
+
+    interface PageTransitionLinkProps extends LinkProps {
+      children: React.ReactNode
+      className?: string
+    }
+
+    export function PageTransitionLink({
+      href,
+      children,
+      className,
+      ...props
+    }: PageTransitionLinkProps) {
+      const router = useRouter()
+
+      const handleClick = async (e: React.MouseEvent<HTMLAnchorElement>) => {
+        e.preventDefault()
+
+        if (!document.startViewTransition) {
+          router.push(href.toString())
+          return
+        }
+
+        const transition = document.startViewTransition(() => {
+          router.push(href.toString())
+        })
+
+        await transition.ready
+      }
+
+      return (
+        <Link 
+          href={href} 
+          onClick={handleClick} 
+          className={className}
+          {...props}
+        >
+          {children}
+        </Link>
+      )
+    }
+    ```
 
     **Step 3:** Add required CSS to `globals.css`
 
@@ -124,19 +196,79 @@ export function FadePreview() {
 Wrap your application with the `PageTransitionFade` component:
 
 ```tsx title="app/layout.tsx"
-import { PageTransitionFade } from "@/components/animations/pages/page-transition-fade"export default function RootLayout({  children,}: {  children: React.ReactNode}) {  return (    <html lang="en">      <body>        <PageTransitionFade>          {children}        </PageTransitionFade>      </body>    </html>  )}```
+import { PageTransitionFade } from "@/components/animations/pages/page-transition-fade"
+
+export default function RootLayout({
+  children,
+}: {
+  children: React.ReactNode
+}) {
+  return (
+    <html lang="en">
+      <body>
+        <PageTransitionFade>
+          {children}
+        </PageTransitionFade>
+      </body>
+    </html>
+  )
+}
+```
 
 ### Using Transition Links
 
 Replace standard Next.js `Link` components with `PageTransitionLink`:
 
 ```tsx
-import { PageTransitionLink } from "@/components/animations/pages/page-transition-link"export function Navigation() {  return (    <nav className="flex gap-4">      <PageTransitionLink href="/" className="hover:text-blue-600">        Home      </PageTransitionLink>      <PageTransitionLink href="/about" className="hover:text-blue-600">        About      </PageTransitionLink>      <PageTransitionLink href="/contact" className="hover:text-blue-600">        Contact      </PageTransitionLink>    </nav>  )}```
+import { PageTransitionLink } from "@/components/animations/pages/page-transition-link"
+
+export function Navigation() {
+  return (
+    <nav className="flex gap-4">
+      <PageTransitionLink href="/" className="hover:text-blue-600">
+        Home
+      </PageTransitionLink>
+      <PageTransitionLink href="/about" className="hover:text-blue-600">
+        About
+      </PageTransitionLink>
+      <PageTransitionLink href="/contact" className="hover:text-blue-600">
+        Contact
+      </PageTransitionLink>
+    </nav>
+  )
+}
+```
 
 ### Programmatic Navigation
 
 ```tsx
-"use client"import { useRouter } from "next/navigation"export function NavigateButton() {  const router = useRouter()  const handleNavigate = async () => {    if (!document.startViewTransition) {      router.push('/destination')      return    }    const transition = document.startViewTransition(() => {      router.push('/destination')    })    await transition.ready  }  return (    <button onClick={handleNavigate} className="inline-flex h-11 items-center gap-2 rounded-lg bg-blue-600 px-6 text-sm font-semibold text-white">      Navigate    </button>  )}```
+"use client"
+
+import { useRouter } from "next/navigation"
+
+export function NavigateButton() {
+  const router = useRouter()
+
+  const handleNavigate = async () => {
+    if (!document.startViewTransition) {
+      router.push('/destination')
+      return
+    }
+
+    const transition = document.startViewTransition(() => {
+      router.push('/destination')
+    })
+
+    await transition.ready
+  }
+
+  return (
+    <button onClick={handleNavigate} className="inline-flex h-11 items-center gap-2 rounded-lg bg-blue-600 px-6 text-sm font-semibold text-white">
+      Navigate
+    </button>
+  )
+}
+```
 
 ## Props
 
@@ -162,22 +294,40 @@ import { PageTransitionLink } from "@/components/animations/pages/page-transitio
 ### Fast Fade
 
 ```tsx
-<PageTransitionFade duration={0.15}>  {children}</PageTransitionFade>```
+<PageTransitionFade duration={0.15}>
+  {children}
+</PageTransitionFade>
+```
 
 ### Slow Fade
 
 ```tsx
-<PageTransitionFade duration={0.6}>  {children}</PageTransitionFade>```
+<PageTransitionFade duration={0.6}>
+  {children}
+</PageTransitionFade>
+```
 
 ### Custom Easing
 
 ```tsx
-<PageTransitionFade   duration={0.4}  ease="cubic-bezier(0.4, 0, 0.2, 1)">  {children}</PageTransitionFade>```
+<PageTransitionFade 
+  duration={0.4}
+  ease="cubic-bezier(0.4, 0, 0.2, 1)"
+>
+  {children}
+</PageTransitionFade>
+```
 
 ### With Custom Timing
 
 ```tsx
-<PageTransitionFade   duration={0.5}  ease="cubic-bezier(0.68, -0.55, 0.265, 1.55)">  {children}</PageTransitionFade>```
+<PageTransitionFade 
+  duration={0.5}
+  ease="cubic-bezier(0.68, -0.55, 0.265, 1.55)"
+>
+  {children}
+</PageTransitionFade>
+```
 
 ## Advanced Usage
 
@@ -186,7 +336,15 @@ import { PageTransitionLink } from "@/components/animations/pages/page-transitio
 You can customize transitions for specific pages by using data attributes:
 
 ```tsx title="app/special-page/page.tsx"
-export default function SpecialPage() {  return (    <div data-transition="special">      <h1>Special Page</h1>      <p>This page has a custom transition</p>    </div>  )}```
+export default function SpecialPage() {
+  return (
+    <div data-transition="special">
+      <h1>Special Page</h1>
+      <p>This page has a custom transition</p>
+    </div>
+  )
+}
+```
 
 Then in your CSS:
 
@@ -224,7 +382,34 @@ For a smooth crossfade without overlap:
 ## Combining with Loading States
 
 ```tsx
-"use client"import { useState } from "react"import { useRouter } from "next/navigation"import { PageTransitionLink } from "@/components/page-transition-link"export function NavigationWithLoading() {  const [isNavigating, setIsNavigating] = useState(false)  return (    <div className="relative">      {isNavigating && (        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">          <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-white"></div>        </div>      )}      <PageTransitionLink         href="/destination"        onClick={() => setIsNavigating(true)}        className="inline-flex h-11 items-center gap-2 rounded-lg bg-blue-600 px-6 text-sm font-semibold text-white"      >        Navigate      </PageTransitionLink>    </div>  )}```
+"use client"
+
+import { useState } from "react"
+import { useRouter } from "next/navigation"
+import { PageTransitionLink } from "@/components/page-transition-link"
+
+export function NavigationWithLoading() {
+  const [isNavigating, setIsNavigating] = useState(false)
+
+  return (
+    <div className="relative">
+      {isNavigating && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+          <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-white"></div>
+        </div>
+      )}
+      
+      <PageTransitionLink 
+        href="/destination"
+        onClick={() => setIsNavigating(true)}
+        className="inline-flex h-11 items-center gap-2 rounded-lg bg-blue-600 px-6 text-sm font-semibold text-white"
+      >
+        Navigate
+      </PageTransitionLink>
+    </div>
+  )
+}
+```
 
 ## Features
 

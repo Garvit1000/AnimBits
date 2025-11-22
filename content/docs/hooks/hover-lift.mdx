@@ -21,7 +21,107 @@ The `useHoverLift` hook returns Framer Motion props that add a lift effect with 
     Copy and paste the hook code into your project:
 
     ```tsx title="lib/hooks/use-hover-lift.ts"
-    import { type MotionProps } from "framer-motion"    export interface UseHoverLiftOptions {      liftDistance?: number      addShadow?: boolean      shadowIntensity?: number      duration?: number      ease?: string | number[]      scale?: number    }    export function useHoverLift(options: UseHoverLiftOptions = {}): MotionProps {      const {        liftDistance = 8,        addShadow = true,        shadowIntensity = 0.3,        duration = 0.2,        ease = "easeOut",        scale = 1,      } = options      const shadowBlur = liftDistance * 2      const shadowSpread = Math.round(liftDistance / 4)      return {        initial: {          y: 0,          scale: 1,          boxShadow: addShadow            ? `0 2px 4px rgba(0, 0, 0, ${shadowIntensity * 0.3})`            : undefined,        },        whileHover: {          y: -liftDistance,          scale,          boxShadow: addShadow            ? `0 ${shadowBlur}px ${shadowBlur + shadowSpread}px rgba(0, 0, 0, ${shadowIntensity})`            : undefined,        },        transition: {          duration,          ease,        },      }    }    ```
+import { type MotionProps, type Easing } from "framer-motion";
+
+export interface UseHoverLiftOptions {
+  liftDistance?: number;
+
+  addShadow?: boolean;
+
+  shadowIntensity?: number;
+
+  duration?: number;
+
+  ease?: Easing | Easing[];
+
+  scale?: number;
+}
+
+export function useHoverLift(options: UseHoverLiftOptions = {}): MotionProps {
+  const {
+    liftDistance = 8,
+    addShadow = true,
+    shadowIntensity = 0.3,
+    duration = 0.2,
+    ease = "easeOut",
+    scale = 1,
+  } = options;
+
+  const shadowBlur = liftDistance * 2;
+  const shadowSpread = Math.round(liftDistance / 4);
+
+  return {
+    initial: {
+      y: 0,
+      scale: 1,
+      boxShadow: addShadow
+        ? `0 2px 4px rgba(0, 0, 0, ${shadowIntensity * 0.3})`
+        : undefined,
+    },
+    whileHover: {
+      y: -liftDistance,
+      scale,
+      boxShadow: addShadow
+        ? `0 ${shadowBlur}px ${shadowBlur + shadowSpread}px rgba(0, 0, 0, ${shadowIntensity})`
+        : undefined,
+    },
+    transition: {
+      duration,
+      ease,
+    },
+  };
+}
+
+```tsx
+ * import { useHoverLift } from "@/lib/hooks"
+ * import { motion } from "framer-motion"
+ *
+ * function MyCard() {
+ *   const liftProps = useHoverLift({ liftDistance: 12 })
+ *   return (
+ *     <motion.div {...liftProps}>
+ *       Content
+ *     </motion.div>
+ *   )
+ * }
+ * ```
+ */
+export function useHoverLift(options: UseHoverLiftOptions = {}): MotionProps {
+  const {
+    liftDistance = 8,
+    addShadow = true,
+    shadowIntensity = 0.3,
+    duration = 0.2,
+    ease = "easeOut",
+    scale = 1,
+  } = options;
+
+  const shadowBlur = liftDistance * 2;
+  const shadowSpread = Math.round(liftDistance / 4);
+
+  return {
+    initial: {
+      y: 0,
+      scale: 1,
+      boxShadow: addShadow
+        ? `0 2px 4px rgba(0, 0, 0, ${shadowIntensity * 0.3})`
+        : undefined,
+    },
+    whileHover: {
+      y: -liftDistance,
+      scale,
+      boxShadow: addShadow
+        ? `0 ${shadowBlur}px ${shadowBlur + shadowSpread}px rgba(0, 0, 0, ${shadowIntensity})`
+        : undefined,
+    },
+    transition: {
+      duration,
+      ease,
+    },
+  };
+}
+
+```
   </Tab>
   <Tab value="CLI">
     ```bash
@@ -35,31 +135,131 @@ The `useHoverLift` hook returns Framer Motion props that add a lift effect with 
 ### Basic Example
 
 ```tsx
-import { motion } from "framer-motion"import { useHoverLift } from "@/lib/hooks/use-hover-lift"export function Card() {  const liftProps = useHoverLift()  return (    <motion.div       {...liftProps}      className="p-6 bg-white rounded-lg border"    >      <h3>Hover me!</h3>      <p>This card lifts on hover</p>    </motion.div>  )}```
+import { motion } from "framer-motion"
+import { useHoverLift } from "@/lib/hooks/use-hover-lift"
+
+export function Card() {
+  const liftProps = useHoverLift()
+  
+  return (
+    <motion.div 
+      {...liftProps}
+      className="p-6 bg-white rounded-lg border"
+    >
+      <h3>Hover me!</h3>
+      <p>This card lifts on hover</p>
+    </motion.div>
+  )
+}
+```
 
 ### With Custom Options
 
 ```tsx
-import { motion } from "framer-motion"import { useHoverLift } from "@/lib/hooks/use-hover-lift"export function ProductCard() {  const liftProps = useHoverLift({    liftDistance: 16,    shadowIntensity: 0.4,    scale: 1.02,    duration: 0.3,  })  return (    <motion.article {...liftProps} className="product-card">      <img src="/product.jpg" alt="Product" />      <h3>Product Name</h3>      <p>$99.99</p>    </motion.article>  )}```
+import { motion } from "framer-motion"
+import { useHoverLift } from "@/lib/hooks/use-hover-lift"
+
+export function ProductCard() {
+  const liftProps = useHoverLift({
+    liftDistance: 16,
+    shadowIntensity: 0.4,
+    scale: 1.02,
+    duration: 0.3,
+  })
+  
+  return (
+    <motion.article {...liftProps} className="product-card">
+      <img src="/product.jpg" alt="Product" />
+      <h3>Product Name</h3>
+      <p>$99.99</p>
+    </motion.article>
+  )
+}
+```
 
 ### On Different Elements
 
 <Tabs items={['Button', 'Card', 'Image', 'Link']}>
   <Tab value="Button">
     ```tsx
-    import { motion } from "framer-motion"    import { useHoverLift } from "@/lib/hooks/use-hover-lift"    export function LiftButton() {      const liftProps = useHoverLift({ liftDistance: 6 })      return (        <motion.button           {...liftProps}          className="inline-flex h-11 items-center gap-2 rounded-lg bg-blue-600 px-6 text-sm font-semibold text-white"        >          Click me        </motion.button>      )    }    ```
+    import { motion } from "framer-motion"
+    import { useHoverLift } from "@/lib/hooks/use-hover-lift"
+
+    export function LiftButton() {
+      const liftProps = useHoverLift({ liftDistance: 6 })
+      
+      return (
+        <motion.button 
+          {...liftProps}
+          className="inline-flex h-11 items-center gap-2 rounded-lg bg-blue-600 px-6 text-sm font-semibold text-white"
+        >
+          Click me
+        </motion.button>
+      )
+    }
+    ```
   </Tab>
   <Tab value="Card">
     ```tsx
-    import { motion } from "framer-motion"    import { useHoverLift } from "@/lib/hooks/use-hover-lift"    export function InfoCard() {      const liftProps = useHoverLift()      return (        <motion.div {...liftProps} className="card">          <h3>Card Title</h3>          <p>Card content goes here</p>        </motion.div>      )    }    ```
+    import { motion } from "framer-motion"
+    import { useHoverLift } from "@/lib/hooks/use-hover-lift"
+
+    export function InfoCard() {
+      const liftProps = useHoverLift()
+      
+      return (
+        <motion.div {...liftProps} className="card">
+          <h3>Card Title</h3>
+          <p>Card content goes here</p>
+        </motion.div>
+      )
+    }
+    ```
   </Tab>
   <Tab value="Image">
     ```tsx
-    import { motion } from "framer-motion"    import { useHoverLift } from "@/lib/hooks/use-hover-lift"    export function GalleryImage() {      const liftProps = useHoverLift({         liftDistance: 12,        scale: 1.05       })      return (        <motion.img           {...liftProps}          src="/image.jpg"          alt="Gallery"          className="rounded-lg"        />      )    }    ```
+    import { motion } from "framer-motion"
+    import { useHoverLift } from "@/lib/hooks/use-hover-lift"
+
+    export function GalleryImage() {
+      const liftProps = useHoverLift({ 
+        liftDistance: 12,
+        scale: 1.05 
+      })
+      
+      return (
+        <motion.img 
+          {...liftProps}
+          src="/image.jpg"
+          alt="Gallery"
+          className="rounded-lg"
+        />
+      )
+    }
+    ```
   </Tab>
   <Tab value="Link">
     ```tsx
-    import { motion } from "framer-motion"    import { useHoverLift } from "@/lib/hooks/use-hover-lift"    export function NavLink() {      const liftProps = useHoverLift({         liftDistance: 4,        addShadow: false       })      return (        <motion.a           {...liftProps}          href="/about"          className="nav-link"        >          About        </motion.a>      )    }    ```
+    import { motion } from "framer-motion"
+    import { useHoverLift } from "@/lib/hooks/use-hover-lift"
+
+    export function NavLink() {
+      const liftProps = useHoverLift({ 
+        liftDistance: 4,
+        addShadow: false 
+      })
+      
+      return (
+        <motion.a 
+          {...liftProps}
+          href="/about"
+          className="nav-link"
+        >
+          About
+        </motion.a>
+      )
+    }
+    ```
   </Tab>
 </Tabs>
 
@@ -130,29 +330,70 @@ Returns `MotionProps` object containing:
 ### Subtle Lift
 
 ```tsx
-const liftProps = useHoverLift({  liftDistance: 4,  shadowIntensity: 0.2,  duration: 0.15,})```
+const liftProps = useHoverLift({
+  liftDistance: 4,
+  shadowIntensity: 0.2,
+  duration: 0.15,
+})
+```
 
 ### Dramatic Lift
 
 ```tsx
-const liftProps = useHoverLift({  liftDistance: 20,  shadowIntensity: 0.5,  scale: 1.05,  duration: 0.3,})```
+const liftProps = useHoverLift({
+  liftDistance: 20,
+  shadowIntensity: 0.5,
+  scale: 1.05,
+  duration: 0.3,
+})
+```
 
 ### No Shadow
 
 ```tsx
-const liftProps = useHoverLift({  liftDistance: 10,  addShadow: false,})```
+const liftProps = useHoverLift({
+  liftDistance: 10,
+  addShadow: false,
+})
+```
 
 ### Custom Easing
 
 ```tsx
-const liftProps = useHoverLift({  liftDistance: 12,  ease: [0.4, 0, 0.2, 1], })```
+const liftProps = useHoverLift({
+  liftDistance: 12,
+  ease: [0.4, 0, 0.2, 1], // Custom cubic bezier
+})
+```
 
 ## Composing with Other Hooks
 
 Combine with other animation hooks for complex effects:
 
 ```tsx
-import { useHoverLift } from "@/lib/hooks/use-hover-lift"import { useHoverGlow } from "@/lib/hooks/use-hover-glow"export function FancyCard() {  const lift = useHoverLift({ liftDistance: 12 })  const glow = useHoverGlow({ glowColor: "rgba(59, 130, 246, 0.5)" })  const combined = {    ...lift,    whileHover: {      ...lift.whileHover,      ...glow.whileHover,    },  }  return (    <motion.div {...combined} className="card">      Lift + Glow effect!    </motion.div>  )}```
+import { useHoverLift } from "@/lib/hooks/use-hover-lift"
+import { useHoverGlow } from "@/lib/hooks/use-hover-glow"
+
+export function FancyCard() {
+  const lift = useHoverLift({ liftDistance: 12 })
+  const glow = useHoverGlow({ glowColor: "rgba(59, 130, 246, 0.5)" })
+  
+  // Merge the animations
+  const combined = {
+    ...lift,
+    whileHover: {
+      ...lift.whileHover,
+      ...glow.whileHover,
+    },
+  }
+  
+  return (
+    <motion.div {...combined} className="card">
+      Lift + Glow effect!
+    </motion.div>
+  )
+}
+```
 
 ## Accessibility
 
