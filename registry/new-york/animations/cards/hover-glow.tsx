@@ -2,7 +2,7 @@
 import * as React from "react";
 import { motion, HTMLMotionProps } from "framer-motion";
 import { cn } from "@/lib/utils";
-import { useHoverGlow } from "@/lib/hooks/use-hover-glow";
+import { useHoverGlow } from "@/lib/use-hover-glow";
 export interface CardHoverGlowProps extends HTMLMotionProps<"div"> {
   glowColor?: string;
   glowSpread?: number;

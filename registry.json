@@ -13,7 +13,7 @@
       ],
       "files": [
         {
-          "path": "lib/hooks/use-hover-lift.ts",
+          "path": "lib/use-hover-lift.ts",
           "type": "registry:lib"
         }
       ]
@@ -28,7 +28,7 @@
       ],
       "files": [
         {
-          "path": "lib/hooks/use-hover-glow.ts",
+          "path": "lib/use-hover-glow.ts",
           "type": "registry:lib"
         }
       ]
@@ -43,7 +43,7 @@
       ],
       "files": [
         {
-          "path": "lib/hooks/use-press.ts",
+          "path": "lib/use-press.ts",
           "type": "registry:lib"
         }
       ]
@@ -58,7 +58,7 @@
       ],
       "files": [
         {
-          "path": "lib/hooks/use-fade-in.ts",
+          "path": "lib/use-fade-in.ts",
           "type": "registry:lib"
         }
       ]
@@ -73,7 +73,7 @@
       ],
       "files": [
         {
-          "path": "lib/hooks/use-scale-in.ts",
+          "path": "lib/use-scale-in.ts",
           "type": "registry:lib"
         }
       ]
@@ -88,7 +88,7 @@
       ],
       "files": [
         {
-          "path": "lib/hooks/use-slide-in.ts",
+          "path": "lib/use-slide-in.ts",
           "type": "registry:lib"
         }
       ]
@@ -103,7 +103,7 @@
       ],
       "files": [
         {
-          "path": "lib/hooks/use-pulse.ts",
+          "path": "lib/use-pulse.ts",
           "type": "registry:lib"
         }
       ]
@@ -118,7 +118,7 @@
       ],
       "files": [
         {
-          "path": "lib/hooks/use-bounce.ts",
+          "path": "lib/use-bounce.ts",
           "type": "registry:lib"
         }
       ]
@@ -133,7 +133,7 @@
       ],
       "files": [
         {
-          "path": "lib/hooks/use-shimmer.ts",
+          "path": "lib/use-shimmer.ts",
           "type": "registry:lib"
         }
       ]
@@ -148,7 +148,7 @@
       ],
       "files": [
         {
-          "path": "lib/hooks/use-scramble.ts",
+          "path": "lib/use-scramble.ts",
           "type": "registry:lib"
         }
       ]
@@ -163,7 +163,7 @@
       ],
       "files": [
         {
-          "path": "lib/hooks/use-word-carousel.ts",
+          "path": "lib/use-word-carousel.ts",
           "type": "registry:lib"
         }
       ]
@@ -178,7 +178,7 @@
       ],
       "files": [
         {
-          "path": "lib/hooks/use-magnetic.ts",
+          "path": "lib/use-magnetic.ts",
           "type": "registry:lib"
         }
       ]
@@ -193,7 +193,7 @@
       ],
       "files": [
         {
-          "path": "lib/hooks/use-parallax-tilt.ts",
+          "path": "lib/use-parallax-tilt.ts",
           "type": "registry:lib"
         }
       ]
@@ -208,7 +208,7 @@
       ],
       "files": [
         {
-          "path": "lib/hooks/use-stroke-draw.ts",
+          "path": "lib/use-stroke-draw.ts",
           "type": "registry:lib"
         }
       ]
@@ -223,22 +223,7 @@
       ],
       "files": [
         {
-          "path": "lib/hooks/index.ts",
-          "type": "registry:lib"
-        }
-      ]
-    },
-    {
-      "name": "hooks-README.md",
-      "type": "registry:lib",
-      "title": "README.md",
-      "description": "The README.md hook.",
-      "dependencies": [
-        "framer-motion"
-      ],
-      "files": [
-        {
-          "path": "lib/hooks/README.md",
+          "path": "lib/index.ts",
           "type": "registry:lib"
         }
       ]

@@ -2,7 +2,7 @@
 import * as React from "react";
 import { motion, HTMLMotionProps } from "framer-motion";
 import { cn } from "@/lib/utils";
-import { useSlideIn, type SlideDirection } from "@/lib/hooks/use-slide-in";
+import { useSlideIn, type SlideDirection } from "@/lib/use-slide-in";
 export interface CardSlideInProps extends HTMLMotionProps<"div"> {
   duration?: number;
   delay?: number;

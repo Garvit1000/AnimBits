@@ -1,6 +1,6 @@
 "use client";
 import { motion, type HTMLMotionProps } from "framer-motion";
-import { useHoverLift } from "@/lib/hooks/use-hover-lift";
+import { useHoverLift } from "@/lib/use-hover-lift";
 interface LiftButtonProps extends Omit<HTMLMotionProps<"button">, "animate"> {
   children: React.ReactNode;
   liftHeight?: number;

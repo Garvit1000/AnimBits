@@ -2,7 +2,7 @@
 import * as React from "react";
 import { motion, HTMLMotionProps } from "framer-motion";
 import { cn } from "@/lib/utils";
-import { useHoverLift } from "@/lib/hooks/use-hover-lift";
+import { useHoverLift } from "@/lib/use-hover-lift";
 export interface CardHoverLiftProps extends HTMLMotionProps<"div"> {
   liftDistance?: number;
   duration?: number;

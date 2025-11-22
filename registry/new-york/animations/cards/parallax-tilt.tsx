@@ -5,7 +5,7 @@ import { cn } from "@/lib/utils";
 import {
   useParallaxTilt,
   type UseParallaxTiltOptions,
-} from "@/lib/hooks/use-parallax-tilt";
+} from "@/lib/use-parallax-tilt";
 export interface CardParallaxTiltProps
   extends Omit<HTMLMotionProps<"div">, "ref">,
     UseParallaxTiltOptions {}

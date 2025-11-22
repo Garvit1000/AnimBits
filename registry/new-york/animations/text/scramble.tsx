@@ -2,7 +2,7 @@
 import * as React from "react";
 import { motion, HTMLMotionProps } from "framer-motion";
 import { cn } from "@/lib/utils";
-import { useScramble, type UseScrambleOptions } from "@/lib/hooks/use-scramble";
+import { useScramble, type UseScrambleOptions } from "@/lib/use-scramble";
 export interface TextScrambleProps
   extends Omit<HTMLMotionProps<"p">, "children">,
     UseScrambleOptions {

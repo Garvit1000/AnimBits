@@ -1,6 +1,6 @@
 "use client";
 import { motion, type HTMLMotionProps } from "framer-motion";
-import { useHoverGlow } from "@/lib/hooks/use-hover-glow";
+import { useHoverGlow } from "@/lib/use-hover-glow";
 interface GlowButtonProps extends Omit<HTMLMotionProps<"button">, "animate"> {
   children: React.ReactNode;
   glowColor?: string;

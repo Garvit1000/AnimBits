@@ -16,7 +16,6 @@ export {
   type UseParallaxTiltOptions,
 } from "./use-parallax-tilt";
 
-// Entrance hooks (Framer Motion based)
 export { useFadeIn, type UseFadeInOptions } from "./use-fade-in";
 export { useScaleIn, type UseScaleInOptions } from "./use-scale-in";
 export {
@@ -25,11 +24,9 @@ export {
   type SlideDirection,
 } from "./use-slide-in";
 
-// Continuous hooks (Framer Motion based)
 export { usePulse, type UsePulseOptions } from "./use-pulse";
 export { useBounce, type UseBounceOptions } from "./use-bounce";
 
-// Text animation hooks (CSS based for performance)
 export { useShimmer, type UseShimmerOptions } from "./use-shimmer";
 export { useScramble, type UseScrambleOptions } from "./use-scramble";
 export {
@@ -37,5 +34,4 @@ export {
   type UseWordCarouselOptions,
 } from "./use-word-carousel";
 
-// SVG animation hooks
 export { useStrokeDraw, type UseStrokeDrawOptions } from "./use-stroke-draw";

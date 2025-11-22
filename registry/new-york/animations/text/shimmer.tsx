@@ -1,7 +1,7 @@
 "use client";
 import * as React from "react";
 import { cn } from "@/lib/utils";
-import { useShimmer, type UseShimmerOptions } from "@/lib/hooks/use-shimmer";
+import { useShimmer, type UseShimmerOptions } from "@/lib/use-shimmer";
 export interface TextShimmerProps
   extends React.HTMLAttributes<HTMLParagraphElement>,
     UseShimmerOptions {
