@@ -43,88 +43,12 @@ The `GlowButton` component adds a colored glow effect on hover. Built using the 
     **Step 1: Copy the hook**
     
     ```tsx title="lib/hooks/use-hover-glow.ts"
-    import { type MotionProps, type Easing } from "framer-motion";
-
-    export interface UseHoverGlowOptions {
-      glowColor?: string;
-      glowBlur?: number;
-      glowSpread?: number;
-      duration?: number;
-      ease?: Easing | Easing[];
-      scale?: number;
-      innerGlow?: boolean;
-    }
-
-    export function useHoverGlow(options: UseHoverGlowOptions = {}): MotionProps {
-      const {
-        glowColor = "rgba(59, 130, 246, 0.5)",
-        glowBlur = 20,
-        glowSpread = 5,
-        duration = 0.3,
-        ease = "easeOut",
-        scale = 1.02,
-        innerGlow = false,
-      } = options;
-
-      const baseShadow = "0 2px 8px rgba(0, 0, 0, 0.1)";
-      const glowShadow = `0 0 ${glowBlur}px ${glowSpread}px ${glowColor}`;
-      const innerGlowShadow = innerGlow
-        ? `inset 0 0 ${glowBlur / 2}px ${glowColor}`
-        : "";
-
-      const hoverShadow = innerGlow
-        ? `${baseShadow}, ${glowShadow}, ${innerGlowShadow}`
-        : `${baseShadow}, ${glowShadow}`;
-
-      return {
-        initial: {
-          scale: 1,
-          boxShadow: baseShadow,
-        },
-        whileHover: {
-          scale,
-          boxShadow: hoverShadow,
-        },
-        transition: {
-          duration,
-          ease,
-        },
-      };
-    }
-    ```
+    import { type MotionProps, type Easing } from "framer-motion";    export interface UseHoverGlowOptions {      glowColor?: string;      glowBlur?: number;      glowSpread?: number;      duration?: number;      ease?: Easing | Easing[];      scale?: number;      innerGlow?: boolean;    }    export function useHoverGlow(options: UseHoverGlowOptions = {}): MotionProps {      const {        glowColor = "rgba(59, 130, 246, 0.5)",        glowBlur = 20,        glowSpread = 5,        duration = 0.3,        ease = "easeOut",        scale = 1.02,        innerGlow = false,      } = options;      const baseShadow = "0 2px 8px rgba(0, 0, 0, 0.1)";      const glowShadow = `0 0 ${glowBlur}px ${glowSpread}px ${glowColor}`;      const innerGlowShadow = innerGlow        ? `inset 0 0 ${glowBlur / 2}px ${glowColor}`        : "";      const hoverShadow = innerGlow        ? `${baseShadow}, ${glowShadow}, ${innerGlowShadow}`        : `${baseShadow}, ${glowShadow}`;      return {        initial: {          scale: 1,          boxShadow: baseShadow,        },        whileHover: {          scale,          boxShadow: hoverShadow,        },        transition: {          duration,          ease,        },      };    }    ```
 
     **Step 2: Copy the component**
     
     ```tsx title="components/animations/buttons/glow.tsx"
-    "use client"
-
-    import { motion, type HTMLMotionProps } from "framer-motion"
-    import { useHoverGlow } from "@/lib/hooks"
-
-    interface GlowButtonProps extends Omit<HTMLMotionProps<"button">, "animate"> {
-      children: React.ReactNode
-      glowColor?: string
-      intensity?: number
-    }
-
-    export function GlowButton({
-      children,
-      glowColor = "rgba(59, 130, 246, 0.5)",
-      intensity = 20,
-      ...props
-    }: GlowButtonProps) {
-      const glowProps = useHoverGlow({
-        glowColor,
-        glowBlur: intensity,
-      })
-
-      return (
-        <motion.button {...glowProps} {...props}>
-          {children}
-        </motion.button>
-      )
-    }
-    ```
+    "use client"    import { motion, type HTMLMotionProps } from "framer-motion"    import { useHoverGlow } from "@/lib/hooks"    interface GlowButtonProps extends Omit<HTMLMotionProps<"button">, "animate"> {      children: React.ReactNode      glowColor?: string      intensity?: number    }    export function GlowButton({      children,      glowColor = "rgba(59, 130, 246, 0.5)",      intensity = 20,      ...props    }: GlowButtonProps) {      const glowProps = useHoverGlow({        glowColor,        glowBlur: intensity,      })      return (        <motion.button {...glowProps} {...props}>          {children}        </motion.button>      )    }    ```
   </Tab>
 </Tabs>
 
@@ -133,12 +57,7 @@ The `GlowButton` component adds a colored glow effect on hover. Built using the 
 ### Basic Example
 
 ```tsx
-import { GlowButton } from "@/components/animations/buttons/glow"
-
-<GlowButton className="inline-flex h-11 items-center gap-2 rounded-lg bg-blue-600 px-6 text-sm font-semibold text-white">
-  Hover Me
-</GlowButton>
-```
+import { GlowButton } from "@/components/animations/buttons/glow"<GlowButton className="inline-flex h-11 items-center gap-2 rounded-lg bg-blue-600 px-6 text-sm font-semibold text-white">  Hover Me</GlowButton>```
 
 ## Props
 
@@ -154,38 +73,17 @@ import { GlowButton } from "@/components/animations/buttons/glow"
 ### Premium CTA
 
 ```tsx
-<GlowButton 
-  glowColor="rgba(255, 215, 0, 0.7)"
-  intensity={30}
-  className="inline-flex h-11 items-center gap-2 rounded-lg bg-gradient-to-r from-yellow-400 to-orange-500 px-6 text-sm font-semibold text-white"
->
-  Upgrade
-</GlowButton>
-```
+<GlowButton   glowColor="rgba(255, 215, 0, 0.7)"  intensity={30}  className="inline-flex h-11 items-center gap-2 rounded-lg bg-gradient-to-r from-yellow-400 to-orange-500 px-6 text-sm font-semibold text-white">  Upgrade</GlowButton>```
 
 ### Dark Mode
 
 ```tsx
-<GlowButton 
-  glowColor="rgba(139, 92, 246, 0.5)"
-  className="inline-flex h-11 items-center gap-2 rounded-lg bg-gray-800 px-6 text-sm font-semibold text-white border border-purple-500"
->
-  Dark Mode
-</GlowButton>
-```
+<GlowButton   glowColor="rgba(139, 92, 246, 0.5)"  className="inline-flex h-11 items-center gap-2 rounded-lg bg-gray-800 px-6 text-sm font-semibold text-white border border-purple-500">  Dark Mode</GlowButton>```
 
 ## Using the Hook Directly
 
 ```tsx
-import { motion } from "framer-motion"
-import { useHoverGlow } from "@/lib/hooks"
-
-const glowProps = useHoverGlow({ glowColor: "rgba(236, 72, 153, 0.6)" })
-
-<motion.div {...glowProps} className="card">
-  Any element with glow
-</motion.div>
-```
+import { motion } from "framer-motion"import { useHoverGlow } from "@/lib/hooks"const glowProps = useHoverGlow({ glowColor: "rgba(236, 72, 153, 0.6)" })<motion.div {...glowProps} className="card">  Any element with glow</motion.div>```
 
 <Callout>
   **Tip:** Match the glow color to your button's background for a cohesive look.

@@ -64,111 +64,24 @@ The `StrokeDrawIcon` component animates SVG paths by drawing them stroke by stro
     **Step 1: Add the utility**
 
     ```tsx title="lib/utils.ts"
-    import { clsx, type ClassValue } from "clsx"
-    import { twMerge } from "tailwind-merge"
-
-    export function cn(...inputs: ClassValue[]) {
-      return twMerge(clsx(inputs))
-    }
-    ```
+    import { clsx, type ClassValue } from "clsx"    import { twMerge } from "tailwind-merge"    export function cn(...inputs: ClassValue[]) {      return twMerge(clsx(inputs))    }    ```
 
     **Step 2: Copy the hook**
 
     ```tsx title="lib/hooks/use-stroke-draw.ts"
-    import { type MotionProps, type Easing } from "framer-motion";
-
-    export interface UseStrokeDrawOptions {
-      duration?: number;
-      delay?: number;
-      repeat?: boolean;
-      ease?: Easing | Easing[];
-    }
-
-    export function useStrokeDraw(options: UseStrokeDrawOptions = {}): MotionProps {
-      const {
-        duration = 1.5,
-        delay = 0,
-        repeat = false,
-        ease = "easeInOut",
-      } = options;
-
-      return {
-        initial: { pathLength: 0, opacity: 0 },
-        animate: { pathLength: 1, opacity: 1 },
-        transition: {
-          pathLength: { duration, delay, ease },
-          opacity: { duration: 0.2, delay },
-          repeat: repeat ? Infinity : 0,
-          repeatDelay: 1,
-        },
-      };
-    }
-    ```
+    import { type MotionProps, type Easing } from "framer-motion";    export interface UseStrokeDrawOptions {      duration?: number;      delay?: number;      repeat?: boolean;      ease?: Easing | Easing[];    }    export function useStrokeDraw(options: UseStrokeDrawOptions = {}): MotionProps {      const {        duration = 1.5,        delay = 0,        repeat = false,        ease = "easeInOut",      } = options;      return {        initial: { pathLength: 0, opacity: 0 },        animate: { pathLength: 1, opacity: 1 },        transition: {          pathLength: { duration, delay, ease },          opacity: { duration: 0.2, delay },          repeat: repeat ? Infinity : 0,          repeatDelay: 1,        },      };    }    ```
 
     **Step 3: Copy the component**
 
     ```tsx title="components/animations/icons/stroke-draw.tsx"
-    "use client"
-
-    import * as React from "react"
-    import * as motion from "framer-motion/client"
-    import { cn } from "@/lib/utils"
-    import { useStrokeDraw, type UseStrokeDrawOptions } from "@/lib/hooks/use-stroke-draw"
-
-    export interface StrokeDrawIconProps extends Omit<React.SVGProps<SVGSVGElement>, "children">, UseStrokeDrawOptions {
-      pathData: string
-      strokeColor?: string
-      strokeWidth?: number
-    }
-
-    export function StrokeDrawIcon({
-      pathData,
-      className,
-      duration,
-      delay,
-      repeat,
-      ease,
-      strokeColor = "currentColor",
-      strokeWidth = 2,
-      ...props
-    }: StrokeDrawIconProps) {
-      const strokeProps = useStrokeDraw({ duration, delay, repeat, ease })
-
-      return (
-        <motion.svg
-          className={cn(className)}
-          fill="none"
-          stroke={strokeColor}
-          strokeWidth={strokeWidth}
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          viewBox={props.viewBox || "0 0 24 24"}
-          width={props.width}
-          height={props.height}
-        >
-          <motion.path d={pathData} {...strokeProps} />
-        </motion.svg>
-      )
-    }
-    ```
+    "use client"    import * as React from "react"    import * as motion from "framer-motion/client"    import { cn } from "@/lib/utils"    import { useStrokeDraw, type UseStrokeDrawOptions } from "@/lib/hooks/use-stroke-draw"    export interface StrokeDrawIconProps extends Omit<React.SVGProps<SVGSVGElement>, "children">, UseStrokeDrawOptions {      pathData: string      strokeColor?: string      strokeWidth?: number    }    export function StrokeDrawIcon({      pathData,      className,      duration,      delay,      repeat,      ease,      strokeColor = "currentColor",      strokeWidth = 2,      ...props    }: StrokeDrawIconProps) {      const strokeProps = useStrokeDraw({ duration, delay, repeat, ease })      return (        <motion.svg          className={cn(className)}          fill="none"          stroke={strokeColor}          strokeWidth={strokeWidth}          strokeLinecap="round"          strokeLinejoin="round"          viewBox={props.viewBox || "0 0 24 24"}          width={props.width}          height={props.height}        >          <motion.path d={pathData} {...strokeProps} />        </motion.svg>      )    }    ```
   </Tab>
 </Tabs>
 
 ## Usage
 
 ```tsx
-import { StrokeDrawIcon } from "@/components/animations/icons/stroke-draw"
-
-export default function Example() {
-  return (
-    <StrokeDrawIcon 
-      pathData="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"
-      viewBox="0 0 24 24"
-      className="w-6 h-6"
-    />
-  )
-}
-```
+import { StrokeDrawIcon } from "@/components/animations/icons/stroke-draw"export default function Example() {  return (    <StrokeDrawIcon       pathData="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"      viewBox="0 0 24 24"      className="w-6 h-6"    />  )}```
 
 ## Examples
 
@@ -253,22 +166,4 @@ export default function Example() {
 This component is built using the `useStrokeDraw()` hook. You can use the hook directly for more control:
 
 ```tsx
-import { useStrokeDraw } from "@/lib/hooks/use-stroke-draw"
-import { motion } from "framer-motion"
-
-export function CustomStrokeIcon() {
-  const strokeProps = useStrokeDraw({ duration: 2, delay: 0.5 })
-  
-  return (
-    <svg viewBox="0 0 24 24" className="w-12 h-12">
-      <motion.path 
-        d="M12 2L2 7l10 5 10-5-10-5z" 
-        stroke="currentColor"
-        strokeWidth={2}
-        fill="none"
-        {...strokeProps} 
-      />
-    </svg>
-  )
-}
-```
+import { useStrokeDraw } from "@/lib/hooks/use-stroke-draw"import { motion } from "framer-motion"export function CustomStrokeIcon() {  const strokeProps = useStrokeDraw({ duration: 2, delay: 0.5 })  return (    <svg viewBox="0 0 24 24" className="w-12 h-12">      <motion.path         d="M12 2L2 7l10 5 10-5-10-5z"         stroke="currentColor"        strokeWidth={2}        fill="none"        {...strokeProps}       />    </svg>  )}```

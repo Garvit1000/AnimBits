@@ -52,147 +52,24 @@ The `CardHoverLift` creates a subtle lift effect on hover, making cards feel int
     **Step 1: Copy the hook**
     
     ```tsx title="lib/hooks/use-hover-lift.ts"
-    import { type MotionProps, type Easing } from "framer-motion";
-
-    export interface UseHoverLiftOptions {
-      /**
-       * Distance to lift the element on hover (in pixels)
-       * @default 8
-       */
-      liftDistance?: number;
-
-      /**
-       * Whether to add shadow on hover
-       * @default true
-       */
-      addShadow?: boolean;
-
-      /**
-       * Shadow intensity (0-1)
-       * @default 0.3
-       */
-      shadowIntensity?: number;
-
-      /**
-       * Animation duration (in seconds)
-       * @default 0.2
-       */
-      duration?: number;
-
-      /**
-       * Animation easing
-       * @default "easeOut"
-       */
-      ease?: Easing | Easing[];
-
-      /**
-       * Scale on hover (1 = no scale)
-       * @default 1
-       */
-      scale?: number;
-    }
-
-    export function useHoverLift(options: UseHoverLiftOptions = {}): MotionProps {
-      const {
-        liftDistance = 8,
-        addShadow = true,
-        shadowIntensity = 0.3,
-        duration = 0.2,
-        ease = "easeOut",
-        scale = 1,
-      } = options;
-
-      const shadowBlur = liftDistance * 2;
-      const shadowSpread = Math.round(liftDistance / 4);
-
-      return {
-        initial: {
-          y: 0,
-          scale: 1,
-          boxShadow: addShadow
-            ? `0 2px 4px rgba(0, 0, 0, ${shadowIntensity * 0.3})`
-            : undefined,
-        },
-        whileHover: {
-          y: -liftDistance,
-          scale,
-          boxShadow: addShadow
-            ? `0 ${shadowBlur}px ${shadowBlur + shadowSpread}px rgba(0, 0, 0, ${shadowIntensity})`
-            : undefined,
-        },
-        transition: {
-          duration,
-          ease,
-        },
-      };
-    }
-    ```
+    import { type MotionProps, type Easing } from "framer-motion";    export interface UseHoverLiftOptions {      liftDistance?: number;      addShadow?: boolean;      shadowIntensity?: number;      duration?: number;      ease?: Easing | Easing[];      scale?: number;    }    export function useHoverLift(options: UseHoverLiftOptions = {}): MotionProps {      const {        liftDistance = 8,        addShadow = true,        shadowIntensity = 0.3,        duration = 0.2,        ease = "easeOut",        scale = 1,      } = options;      const shadowBlur = liftDistance * 2;      const shadowSpread = Math.round(liftDistance / 4);      return {        initial: {          y: 0,          scale: 1,          boxShadow: addShadow            ? `0 2px 4px rgba(0, 0, 0, ${shadowIntensity * 0.3})`            : undefined,        },        whileHover: {          y: -liftDistance,          scale,          boxShadow: addShadow            ? `0 ${shadowBlur}px ${shadowBlur + shadowSpread}px rgba(0, 0, 0, ${shadowIntensity})`            : undefined,        },        transition: {          duration,          ease,        },      };    }    ```
 
     **Step 2: Copy the utility function (if not already present)**
     
     ```tsx title="lib/utils.ts"
-    import { type ClassValue, clsx } from "clsx"
-    import { twMerge } from "tailwind-merge"
-
-    export function cn(...inputs: ClassValue[]) {
-      return twMerge(clsx(inputs))
-    }
-    ```
+    import { type ClassValue, clsx } from "clsx"    import { twMerge } from "tailwind-merge"    export function cn(...inputs: ClassValue[]) {      return twMerge(clsx(inputs))    }    ```
 
     **Step 3: Copy the component**
     
     ```tsx title="components/animations/cards/hover-lift.tsx"
-    "use client"
-    
-    import * as React from "react"
-    import { motion, HTMLMotionProps } from "framer-motion"
-    import { cn } from "@/lib/utils"
-    import { useHoverLift } from "@/lib/hooks"
-    
-    export interface CardHoverLiftProps extends HTMLMotionProps<"div"> {
-      liftDistance?: number
-      duration?: number
-      addShadow?: boolean
-    }
-    
-    export function CardHoverLift({
-      children,
-      className,
-      liftDistance = 8,
-      duration = 0.2,
-      addShadow = true,
-      ...props
-    }: CardHoverLiftProps) {
-      const liftProps = useHoverLift({
-        liftDistance,
-        duration,
-        addShadow,
-      })
-    
-      return (
-        <motion.div
-          {...liftProps}
-          className={cn("cursor-pointer", className)}
-          {...props}
-        >
-          {children}
-        </motion.div>
-      )
-    }
-    ```
+    "use client"    import * as React from "react"    import { motion, HTMLMotionProps } from "framer-motion"    import { cn } from "@/lib/utils"    import { useHoverLift } from "@/lib/hooks"    export interface CardHoverLiftProps extends HTMLMotionProps<"div"> {      liftDistance?: number      duration?: number      addShadow?: boolean    }    export function CardHoverLift({      children,      className,      liftDistance = 8,      duration = 0.2,      addShadow = true,      ...props    }: CardHoverLiftProps) {      const liftProps = useHoverLift({        liftDistance,        duration,        addShadow,      })      return (        <motion.div          {...liftProps}          className={cn("cursor-pointer", className)}          {...props}        >          {children}        </motion.div>      )    }    ```
   </Tab>
 </Tabs>
 
 ## Usage
 
 ```tsx
-import { CardHoverLift } from "@/components/animations/cards/hover-lift"
-
-<CardHoverLift className="p-6 bg-white rounded-lg border">
-  <h3>Card Title</h3>
-  <p>Card content</p>
-</CardHoverLift>
-```
+import { CardHoverLift } from "@/components/animations/cards/hover-lift"<CardHoverLift className="p-6 bg-white rounded-lg border">  <h3>Card Title</h3>  <p>Card content</p></CardHoverLift>```
 
 ## Examples
 

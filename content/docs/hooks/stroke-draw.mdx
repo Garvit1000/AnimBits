@@ -19,35 +19,7 @@ The `useStrokeDraw` hook animates SVG paths with a drawing effect, perfect for l
 <Tabs items={['Manual', 'CLI']}>
   <Tab value="Manual">
     ```tsx title="lib/hooks/use-stroke-draw.ts"
-    import { type MotionProps } from "framer-motion"
-
-    export interface UseStrokeDrawOptions {
-      duration?: number
-      delay?: number
-      repeat?: boolean
-      ease?: string | number[]
-    }
-
-    export function useStrokeDraw(options: UseStrokeDrawOptions = {}): MotionProps {
-      const {
-        duration = 1.5,
-        delay = 0,
-        repeat = false,
-        ease = "easeInOut",
-      } = options
-
-      return {
-        initial: { pathLength: 0, opacity: 0 },
-        animate: { pathLength: 1, opacity: 1 },
-        transition: {
-          pathLength: { duration, delay, ease },
-          opacity: { duration: 0.2, delay },
-          repeat: repeat ? Infinity : 0,
-          repeatDelay: 1,
-        },
-      }
-    }
-    ```
+    import { type MotionProps } from "framer-motion"    export interface UseStrokeDrawOptions {      duration?: number      delay?: number      repeat?: boolean      ease?: string | number[]    }    export function useStrokeDraw(options: UseStrokeDrawOptions = {}): MotionProps {      const {        duration = 1.5,        delay = 0,        repeat = false,        ease = "easeInOut",      } = options      return {        initial: { pathLength: 0, opacity: 0 },        animate: { pathLength: 1, opacity: 1 },        transition: {          pathLength: { duration, delay, ease },          opacity: { duration: 0.2, delay },          repeat: repeat ? Infinity : 0,          repeatDelay: 1,        },      }    }    ```
   </Tab>
   <Tab value="CLI">
     ```bash
@@ -61,140 +33,32 @@ The `useStrokeDraw` hook animates SVG paths with a drawing effect, perfect for l
 ### Basic Example
 
 ```tsx
-import { motion } from "framer-motion"
-import { useStrokeDraw } from "@/lib/hooks/use-stroke-draw"
-
-export function DrawingLogo() {
-  const strokeProps = useStrokeDraw()
-  
-  return (
-    <svg width="200" height="200" viewBox="0 0 200 200">
-      <motion.path
-        d="M 50 100 Q 100 50 150 100 T 250 100"
-        stroke="currentColor"
-        strokeWidth="3"
-        fill="none"
-        {...strokeProps}
-      />
-    </svg>
-  )
-}
-```
+import { motion } from "framer-motion"import { useStrokeDraw } from "@/lib/hooks/use-stroke-draw"export function DrawingLogo() {  const strokeProps = useStrokeDraw()  return (    <svg width="200" height="200" viewBox="0 0 200 200">      <motion.path        d="M 50 100 Q 100 50 150 100 T 250 100"        stroke="currentColor"        strokeWidth="3"        fill="none"        {...strokeProps}      />    </svg>  )}```
 
 ### With Custom Duration
 
 ```tsx
-import { motion } from "framer-motion"
-import { useStrokeDraw } from "@/lib/hooks/use-stroke-draw"
-
-export function SlowDraw() {
-  const strokeProps = useStrokeDraw({ 
-    duration: 3,
-    delay: 0.5,
-  })
-  
-  return (
-    <svg width="300" height="300" viewBox="0 0 300 300">
-      <motion.path
-        d="M 150 50 L 250 150 L 150 250 L 50 150 Z"
-        stroke="#3b82f6"
-        strokeWidth="4"
-        fill="none"
-        {...strokeProps}
-      />
-    </svg>
-  )
-}
-```
+import { motion } from "framer-motion"import { useStrokeDraw } from "@/lib/hooks/use-stroke-draw"export function SlowDraw() {  const strokeProps = useStrokeDraw({     duration: 3,    delay: 0.5,  })  return (    <svg width="300" height="300" viewBox="0 0 300 300">      <motion.path        d="M 150 50 L 250 150 L 150 250 L 50 150 Z"        stroke="#3b82f6"        strokeWidth="4"        fill="none"        {...strokeProps}      />    </svg>  )}```
 
 ### Repeating Animation
 
 ```tsx
-import { motion } from "framer-motion"
-import { useStrokeDraw } from "@/lib/hooks/use-stroke-draw"
-
-export function ContinuousDraw() {
-  const strokeProps = useStrokeDraw({ 
-    duration: 2,
-    repeat: true, // Loops forever
-  })
-  
-  return (
-    <svg width="100" height="100" viewBox="0 0 100 100">
-      <motion.circle
-        cx="50"
-        cy="50"
-        r="40"
-        stroke="currentColor"
-        strokeWidth="2"
-        fill="none"
-        {...strokeProps}
-      />
-    </svg>
-  )
-}
-```
+import { motion } from "framer-motion"import { useStrokeDraw } from "@/lib/hooks/use-stroke-draw"export function ContinuousDraw() {  const strokeProps = useStrokeDraw({     duration: 2,    repeat: true,   })  return (    <svg width="100" height="100" viewBox="0 0 100 100">      <motion.circle        cx="50"        cy="50"        r="40"        stroke="currentColor"        strokeWidth="2"        fill="none"        {...strokeProps}      />    </svg>  )}```
 
 ### Multiple Paths with Stagger
 
 <Tabs items={['Sequential', 'Staggered', 'Simultaneous']}>
   <Tab value="Sequential">
     ```tsx
-    import { motion } from "framer-motion"
-    import { useStrokeDraw } from "@/lib/hooks/use-stroke-draw"
-
-    export function SequentialDraw() {
-      const path1 = useStrokeDraw({ delay: 0 })
-      const path2 = useStrokeDraw({ delay: 1.5 })
-      const path3 = useStrokeDraw({ delay: 3 })
-      
-      return (
-        <svg width="300" height="100" viewBox="0 0 300 100">
-          <motion.path d="M 10 50 L 90 50" stroke="currentColor" {...path1} />
-          <motion.path d="M 110 50 L 190 50" stroke="currentColor" {...path2} />
-          <motion.path d="M 210 50 L 290 50" stroke="currentColor" {...path3} />
-        </svg>
-      )
-    }
-    ```
+    import { motion } from "framer-motion"    import { useStrokeDraw } from "@/lib/hooks/use-stroke-draw"    export function SequentialDraw() {      const path1 = useStrokeDraw({ delay: 0 })      const path2 = useStrokeDraw({ delay: 1.5 })      const path3 = useStrokeDraw({ delay: 3 })      return (        <svg width="300" height="100" viewBox="0 0 300 100">          <motion.path d="M 10 50 L 90 50" stroke="currentColor" {...path1} />          <motion.path d="M 110 50 L 190 50" stroke="currentColor" {...path2} />          <motion.path d="M 210 50 L 290 50" stroke="currentColor" {...path3} />        </svg>      )    }    ```
   </Tab>
   <Tab value="Staggered">
     ```tsx
-    import { motion } from "framer-motion"
-    import { useStrokeDraw } from "@/lib/hooks/use-stroke-draw"
-
-    export function StaggeredDraw() {
-      const path1 = useStrokeDraw({ delay: 0 })
-      const path2 = useStrokeDraw({ delay: 0.3 })
-      const path3 = useStrokeDraw({ delay: 0.6 })
-      
-      return (
-        <svg width="300" height="100" viewBox="0 0 300 100">
-          <motion.path d="M..." stroke="currentColor" {...path1} />
-          <motion.path d="M..." stroke="currentColor" {...path2} />
-          <motion.path d="M..." stroke="currentColor" {...path3} />
-        </svg>
-      )
-    }
-    ```
+    import { motion } from "framer-motion"    import { useStrokeDraw } from "@/lib/hooks/use-stroke-draw"    export function StaggeredDraw() {      const path1 = useStrokeDraw({ delay: 0 })      const path2 = useStrokeDraw({ delay: 0.3 })      const path3 = useStrokeDraw({ delay: 0.6 })      return (        <svg width="300" height="100" viewBox="0 0 300 100">          <motion.path d="M..." stroke="currentColor" {...path1} />          <motion.path d="M..." stroke="currentColor" {...path2} />          <motion.path d="M..." stroke="currentColor" {...path3} />        </svg>      )    }    ```
   </Tab>
   <Tab value="Simultaneous">
     ```tsx
-    import { motion } from "framer-motion"
-    import { useStrokeDraw } from "@/lib/hooks/use-stroke-draw"
-
-    export function SimultaneousDraw() {
-      const strokeProps = useStrokeDraw() // Same props for all
-      
-      return (
-        <svg width="300" height="100" viewBox="0 0 300 100">
-          <motion.path d="M..." stroke="currentColor" {...strokeProps} />
-          <motion.path d="M..." stroke="currentColor" {...strokeProps} />
-          <motion.path d="M..." stroke="currentColor" {...strokeProps} />
-        </svg>
-      )
-    }
-    ```
+    import { motion } from "framer-motion"    import { useStrokeDraw } from "@/lib/hooks/use-stroke-draw"    export function SimultaneousDraw() {      const strokeProps = useStrokeDraw()       return (        <svg width="300" height="100" viewBox="0 0 300 100">          <motion.path d="M..." stroke="currentColor" {...strokeProps} />          <motion.path d="M..." stroke="currentColor" {...strokeProps} />          <motion.path d="M..." stroke="currentColor" {...strokeProps} />        </svg>      )    }    ```
   </Tab>
 </Tabs>
 
@@ -250,109 +114,22 @@ Returns `MotionProps` to spread on `motion.path` or other SVG elements
 ### Logo Reveal
 
 ```tsx
-import { motion } from "framer-motion"
-import { useStrokeDraw } from "@/lib/hooks/use-stroke-draw"
-
-export function LogoReveal() {
-  const strokeProps = useStrokeDraw({ duration: 2 })
-  
-  return (
-    <svg width="200" height="200" viewBox="0 0 200 200">
-      <motion.path
-        d="M 50 50 L 150 50 L 150 150 L 50 150 Z M 75 75 L 125 125 M 125 75 L 75 125"
-        stroke="#000"
-        strokeWidth="4"
-        strokeLinecap="round"
-        fill="none"
-        {...strokeProps}
-      />
-    </svg>
-  )
-}
-```
+import { motion } from "framer-motion"import { useStrokeDraw } from "@/lib/hooks/use-stroke-draw"export function LogoReveal() {  const strokeProps = useStrokeDraw({ duration: 2 })  return (    <svg width="200" height="200" viewBox="0 0 200 200">      <motion.path        d="M 50 50 L 150 50 L 150 150 L 50 150 Z M 75 75 L 125 125 M 125 75 L 75 125"        stroke="#000"        strokeWidth="4"        strokeLinecap="round"        fill="none"        {...strokeProps}      />    </svg>  )}```
 
 ### Signature Effect
 
 ```tsx
-import { motion } from "framer-motion"
-import { useStrokeDraw } from "@/lib/hooks/use-stroke-draw"
-
-export function Signature() {
-  const strokeProps = useStrokeDraw({ 
-    duration: 2.5,
-    ease: [0.4, 0, 0.2, 1],
-  })
-  
-  return (
-    <svg width="400" height="100" viewBox="0 0 400 100">
-      <motion.path
-        d="M 10 50 Q 50 10, 100 50 T 200 50 Q 250 80, 300 50"
-        stroke="#1e40af"
-        strokeWidth="3"
-        strokeLinecap="round"
-        fill="none"
-        {...strokeProps}
-      />
-    </svg>
-  )
-}
-```
+import { motion } from "framer-motion"import { useStrokeDraw } from "@/lib/hooks/use-stroke-draw"export function Signature() {  const strokeProps = useStrokeDraw({     duration: 2.5,    ease: [0.4, 0, 0.2, 1],  })  return (    <svg width="400" height="100" viewBox="0 0 400 100">      <motion.path        d="M 10 50 Q 50 10, 100 50 T 200 50 Q 250 80, 300 50"        stroke="#1e40af"        strokeWidth="3"        strokeLinecap="round"        fill="none"        {...strokeProps}      />    </svg>  )}```
 
 ### Loading Spinner
 
 ```tsx
-import { motion } from "framer-motion"
-import { useStrokeDraw } from "@/lib/hooks/use-stroke-draw"
-
-export function DrawSpinner() {
-  const strokeProps = useStrokeDraw({ 
-    duration: 1.5,
-    repeat: true,
-  })
-  
-  return (
-    <svg width="50" height="50" viewBox="0 0 50 50">
-      <motion.circle
-        cx="25"
-        cy="25"
-        r="20"
-        stroke="currentColor"
-        strokeWidth="3"
-        fill="none"
-        {...strokeProps}
-      />
-    </svg>
-  )
-}
-```
+import { motion } from "framer-motion"import { useStrokeDraw } from "@/lib/hooks/use-stroke-draw"export function DrawSpinner() {  const strokeProps = useStrokeDraw({     duration: 1.5,    repeat: true,  })  return (    <svg width="50" height="50" viewBox="0 0 50 50">      <motion.circle        cx="25"        cy="25"        r="20"        stroke="currentColor"        strokeWidth="3"        fill="none"        {...strokeProps}      />    </svg>  )}```
 
 ### Checkmark Animation
 
 ```tsx
-import { motion } from "framer-motion"
-import { useStrokeDraw } from "@/lib/hooks/use-stroke-draw"
-
-export function CheckmarkDraw() {
-  const strokeProps = useStrokeDraw({ 
-    duration: 0.5,
-    ease: "easeOut",
-  })
-  
-  return (
-    <svg width="100" height="100" viewBox="0 0 100 100">
-      <motion.path
-        d="M 20 50 L 40 70 L 80 30"
-        stroke="#10b981"
-        strokeWidth="6"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        fill="none"
-        {...strokeProps}
-      />
-    </svg>
-  )
-}
-```
+import { motion } from "framer-motion"import { useStrokeDraw } from "@/lib/hooks/use-stroke-draw"export function CheckmarkDraw() {  const strokeProps = useStrokeDraw({     duration: 0.5,    ease: "easeOut",  })  return (    <svg width="100" height="100" viewBox="0 0 100 100">      <motion.path        d="M 20 50 L 40 70 L 80 30"        stroke="#10b981"        strokeWidth="6"        strokeLinecap="round"        strokeLinejoin="round"        fill="none"        {...strokeProps}      />    </svg>  )}```
 
 ## Tips
 
@@ -361,19 +138,12 @@ export function CheckmarkDraw() {
 For more control, combine with `strokeDasharray`:
 
 ```tsx
-<motion.path
-  {...strokeProps}
-  strokeDasharray="5 5" // Dashed line
-/>
-```
+<motion.path  {...strokeProps}  strokeDasharray="5 5" />```
 
 ### Custom Easing
 
 ```tsx
-const strokeProps = useStrokeDraw({
-  ease: [0.6, 0.01, 0.05, 0.95], // Custom cubic bezier
-})
-```
+const strokeProps = useStrokeDraw({  ease: [0.6, 0.01, 0.05, 0.95], })```
 
 ## Performance
 

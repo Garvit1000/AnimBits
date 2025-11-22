@@ -38,70 +38,19 @@ The `LoaderPulse` component creates a pulsing circle animation. Perfect for subt
     **Step 1: Add the utility**
 
     ```tsx title="lib/utils.ts"
-    import { clsx, type ClassValue } from "clsx"
-    import { twMerge } from "tailwind-merge"
-
-    export function cn(...inputs: ClassValue[]) {
-      return twMerge(clsx(inputs))
-    }
-    ```
+    import { clsx, type ClassValue } from "clsx"    import { twMerge } from "tailwind-merge"    export function cn(...inputs: ClassValue[]) {      return twMerge(clsx(inputs))    }    ```
 
     **Step 2: Copy the component**
 
     ```tsx title="components/animations/loaders/pulse.tsx"
-    "use client"
-
-    import * as React from "react"
-    import { motion, HTMLMotionProps } from "framer-motion"
-    import { cn } from "@/lib/utils"
-
-    export interface LoaderPulseProps extends HTMLMotionProps<"div"> {
-      size?: number
-      color?: string
-      duration?: number
-    }
-
-    export function LoaderPulse({
-      className,
-      size = 60,
-      color = "currentColor",
-      duration = 1.5,
-      ...props
-    }: LoaderPulseProps) {
-      return (
-        <motion.div
-          className={cn("rounded-full", className)}
-          style={{
-            width: size,
-            height: size,
-            backgroundColor: color,
-          }}
-          animate={{
-            scale: [1, 1.2, 1],
-            opacity: [0.5, 1, 0.5],
-          }}
-          transition={{
-            duration,
-            ease: "easeInOut",
-            repeat: Infinity,
-          }}
-          {...props}
-        />
-      )
-    }
-    ```
+    "use client"    import * as React from "react"    import { motion, HTMLMotionProps } from "framer-motion"    import { cn } from "@/lib/utils"    export interface LoaderPulseProps extends HTMLMotionProps<"div"> {      size?: number      color?: string      duration?: number    }    export function LoaderPulse({      className,      size = 60,      color = "currentColor",      duration = 1.5,      ...props    }: LoaderPulseProps) {      return (        <motion.div          className={cn("rounded-full", className)}          style={{            width: size,            height: size,            backgroundColor: color,          }}          animate={{            scale: [1, 1.2, 1],            opacity: [0.5, 1, 0.5],          }}          transition={{            duration,            ease: "easeInOut",            repeat: Infinity,          }}          {...props}        />      )    }    ```
   </Tab>
 </Tabs>
 
 ## Usage
 
 ```tsx
-import { LoaderPulse } from "@/components/animations/loaders/pulse"
-
-export default function Example() {
-  return <LoaderPulse />
-}
-```
+import { LoaderPulse } from "@/components/animations/loaders/pulse"export default function Example() {  return <LoaderPulse />}```
 
 ## Examples
 

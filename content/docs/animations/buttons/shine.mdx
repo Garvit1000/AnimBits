@@ -38,68 +38,19 @@ The `ShineButton` creates a shine/shimmer effect that sweeps across the button o
     **Step 1: Add the utility**
 
     ```tsx title="lib/utils.ts"
-    import { clsx, type ClassValue } from "clsx"
-    import { twMerge } from "tailwind-merge"
-
-    export function cn(...inputs: ClassValue[]) {
-      return twMerge(clsx(inputs))
-    }
-    ```
+    import { clsx, type ClassValue } from "clsx"    import { twMerge } from "tailwind-merge"    export function cn(...inputs: ClassValue[]) {      return twMerge(clsx(inputs))    }    ```
 
     **Step 2: Copy the component**
 
     ```tsx title="components/animations/buttons/shine.tsx"
-    "use client"
-
-    import { motion, type HTMLMotionProps } from "framer-motion"
-    import { cn } from "@/lib/utils"
-
-    interface ShineButtonProps extends Omit<HTMLMotionProps<"button">, "animate"> {
-      children: React.ReactNode
-      direction?: "left" | "right"
-    }
-
-    export function ShineButton({
-      children,
-      direction = "right",
-      className,
-      ...props
-    }: ShineButtonProps) {
-      return (
-        <motion.button
-          className={cn("relative overflow-hidden", className)}
-          whileHover="hover"
-          initial="initial"
-          {...props}
-        >
-          {children}
-          <motion.div
-            className="absolute inset-0 w-full h-full pointer-events-none"
-            style={{
-              background: "linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent)",
-            }}
-            variants={{
-              initial: { x: direction === "right" ? "-100%" : "100%" },
-              hover: { x: direction === "right" ? "100%" : "-100%" },
-            }}
-            transition={{ duration: 0.6, ease: "easeInOut" }}
-          />
-        </motion.button>
-      )
-    }
-    ```
+    "use client"    import { motion, type HTMLMotionProps } from "framer-motion"    import { cn } from "@/lib/utils"    interface ShineButtonProps extends Omit<HTMLMotionProps<"button">, "animate"> {      children: React.ReactNode      direction?: "left" | "right"    }    export function ShineButton({      children,      direction = "right",      className,      ...props    }: ShineButtonProps) {      return (        <motion.button          className={cn("relative overflow-hidden", className)}          whileHover="hover"          initial="initial"          {...props}        >          {children}          <motion.div            className="absolute inset-0 w-full h-full pointer-events-none"            style={{              background: "linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent)",            }}            variants={{              initial: { x: direction === "right" ? "-100%" : "100%" },              hover: { x: direction === "right" ? "100%" : "-100%" },            }}            transition={{ duration: 0.6, ease: "easeInOut" }}          />        </motion.button>      )    }    ```
   </Tab>
 </Tabs>
 
 ## Usage
 
 ```tsx
-import { ShineButton } from "@/components/animations/buttons/shine"
-
-<ShineButton className="inline-flex h-11 items-center gap-2 rounded-lg bg-blue-600 px-6 text-sm font-semibold text-white">
-  Hover Me
-</ShineButton>
-```
+import { ShineButton } from "@/components/animations/buttons/shine"<ShineButton className="inline-flex h-11 items-center gap-2 rounded-lg bg-blue-600 px-6 text-sm font-semibold text-white">  Hover Me</ShineButton>```
 
 
 ## Props
@@ -112,13 +63,4 @@ import { ShineButton } from "@/components/animations/buttons/shine"
 ## Examples
 
 ```tsx
-// Premium CTA
-<ShineButton className="inline-flex h-11 items-center gap-2 rounded-lg bg-gradient-to-r from-purple-600 to-pink-600 px-6 text-sm font-semibold text-white">
-  Upgrade Now
-</ShineButton>
-
-// Dark button
-<ShineButton className="inline-flex h-11 items-center gap-2 rounded-lg bg-gray-900 px-6 text-sm font-semibold text-white">
-  Dark Shine
-</ShineButton>
-```
+<ShineButton className="inline-flex h-11 items-center gap-2 rounded-lg bg-gradient-to-r from-purple-600 to-pink-600 px-6 text-sm font-semibold text-white">  Upgrade Now</ShineButton><ShineButton className="inline-flex h-11 items-center gap-2 rounded-lg bg-gray-900 px-6 text-sm font-semibold text-white">  Dark Shine</ShineButton>```

@@ -19,76 +19,7 @@ The `useParallaxTilt` hook creates a stunning 3D tilt effect where elements rota
 <Tabs items={['Manual', 'CLI']}>
   <Tab value="Manual">
     ```tsx title="lib/hooks/use-parallax-tilt.ts"
-    import * as React from "react"
-    import { useMotionValue, useSpring, useTransform } from "framer-motion"
-
-    export interface UseParallaxTiltOptions {
-      maxTilt?: number
-      duration?: number
-      shadowIntensity?: number
-      stiffness?: number
-      damping?: number
-    }
-
-    export function useParallaxTilt(options: UseParallaxTiltOptions = {}) {
-      const {
-        maxTilt = 15,
-        duration = 0.3,
-        shadowIntensity = 0.3,
-        stiffness = 300,
-        damping = 30,
-      } = options
-
-      const ref = React.useRef<HTMLElement>(null)
-      const x = useMotionValue(0)
-      const y = useMotionValue(0)
-
-      const mouseXSpring = useSpring(x, { stiffness, damping })
-      const mouseYSpring = useSpring(y, { stiffness, damping })
-
-      const rotateX = useTransform(mouseYSpring, [-0.5, 0.5], [maxTilt, -maxTilt])
-      const rotateY = useTransform(mouseXSpring, [-0.5, 0.5], [-maxTilt, maxTilt])
-
-      const shadowX = useTransform(mouseXSpring, [-0.5, 0.5], [-20, 20])
-      const shadowY = useTransform(mouseYSpring, [-0.5, 0.5], [-20, 20])
-
-      const handleMouseMove = (e: React.MouseEvent<HTMLElement>) => {
-        if (!ref.current) return
-
-        const rect = ref.current.getBoundingClientRect()
-        const width = rect.width
-        const height = rect.height
-        const mouseX = e.clientX - rect.left
-        const mouseY = e.clientY - rect.top
-        const xPct = mouseX / width - 0.5
-        const yPct = mouseY / height - 0.5
-        x.set(xPct)
-        y.set(yPct)
-      }
-
-      const handleMouseLeave = () => {
-        x.set(0)
-        y.set(0)
-      }
-
-      const tiltProps = {
-        style: {
-          rotateX,
-          rotateY,
-          transformStyle: "preserve-3d" as const,
-          boxShadow: useTransform(
-            [shadowX, shadowY],
-            ([x, y]) => `${x}px ${y}px 30px rgba(0, 0, 0, ${shadowIntensity})`
-          ),
-        },
-        onMouseMove: handleMouseMove,
-        onMouseLeave: handleMouseLeave,
-        transition: { duration },
-      }
-
-      return { tiltProps, ref }
-    }
-    ```
+    import * as React from "react"    import { useMotionValue, useSpring, useTransform } from "framer-motion"    export interface UseParallaxTiltOptions {      maxTilt?: number      duration?: number      shadowIntensity?: number      stiffness?: number      damping?: number    }    export function useParallaxTilt(options: UseParallaxTiltOptions = {}) {      const {        maxTilt = 15,        duration = 0.3,        shadowIntensity = 0.3,        stiffness = 300,        damping = 30,      } = options      const ref = React.useRef<HTMLElement>(null)      const x = useMotionValue(0)      const y = useMotionValue(0)      const mouseXSpring = useSpring(x, { stiffness, damping })      const mouseYSpring = useSpring(y, { stiffness, damping })      const rotateX = useTransform(mouseYSpring, [-0.5, 0.5], [maxTilt, -maxTilt])      const rotateY = useTransform(mouseXSpring, [-0.5, 0.5], [-maxTilt, maxTilt])      const shadowX = useTransform(mouseXSpring, [-0.5, 0.5], [-20, 20])      const shadowY = useTransform(mouseYSpring, [-0.5, 0.5], [-20, 20])      const handleMouseMove = (e: React.MouseEvent<HTMLElement>) => {        if (!ref.current) return        const rect = ref.current.getBoundingClientRect()        const width = rect.width        const height = rect.height        const mouseX = e.clientX - rect.left        const mouseY = e.clientY - rect.top        const xPct = mouseX / width - 0.5        const yPct = mouseY / height - 0.5        x.set(xPct)        y.set(yPct)      }      const handleMouseLeave = () => {        x.set(0)        y.set(0)      }      const tiltProps = {        style: {          rotateX,          rotateY,          transformStyle: "preserve-3d" as const,          boxShadow: useTransform(            [shadowX, shadowY],            ([x, y]) => `${x}px ${y}px 30px rgba(0, 0, 0, ${shadowIntensity})`          ),        },        onMouseMove: handleMouseMove,        onMouseLeave: handleMouseLeave,        transition: { duration },      }      return { tiltProps, ref }    }    ```
   </Tab>
   <Tab value="CLI">
     ```bash
@@ -102,149 +33,31 @@ The `useParallaxTilt` hook creates a stunning 3D tilt effect where elements rota
 ### Basic Example
 
 ```tsx
-import { motion } from "framer-motion"
-import { useParallaxTilt } from "@/lib/hooks/use-parallax-tilt"
-
-export function TiltCard() {
-  const { tiltProps, ref } = useParallaxTilt()
-  
-  return (
-    <motion.div 
-      ref={ref}
-      {...tiltProps}
-      className="p-8 bg-gradient-to-br from-purple-500 to-pink-500 rounded-xl"
-    >
-      <h3 className="text-white text-2xl font-bold">3D Tilt Card</h3>
-      <p className="text-white/80">Move your mouse over me!</p>
-    </motion.div>
-  )
-}
-```
+import { motion } from "framer-motion"import { useParallaxTilt } from "@/lib/hooks/use-parallax-tilt"export function TiltCard() {  const { tiltProps, ref } = useParallaxTilt()  return (    <motion.div       ref={ref}      {...tiltProps}      className="p-8 bg-gradient-to-br from-purple-500 to-pink-500 rounded-xl"    >      <h3 className="text-white text-2xl font-bold">3D Tilt Card</h3>      <p className="text-white/80">Move your mouse over me!</p>    </motion.div>  )}```
 
 ### With Custom Tilt Angle
 
 ```tsx
-import { motion } from "framer-motion"
-import { useParallaxTilt } from "@/lib/hooks/use-parallax-tilt"
-
-export function DramaticTilt() {
-  const { tiltProps, ref } = useParallaxTilt({
-    maxTilt: 25, // More dramatic tilt
-    shadowIntensity: 0.5,
-  })
-  
-  return (
-    <motion.div 
-      ref={ref}
-      {...tiltProps}
-      className="product-card"
-    >
-      <img src="/product.jpg" alt="Product" />
-      <h3>Premium Product</h3>
-    </motion.div>
-  )
-}
-```
+import { motion } from "framer-motion"import { useParallaxTilt } from "@/lib/hooks/use-parallax-tilt"export function DramaticTilt() {  const { tiltProps, ref } = useParallaxTilt({    maxTilt: 25,     shadowIntensity: 0.5,  })  return (    <motion.div       ref={ref}      {...tiltProps}      className="product-card"    >      <img src="/product.jpg" alt="Product" />      <h3>Premium Product</h3>    </motion.div>  )}```
 
 ### On Different Elements
 
 <Tabs items={['Card', 'Image', 'Button', 'Profile']}>
   <Tab value="Card">
     ```tsx
-    import { motion } from "framer-motion"
-    import { useParallaxTilt } from "@/lib/hooks/use-parallax-tilt"
-
-    export function ProductCard() {
-      const { tiltProps, ref } = useParallaxTilt()
-      
-      return (
-        <motion.article 
-          ref={ref}
-          {...tiltProps}
-          className="product-card"
-        >
-          <img src="/product.jpg" alt="Product" />
-          <h3>Product Name</h3>
-          <p>$99.99</p>
-        </motion.article>
-      )
-    }
-    ```
+    import { motion } from "framer-motion"    import { useParallaxTilt } from "@/lib/hooks/use-parallax-tilt"    export function ProductCard() {      const { tiltProps, ref } = useParallaxTilt()      return (        <motion.article           ref={ref}          {...tiltProps}          className="product-card"        >          <img src="/product.jpg" alt="Product" />          <h3>Product Name</h3>          <p>$99.99</p>        </motion.article>      )    }    ```
   </Tab>
   <Tab value="Image">
     ```tsx
-    import { motion } from "framer-motion"
-    import { useParallaxTilt } from "@/lib/hooks/use-parallax-tilt"
-
-    export function TiltImage() {
-      const { tiltProps, ref } = useParallaxTilt({ 
-        maxTilt: 10,
-        shadowIntensity: 0.4 
-      })
-      
-      return (
-        <motion.div 
-          ref={ref}
-          {...tiltProps}
-          className="overflow-hidden rounded-lg"
-        >
-          <img 
-            src="/hero.jpg" 
-            alt="Hero" 
-            className="w-full h-full object-cover"
-          />
-        </motion.div>
-      )
-    }
-    ```
+    import { motion } from "framer-motion"    import { useParallaxTilt } from "@/lib/hooks/use-parallax-tilt"    export function TiltImage() {      const { tiltProps, ref } = useParallaxTilt({         maxTilt: 10,        shadowIntensity: 0.4       })      return (        <motion.div           ref={ref}          {...tiltProps}          className="overflow-hidden rounded-lg"        >          <img             src="/hero.jpg"             alt="Hero"             className="w-full h-full object-cover"          />        </motion.div>      )    }    ```
   </Tab>
   <Tab value="Button">
     ```tsx
-    import { motion } from "framer-motion"
-    import { useParallaxTilt } from "@/lib/hooks/use-parallax-tilt"
-
-    export function TiltButton() {
-      const { tiltProps, ref } = useParallaxTilt({ 
-        maxTilt: 8,
-        stiffness: 400 
-      })
-      
-      return (
-        <motion.button 
-          ref={ref}
-          {...tiltProps}
-          className="inline-flex h-11 items-center gap-2 rounded-lg bg-blue-600 px-6 text-sm font-semibold text-white"
-        >
-          3D Button
-        </motion.button>
-      )
-    }
-    ```
+    import { motion } from "framer-motion"    import { useParallaxTilt } from "@/lib/hooks/use-parallax-tilt"    export function TiltButton() {      const { tiltProps, ref } = useParallaxTilt({         maxTilt: 8,        stiffness: 400       })      return (        <motion.button           ref={ref}          {...tiltProps}          className="inline-flex h-11 items-center gap-2 rounded-lg bg-blue-600 px-6 text-sm font-semibold text-white"        >          3D Button        </motion.button>      )    }    ```
   </Tab>
   <Tab value="Profile">
     ```tsx
-    import { motion } from "framer-motion"
-    import { useParallaxTilt } from "@/lib/hooks/use-parallax-tilt"
-
-    export function ProfileCard() {
-      const { tiltProps, ref } = useParallaxTilt({
-        maxTilt: 12,
-        shadowIntensity: 0.35,
-      })
-      
-      return (
-        <motion.div 
-          ref={ref}
-          {...tiltProps}
-          className="profile-card"
-        >
-          <img src="/avatar.jpg" alt="Avatar" className="avatar" />
-          <h3>John Doe</h3>
-          <p>Software Engineer</p>
-        </motion.div>
-      )
-    }
-    ```
+    import { motion } from "framer-motion"    import { useParallaxTilt } from "@/lib/hooks/use-parallax-tilt"    export function ProfileCard() {      const { tiltProps, ref } = useParallaxTilt({        maxTilt: 12,        shadowIntensity: 0.35,      })      return (        <motion.div           ref={ref}          {...tiltProps}          className="profile-card"        >          <img src="/avatar.jpg" alt="Avatar" className="avatar" />          <h3>John Doe</h3>          <p>Software Engineer</p>        </motion.div>      )    }    ```
   </Tab>
 </Tabs>
 
@@ -308,77 +121,29 @@ Returns an object containing:
 ### Subtle Tilt
 
 ```tsx
-const { tiltProps, ref } = useParallaxTilt({
-  maxTilt: 8,
-  shadowIntensity: 0.2,
-})
-```
+const { tiltProps, ref } = useParallaxTilt({  maxTilt: 8,  shadowIntensity: 0.2,})```
 
 ### Dramatic Tilt
 
 ```tsx
-const { tiltProps, ref } = useParallaxTilt({
-  maxTilt: 30,
-  shadowIntensity: 0.6,
-  stiffness: 200,
-})
-```
+const { tiltProps, ref } = useParallaxTilt({  maxTilt: 30,  shadowIntensity: 0.6,  stiffness: 200,})```
 
 ### Smooth & Slow
 
 ```tsx
-const { tiltProps, ref } = useParallaxTilt({
-  maxTilt: 15,
-  stiffness: 150,
-  damping: 40,
-})
-```
+const { tiltProps, ref } = useParallaxTilt({  maxTilt: 15,  stiffness: 150,  damping: 40,})```
 
 ### Snappy & Responsive
 
 ```tsx
-const { tiltProps, ref } = useParallaxTilt({
-  maxTilt: 20,
-  stiffness: 500,
-  damping: 20,
-})
-```
+const { tiltProps, ref } = useParallaxTilt({  maxTilt: 20,  stiffness: 500,  damping: 20,})```
 
 ## Advanced: Layered 3D Effect
 
 Create depth with nested elements:
 
 ```tsx
-import { motion } from "framer-motion"
-import { useParallaxTilt } from "@/lib/hooks/use-parallax-tilt"
-
-export function LayeredCard() {
-  const { tiltProps, ref } = useParallaxTilt()
-  
-  return (
-    <motion.div 
-      ref={ref}
-      {...tiltProps}
-      className="card"
-    >
-      {/* Background layer */}
-      <div style={{ transform: "translateZ(-20px)" }}>
-        Background
-      </div>
-      
-      {/* Middle layer */}
-      <div style={{ transform: "translateZ(0px)" }}>
-        Content
-      </div>
-      
-      {/* Front layer */}
-      <div style={{ transform: "translateZ(40px)" }}>
-        Floating Element
-      </div>
-    </motion.div>
-  )
-}
-```
+import { motion } from "framer-motion"import { useParallaxTilt } from "@/lib/hooks/use-parallax-tilt"export function LayeredCard() {  const { tiltProps, ref } = useParallaxTilt()  return (    <motion.div       ref={ref}      {...tiltProps}      className="card"    >      {}      <div style={{ transform: "translateZ(-20px)" }}>        Background      </div>      {}      <div style={{ transform: "translateZ(0px)" }}>        Content      </div>      {}      <div style={{ transform: "translateZ(40px)" }}>        Floating Element      </div>    </motion.div>  )}```
 
 ## Performance
 

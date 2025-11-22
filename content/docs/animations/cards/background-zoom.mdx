@@ -53,72 +53,19 @@ The `CardBackgroundZoom` creates a zoom effect on the background image while kee
     **Step 1: Add the utility**
 
     ```tsx title="lib/utils.ts"
-    import { clsx, type ClassValue } from "clsx"
-    import { twMerge } from "tailwind-merge"
-
-    export function cn(...inputs: ClassValue[]) {
-      return twMerge(clsx(inputs))
-    }
-    ```
+    import { clsx, type ClassValue } from "clsx"    import { twMerge } from "tailwind-merge"    export function cn(...inputs: ClassValue[]) {      return twMerge(clsx(inputs))    }    ```
 
     **Step 2: Copy the component**
 
     ```tsx title="components/animations/cards/background-zoom.tsx"
-    "use client"
-    
-    import * as React from "react"
-    import { motion, HTMLMotionProps } from "framer-motion"
-    import { cn } from "@/lib/utils"
-    
-    export interface CardBackgroundZoomProps extends Omit<HTMLMotionProps<"div">, "children"> {
-      backgroundImage: string
-      children: React.ReactNode
-      scale?: number
-      duration?: number
-    }
-    
-    export function CardBackgroundZoom({
-      backgroundImage,
-      children,
-      className,
-      scale = 1.1,
-      duration = 0.6,
-      ...props
-    }: CardBackgroundZoomProps) {
-      return (
-        <motion.div
-          className={cn("relative overflow-hidden", className)}
-          whileHover="hover"
-          initial="initial"
-          {...props}
-        >
-          <motion.div
-            className="absolute inset-0 bg-cover bg-center"
-            style={{ backgroundImage: `url(${backgroundImage})` }}
-            variants={{
-              initial: { scale: 1 },
-              hover: { scale },
-            }}
-            transition={{ duration, ease: "easeOut" }}
-          />
-          <div className="relative z-10">{children}</div>
-        </motion.div>
-      )
-    }
-    ```
+    "use client"    import * as React from "react"    import { motion, HTMLMotionProps } from "framer-motion"    import { cn } from "@/lib/utils"    export interface CardBackgroundZoomProps extends Omit<HTMLMotionProps<"div">, "children"> {      backgroundImage: string      children: React.ReactNode      scale?: number      duration?: number    }    export function CardBackgroundZoom({      backgroundImage,      children,      className,      scale = 1.1,      duration = 0.6,      ...props    }: CardBackgroundZoomProps) {      return (        <motion.div          className={cn("relative overflow-hidden", className)}          whileHover="hover"          initial="initial"          {...props}        >          <motion.div            className="absolute inset-0 bg-cover bg-center"            style={{ backgroundImage: `url(${backgroundImage})` }}            variants={{              initial: { scale: 1 },              hover: { scale },            }}            transition={{ duration, ease: "easeOut" }}          />          <div className="relative z-10">{children}</div>        </motion.div>      )    }    ```
   </Tab>
 </Tabs>
 
 ## Usage
 
 ```tsx
-import { CardBackgroundZoom } from "@/components/animations/cards/background-zoom"
-
-<CardBackgroundZoom backgroundImage="/image.jpg">
-  <h3>Card Title</h3>
-  <p>Content</p>
-</CardBackgroundZoom>
-```
+import { CardBackgroundZoom } from "@/components/animations/cards/background-zoom"<CardBackgroundZoom backgroundImage="/image.jpg">  <h3>Card Title</h3>  <p>Content</p></CardBackgroundZoom>```
 
 ## Examples
 

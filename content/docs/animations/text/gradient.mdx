@@ -36,81 +36,19 @@ The `TextGradient` creates smooth animated gradient text effects.
     **Step 1: Add the utility**
 
     ```tsx title="lib/utils.ts"
-    import { clsx, type ClassValue } from "clsx"
-    import { twMerge } from "tailwind-merge"
-
-    export function cn(...inputs: ClassValue[]) {
-      return twMerge(clsx(inputs))
-    }
-    ```
+    import { clsx, type ClassValue } from "clsx"    import { twMerge } from "tailwind-merge"    export function cn(...inputs: ClassValue[]) {      return twMerge(clsx(inputs))    }    ```
 
     **Step 2: Copy the component**
 
     ```tsx title="components/animations/text/gradient.tsx"
-    "use client"
-
-    import * as React from "react"
-    import { motion, HTMLMotionProps } from "framer-motion"
-    import { cn } from "@/lib/utils"
-
-    export interface TextGradientProps extends Omit<HTMLMotionProps<"p">, "children"> {
-      children: string
-      gradient?: string
-      animate?: boolean
-      duration?: number
-    }
-
-    export function TextGradient({
-      children,
-      className,
-      gradient = "linear-gradient(90deg, #3b82f6, #8b5cf6, #ec4899)",
-      animate: shouldAnimate = true,
-      duration = 3,
-      ...props
-    }: TextGradientProps) {
-      return (
-        <motion.p
-          className={cn(className)}
-          style={{
-            backgroundImage: gradient,
-            backgroundSize: shouldAnimate ? "200% auto" : "100% auto",
-            WebkitBackgroundClip: "text",
-            WebkitTextFillColor: "transparent",
-            backgroundClip: "text",
-          }}
-          animate={
-            shouldAnimate
-              ? {
-                  backgroundPosition: ["0% center", "200% center"],
-                }
-              : undefined
-          }
-          transition={
-            shouldAnimate
-              ? {
-                  duration,
-                  ease: "linear",
-                  repeat: Infinity,
-                }
-              : undefined
-          }
-          {...props}
-        >
-          {children}
-        </motion.p>
-      )
-    }
-    ```
+    "use client"    import * as React from "react"    import { motion, HTMLMotionProps } from "framer-motion"    import { cn } from "@/lib/utils"    export interface TextGradientProps extends Omit<HTMLMotionProps<"p">, "children"> {      children: string      gradient?: string      animate?: boolean      duration?: number    }    export function TextGradient({      children,      className,      gradient = "linear-gradient(90deg, #3b82f6, #8b5cf6, #ec4899)",      animate: shouldAnimate = true,      duration = 3,      ...props    }: TextGradientProps) {      return (        <motion.p          className={cn(className)}          style={{            backgroundImage: gradient,            backgroundSize: shouldAnimate ? "200% auto" : "100% auto",            WebkitBackgroundClip: "text",            WebkitTextFillColor: "transparent",            backgroundClip: "text",          }}          animate={            shouldAnimate              ? {                  backgroundPosition: ["0% center", "200% center"],                }              : undefined          }          transition={            shouldAnimate              ? {                  duration,                  ease: "linear",                  repeat: Infinity,                }              : undefined          }          {...props}        >          {children}        </motion.p>      )    }    ```
   </Tab>
 </Tabs>
 
 ## Usage
 
 ```tsx
-import { TextGradient } from "@/components/animations/text/gradient"
-
-<TextGradient>Gradient Text</TextGradient>
-```
+import { TextGradient } from "@/components/animations/text/gradient"<TextGradient>Gradient Text</TextGradient>```
 
 ## Examples
 

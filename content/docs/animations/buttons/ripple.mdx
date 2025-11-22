@@ -39,91 +39,12 @@ The `RippleButton` creates a Material Design-inspired ripple effect that expands
     **Step 1: Add the utility**
 
     ```tsx title="lib/utils.ts"
-    import { clsx, type ClassValue } from "clsx"
-    import { twMerge } from "tailwind-merge"
-
-    export function cn(...inputs: ClassValue[]) {
-      return twMerge(clsx(inputs))
-    }
-    ```
+    import { clsx, type ClassValue } from "clsx"    import { twMerge } from "tailwind-merge"    export function cn(...inputs: ClassValue[]) {      return twMerge(clsx(inputs))    }    ```
 
     **Step 2: Copy the component**
 
     ```tsx title="components/animations/buttons/ripple.tsx"
-    "use client"
-
-    import * as React from "react"
-    import { motion, HTMLMotionProps } from "framer-motion"
-    import { cn } from "@/lib/utils"
-
-    interface RippleButtonProps extends Omit<HTMLMotionProps<"button">, "onClick"> {
-      children: React.ReactNode
-      rippleColor?: string
-      duration?: number
-      onClick?: (e: React.MouseEvent<HTMLButtonElement>) => void
-    }
-
-    export function RippleButton({
-      children,
-      rippleColor = "rgba(255, 255, 255, 0.6)",
-      duration = 0.6,
-      onClick,
-      className,
-      ...props
-    }: RippleButtonProps) {
-      const [ripples, setRipples] = React.useState<Array<{x: number, y: number, id: number}>>([])
-      const buttonRef = React.useRef<HTMLButtonElement>(null)
-
-      const handleClick = (e: React.MouseEvent<HTMLButtonElement>) => {
-        const button = buttonRef.current
-        if (!button) return
-
-        const rect = button.getBoundingClientRect()
-        const x = e.clientX - rect.left
-        const y = e.clientY - rect.top
-
-        const newRipple = { x, y, id: Date.now() }
-        setRipples((prev) => [...prev, newRipple])
-
-        setTimeout(() => {
-          setRipples((prev) => prev.filter((r) => r.id !== newRipple.id))
-        }, duration * 1000)
-
-        onClick?.(e)
-      }
-
-      return (
-        <motion.button
-          ref={buttonRef}
-          className={cn("relative overflow-hidden", className)}
-          onClick={handleClick}
-          {...props}
-        >
-          {children}
-          {ripples.map((ripple) => (
-            <motion.span
-              key={ripple.id}
-              className="absolute rounded-full pointer-events-none"
-              style={{
-                left: ripple.x,
-                top: ripple.y,
-                backgroundColor: rippleColor,
-              }}
-              initial={{ width: 0, height: 0, opacity: 1 }}
-              animate={{
-                width: 500,
-                height: 500,
-                opacity: 0,
-                x: -250,
-                y: -250,
-              }}
-              transition={{ duration, ease: "easeOut" }}
-            />
-          ))}
-        </motion.button>
-      )
-    }
-    ```
+    "use client"    import * as React from "react"    import { motion, HTMLMotionProps } from "framer-motion"    import { cn } from "@/lib/utils"    interface RippleButtonProps extends Omit<HTMLMotionProps<"button">, "onClick"> {      children: React.ReactNode      rippleColor?: string      duration?: number      onClick?: (e: React.MouseEvent<HTMLButtonElement>) => void    }    export function RippleButton({      children,      rippleColor = "rgba(255, 255, 255, 0.6)",      duration = 0.6,      onClick,      className,      ...props    }: RippleButtonProps) {      const [ripples, setRipples] = React.useState<Array<{x: number, y: number, id: number}>>([])      const buttonRef = React.useRef<HTMLButtonElement>(null)      const handleClick = (e: React.MouseEvent<HTMLButtonElement>) => {        const button = buttonRef.current        if (!button) return        const rect = button.getBoundingClientRect()        const x = e.clientX - rect.left        const y = e.clientY - rect.top        const newRipple = { x, y, id: Date.now() }        setRipples((prev) => [...prev, newRipple])        setTimeout(() => {          setRipples((prev) => prev.filter((r) => r.id !== newRipple.id))        }, duration * 1000)        onClick?.(e)      }      return (        <motion.button          ref={buttonRef}          className={cn("relative overflow-hidden", className)}          onClick={handleClick}          {...props}        >          {children}          {ripples.map((ripple) => (            <motion.span              key={ripple.id}              className="absolute rounded-full pointer-events-none"              style={{                left: ripple.x,                top: ripple.y,                backgroundColor: rippleColor,              }}              initial={{ width: 0, height: 0, opacity: 1 }}              animate={{                width: 500,                height: 500,                opacity: 0,                x: -250,                y: -250,              }}              transition={{ duration, ease: "easeOut" }}            />          ))}        </motion.button>      )    }    ```
   </Tab>
 </Tabs>
 
@@ -132,52 +53,17 @@ The `RippleButton` creates a Material Design-inspired ripple effect that expands
 ### Basic Example
 
 ```tsx
-import { RippleButton } from "@/components/animations/buttons/ripple"
-
-<RippleButton className="inline-flex h-11 items-center gap-2 rounded-lg bg-blue-600 px-6 text-sm font-semibold text-white">
-  Click Me
-</RippleButton>
-```
+import { RippleButton } from "@/components/animations/buttons/ripple"<RippleButton className="inline-flex h-11 items-center gap-2 rounded-lg bg-blue-600 px-6 text-sm font-semibold text-white">  Click Me</RippleButton>```
 
 ### Custom Ripple Color
 
 ```tsx
-// Light ripple on dark button
-<RippleButton 
-  rippleColor="rgba(255, 255, 255, 0.3)"
-  className="inline-flex h-11 items-center gap-2 rounded-lg bg-gray-900 px-6 text-sm font-semibold text-white"
->
-  Dark Button
-</RippleButton>
-
-// Dark ripple on light button
-<RippleButton 
-  rippleColor="rgba(0, 0, 0, 0.2)"
-  className="inline-flex h-11 items-center gap-2 rounded-lg bg-white px-6 text-sm font-semibold text-gray-900 border border-neutral-200"
->
-  Light Button
-</RippleButton>
-```
+<RippleButton   rippleColor="rgba(255, 255, 255, 0.3)"  className="inline-flex h-11 items-center gap-2 rounded-lg bg-gray-900 px-6 text-sm font-semibold text-white">  Dark Button</RippleButton><RippleButton   rippleColor="rgba(0, 0, 0, 0.2)"  className="inline-flex h-11 items-center gap-2 rounded-lg bg-white px-6 text-sm font-semibold text-gray-900 border border-neutral-200">  Light Button</RippleButton>```
 
 ### Custom Duration
 
 ```tsx
-// Fast ripple
-<RippleButton 
-  duration={0.4}
-  className="inline-flex h-11 items-center gap-2 rounded-lg bg-blue-600 px-6 text-sm font-semibold text-white"
->
-  Fast
-</RippleButton>
-
-// Slow ripple
-<RippleButton 
-  duration={1}
-  className="inline-flex h-11 items-center gap-2 rounded-lg bg-blue-600 px-6 text-sm font-semibold text-white"
->
-  Slow
-</RippleButton>
-```
+<RippleButton   duration={0.4}  className="inline-flex h-11 items-center gap-2 rounded-lg bg-blue-600 px-6 text-sm font-semibold text-white">  Fast</RippleButton><RippleButton   duration={1}  className="inline-flex h-11 items-center gap-2 rounded-lg bg-blue-600 px-6 text-sm font-semibold text-white">  Slow</RippleButton>```
 
 ## Props
 
@@ -193,56 +79,22 @@ import { RippleButton } from "@/components/animations/buttons/ripple"
 ### Material Design Style
 
 ```tsx
-<RippleButton 
-  rippleColor="rgba(255, 255, 255, 0.4)"
-  duration={0.6}
-  className="inline-flex h-11 items-center gap-2 rounded-lg bg-blue-600 px-6 text-sm font-semibold text-white shadow-md hover:shadow-lg"
->
-  Material Button
-</RippleButton>
-```
+<RippleButton   rippleColor="rgba(255, 255, 255, 0.4)"  duration={0.6}  className="inline-flex h-11 items-center gap-2 rounded-lg bg-blue-600 px-6 text-sm font-semibold text-white shadow-md hover:shadow-lg">  Material Button</RippleButton>```
 
 ### Icon Button
 
 ```tsx
-<RippleButton 
-  rippleColor="rgba(59, 130, 246, 0.3)"
-  className="inline-flex h-11 w-11 items-center justify-center rounded-lg bg-blue-50"
->
-  <HeartIcon className="h-5 w-5 text-blue-600" />
-</RippleButton>
-```
+<RippleButton   rippleColor="rgba(59, 130, 246, 0.3)"  className="inline-flex h-11 w-11 items-center justify-center rounded-lg bg-blue-50">  <HeartIcon className="h-5 w-5 text-blue-600" /></RippleButton>```
 
 ### Colored Ripples
 
 ```tsx
-// Purple ripple
-<RippleButton 
-  rippleColor="rgba(168, 85, 247, 0.4)"
-  className="inline-flex h-11 items-center gap-2 rounded-lg bg-purple-600 px-6 text-sm font-semibold text-white"
->
-  Purple Ripple
-</RippleButton>
-
-// Green ripple
-<RippleButton 
-  rippleColor="rgba(34, 197, 94, 0.4)"
-  className="inline-flex h-11 items-center gap-2 rounded-lg bg-green-600 px-6 text-sm font-semibold text-white"
->
-  Green Ripple
-</RippleButton>
-```
+<RippleButton   rippleColor="rgba(168, 85, 247, 0.4)"  className="inline-flex h-11 items-center gap-2 rounded-lg bg-purple-600 px-6 text-sm font-semibold text-white">  Purple Ripple</RippleButton><RippleButton   rippleColor="rgba(34, 197, 94, 0.4)"  className="inline-flex h-11 items-center gap-2 rounded-lg bg-green-600 px-6 text-sm font-semibold text-white">  Green Ripple</RippleButton>```
 
 ## With Click Handler
 
 ```tsx
-<RippleButton 
-  onClick={() => console.log('Clicked!')}
-  className="inline-flex h-11 items-center gap-2 rounded-lg bg-blue-600 px-6 text-sm font-semibold text-white"
->
-  Click Me
-</RippleButton>
-```
+<RippleButton   onClick={() => console.log('Clicked!')}  className="inline-flex h-11 items-center gap-2 rounded-lg bg-blue-600 px-6 text-sm font-semibold text-white">  Click Me</RippleButton>```
 
 <Callout>
   **Note:** Requires `overflow-hidden` on the button for the ripple to be clipped properly.

@@ -35,53 +35,7 @@ Try it live! Adjust the speed and blur sliders, then click the button to see the
   </Tab>
   <Tab value="Manual">
     ```tsx title="components/animations/transitions/theme-toggle-slide-left.tsx"
-    "use client"
-
-    import * as React from "react"
-
-    export interface ThemeToggleSlideLeftProps {
-      children: React.ReactNode
-      onToggle?: () => void
-      theme?: "light" | "dark"
-      className?: string
-      speed?: number
-      blur?: number
-    }
-
-    export function ThemeToggleSlideLeft({
-      children,
-      onToggle,
-      theme,
-      className,
-      speed = 0.5,
-      blur = 0,
-    }: ThemeToggleSlideLeftProps) {
-      const handleClick = async () => {
-        if (!document.startViewTransition) {
-          onToggle?.()
-          return
-        }
-
-        document.documentElement.style.setProperty('--transition-speed', `${speed}s`)
-        document.documentElement.style.setProperty('--transition-blur', `${blur}px`)
-
-        document.documentElement.classList.add('theme-slide-left')
-
-        const transition = document.startViewTransition(() => {
-          onToggle?.()
-        })
-
-        await transition.finished
-        document.documentElement.classList.remove('theme-slide-left')
-      }
-
-      return (
-        <div onClick={handleClick} className={className}>
-          {children}
-        </div>
-      )
-    }
-    ```
+    "use client"    import * as React from "react"    export interface ThemeToggleSlideLeftProps {      children: React.ReactNode      onToggle?: () => void      theme?: "light" | "dark"      className?: string      speed?: number      blur?: number    }    export function ThemeToggleSlideLeft({      children,      onToggle,      theme,      className,      speed = 0.5,      blur = 0,    }: ThemeToggleSlideLeftProps) {      const handleClick = async () => {        if (!document.startViewTransition) {          onToggle?.()          return        }        document.documentElement.style.setProperty('--transition-speed', `${speed}s`)        document.documentElement.style.setProperty('--transition-blur', `${blur}px`)        document.documentElement.classList.add('theme-slide-left')        const transition = document.startViewTransition(() => {          onToggle?.()        })        await transition.finished        document.documentElement.classList.remove('theme-slide-left')      }      return (        <div onClick={handleClick} className={className}>          {children}        </div>      )    }    ```
 
     **Required CSS** (add to `globals.css`):
     ```css
@@ -128,26 +82,7 @@ Try it live! Adjust the speed and blur sliders, then click the button to see the
 ### With next-themes
 
 ```tsx
-"use client"
-
-import { useTheme } from "next-themes"
-import { ThemeToggleSlideLeft } from "@/components/animations/transitions/theme-toggle-slide-left"
-import { Button } from "@/components/ui/button"
-
-export function ThemeToggle() {
-  const { theme, setTheme } = useTheme()
-  
-  return (
-    <ThemeToggleSlideLeft 
-      onToggle={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
-      speed={0.5}
-      blur={0}
-    >
-      <Button>Toggle Theme</Button>
-    </ThemeToggleSlideLeft>
-  )
-}
-```
+"use client"import { useTheme } from "next-themes"import { ThemeToggleSlideLeft } from "@/components/animations/transitions/theme-toggle-slide-left"import { Button } from "@/components/ui/button"export function ThemeToggle() {  const { theme, setTheme } = useTheme()  return (    <ThemeToggleSlideLeft       onToggle={() => setTheme(theme === 'dark' ? 'light' : 'dark')}      speed={0.5}      blur={0}    >      <Button>Toggle Theme</Button>    </ThemeToggleSlideLeft>  )}```
 
 ## Props
 
@@ -165,26 +100,17 @@ export function ThemeToggle() {
 ### Fast Transition
 
 ```tsx
-<ThemeToggleSlideLeft speed={0.2}>
-  <Button>Toggle</Button>
-</ThemeToggleSlideLeft>
-```
+<ThemeToggleSlideLeft speed={0.2}>  <Button>Toggle</Button></ThemeToggleSlideLeft>```
 
 ### With Blur
 
 ```tsx
-<ThemeToggleSlideLeft speed={0.5} blur={10}>
-  <Button>Toggle</Button>
-</ThemeToggleSlideLeft>
-```
+<ThemeToggleSlideLeft speed={0.5} blur={10}>  <Button>Toggle</Button></ThemeToggleSlideLeft>```
 
 ### Slow with Heavy Blur
 
 ```tsx
-<ThemeToggleSlideLeft speed={1.2} blur={20}>
-  <Button>Toggle</Button>
-</ThemeToggleSlideLeft>
-```
+<ThemeToggleSlideLeft speed={1.2} blur={20}>  <Button>Toggle</Button></ThemeToggleSlideLeft>```
 
 ## Features
 

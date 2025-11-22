@@ -19,69 +19,7 @@ The `useSlideIn` hook creates a slide-in entrance animation from any direction (
 <Tabs items={['Manual', 'CLI']}>
   <Tab value="Manual">
     ```tsx title="lib/hooks/use-slide-in.ts"
-    import { type MotionProps } from "framer-motion"
-
-    export type SlideDirection = "left" | "right" | "up" | "down"
-
-    export interface UseSlideInOptions {
-      direction?: SlideDirection
-      distance?: number
-      duration?: number
-      delay?: number
-      initialOpacity?: number
-      ease?: string | number[]
-      viewport?: "once" | "always"
-    }
-
-    export function useSlideIn(options: UseSlideInOptions = {}): MotionProps {
-      const {
-        direction = "left",
-        distance = 50,
-        duration = 0.5,
-        delay = 0,
-        initialOpacity = 0,
-        ease = "easeOut",
-        viewport = "once",
-      } = options
-
-      const getInitialPosition = () => {
-        switch (direction) {
-          case "left":
-            return { x: -distance, y: 0 }
-          case "right":
-            return { x: distance, y: 0 }
-          case "up":
-            return { x: 0, y: -distance }
-          case "down":
-            return { x: 0, y: distance }
-          default:
-            return { x: -distance, y: 0 }
-        }
-      }
-
-      const initialPosition = getInitialPosition()
-
-      return {
-        initial: {
-          ...initialPosition,
-          opacity: initialOpacity,
-        },
-        whileInView: {
-          x: 0,
-          y: 0,
-          opacity: 1,
-        },
-        viewport: {
-          once: viewport === "once",
-        },
-        transition: {
-          duration,
-          delay,
-          ease,
-        },
-      }
-    }
-    ```
+    import { type MotionProps } from "framer-motion"    export type SlideDirection = "left" | "right" | "up" | "down"    export interface UseSlideInOptions {      direction?: SlideDirection      distance?: number      duration?: number      delay?: number      initialOpacity?: number      ease?: string | number[]      viewport?: "once" | "always"    }    export function useSlideIn(options: UseSlideInOptions = {}): MotionProps {      const {        direction = "left",        distance = 50,        duration = 0.5,        delay = 0,        initialOpacity = 0,        ease = "easeOut",        viewport = "once",      } = options      const getInitialPosition = () => {        switch (direction) {          case "left":            return { x: -distance, y: 0 }          case "right":            return { x: distance, y: 0 }          case "up":            return { x: 0, y: -distance }          case "down":            return { x: 0, y: distance }          default:            return { x: -distance, y: 0 }        }      }      const initialPosition = getInitialPosition()      return {        initial: {          ...initialPosition,          opacity: initialOpacity,        },        whileInView: {          x: 0,          y: 0,          opacity: 1,        },        viewport: {          once: viewport === "once",        },        transition: {          duration,          delay,          ease,        },      }    }    ```
   </Tab>
   <Tab value="CLI">
     ```bash
@@ -95,151 +33,38 @@ The `useSlideIn` hook creates a slide-in entrance animation from any direction (
 ### Basic Example
 
 ```tsx
-import { motion } from "framer-motion"
-import { useSlideIn } from "@/lib/hooks/use-slide-in"
-
-export function Card() {
-  const slideProps = useSlideIn({ direction: "left" })
-  
-  return (
-    <motion.div {...slideProps} className="card">
-      <h3>Slides in from left</h3>
-      <p>Content appears smoothly</p>
-    </motion.div>
-  )
-}
-```
+import { motion } from "framer-motion"import { useSlideIn } from "@/lib/hooks/use-slide-in"export function Card() {  const slideProps = useSlideIn({ direction: "left" })  return (    <motion.div {...slideProps} className="card">      <h3>Slides in from left</h3>      <p>Content appears smoothly</p>    </motion.div>  )}```
 
 ### All Directions
 
 <Tabs items={['From Left', 'From Right', 'From Top', 'From Bottom']}>
   <Tab value="From Left">
     ```tsx
-    import { motion } from "framer-motion"
-    import { useSlideIn } from "@/lib/hooks/use-slide-in"
-
-    export function SlideFromLeft() {
-      const slideProps = useSlideIn({ 
-        direction: "left",
-        distance: 100 
-      })
-      
-      return (
-        <motion.div {...slideProps}>
-          Slides from left
-        </motion.div>
-      )
-    }
-    ```
+    import { motion } from "framer-motion"    import { useSlideIn } from "@/lib/hooks/use-slide-in"    export function SlideFromLeft() {      const slideProps = useSlideIn({         direction: "left",        distance: 100       })      return (        <motion.div {...slideProps}>          Slides from left        </motion.div>      )    }    ```
   </Tab>
   <Tab value="From Right">
     ```tsx
-    import { motion } from "framer-motion"
-    import { useSlideIn } from "@/lib/hooks/use-slide-in"
-
-    export function SlideFromRight() {
-      const slideProps = useSlideIn({ 
-        direction: "right",
-        distance: 100 
-      })
-      
-      return (
-        <motion.div {...slideProps}>
-          Slides from right
-        </motion.div>
-      )
-    }
-    ```
+    import { motion } from "framer-motion"    import { useSlideIn } from "@/lib/hooks/use-slide-in"    export function SlideFromRight() {      const slideProps = useSlideIn({         direction: "right",        distance: 100       })      return (        <motion.div {...slideProps}>          Slides from right        </motion.div>      )    }    ```
   </Tab>
   <Tab value="From Top">
     ```tsx
-    import { motion } from "framer-motion"
-    import { useSlideIn } from "@/lib/hooks/use-slide-in"
-
-    export function SlideFromTop() {
-      const slideProps = useSlideIn({ 
-        direction: "up",
-        distance: 80 
-      })
-      
-      return (
-        <motion.div {...slideProps}>
-          Slides from top
-        </motion.div>
-      )
-    }
-    ```
+    import { motion } from "framer-motion"    import { useSlideIn } from "@/lib/hooks/use-slide-in"    export function SlideFromTop() {      const slideProps = useSlideIn({         direction: "up",        distance: 80       })      return (        <motion.div {...slideProps}>          Slides from top        </motion.div>      )    }    ```
   </Tab>
   <Tab value="From Bottom">
     ```tsx
-    import { motion } from "framer-motion"
-    import { useSlideIn } from "@/lib/hooks/use-slide-in"
-
-    export function SlideFromBottom() {
-      const slideProps = useSlideIn({ 
-        direction: "down",
-        distance: 80 
-      })
-      
-      return (
-        <motion.div {...slideProps}>
-          Slides from bottom
-        </motion.div>
-      )
-    }
-    ```
+    import { motion } from "framer-motion"    import { useSlideIn } from "@/lib/hooks/use-slide-in"    export function SlideFromBottom() {      const slideProps = useSlideIn({         direction: "down",        distance: 80       })      return (        <motion.div {...slideProps}>          Slides from bottom        </motion.div>      )    }    ```
   </Tab>
 </Tabs>
 
 ### Sidebar/Drawer
 
 ```tsx
-import { motion } from "framer-motion"
-import { useSlideIn } from "@/lib/hooks/use-slide-in"
-
-export function Sidebar({ isOpen }: { isOpen: boolean }) {
-  const slideProps = useSlideIn({ 
-    direction: "left",
-    distance: 300,
-    duration: 0.3 
-  })
-  
-  if (!isOpen) return null
-  
-  return (
-    <motion.aside {...slideProps} className="sidebar">
-      <nav>Navigation items</nav>
-    </motion.aside>
-  )
-}
-```
+import { motion } from "framer-motion"import { useSlideIn } from "@/lib/hooks/use-slide-in"export function Sidebar({ isOpen }: { isOpen: boolean }) {  const slideProps = useSlideIn({     direction: "left",    distance: 300,    duration: 0.3   })  if (!isOpen) return null  return (    <motion.aside {...slideProps} className="sidebar">      <nav>Navigation items</nav>    </motion.aside>  )}```
 
 ### Staggered List
 
 ```tsx
-import { motion } from "framer-motion"
-import { useSlideIn } from "@/lib/hooks/use-slide-in"
-
-export function FeatureList({ features }) {
-  return (
-    <div className="space-y-4">
-      {features.map((feature, index) => {
-        const slideProps = useSlideIn({ 
-          direction: "left",
-          delay: index * 0.1 
-        })
-        
-        return (
-          <motion.div key={feature.id} {...slideProps}>
-            <h3>{feature.title}</h3>
-            <p>{feature.description}</p>
-          </motion.div>
-        )
-      })}
-    </div>
-  )
-}
-```
+import { motion } from "framer-motion"import { useSlideIn } from "@/lib/hooks/use-slide-in"export function FeatureList({ features }) {  return (    <div className="space-y-4">      {features.map((feature, index) => {        const slideProps = useSlideIn({           direction: "left",          delay: index * 0.1         })        return (          <motion.div key={feature.id} {...slideProps}>            <h3>{feature.title}</h3>            <p>{feature.description}</p>          </motion.div>        )      })}    </div>  )}```
 
 ## API Reference
 
@@ -260,56 +85,31 @@ export function FeatureList({ features }) {
 ### Quick Slide
 
 ```tsx
-const slideProps = useSlideIn({
-  direction: "left",
-  distance: 30,
-  duration: 0.3,
-})
-```
+const slideProps = useSlideIn({  direction: "left",  distance: 30,  duration: 0.3,})```
 
 ### Dramatic Entrance
 
 ```tsx
-const slideProps = useSlideIn({
-  direction: "right",
-  distance: 200,
-  duration: 0.8,
-})
-```
+const slideProps = useSlideIn({  direction: "right",  distance: 200,  duration: 0.8,})```
 
 ### Notification
 
 ```tsx
-const slideProps = useSlideIn({
-  direction: "down",
-  distance: 100,
-  duration: 0.4,
-  ease: [0.68, -0.55, 0.265, 1.55],  // Bounce
-})
-```
+const slideProps = useSlideIn({  direction: "down",  distance: 100,  duration: 0.4,  ease: [0.68, -0.55, 0.265, 1.55],  })```
 
 ## Common Use Cases
 
 ### Mobile Menu
 
 ```tsx
-<motion.nav {...useSlideIn({ direction: "right", distance: 300 })}>
-  Menu items
-</motion.nav>
-```
+<motion.nav {...useSlideIn({ direction: "right", distance: 300 })}>  Menu items</motion.nav>```
 
 ### Toast Notification
 
 ```tsx
-<motion.div {...useSlideIn({ direction: "down", distance: 100 })}>
-  Notification message
-</motion.div>
-```
+<motion.div {...useSlideIn({ direction: "down", distance: 100 })}>  Notification message</motion.div>```
 
 ### Feature Cards
 
 ```tsx
-<motion.div {...useSlideIn({ direction: "left", delay: 0.2 })}>
-  Feature card
-</motion.div>
-```
+<motion.div {...useSlideIn({ direction: "left", delay: 0.2 })}>  Feature card</motion.div>```

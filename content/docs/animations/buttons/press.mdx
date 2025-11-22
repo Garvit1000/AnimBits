@@ -39,82 +39,24 @@ The `PressButton` component provides tactile press-down feedback when clicked. B
     **Step 1: Copy the hook**
 
     ```tsx title="lib/hooks/use-press.ts"
-    import { type MotionProps, type Easing } from "framer-motion";
-
-    export interface UsePressOptions {
-      pressScale?: number;
-      duration?: number;
-      ease?: Easing | Easing[];
-      addRotation?: boolean;
-      rotationAmount?: number;
-    }
-
-    export function usePress(options: UsePressOptions = {}): MotionProps {
-      const {
-        pressScale = 0.95,
-        duration = 0.1,
-        ease = "easeInOut",
-        addRotation = false,
-        rotationAmount = 2,
-      } = options;
-
-      return {
-        whileTap: {
-          scale: pressScale,
-          rotate: addRotation ? rotationAmount : 0,
-        },
-        transition: {
-          duration,
-          ease,
-        },
-      };
-    }
-    ```
+    import { type MotionProps, type Easing } from "framer-motion";    export interface UsePressOptions {      pressScale?: number;      duration?: number;      ease?: Easing | Easing[];      addRotation?: boolean;      rotationAmount?: number;    }    export function usePress(options: UsePressOptions = {}): MotionProps {      const {        pressScale = 0.95,        duration = 0.1,        ease = "easeInOut",        addRotation = false,        rotationAmount = 2,      } = options;      return {        whileTap: {          scale: pressScale,          rotate: addRotation ? rotationAmount : 0,        },        transition: {          duration,          ease,        },      };    }    ```
 
     **Step 2: Copy the component**
 
     ```tsx title="components/animations/buttons/press.tsx"
-    "use client"
-
-    import { motion, type HTMLMotionProps } from "framer-motion"
-    import { usePress } from "@/lib/hooks/use-press"
-
-    interface PressButtonProps extends Omit<HTMLMotionProps<"button">, "animate"> {
-      children: React.ReactNode
-      scale?: number
-    }
-
-    export function PressButton({
-      children,
-      scale = 0.95,
-      ...props
-    }: PressButtonProps) {
-      const pressProps = usePress({ pressScale: scale })
-      return <motion.button {...pressProps} {...props}>{children}</motion.button>
-    }
-    ```
+    "use client"    import { motion, type HTMLMotionProps } from "framer-motion"    import { usePress } from "@/lib/hooks/use-press"    interface PressButtonProps extends Omit<HTMLMotionProps<"button">, "animate"> {      children: React.ReactNode      scale?: number    }    export function PressButton({      children,      scale = 0.95,      ...props    }: PressButtonProps) {      const pressProps = usePress({ pressScale: scale })      return <motion.button {...pressProps} {...props}>{children}</motion.button>    }    ```
   </Tab>
 </Tabs>
 
 ## Usage
 
 ```tsx
-import { PressButton } from "@/components/animations/buttons/press"
-
-<PressButton className="inline-flex h-11 items-center gap-2 rounded-lg bg-blue-600 px-6 text-sm font-semibold text-white">
-  Click Me
-</PressButton>
-```
+import { PressButton } from "@/components/animations/buttons/press"<PressButton className="inline-flex h-11 items-center gap-2 rounded-lg bg-blue-600 px-6 text-sm font-semibold text-white">  Click Me</PressButton>```
 
 ### Custom Scale
 
 ```tsx
-// Subtle press
-<PressButton scale={0.98}>Subtle</PressButton>
-
-// Strong press
-<PressButton scale={0.90}>Strong</PressButton>
-```
+<PressButton scale={0.98}>Subtle</PressButton><PressButton scale={0.90}>Strong</PressButton>```
 
 ## Props
 
@@ -126,16 +68,7 @@ import { PressButton } from "@/components/animations/buttons/press"
 ## Examples
 
 ```tsx
-// Icon button
-<PressButton scale={0.92} className="p-3 bg-white rounded-full">
-  <PlusIcon />
-</PressButton>
-
-// Keyboard key style
-<PressButton scale={0.93} className="px-6 py-2.5 bg-gray-200 rounded shadow-md">
-  Enter
-</PressButton>
-```
+<PressButton scale={0.92} className="p-3 bg-white rounded-full">  <PlusIcon /></PressButton><PressButton scale={0.93} className="px-6 py-2.5 bg-gray-200 rounded shadow-md">  Enter</PressButton>```
 
 <Callout>
   **Tip:** Combine with other effects like lift or glow for richer interactions.

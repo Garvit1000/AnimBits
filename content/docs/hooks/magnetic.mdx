@@ -21,54 +21,7 @@ The `useMagnetic` hook creates a magnetic attraction effect where elements smoot
     Copy and paste the hook code into your project:
 
     ```tsx title="lib/hooks/use-magnetic.ts"
-    import * as React from "react"
-    import { useMotionValue, useSpring } from "framer-motion"
-
-    export interface UseMagneticOptions {
-      strength?: number
-      stiffness?: number
-      damping?: number
-    }
-
-    export function useMagnetic(options: UseMagneticOptions = {}) {
-      const { strength = 30, stiffness = 150, damping = 15 } = options
-
-      const ref = React.useRef<HTMLElement>(null)
-      const x = useMotionValue(0)
-      const y = useMotionValue(0)
-
-      const springConfig = { damping, stiffness }
-      const springX = useSpring(x, springConfig)
-      const springY = useSpring(y, springConfig)
-
-      const handleMouseMove = (e: React.MouseEvent<HTMLElement>) => {
-        if (!ref.current) return
-
-        const rect = ref.current.getBoundingClientRect()
-        const centerX = rect.left + rect.width / 2
-        const centerY = rect.top + rect.height / 2
-
-        const distanceX = e.clientX - centerX
-        const distanceY = e.clientY - centerY
-
-        x.set(distanceX * (strength / 100))
-        y.set(distanceY * (strength / 100))
-      }
-
-      const handleMouseLeave = () => {
-        x.set(0)
-        y.set(0)
-      }
-
-      const magneticProps = {
-        style: { x: springX, y: springY },
-        onMouseMove: handleMouseMove,
-        onMouseLeave: handleMouseLeave,
-      }
-
-      return { magneticProps, ref }
-    }
-    ```
+    import * as React from "react"    import { useMotionValue, useSpring } from "framer-motion"    export interface UseMagneticOptions {      strength?: number      stiffness?: number      damping?: number    }    export function useMagnetic(options: UseMagneticOptions = {}) {      const { strength = 30, stiffness = 150, damping = 15 } = options      const ref = React.useRef<HTMLElement>(null)      const x = useMotionValue(0)      const y = useMotionValue(0)      const springConfig = { damping, stiffness }      const springX = useSpring(x, springConfig)      const springY = useSpring(y, springConfig)      const handleMouseMove = (e: React.MouseEvent<HTMLElement>) => {        if (!ref.current) return        const rect = ref.current.getBoundingClientRect()        const centerX = rect.left + rect.width / 2        const centerY = rect.top + rect.height / 2        const distanceX = e.clientX - centerX        const distanceY = e.clientY - centerY        x.set(distanceX * (strength / 100))        y.set(distanceY * (strength / 100))      }      const handleMouseLeave = () => {        x.set(0)        y.set(0)      }      const magneticProps = {        style: { x: springX, y: springY },        onMouseMove: handleMouseMove,        onMouseLeave: handleMouseLeave,      }      return { magneticProps, ref }    }    ```
   </Tab>
   <Tab value="CLI">
     ```bash
@@ -82,137 +35,31 @@ The `useMagnetic` hook creates a magnetic attraction effect where elements smoot
 ### Basic Example
 
 ```tsx
-import { motion } from "framer-motion"
-import { useMagnetic } from "@/lib/hooks/use-magnetic"
-
-export function MagneticButton() {
-  const { magneticProps, ref } = useMagnetic()
-  
-  return (
-    <motion.button 
-      ref={ref}
-      {...magneticProps}
-      className="inline-flex h-11 items-center gap-2 rounded-lg bg-blue-600 px-6 text-sm font-semibold text-white"
-    >
-      Hover me - I follow your cursor!
-    </motion.button>
-  )
-}
-```
+import { motion } from "framer-motion"import { useMagnetic } from "@/lib/hooks/use-magnetic"export function MagneticButton() {  const { magneticProps, ref } = useMagnetic()  return (    <motion.button       ref={ref}      {...magneticProps}      className="inline-flex h-11 items-center gap-2 rounded-lg bg-blue-600 px-6 text-sm font-semibold text-white"    >      Hover me - I follow your cursor!    </motion.button>  )}```
 
 ### With Custom Strength
 
 ```tsx
-import { motion } from "framer-motion"
-import { useMagnetic } from "@/lib/hooks/use-magnetic"
-
-export function StrongMagnet() {
-  const { magneticProps, ref } = useMagnetic({
-    strength: 50, // Stronger attraction
-    stiffness: 200,
-    damping: 20,
-  })
-  
-  return (
-    <motion.div 
-      ref={ref}
-      {...magneticProps}
-      className="card"
-    >
-      <h3>Strong Magnetic Card</h3>
-      <p>Follows cursor more aggressively</p>
-    </motion.div>
-  )
-}
-```
+import { motion } from "framer-motion"import { useMagnetic } from "@/lib/hooks/use-magnetic"export function StrongMagnet() {  const { magneticProps, ref } = useMagnetic({    strength: 50,     stiffness: 200,    damping: 20,  })  return (    <motion.div       ref={ref}      {...magneticProps}      className="card"    >      <h3>Strong Magnetic Card</h3>      <p>Follows cursor more aggressively</p>    </motion.div>  )}```
 
 ### On Different Elements
 
 <Tabs items={['Button', 'Card', 'Icon', 'Link']}>
   <Tab value="Button">
     ```tsx
-    import { motion } from "framer-motion"
-    import { useMagnetic } from "@/lib/hooks/use-magnetic"
-
-    export function MagneticCTA() {
-      const { magneticProps, ref } = useMagnetic({ strength: 40 })
-      
-      return (
-        <motion.button 
-          ref={ref}
-          {...magneticProps}
-          className="cta-button"
-        >
-          Get Started
-        </motion.button>
-      )
-    }
-    ```
+    import { motion } from "framer-motion"    import { useMagnetic } from "@/lib/hooks/use-magnetic"    export function MagneticCTA() {      const { magneticProps, ref } = useMagnetic({ strength: 40 })      return (        <motion.button           ref={ref}          {...magneticProps}          className="cta-button"        >          Get Started        </motion.button>      )    }    ```
   </Tab>
   <Tab value="Card">
     ```tsx
-    import { motion } from "framer-motion"
-    import { useMagnetic } from "@/lib/hooks/use-magnetic"
-
-    export function MagneticCard() {
-      const { magneticProps, ref } = useMagnetic()
-      
-      return (
-        <motion.div 
-          ref={ref}
-          {...magneticProps}
-          className="product-card"
-        >
-          <img src="/product.jpg" alt="Product" />
-          <h3>Product Name</h3>
-        </motion.div>
-      )
-    }
-    ```
+    import { motion } from "framer-motion"    import { useMagnetic } from "@/lib/hooks/use-magnetic"    export function MagneticCard() {      const { magneticProps, ref } = useMagnetic()      return (        <motion.div           ref={ref}          {...magneticProps}          className="product-card"        >          <img src="/product.jpg" alt="Product" />          <h3>Product Name</h3>        </motion.div>      )    }    ```
   </Tab>
   <Tab value="Icon">
     ```tsx
-    import { motion } from "framer-motion"
-    import { useMagnetic } from "@/lib/hooks/use-magnetic"
-
-    export function MagneticIcon() {
-      const { magneticProps, ref } = useMagnetic({ 
-        strength: 60,
-        stiffness: 300 
-      })
-      
-      return (
-        <motion.div 
-          ref={ref}
-          {...magneticProps}
-          className="icon-wrapper"
-        >
-          <HeartIcon />
-        </motion.div>
-      )
-    }
-    ```
+    import { motion } from "framer-motion"    import { useMagnetic } from "@/lib/hooks/use-magnetic"    export function MagneticIcon() {      const { magneticProps, ref } = useMagnetic({         strength: 60,        stiffness: 300       })      return (        <motion.div           ref={ref}          {...magneticProps}          className="icon-wrapper"        >          <HeartIcon />        </motion.div>      )    }    ```
   </Tab>
   <Tab value="Link">
     ```tsx
-    import { motion } from "framer-motion"
-    import { useMagnetic } from "@/lib/hooks/use-magnetic"
-
-    export function MagneticLink() {
-      const { magneticProps, ref } = useMagnetic({ strength: 25 })
-      
-      return (
-        <motion.a 
-          ref={ref}
-          {...magneticProps}
-          href="/about"
-          className="nav-link"
-        >
-          About Us
-        </motion.a>
-      )
-    }
-    ```
+    import { motion } from "framer-motion"    import { useMagnetic } from "@/lib/hooks/use-magnetic"    export function MagneticLink() {      const { magneticProps, ref } = useMagnetic({ strength: 25 })      return (        <motion.a           ref={ref}          {...magneticProps}          href="/about"          className="nav-link"        >          About Us        </motion.a>      )    }    ```
   </Tab>
 </Tabs>
 
@@ -264,67 +111,29 @@ Returns an object containing:
 ### Subtle Magnetic Effect
 
 ```tsx
-const { magneticProps, ref } = useMagnetic({
-  strength: 15,
-  stiffness: 100,
-  damping: 20,
-})
-```
+const { magneticProps, ref } = useMagnetic({  strength: 15,  stiffness: 100,  damping: 20,})```
 
 ### Strong Magnetic Effect
 
 ```tsx
-const { magneticProps, ref } = useMagnetic({
-  strength: 60,
-  stiffness: 250,
-  damping: 10,
-})
-```
+const { magneticProps, ref } = useMagnetic({  strength: 60,  stiffness: 250,  damping: 10,})```
 
 ### Smooth & Slow
 
 ```tsx
-const { magneticProps, ref } = useMagnetic({
-  strength: 40,
-  stiffness: 80,
-  damping: 25,
-})
-```
+const { magneticProps, ref } = useMagnetic({  strength: 40,  stiffness: 80,  damping: 25,})```
 
 ### Snappy & Responsive
 
 ```tsx
-const { magneticProps, ref } = useMagnetic({
-  strength: 35,
-  stiffness: 300,
-  damping: 15,
-})
-```
+const { magneticProps, ref } = useMagnetic({  strength: 35,  stiffness: 300,  damping: 15,})```
 
 ## Combining with Other Effects
 
 Combine magnetic effect with other animations:
 
 ```tsx
-import { useMagnetic } from "@/lib/hooks/use-magnetic"
-import { useHoverLift } from "@/lib/hooks/use-hover-lift"
-
-export function MagneticLiftButton() {
-  const { magneticProps, ref } = useMagnetic()
-  const liftProps = useHoverLift()
-  
-  return (
-    <motion.button 
-      ref={ref}
-      {...magneticProps}
-      {...liftProps}
-      className="fancy-button"
-    >
-      Magnetic + Lift!
-    </motion.button>
-  )
-}
-```
+import { useMagnetic } from "@/lib/hooks/use-magnetic"import { useHoverLift } from "@/lib/hooks/use-hover-lift"export function MagneticLiftButton() {  const { magneticProps, ref } = useMagnetic()  const liftProps = useHoverLift()  return (    <motion.button       ref={ref}      {...magneticProps}      {...liftProps}      className="fancy-button"    >      Magnetic + Lift!    </motion.button>  )}```
 
 ## Performance Tips
 

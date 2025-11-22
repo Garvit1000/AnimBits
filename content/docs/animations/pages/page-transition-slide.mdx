@@ -64,89 +64,12 @@ export function SlidePreview() {
     **Step 1:** Create the component
 
     ```tsx title="components/animations/pages/page-transition-slide.tsx"
-    "use client"
-
-    import * as React from "react"
-    import { usePathname } from "next/navigation"
-
-    export type SlideDirection = "left" | "right" | "top" | "bottom"
-
-    export interface PageTransitionSlideProps {
-      children: React.ReactNode
-      direction?: SlideDirection
-      duration?: number
-      ease?: string
-    }
-
-    export function PageTransitionSlide({
-      children,
-      direction = "left",
-      duration = 0.4,
-      ease = "ease-in-out",
-    }: PageTransitionSlideProps) {
-      const pathname = usePathname()
-
-      React.useEffect(() => {
-        if (!document.startViewTransition) return
-
-        document.documentElement.style.setProperty('--page-transition-duration', `${duration}s`)
-        document.documentElement.style.setProperty('--page-transition-ease', ease)
-        document.documentElement.setAttribute('data-slide-direction', direction)
-      }, [pathname, duration, ease, direction])
-
-      return <>{children}</>
-    }
-    ```
+    "use client"    import * as React from "react"    import { usePathname } from "next/navigation"    export type SlideDirection = "left" | "right" | "top" | "bottom"    export interface PageTransitionSlideProps {      children: React.ReactNode      direction?: SlideDirection      duration?: number      ease?: string    }    export function PageTransitionSlide({      children,      direction = "left",      duration = 0.4,      ease = "ease-in-out",    }: PageTransitionSlideProps) {      const pathname = usePathname()      React.useEffect(() => {        if (!document.startViewTransition) return        document.documentElement.style.setProperty('--page-transition-duration', `${duration}s`)        document.documentElement.style.setProperty('--page-transition-ease', ease)        document.documentElement.setAttribute('data-slide-direction', direction)      }, [pathname, duration, ease, direction])      return <>{children}</>    }    ```
 
     **Step 2:** Create navigation wrapper
 
     ```tsx title="components/animations/pages/page-transition-link.tsx"
-    "use client"
-
-    import * as React from "react"
-    import { useRouter } from "next/navigation"
-    import Link, { LinkProps } from "next/link"
-
-    interface PageTransitionLinkProps extends LinkProps {
-      children: React.ReactNode
-      className?: string
-    }
-
-    export function PageTransitionLink({
-      href,
-      children,
-      className,
-      ...props
-    }: PageTransitionLinkProps) {
-      const router = useRouter()
-
-      const handleClick = async (e: React.MouseEvent<HTMLAnchorElement>) => {
-        e.preventDefault()
-
-        if (!document.startViewTransition) {
-          router.push(href.toString())
-          return
-        }
-
-        const transition = document.startViewTransition(() => {
-          router.push(href.toString())
-        })
-
-        await transition.ready
-      }
-
-      return (
-        <Link 
-          href={href} 
-          onClick={handleClick} 
-          className={className}
-          {...props}
-        >
-          {children}
-        </Link>
-      )
-    }
-    ```
+    "use client"    import * as React from "react"    import { useRouter } from "next/navigation"    import Link, { LinkProps } from "next/link"    interface PageTransitionLinkProps extends LinkProps {      children: React.ReactNode      className?: string    }    export function PageTransitionLink({      href,      children,      className,      ...props    }: PageTransitionLinkProps) {      const router = useRouter()      const handleClick = async (e: React.MouseEvent<HTMLAnchorElement>) => {        e.preventDefault()        if (!document.startViewTransition) {          router.push(href.toString())          return        }        const transition = document.startViewTransition(() => {          router.push(href.toString())        })        await transition.ready      }      return (        <Link           href={href}           onClick={handleClick}           className={className}          {...props}        >          {children}        </Link>      )    }    ```
 
     **Step 3:** Add required CSS to `globals.css`
 
@@ -287,79 +210,19 @@ export function SlidePreview() {
 Wrap your application with the `PageTransitionSlide` component:
 
 ```tsx title="app/layout.tsx"
-import { PageTransitionSlide } from "@/components/animations/pages/page-transition-slide"
-
-export default function RootLayout({
-  children,
-}: {
-  children: React.ReactNode
-}) {
-  return (
-    <html lang="en">
-      <body>
-        <PageTransitionSlide direction="left">
-          {children}
-        </PageTransitionSlide>
-      </body>
-    </html>
-  )
-}
-```
+import { PageTransitionSlide } from "@/components/animations/pages/page-transition-slide"export default function RootLayout({  children,}: {  children: React.ReactNode}) {  return (    <html lang="en">      <body>        <PageTransitionSlide direction="left">          {children}        </PageTransitionSlide>      </body>    </html>  )}```
 
 ### Using Transition Links
 
 Replace standard Next.js `Link` components with `PageTransitionLink`:
 
 ```tsx
-import { PageTransitionLink } from "@/components/animations/pages/page-transition-link"
-
-export function Navigation() {
-  return (
-    <nav className="flex gap-4">
-      <PageTransitionLink href="/" className="hover:text-blue-600">
-        Home
-      </PageTransitionLink>
-      <PageTransitionLink href="/about" className="hover:text-blue-600">
-        About
-      </PageTransitionLink>
-      <PageTransitionLink href="/contact" className="hover:text-blue-600">
-        Contact
-      </PageTransitionLink>
-    </nav>
-  )
-}
-```
+import { PageTransitionLink } from "@/components/animations/pages/page-transition-link"export function Navigation() {  return (    <nav className="flex gap-4">      <PageTransitionLink href="/" className="hover:text-blue-600">        Home      </PageTransitionLink>      <PageTransitionLink href="/about" className="hover:text-blue-600">        About      </PageTransitionLink>      <PageTransitionLink href="/contact" className="hover:text-blue-600">        Contact      </PageTransitionLink>    </nav>  )}```
 
 ### Programmatic Navigation
 
 ```tsx
-"use client"
-
-import { useRouter } from "next/navigation"
-
-export function NavigateButton() {
-  const router = useRouter()
-
-  const handleNavigate = async () => {
-    if (!document.startViewTransition) {
-      router.push('/destination')
-      return
-    }
-
-    const transition = document.startViewTransition(() => {
-      router.push('/destination')
-    })
-
-    await transition.ready
-  }
-
-  return (
-    <button onClick={handleNavigate} className="inline-flex h-11 items-center gap-2 rounded-lg bg-blue-600 px-6 text-sm font-semibold text-white">
-      Navigate
-    </button>
-  )
-}
-```
+"use client"import { useRouter } from "next/navigation"export function NavigateButton() {  const router = useRouter()  const handleNavigate = async () => {    if (!document.startViewTransition) {      router.push('/destination')      return    }    const transition = document.startViewTransition(() => {      router.push('/destination')    })    await transition.ready  }  return (    <button onClick={handleNavigate} className="inline-flex h-11 items-center gap-2 rounded-lg bg-blue-600 px-6 text-sm font-semibold text-white">      Navigate    </button>  )}```
 
 ## Props
 
@@ -386,80 +249,42 @@ export function NavigateButton() {
 ### Slide from Left
 
 ```tsx
-<PageTransitionSlide direction="left">
-  {children}
-</PageTransitionSlide>
-```
+<PageTransitionSlide direction="left">  {children}</PageTransitionSlide>```
 
 ### Slide from Right
 
 ```tsx
-<PageTransitionSlide direction="right">
-  {children}
-</PageTransitionSlide>
-```
+<PageTransitionSlide direction="right">  {children}</PageTransitionSlide>```
 
 ### Slide from Top
 
 ```tsx
-<PageTransitionSlide direction="top">
-  {children}
-</PageTransitionSlide>
-```
+<PageTransitionSlide direction="top">  {children}</PageTransitionSlide>```
 
 ### Slide from Bottom
 
 ```tsx
-<PageTransitionSlide direction="bottom">
-  {children}
-</PageTransitionSlide>
-```
+<PageTransitionSlide direction="bottom">  {children}</PageTransitionSlide>```
 
 ### Fast Slide
 
 ```tsx
-<PageTransitionSlide 
-  direction="left"
-  duration={0.2}
->
-  {children}
-</PageTransitionSlide>
-```
+<PageTransitionSlide   direction="left"  duration={0.2}>  {children}</PageTransitionSlide>```
 
 ### Slow Slide
 
 ```tsx
-<PageTransitionSlide 
-  direction="right"
-  duration={0.8}
->
-  {children}
-</PageTransitionSlide>
-```
+<PageTransitionSlide   direction="right"  duration={0.8}>  {children}</PageTransitionSlide>```
 
 ### Custom Easing
 
 ```tsx
-<PageTransitionSlide 
-  direction="left"
-  duration={0.5}
-  ease="cubic-bezier(0.4, 0, 0.2, 1)"
->
-  {children}
-</PageTransitionSlide>
-```
+<PageTransitionSlide   direction="left"  duration={0.5}  ease="cubic-bezier(0.4, 0, 0.2, 1)">  {children}</PageTransitionSlide>```
 
 ### Bouncy Slide
 
 ```tsx
-<PageTransitionSlide 
-  direction="bottom"
-  duration={0.6}
-  ease="cubic-bezier(0.68, -0.55, 0.265, 1.55)"
->
-  {children}
-</PageTransitionSlide>
-```
+<PageTransitionSlide   direction="bottom"  duration={0.6}  ease="cubic-bezier(0.68, -0.55, 0.265, 1.55)">  {children}</PageTransitionSlide>```
 
 ## Advanced Usage
 
@@ -468,56 +293,17 @@ export function NavigateButton() {
 You can change the slide direction based on the navigation path:
 
 ```tsx
-"use client"
-
-import { useState, useEffect } from "react"
-import { usePathname } from "next/navigation"
-import { PageTransitionSlide, SlideDirection } from "@/components/animations/pages/page-transition-slide"
-
-export function DynamicSlideTransition({ children }: { children: React.ReactNode }) {
-  const pathname = usePathname()
-  const [direction, setDirection] = useState<SlideDirection>("left")
-
-  useEffect(() => {
-    // Example: slide right when going back
-    if (pathname.includes('/back')) {
-      setDirection('right')
-    } else {
-      setDirection('left')
-    }
-  }, [pathname])
-
-  return (
-    <PageTransitionSlide direction={direction}>
-      {children}
-    </PageTransitionSlide>
-  )
-}
-```
+"use client"import { useState, useEffect } from "react"import { usePathname } from "next/navigation"import { PageTransitionSlide, SlideDirection } from "@/components/animations/pages/page-transition-slide"export function DynamicSlideTransition({ children }: { children: React.ReactNode }) {  const pathname = usePathname()  const [direction, setDirection] = useState<SlideDirection>("left")  useEffect(() => {    if (pathname.includes('/back')) {      setDirection('right')    } else {      setDirection('left')    }  }, [pathname])  return (    <PageTransitionSlide direction={direction}>      {children}    </PageTransitionSlide>  )}```
 
 ### Per-Page Custom Directions
 
 Use data attributes to customize transitions per page:
 
 ```tsx title="app/page-1/page.tsx"
-export default function Page1() {
-  return (
-    <div data-slide-direction="left">
-      <h1>Page 1</h1>
-    </div>
-  )
-}
-```
+export default function Page1() {  return (    <div data-slide-direction="left">      <h1>Page 1</h1>    </div>  )}```
 
 ```tsx title="app/page-2/page.tsx"
-export default function Page2() {
-  return (
-    <div data-slide-direction="top">
-      <h1>Page 2</h1>
-    </div>
-  )
-}
-```
+export default function Page2() {  return (    <div data-slide-direction="top">      <h1>Page 2</h1>    </div>  )}```
 
 ### Parallax Effect
 
@@ -564,34 +350,7 @@ Combine slide and fade for a more dynamic effect:
 Track navigation direction based on browser history:
 
 ```tsx
-"use client"
-
-import { useState, useEffect } from "react"
-import { usePathname } from "next/navigation"
-import { PageTransitionSlide, SlideDirection } from "@/components/animations/pages/page-transition-slide"
-
-export function HistoryAwareSlide({ children }: { children: React.ReactNode }) {
-  const pathname = usePathname()
-  const [direction, setDirection] = useState<SlideDirection>("left")
-  const [prevPath, setPrevPath] = useState(pathname)
-
-  useEffect(() => {
-    // Simple heuristic: if path is shorter, likely going back
-    if (pathname.length < prevPath.length) {
-      setDirection('right')
-    } else {
-      setDirection('left')
-    }
-    setPrevPath(pathname)
-  }, [pathname, prevPath])
-
-  return (
-    <PageTransitionSlide direction={direction}>
-      {children}
-    </PageTransitionSlide>
-  )
-}
-```
+"use client"import { useState, useEffect } from "react"import { usePathname } from "next/navigation"import { PageTransitionSlide, SlideDirection } from "@/components/animations/pages/page-transition-slide"export function HistoryAwareSlide({ children }: { children: React.ReactNode }) {  const pathname = usePathname()  const [direction, setDirection] = useState<SlideDirection>("left")  const [prevPath, setPrevPath] = useState(pathname)  useEffect(() => {    if (pathname.length < prevPath.length) {      setDirection('right')    } else {      setDirection('left')    }    setPrevPath(pathname)  }, [pathname, prevPath])  return (    <PageTransitionSlide direction={direction}>      {children}    </PageTransitionSlide>  )}```
 
 ## Features
 

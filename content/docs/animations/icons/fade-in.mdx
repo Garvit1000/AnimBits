@@ -46,54 +46,14 @@ import { Sparkles } from "lucide-react"
   </Tab>
   <Tab value="Manual">
     ```tsx title="components/animations/icons/fade-in.tsx"
-    "use client"
-
-    import * as motion from "framer-motion/client"
-    import type { HTMLMotionProps } from "framer-motion"
-    import { fadeInVariants, createDelayedTransition } from "@/lib/animation-presets"
-
-    interface FadeInIconProps extends Omit<HTMLMotionProps<"div">, "animate"> {
-      children: React.ReactNode
-      delay?: number
-      duration?: number
-    }
-
-    export function FadeInIcon({
-      children,
-      delay = 0,
-      duration = 0.3,
-      ...props
-    }: FadeInIconProps) {
-      return (
-        <motion.div
-          variants={fadeInVariants}
-          initial="hidden"
-          animate="visible"
-          transition={createDelayedTransition(delay, duration)}
-          {...props}
-        >
-          {children}
-        </motion.div>
-      )
-    }
-    ```
+    "use client"    import * as motion from "framer-motion/client"    import type { HTMLMotionProps } from "framer-motion"    import { fadeInVariants, createDelayedTransition } from "@/lib/animation-presets"    interface FadeInIconProps extends Omit<HTMLMotionProps<"div">, "animate"> {      children: React.ReactNode      delay?: number      duration?: number    }    export function FadeInIcon({      children,      delay = 0,      duration = 0.3,      ...props    }: FadeInIconProps) {      return (        <motion.div          variants={fadeInVariants}          initial="hidden"          animate="visible"          transition={createDelayedTransition(delay, duration)}          {...props}        >          {children}        </motion.div>      )    }    ```
   </Tab>
 </Tabs>
 
 ## Usage
 
 ```tsx
-import { FadeInIcon } from "@/components/animations/icons/fade-in"
-import { Sparkles } from "lucide-react"
-
-export default function Example() {
-  return (
-    <FadeInIcon delay={0.2} duration={0.3}>
-      <Sparkles className="w-6 h-6" />
-    </FadeInIcon>
-  )
-}
-```
+import { FadeInIcon } from "@/components/animations/icons/fade-in"import { Sparkles } from "lucide-react"export default function Example() {  return (    <FadeInIcon delay={0.2} duration={0.3}>      <Sparkles className="w-6 h-6" />    </FadeInIcon>  )}```
 
 ## Examples
 

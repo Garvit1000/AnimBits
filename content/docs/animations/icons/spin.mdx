@@ -46,57 +46,14 @@ import { Loader } from "lucide-react"
   </Tab>
   <Tab value="Manual">
     ```tsx title="components/animations/icons/spin.tsx"
-    "use client"
-
-    import * as motion from "framer-motion/client"
-    import type { HTMLMotionProps } from "framer-motion"
-
-    interface SpinIconProps extends Omit<HTMLMotionProps<"div">, "animate"> {
-      children: React.ReactNode
-      duration?: number
-      direction?: "clockwise" | "counterclockwise"
-    }
-
-    export function SpinIcon({
-      children,
-      duration = 1,
-      direction = "clockwise",
-      ...props
-    }: SpinIconProps) {
-      const rotation = direction === "clockwise" ? 360 : -360
-
-      return (
-        <motion.div
-          animate={{ rotate: rotation }}
-          transition={{
-            duration,
-            ease: "linear",
-            repeat: Infinity,
-          }}
-          {...props}
-        >
-          {children}
-        </motion.div>
-      )
-    }
-    ```
+    "use client"    import * as motion from "framer-motion/client"    import type { HTMLMotionProps } from "framer-motion"    interface SpinIconProps extends Omit<HTMLMotionProps<"div">, "animate"> {      children: React.ReactNode      duration?: number      direction?: "clockwise" | "counterclockwise"    }    export function SpinIcon({      children,      duration = 1,      direction = "clockwise",      ...props    }: SpinIconProps) {      const rotation = direction === "clockwise" ? 360 : -360      return (        <motion.div          animate={{ rotate: rotation }}          transition={{            duration,            ease: "linear",            repeat: Infinity,          }}          {...props}        >          {children}        </motion.div>      )    }    ```
   </Tab>
 </Tabs>
 
 ## Usage
 
 ```tsx
-import { SpinIcon } from "@/components/animations/icons/spin"
-import { Loader } from "lucide-react"
-
-export default function Example() {
-  return (
-    <SpinIcon duration={1} direction="clockwise">
-      <Loader className="w-6 h-6" />
-    </SpinIcon>
-  )
-}
-```
+import { SpinIcon } from "@/components/animations/icons/spin"import { Loader } from "lucide-react"export default function Example() {  return (    <SpinIcon duration={1} direction="clockwise">      <Loader className="w-6 h-6" />    </SpinIcon>  )}```
 
 ## Examples
 
