@@ -518,6 +518,10 @@
         {
           "path": "registry/new-york/animations/icons/stroke-draw.tsx",
           "type": "registry:component"
+        },
+        {
+          "path": "lib/use-stroke-draw.ts",
+          "type": "registry:lib"
         }
       ]
     },
@@ -539,10 +543,11 @@
         {
           "path": "registry/new-york/animations/buttons/press.tsx",
           "type": "registry:component"
+        },
+        {
+          "path": "lib/use-press.ts",
+          "type": "registry:lib"
         }
-      ],
-      "registryDependencies": [
-        "https://animbits.dev/r/hooks-use-press.json"
       ]
     },
     {
@@ -563,10 +568,11 @@
         {
           "path": "registry/new-york/animations/buttons/glow.tsx",
           "type": "registry:component"
+        },
+        {
+          "path": "lib/use-hover-glow.ts",
+          "type": "registry:lib"
         }
-      ],
-      "registryDependencies": [
-        "https://animbits.dev/r/hooks-use-hover-glow.json"
       ]
     },
     {
@@ -587,10 +593,11 @@
         {
           "path": "registry/new-york/animations/buttons/lift.tsx",
           "type": "registry:component"
+        },
+        {
+          "path": "lib/use-hover-lift.ts",
+          "type": "registry:lib"
         }
-      ],
-      "registryDependencies": [
-        "https://animbits.dev/r/hooks-use-hover-lift.json"
       ]
     },
     {
@@ -701,6 +708,10 @@
         {
           "path": "registry/new-york/animations/buttons/magnetic.tsx",
           "type": "registry:component"
+        },
+        {
+          "path": "lib/use-magnetic.ts",
+          "type": "registry:lib"
         }
       ]
     },
@@ -743,10 +754,11 @@
         {
           "path": "registry/new-york/animations/cards/hover-lift.tsx",
           "type": "registry:component"
+        },
+        {
+          "path": "lib/use-hover-lift.ts",
+          "type": "registry:lib"
         }
-      ],
-      "registryDependencies": [
-        "https://animbits.dev/r/hooks-use-hover-lift.json"
       ]
     },
     {
@@ -767,10 +779,11 @@
         {
           "path": "registry/new-york/animations/cards/hover-glow.tsx",
           "type": "registry:component"
+        },
+        {
+          "path": "lib/use-hover-glow.ts",
+          "type": "registry:lib"
         }
-      ],
-      "registryDependencies": [
-        "https://animbits.dev/r/hooks-use-hover-glow.json"
       ]
     },
     {
@@ -810,10 +823,11 @@
         {
           "path": "registry/new-york/animations/cards/scale-in.tsx",
           "type": "registry:component"
+        },
+        {
+          "path": "lib/use-scale-in.ts",
+          "type": "registry:lib"
         }
-      ],
-      "registryDependencies": [
-        "https://animbits.dev/r/hooks-use-scale-in.json"
       ]
     },
     {
@@ -833,10 +847,11 @@
         {
           "path": "registry/new-york/animations/cards/slide-in.tsx",
           "type": "registry:component"
+        },
+        {
+          "path": "lib/use-slide-in.ts",
+          "type": "registry:lib"
         }
-      ],
-      "registryDependencies": [
-        "https://animbits.dev/r/hooks-use-slide-in.json"
       ]
     },
     {
@@ -903,6 +918,10 @@
         {
           "path": "registry/new-york/animations/cards/parallax-tilt.tsx",
           "type": "registry:component"
+        },
+        {
+          "path": "lib/use-parallax-tilt.ts",
+          "type": "registry:lib"
         }
       ]
     },
@@ -1050,6 +1069,10 @@
         {
           "path": "registry/new-york/animations/text/shimmer.tsx",
           "type": "registry:component"
+        },
+        {
+          "path": "lib/use-shimmer.ts",
+          "type": "registry:lib"
         }
       ]
     },
@@ -1071,6 +1094,10 @@
         {
           "path": "registry/new-york/animations/text/scramble.tsx",
           "type": "registry:component"
+        },
+        {
+          "path": "lib/use-scramble.ts",
+          "type": "registry:lib"
         }
       ]
     },
@@ -1092,6 +1119,10 @@
         {
           "path": "registry/new-york/animations/text/word-carousel.tsx",
           "type": "registry:component"
+        },
+        {
+          "path": "lib/use-word-carousel.ts",
+          "type": "registry:lib"
         }
       ]
     },
