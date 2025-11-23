@@ -49,7 +49,7 @@ async function getStarCount() {
         });
         const data = await res.json();
         return data.stargazers_count || 0;
-    } catch (e) {
+    } catch {
         return 0;
     }
 }
