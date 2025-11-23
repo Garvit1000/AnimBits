@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { ThemeProvider } from "@/components/theme-provider";
+import { LoadingProvider } from "@/components/loading-provider";
 import { RootProvider } from 'fumadocs-ui/provider/next';
 import "./globals.css";
 
@@ -36,7 +37,9 @@ export default function RootLayout({
             enableSystem
             disableTransitionOnChange
           >
-            {children}
+            <LoadingProvider>
+              {children}
+            </LoadingProvider>
           </ThemeProvider>
         </RootProvider>
       </body>

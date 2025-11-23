@@ -39,10 +39,10 @@ export function Navbar() {
       <div className="container mx-auto px-4 h-16 flex items-center justify-between">
         <div className="flex items-center gap-8">
           <Link href="/" className="flex items-center gap-2">
-            <AnimatedLogo className="w-8 h-8 text-neutral-900 dark:text-neutral-50" />
+            <AnimatedLogo className="w-10 h-10 text-neutral-900 dark:text-neutral-50" />
             <span className="font-semibold text-lg">Animbits</span>
           </Link>
-          
+
           <div className="hidden md:flex items-center gap-6">
             <Link href="/docs" className="text-sm text-neutral-600 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-neutral-50 transition-colors">
               Docs
@@ -67,7 +67,7 @@ export function Navbar() {
               ⌘K
             </kbd>
           </button>
-          
+
           <Link
             href="https://twitter.com/Garvit1000"
             target="_blank"
@@ -84,8 +84,8 @@ export function Navbar() {
               <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
             </svg>
           </Link>
-          
-          <GithubButton 
+
+          <GithubButton
             repoUrl="https://github.com/Garvit1000/AnimBits"
             label="Star"
             targetStars={stars}

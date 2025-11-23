@@ -229,20 +229,25 @@ export default function Home() {
             </section>
 
             {/* Animation Categories */}
-            <section className="bg-neutral-50 py-20 dark:bg-neutral-900/50">
+            <section className="relative bg-white py-24 dark:bg-neutral-950">
                 <div className="container mx-auto px-4">
                     <motion.div
-                        className="mb-16 text-center"
+                        className="mb-20 text-center"
                         initial={{ opacity: 0, y: 20 }}
                         whileInView={{ opacity: 1, y: 0 }}
                         viewport={{ once: true }}
                         transition={{ duration: 0.5 }}
                     >
-                        <h2 className="mb-3 text-3xl font-bold text-neutral-900 dark:text-white md:text-4xl">
-                            Categories
+                        <div className="mb-4 inline-block rounded-full border border-neutral-200 bg-neutral-50 px-4 py-1.5 dark:border-neutral-800 dark:bg-neutral-900">
+                            <span className="text-sm font-medium text-neutral-700 dark:text-neutral-300">
+                                ✨ Production Ready
+                            </span>
+                        </div>
+                        <h2 className="mb-4 text-4xl font-bold text-neutral-900 dark:text-white md:text-5xl">
+                            Animation Categories
                         </h2>
-                        <p className="text-base text-neutral-600 dark:text-neutral-400">
-                            Explore our collection of production-ready animations.
+                        <p className="mx-auto max-w-2xl text-lg text-neutral-600 dark:text-neutral-400">
+                            Explore our collection of production-ready animations
                         </p>
                     </motion.div>
 
@@ -250,7 +255,7 @@ export default function Home() {
                         {/* Text */}
                         <Link
                             href="/docs/animations/text/shimmer"
-                            className="row-span-1 group/item block h-full w-full"
+                            className="group/item block h-full w-full"
                         >
                             <BentoGridItem
                                 title="Text"
@@ -274,10 +279,10 @@ export default function Home() {
                             />
                         </Link>
 
-                        {/* Icons (Replaces Text Scramble) */}
+                        {/* Icons */}
                         <Link
                             href="/docs/animations/icons/heartbeat"
-                            className="row-span-1 group/item block h-full w-full"
+                            className="group/item block h-full w-full"
                         >
                             <BentoGridItem
                                 title="Icons"
@@ -293,21 +298,21 @@ export default function Home() {
                             />
                         </Link>
 
-                        {/* Lists (Replaces Word Carousel) */}
+                        {/* Lists */}
                         <Link
                             href="/docs/animations/lists/stagger-fade"
-                            className="row-span-1 group/item block h-full w-full"
+                            className="group/item block h-full w-full"
                         >
                             <BentoGridItem
                                 title="Lists"
                                 description="Staggered animations"
                                 header={
                                     <div className="flex h-full min-h-[6rem] w-full items-center justify-center">
-                                        <StaggerFadeList className="space-y-2 w-32">
+                                        <StaggerFadeList className="w-32 space-y-2">
                                             {[1, 2, 3].map((i) => (
                                                 <div
                                                     key={i}
-                                                    className="h-2 w-full rounded bg-neutral-200 dark:bg-neutral-700"
+                                                    className="h-2 w-full rounded-full bg-neutral-300 dark:bg-neutral-700"
                                                 />
                                             ))}
                                         </StaggerFadeList>
@@ -317,17 +322,17 @@ export default function Home() {
                             />
                         </Link>
 
-                        {/* Cards (Parallax Tilt) */}
+                        {/* Cards */}
                         <Link
                             href="/docs/animations/cards/parallax-tilt"
-                            className="row-span-1 md:col-span-2 md:row-span-2 group/item block h-full w-full"
+                            className="group/item block h-full w-full md:col-span-2 md:row-span-2"
                         >
                             <BentoGridItem
                                 title="Cards"
                                 description="3D Tilt, Hover effects"
                                 header={
                                     <div className="flex h-full min-h-[6rem] w-full items-center justify-center p-4">
-                                        <CardParallaxTilt className="w-full max-w-xs overflow-hidden rounded-lg border bg-white shadow-lg dark:border-neutral-700 dark:bg-neutral-800">
+                                        <CardParallaxTilt className="w-full max-w-xs overflow-hidden rounded-xl border border-neutral-200 bg-white shadow-md dark:border-neutral-800 dark:bg-neutral-900">
                                             <img
                                                 src="https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=400&h=300&fit=crop"
                                                 alt="Beautiful mountain landscape"
@@ -336,14 +341,16 @@ export default function Home() {
                                             <div className="p-4">
                                                 <div className="flex items-center justify-between">
                                                     <div>
-                                                        <div className="text-sm font-semibold">
+                                                        <div className="text-sm font-semibold text-neutral-900 dark:text-white">
                                                             Mountain View
                                                         </div>
                                                         <div className="text-xs text-neutral-500 dark:text-neutral-400">
                                                             Premium Landscape
                                                         </div>
                                                     </div>
-                                                    <Badge>New</Badge>
+                                                    <span className="rounded-full bg-blue-600 px-2 py-1 text-xs font-semibold text-white">
+                                                        New
+                                                    </span>
                                                 </div>
                                             </div>
                                         </CardParallaxTilt>
@@ -353,18 +360,18 @@ export default function Home() {
                             />
                         </Link>
 
-                        {/* Buttons (Ripple) */}
+                        {/* Buttons */}
                         <Link
                             href="/docs/animations/buttons/ripple"
-                            className="row-span-1 group/item block h-full w-full"
+                            className="group/item block h-full w-full"
                         >
                             <BentoGridItem
                                 title="Buttons"
                                 description="Ripple, Magnetic, and more"
                                 header={
                                     <div className="flex h-full min-h-[6rem] w-full items-center justify-center">
-                                        <RippleButton className="rounded-lg bg-blue-600 px-6 py-2.5 font-semibold text-white">
-                                            Buttons
+                                        <RippleButton className="rounded-lg bg-blue-600 px-6 py-2.5 font-semibold text-white shadow-sm hover:bg-blue-700">
+                                            Click Me
                                         </RippleButton>
                                     </div>
                                 }
@@ -372,10 +379,10 @@ export default function Home() {
                             />
                         </Link>
 
-                        {/* Transitions (Replaces Magnetic Button) */}
+                        {/* Transitions */}
                         <Link
                             href="/docs/transitions/theme-toggle-circular"
-                            className="row-span-1 group/item block h-full w-full"
+                            className="group/item block h-full w-full"
                         >
                             <BentoGridItem
                                 title="Transitions"
@@ -383,7 +390,7 @@ export default function Home() {
                                 header={
                                     <div className="flex h-full min-h-[6rem] w-full items-center justify-center">
                                         <ThemeToggleCircular>
-                                            <div className="h-10 w-10 rounded-full bg-neutral-900 dark:bg-white" />
+                                            <div className="h-10 w-10 rounded-full bg-neutral-900 dark:bg-neutral-100" />
                                         </ThemeToggleCircular>
                                     </div>
                                 }
@@ -391,10 +398,10 @@ export default function Home() {
                             />
                         </Link>
 
-                        {/* Loaders (Orbit) */}
+                        {/* Loaders */}
                         <Link
                             href="/docs/animations/loaders/orbit"
-                            className="row-span-1 group/item block h-full w-full"
+                            className="group/item block h-full w-full"
                         >
                             <BentoGridItem
                                 title="Loaders"
@@ -413,18 +420,18 @@ export default function Home() {
                             />
                         </Link>
 
-                        {/* Pages (Replaces Gooey Blobs) */}
+                        {/* Pages */}
                         <Link
                             href="/docs/animations/pages/page-transition-fade"
-                            className="row-span-1 group/item block h-full w-full"
+                            className="group/item block h-full w-full"
                         >
                             <BentoGridItem
                                 title="Pages"
                                 description="Smooth page transitions"
                                 header={
                                     <div className="flex h-full min-h-[6rem] w-full items-center justify-center">
-                                        <div className="rounded-lg border border-neutral-200 p-4 dark:border-neutral-800">
-                                            <span className="text-sm font-medium">
+                                        <div className="rounded-lg border-2 border-dashed border-neutral-300 p-6 dark:border-neutral-700">
+                                            <span className="text-sm font-medium text-neutral-700 dark:text-neutral-300">
                                                 Page Transition
                                             </span>
                                         </div>
@@ -434,10 +441,10 @@ export default function Home() {
                             />
                         </Link>
 
-                        {/* Morphing (Keep as extra loader example) */}
+                        {/* Morphing */}
                         <Link
                             href="/docs/animations/loaders/morphing"
-                            className="row-span-1 group/item block h-full w-full"
+                            className="group/item block h-full w-full"
                         >
                             <BentoGridItem
                                 title="Morphing"
