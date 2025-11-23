@@ -18,7 +18,7 @@ export function Footer() {
             </p>
             <div className="flex gap-4">
               <Link
-                href="https://github.com"
+                href="https://github.com/Garvit1000/AnimBits"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-neutral-600 transition-colors hover:text-neutral-900 dark:text-neutral-400 dark:hover:text-white"
@@ -26,7 +26,7 @@ export function Footer() {
                 <Github className="h-5 w-5" />
               </Link>
               <Link
-                href="https://twitter.com"
+                href="https://x.com/Garvit1000"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-neutral-600 transition-colors hover:text-neutral-900 dark:text-neutral-400 dark:hover:text-white"
@@ -52,18 +52,10 @@ export function Footer() {
               </li>
               <li>
                 <Link
-                  href="/animations"
+                  href="/docs/animations/buttons/lift"
                   className="text-neutral-600 transition-colors hover:text-neutral-900 dark:text-neutral-400 dark:hover:text-white"
                 >
                   Animations
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="/examples"
-                  className="text-neutral-600 transition-colors hover:text-neutral-900 dark:text-neutral-400 dark:hover:text-white"
-                >
-                  Examples
                 </Link>
               </li>
             </ul>
@@ -77,23 +69,15 @@ export function Footer() {
             <ul className="space-y-2 text-sm">
               <li>
                 <Link
-                  href="/blog"
+                  href="https://github.com/Garvit1000/AnimBits/issues"
                   className="text-neutral-600 transition-colors hover:text-neutral-900 dark:text-neutral-400 dark:hover:text-white"
                 >
-                  Blog
+                  Issues
                 </Link>
               </li>
               <li>
                 <Link
-                  href="/changelog"
-                  className="text-neutral-600 transition-colors hover:text-neutral-900 dark:text-neutral-400 dark:hover:text-white"
-                >
-                  Changelog
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="/contributing"
+                  href="https://github.com/Garvit1000/AnimBits?tab=contributing-ov-file"
                   className="text-neutral-600 transition-colors hover:text-neutral-900 dark:text-neutral-400 dark:hover:text-white"
                 >
                   Contributing

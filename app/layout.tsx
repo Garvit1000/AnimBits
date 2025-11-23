@@ -10,14 +10,13 @@ const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
 });
-
 const geistMono = Geist_Mono({
   variable: "--font-geist-mono",
   subsets: ["latin"],
 });
 
 export const metadata: Metadata = {
-  title: "Animbits - Animation Registry",
+  title: "Animbits - Animation Registry for UI",
   description: "Production-ready animation components for React",
 };
 

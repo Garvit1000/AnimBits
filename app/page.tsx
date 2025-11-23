@@ -129,6 +129,9 @@ export default async function Home() {
                                 A set of beautifully designed animations that you can install
                                 with one command.
                             </p>
+                            <p className="mb-4">
+                                Stop writing repetitive Motion code.Open Source. Open Code.
+                            </p>
                         </motion.div>
 
                         {/* CTA Buttons */}
