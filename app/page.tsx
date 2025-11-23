@@ -2,7 +2,7 @@ import Link from "next/link";
 import { Navbar } from "@/components/navbar";
 import { BentoGrid, BentoGridItem } from "@/components/ui/bento-grid";
 import { ContainerTextFlip } from "@/components/ui/container-text-flip";
-
+import { CodeBlockWithCopy } from "@/components/ui/code-block-with-copy";
 import { TextShimmer } from "@/registry/new-york/animations/text/shimmer";
 import { RippleButton } from "@/registry/new-york/animations/buttons/ripple";
 import { CardParallaxTilt } from "@/registry/new-york/animations/cards/parallax-tilt";
@@ -13,10 +13,11 @@ import { StaggerFadeList } from "@/registry/new-york/animations/lists/stagger-fa
 
 import { ThemeToggleCircular } from "@/registry/new-york/animations/transitions/theme-toggle-circular";
 import DatabaseWithRestApi from "@/components/ui/database-with-rest-api";
-import { TestimonialsColumn } from "@/components/testimonials-columns-1";
+import { TestimonialsHorizontal } from "@/components/testimonials-horizontal";
 import { Footer } from "@/components/footer";
 import { GithubButton } from "@/components/ui/github-button";
 import { StickyBanner } from "@/components/ui/sticky-banner";
+import { CTASection } from "@/components/cta-with-rectangle";
 
 import { ArrowRight, Sparkles, Heart, ChevronRight } from "lucide-react";
 import * as motion from "framer-motion/client";
@@ -547,11 +548,7 @@ export default async function Home() {
                                 </p>
                             </div>
 
-                            <div className="rounded-lg border border-neutral-200 bg-neutral-50 p-4 dark:border-neutral-800 dark:bg-neutral-900">
-                                <code className="text-sm text-neutral-900 dark:text-neutral-100">
-                                    npx shadcn add https://animbits.dev/r/buttons-lift.json
-                                </code>
-                            </div>
+                            <CodeBlockWithCopy code="npx shadcn add https://animbits.dev/r/buttons-lift.json" />
 
                             <div className="space-y-4">
                                 <div className="flex items-start gap-3">
@@ -620,22 +617,25 @@ export default async function Home() {
                         </p>
                     </motion.div>
 
-                    <div className="[mask-image:linear-gradient(to_bottom,transparent,black_25%,black_75%,transparent)] max-w-6xl mx-auto">
-                        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                            <TestimonialsColumn testimonials={testimonials} duration={15} />
-                            <TestimonialsColumn
-                                testimonials={testimonials.slice().reverse()}
-                                duration={18}
-                                className="hidden md:block"
-                            />
-                            <TestimonialsColumn
-                                testimonials={testimonials}
-                                duration={20}
-                                className="hidden md:block"
-                            />
-                        </div>
+                    <div className="[mask-image:linear-gradient(to_right,transparent,black_10%,black_90%,transparent)] max-w-7xl mx-auto">
+                        <TestimonialsHorizontal testimonials={testimonials} duration={30} />
                     </div>
                 </div>
+            </section>
+
+            <section className="py-20">
+                <CTASection
+                    badge={{
+                        text: "Ready to get started?",
+                    }}
+                    title="Build your next project with AnimBits"
+                    description="Join thousands of developers building beautiful, animated interfaces with AnimBits."
+                    action={{
+                        text: "Get Started",
+                        href: "/docs/installation",
+                        variant: "default",
+                    }}
+                />
             </section>
 
             <Footer />
