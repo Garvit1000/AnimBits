@@ -15,8 +15,10 @@ import { ThemeToggleCircular } from "@/registry/new-york/animations/transitions/
 import DatabaseWithRestApi from "@/components/ui/database-with-rest-api";
 import { TestimonialsColumn } from "@/components/testimonials-columns-1";
 import { Footer } from "@/components/footer";
+import { GithubButton } from "@/components/ui/github-button";
+import { StickyBanner } from "@/components/ui/sticky-banner";
 
-import { ArrowRight, Sparkles, Heart } from "lucide-react";
+import { ArrowRight, Sparkles, Heart, ChevronRight } from "lucide-react";
 import * as motion from "framer-motion/client";
 
 const testimonials = [
@@ -40,9 +42,28 @@ const testimonials = [
     },
 ];
 
-export default function Home() {
+async function getStarCount() {
+    try {
+        const res = await fetch("https://api.github.com/repos/Garvit1000/AnimBits", {
+            next: { revalidate: 3600 },
+        });
+        const data = await res.json();
+        return data.stargazers_count || 0;
+    } catch (e) {
+        return 0;
+    }
+}
+
+export default async function Home() {
+    const stars = await getStarCount();
     return (
         <div className="min-h-screen bg-white dark:bg-neutral-950">
+            <StickyBanner>
+                <span className="flex items-center gap-1 text-xs md:text-sm font-medium">
+                    Now Available: Hooks — structured, reusable motion for your UI.
+                    <ChevronRight className="w-3 h-3 md:w-4 md:h-4" />
+                </span>
+            </StickyBanner>
             <Navbar />
 
             {/* Hero Section */}
@@ -107,9 +128,6 @@ export default function Home() {
                                 A set of beautifully designed animations that you can install
                                 with one command.
                             </p>
-                            <p>
-                                Stop writing repetitive Motion code. Open Source. Open Code.
-                            </p>
                         </motion.div>
 
                         {/* CTA Buttons */}
@@ -119,21 +137,28 @@ export default function Home() {
                             animate={{ opacity: 1, y: 0 }}
                             transition={{ duration: 0.5, delay: 0.3 }}
                         >
-                            <motion.button
-                                className="inline-flex h-11 items-center gap-2 rounded-lg bg-neutral-900 px-6 text-sm font-semibold text-white transition-colors hover:bg-neutral-800 dark:bg-white dark:text-neutral-900 dark:hover:bg-neutral-100"
-                                whileHover={{ scale: 1.02 }}
-                                whileTap={{ scale: 0.98 }}
-                            >
-                                Getting Started
-                                <ArrowRight className="h-4 w-4" />
-                            </motion.button>
-                            <motion.button
-                                className="inline-flex h-11 items-center gap-2 rounded-lg border border-neutral-200 bg-white px-6 text-sm font-semibold text-neutral-900 transition-colors hover:bg-neutral-50 dark:border-neutral-800 dark:bg-neutral-950 dark:text-white dark:hover:bg-neutral-900"
-                                whileHover={{ scale: 1.02 }}
-                                whileTap={{ scale: 0.98 }}
-                            >
-                                Read Docs
-                            </motion.button>
+                            <Link href="/docs/installation">
+                                <motion.button
+                                    className="inline-flex h-11 items-center gap-2 rounded-lg bg-neutral-900 px-6 text-sm font-semibold text-white transition-colors hover:bg-neutral-800 dark:bg-white dark:text-neutral-900 dark:hover:bg-neutral-100"
+                                    whileHover={{ scale: 1.02 }}
+                                    whileTap={{ scale: 0.98 }}
+                                >
+                                    Getting Started
+                                    <ArrowRight className="h-4 w-4" />
+                                </motion.button>
+                            </Link>
+                            <GithubButton
+                                repoUrl="https://github.com/Garvit1000/AnimBits"
+                                label="Star on GitHub"
+                                targetStars={stars}
+                                showGithubIcon={true}
+                                showStarIcon={true}
+                                variant="outline"
+                                size="lg"
+                                autoAnimate={true}
+                                filled={true}
+                                className="h-11 rounded-lg px-6 text-sm font-semibold"
+                            />
                         </motion.div>
 
                         {/* Tech Stack with Devicon Icons */}
@@ -239,7 +264,7 @@ export default function Home() {
                     >
                         <div className="mb-4 inline-block rounded-full border border-neutral-200 bg-neutral-50 px-4 py-1.5 dark:border-neutral-800 dark:bg-neutral-900">
                             <span className="text-sm font-medium text-neutral-700 dark:text-neutral-300">
-                                ✨ Production Ready
+                                Production Ready
                             </span>
                         </div>
                         <h2 className="mb-4 text-4xl font-bold text-neutral-900 dark:text-white md:text-5xl">
@@ -524,7 +549,7 @@ export default function Home() {
 
                             <div className="rounded-lg border border-neutral-200 bg-neutral-50 p-4 dark:border-neutral-800 dark:bg-neutral-900">
                                 <code className="text-sm text-neutral-900 dark:text-neutral-100">
-                                    npx shadcn add @animbits/text/shimmer
+                                    npx shadcn add https://animbits.dev/r/buttons-lift.json
                                 </code>
                             </div>
 
