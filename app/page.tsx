@@ -1,6 +1,5 @@
 import Link from "next/link";
 import { Navbar } from "@/components/navbar";
-import { Badge } from "@/components/ui/badge";
 import { BentoGrid, BentoGridItem } from "@/components/ui/bento-grid";
 import { ContainerTextFlip } from "@/components/ui/container-text-flip";
 

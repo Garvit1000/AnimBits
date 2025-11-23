@@ -3,6 +3,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import { ThemeProvider } from "@/components/theme-provider";
 import { LoadingProvider } from "@/components/loading-provider";
 import { RootProvider } from 'fumadocs-ui/provider/next';
+import { Analytics } from "@vercel/analytics/react";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -42,6 +43,7 @@ export default function RootLayout({
             </LoadingProvider>
           </ThemeProvider>
         </RootProvider>
+        <Analytics />
       </body>
     </html>
   );
