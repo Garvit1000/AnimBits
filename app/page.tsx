@@ -72,8 +72,8 @@ export default async function Home() {
                 {/* Subtle dot pattern background */}
                 <div className="absolute inset-0 bg-[radial-gradient(circle_at_1px_1px,rgb(0_0_0/0.05)_1px,transparent_0)] [background-size:24px_24px] dark:bg-[radial-gradient(circle_at_1px_1px,rgb(255_255_255/0.05)_1px,transparent_0)]" />
 
-                <div className="container relative z-10 mx-auto px-4 py-20 md:py-28 lg:py-36">
-                    <div className="mx-auto max-w-4xl text-center">
+                <div className="container relative z-10 mx-auto px-4 py-20 md:py-28 lg:py-36 2xl:py-44">
+                    <div className="mx-auto max-w-4xl 2xl:max-w-5xl text-center">
                         {/* Badge */}
                         <motion.div
                             className="mb-8 inline-flex items-center gap-2 rounded-full px-3 py-1 text-sm relative bg-neutral-50 dark:bg-neutral-900"
@@ -102,7 +102,7 @@ export default async function Home() {
                             animate={{ opacity: 1, y: 0 }}
                             transition={{ duration: 0.5, delay: 0.1 }}
                         >
-                            <h1 className="mb-4 text-4xl font-bold leading-tight tracking-tight text-neutral-900 dark:text-white md:text-5xl lg:text-6xl">
+                            <h1 className="mb-4 text-4xl font-bold leading-tight tracking-tight text-neutral-900 dark:text-white md:text-5xl lg:text-6xl 2xl:text-7xl">
                                 The Foundation for Your
                             </h1>
                             <div className="flex justify-center">
@@ -112,7 +112,7 @@ export default async function Home() {
                                         "Design System",
                                         "Component Library",
                                     ]}
-                                    className="text-3xl md:text-5xl lg:text-6xl"
+                                    className="text-3xl md:text-5xl lg:text-6xl 2xl:text-7xl"
                                     textClassName="font-bold"
                                 />
                             </div>
@@ -120,7 +120,7 @@ export default async function Home() {
 
                         {/* Description */}
                         <motion.div
-                            className="mx-auto mb-10 max-w-2xl text-base leading-relaxed text-neutral-600 dark:text-neutral-400 md:text-lg"
+                            className="mx-auto mb-10 max-w-2xl 2xl:max-w-3xl text-base leading-relaxed text-neutral-600 dark:text-neutral-400 md:text-lg 2xl:text-xl"
                             initial={{ opacity: 0, y: 20 }}
                             animate={{ opacity: 1, y: 0 }}
                             transition={{ duration: 0.5, delay: 0.2 }}
@@ -143,7 +143,7 @@ export default async function Home() {
                         >
                             <Link href="/docs/installation">
                                 <motion.button
-                                    className="inline-flex h-11 items-center gap-2 rounded-lg bg-neutral-900 px-6 text-sm font-semibold text-white transition-colors hover:bg-neutral-800 dark:bg-white dark:text-neutral-900 dark:hover:bg-neutral-100"
+                                    className="inline-flex h-11 2xl:h-12 items-center gap-2 rounded-lg bg-neutral-900 px-6 2xl:px-8 text-sm 2xl:text-base font-semibold text-white transition-colors hover:bg-neutral-800 dark:bg-white dark:text-neutral-900 dark:hover:bg-neutral-100"
                                     whileHover={{ scale: 1.02 }}
                                     whileTap={{ scale: 0.98 }}
                                 >
@@ -161,7 +161,7 @@ export default async function Home() {
                                 size="lg"
                                 autoAnimate={true}
                                 filled={true}
-                                className="h-11 rounded-lg px-6 text-sm font-semibold"
+                                className="h-11 2xl:h-12 rounded-lg px-6 2xl:px-8 text-sm 2xl:text-base font-semibold"
                             />
                         </motion.div>
 
@@ -183,9 +183,9 @@ export default async function Home() {
                                 <img
                                     src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/nextjs/nextjs-original.svg"
                                     alt="Next.js"
-                                    className="h-6 w-6 dark:invert"
+                                    className="h-6 w-6 2xl:h-7 2xl:w-7 dark:invert"
                                 />
-                                <span className="text-sm font-medium">Next.js</span>
+                                <span className="text-sm 2xl:text-base font-medium">Next.js</span>
                             </motion.a>
 
                             <motion.a
@@ -231,7 +231,7 @@ export default async function Home() {
                                 <img
                                     src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/framermotion/framermotion-original.svg"
                                     alt="Framer Motion"
-                                    className="h-6 w-6 dark:invert"
+                                    className="h-6 w-6 2xl:h-7 2xl:w-7 dark:invert"
                                 />
                                 <span className="text-sm font-medium">Framer Motion</span>
                             </motion.a>
@@ -257,7 +257,7 @@ export default async function Home() {
             </section>
 
             {/* Animation Categories */}
-            <section className="relative bg-white py-24 dark:bg-neutral-950">
+            <section className="relative bg-white py-24 2xl:py-32 dark:bg-neutral-950">
                 <div className="container mx-auto px-4">
                     <motion.div
                         className="mb-20 text-center"
@@ -279,7 +279,7 @@ export default async function Home() {
                         </p>
                     </motion.div>
 
-                    <BentoGrid className="mx-auto max-w-7xl">
+                    <BentoGrid className="mx-auto max-w-7xl 2xl:max-w-\[1400px\]">
                         {/* Text */}
                         <Link
                             href="/docs/animations/text/shimmer"
@@ -490,7 +490,7 @@ export default async function Home() {
             </section>
 
             {/* How It Works Section */}
-            <section className="bg-white py-20 dark:bg-neutral-950">
+            <section className="bg-white py-20 2xl:py-28 dark:bg-neutral-950">
                 <div className="container mx-auto px-4">
                     <motion.div
                         className="mb-16 text-center"
@@ -507,7 +507,7 @@ export default async function Home() {
                         </p>
                     </motion.div>
 
-                    <div className="mx-auto grid max-w-6xl items-center gap-12 lg:grid-cols-2">
+                    <div className="mx-auto grid max-w-6xl 2xl:max-w-7xl items-center gap-12 2xl:gap-16 lg:grid-cols-2">
                         {/* Diagram - Left Side */}
                         <motion.div
                             className="flex justify-center"

@@ -38,27 +38,27 @@ export function Navbar() {
 
   return (
     <nav className="border-b border-neutral-200 dark:border-neutral-800 bg-white/80 dark:bg-neutral-950/80 backdrop-blur-sm sticky top-0 z-50">
-      <div className="container mx-auto px-4 h-16 flex items-center justify-between">
+      <div className="container mx-auto px-4 h-16 2xl:h-20 flex items-center justify-between">
         <div className="flex items-center gap-8">
-          <Link href="/" className="flex items-center gap-2" onClick={() => setIsOpen(false)}>
-            <AnimatedLogo className="w-10 h-10 text-neutral-900 dark:text-neutral-50" />
-            <span className="font-semibold text-lg">Animbits</span>
+          <Link href="/" className="flex items-center gap-2 2xl:gap-3" onClick={() => setIsOpen(false)}>
+            <AnimatedLogo className="w-10 h-10 2xl:w-12 2xl:h-12 text-neutral-900 dark:text-neutral-50" />
+            <span className="font-semibold text-lg 2xl:text-xl">Animbits</span>
           </Link>
 
-          <div className="hidden md:flex items-center gap-6">
-            <Link href="/docs" className="text-sm text-neutral-600 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-neutral-50 transition-colors">
+          <div className="hidden md:flex items-center gap-6 2xl:gap-8">
+            <Link href="/docs" className="text-sm 2xl:text-base text-neutral-600 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-neutral-50 transition-colors">
               Docs
             </Link>
-            <Link href="/docs/animations/buttons/lift" className="text-sm text-neutral-600 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-neutral-50 transition-colors">
+            <Link href="/docs/animations/buttons/lift" className="text-sm 2xl:text-base text-neutral-600 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-neutral-50 transition-colors">
               Animations
             </Link>
           </div>
         </div>
 
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 2xl:gap-3">
           <button
             onClick={handleSearchClick}
-            className="hidden md:flex items-center gap-2 px-3 py-1.5 text-sm text-neutral-600 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-neutral-50 border border-neutral-200 dark:border-neutral-800 rounded-md hover:bg-neutral-100 dark:hover:bg-neutral-900 transition-colors"
+            className="hidden md:flex items-center gap-2 px-3 py-1.5 text-sm 2xl:text-base text-neutral-600 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-neutral-50 border border-neutral-200 dark:border-neutral-800 rounded-md hover:bg-neutral-100 dark:hover:bg-neutral-900 transition-colors"
           >
             <Search className="w-4 h-4" />
             <span>Search...</span>
