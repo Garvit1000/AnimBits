@@ -1500,7 +1500,74 @@
           "path": "registry/new-york/animations/transitions/theme-toggle-circular.tsx",
           "type": "registry:component"
         }
-      ]
+      ],
+      "css": {
+        ":root": {
+          "--transition-speed": "0.5s",
+          "--transition-blur": "0px",
+          "--x": "50%",
+          "--y": "50%"
+        },
+        "::view-transition-group(root)": {
+          "animation": "none",
+          "isolation": "isolate",
+          "overflow": "hidden"
+        },
+        "::view-transition-image-pair(root)": {
+          "isolation": "isolate",
+          "overflow": "hidden"
+        },
+        "::view-transition-old(root), ::view-transition-new(root)": {
+          "filter": "blur(var(--transition-blur))",
+          "overflow": "hidden",
+          "backface-visibility": "hidden",
+          "contain": "paint"
+        },
+        "[data-theme-transition=\"to-dark\"]::view-transition-old(root)": {
+          "animation": "none",
+          "z-index": "-1",
+          "mix-blend-mode": "normal"
+        },
+        "[data-theme-transition=\"to-dark\"]::view-transition-new(root)": {
+          "animation": "circle var(--transition-speed) ease-in-out",
+          "will-change": "clip-path",
+          "mix-blend-mode": "normal",
+          "z-index": "1",
+          "transform": "translateZ(0)"
+        },
+        "[data-theme-transition=\"to-light\"]::view-transition-old(root)": {
+          "animation": "circle-reverse var(--transition-speed) ease-in-out",
+          "will-change": "clip-path",
+          "z-index": "1",
+          "transform": "translateZ(0)"
+        },
+        "[data-theme-transition=\"to-light\"]::view-transition-new(root)": {
+          "animation": "none",
+          "mix-blend-mode": "normal",
+          "z-index": "-1"
+        },
+        "@keyframes circle": {
+          "from": {
+            "clip-path": "circle(0% at var(--x) var(--y))"
+          },
+          "to": {
+            "clip-path": "circle(150% at var(--x) var(--y))"
+          }
+        },
+        "@keyframes circle-reverse": {
+          "from": {
+            "clip-path": "circle(150% at var(--x) var(--y))"
+          },
+          "to": {
+            "clip-path": "circle(0% at var(--x) var(--y))"
+          }
+        },
+        "@media (prefers-reduced-motion: reduce)": {
+          "::view-transition-group(*), ::view-transition-old(*), ::view-transition-new(*)": {
+            "animation": "none !important"
+          }
+        }
+      }
     },
     {
       "name": "transitions-theme-toggle-slide-bottom",
@@ -1521,7 +1588,36 @@
           "path": "registry/new-york/animations/transitions/theme-toggle-slide-bottom.tsx",
           "type": "registry:component"
         }
-      ]
+      ],
+      "css": {
+        ":root": {
+          "--transition-speed": "0.5s",
+          "--transition-blur": "0px"
+        },
+        ".theme-slide-bottom::view-transition-old(root)": {
+          "animation": "slide-out-bottom var(--transition-speed) cubic-bezier(0.4, 0, 0.2, 1)",
+          "filter": "blur(var(--transition-blur))"
+        },
+        ".theme-slide-bottom::view-transition-new(root)": {
+          "animation": "slide-in-bottom var(--transition-speed) cubic-bezier(0.4, 0, 0.2, 1)",
+          "filter": "blur(var(--transition-blur))"
+        },
+        "@keyframes slide-out-bottom": {
+          "to": {
+            "transform": "translateY(100%)"
+          }
+        },
+        "@keyframes slide-in-bottom": {
+          "from": {
+            "transform": "translateY(100%)"
+          }
+        },
+        "@media (prefers-reduced-motion: reduce)": {
+          ".theme-slide-bottom::view-transition-group(*), .theme-slide-bottom::view-transition-old(*), .theme-slide-bottom::view-transition-new(*)": {
+            "animation": "none !important"
+          }
+        }
+      }
     },
     {
       "name": "transitions-theme-toggle-slide-left",
@@ -1542,7 +1638,36 @@
           "path": "registry/new-york/animations/transitions/theme-toggle-slide-left.tsx",
           "type": "registry:component"
         }
-      ]
+      ],
+      "css": {
+        ":root": {
+          "--transition-speed": "0.5s",
+          "--transition-blur": "0px"
+        },
+        ".theme-slide-left::view-transition-old(root)": {
+          "animation": "slide-out-left var(--transition-speed) cubic-bezier(0.4, 0, 0.2, 1)",
+          "filter": "blur(var(--transition-blur))"
+        },
+        ".theme-slide-left::view-transition-new(root)": {
+          "animation": "slide-in-left var(--transition-speed) cubic-bezier(0.4, 0, 0.2, 1)",
+          "filter": "blur(var(--transition-blur))"
+        },
+        "@keyframes slide-out-left": {
+          "to": {
+            "transform": "translateX(-100%)"
+          }
+        },
+        "@keyframes slide-in-left": {
+          "from": {
+            "transform": "translateX(-100%)"
+          }
+        },
+        "@media (prefers-reduced-motion: reduce)": {
+          ".theme-slide-left::view-transition-group(*), .theme-slide-left::view-transition-old(*), .theme-slide-left::view-transition-new(*)": {
+            "animation": "none !important"
+          }
+        }
+      }
     },
     {
       "name": "transitions-theme-toggle-slide-right",
@@ -1563,7 +1688,36 @@
           "path": "registry/new-york/animations/transitions/theme-toggle-slide-right.tsx",
           "type": "registry:component"
         }
-      ]
+      ],
+      "css": {
+        ":root": {
+          "--transition-speed": "0.5s",
+          "--transition-blur": "0px"
+        },
+        ".theme-slide-right::view-transition-old(root)": {
+          "animation": "slide-out-right var(--transition-speed) cubic-bezier(0.4, 0, 0.2, 1)",
+          "filter": "blur(var(--transition-blur))"
+        },
+        ".theme-slide-right::view-transition-new(root)": {
+          "animation": "slide-in-right var(--transition-speed) cubic-bezier(0.4, 0, 0.2, 1)",
+          "filter": "blur(var(--transition-blur))"
+        },
+        "@keyframes slide-out-right": {
+          "to": {
+            "transform": "translateX(100%)"
+          }
+        },
+        "@keyframes slide-in-right": {
+          "from": {
+            "transform": "translateX(100%)"
+          }
+        },
+        "@media (prefers-reduced-motion: reduce)": {
+          ".theme-slide-right::view-transition-group(*), .theme-slide-right::view-transition-old(*), .theme-slide-right::view-transition-new(*)": {
+            "animation": "none !important"
+          }
+        }
+      }
     },
     {
       "name": "transitions-theme-toggle-slide-top",
@@ -1584,7 +1738,36 @@
           "path": "registry/new-york/animations/transitions/theme-toggle-slide-top.tsx",
           "type": "registry:component"
         }
-      ]
+      ],
+      "css": {
+        ":root": {
+          "--transition-speed": "0.5s",
+          "--transition-blur": "0px"
+        },
+        ".theme-slide-top::view-transition-old(root)": {
+          "animation": "slide-out-top var(--transition-speed) cubic-bezier(0.4, 0, 0.2, 1)",
+          "filter": "blur(var(--transition-blur))"
+        },
+        ".theme-slide-top::view-transition-new(root)": {
+          "animation": "slide-in-top var(--transition-speed) cubic-bezier(0.4, 0, 0.2, 1)",
+          "filter": "blur(var(--transition-blur))"
+        },
+        "@keyframes slide-out-top": {
+          "to": {
+            "transform": "translateY(-100%)"
+          }
+        },
+        "@keyframes slide-in-top": {
+          "from": {
+            "transform": "translateY(-100%)"
+          }
+        },
+        "@media (prefers-reduced-motion: reduce)": {
+          ".theme-slide-top::view-transition-group(*), .theme-slide-top::view-transition-old(*), .theme-slide-top::view-transition-new(*)": {
+            "animation": "none !important"
+          }
+        }
+      }
     }
   ]
 }
