@@ -592,31 +592,6 @@ export function HistoryAwareSlide({ children }: { children: React.ReactNode }) {
 }
 ```
 
-## Features
-
-- ✅ Hardware accelerated (GPU transforms)
-- ✅ Respects `prefers-reduced-motion`
-- ✅ Graceful fallback for unsupported browsers
-- ✅ Works with Next.js App Router
-- ✅ Four direction options
-- ✅ Minimal bundle size (~1KB)
-- ✅ Customizable duration and easing
-
-## Browser Support
-
-- Chrome 111+
-- Edge 111+
-- Opera 97+
-- Falls back to instant navigation in other browsers
-
-## Performance Tips
-
-1. **Use transforms**: Transforms are GPU-accelerated and more performant than position changes
-2. **Keep transitions quick**: 300-500ms is ideal for slide transitions
-3. **Avoid large pages**: Very tall/wide pages may cause jank during slides
-4. **Test on mobile**: Ensure smooth performance on lower-end devices
-5. **Use `will-change`**: Add `will-change: transform` for better performance
-
 ```css
 ::view-transition-old(root),
 ::view-transition-new(root) {
@@ -637,15 +612,3 @@ export function HistoryAwareSlide({ children }: { children: React.ReactNode }) {
 3. Ensure `document.startViewTransition` is available
 4. Check console for JavaScript errors
 
-### Janky animation
-
-1. Reduce transition duration
-2. Use simpler easing functions
-3. Check for heavy JavaScript on page load
-4. Reduce page complexity during transition
-
-### Wrong direction
-
-1. Verify `data-slide-direction` attribute is set correctly
-2. Check that CSS matches the direction attribute
-3. Clear browser cache and reload

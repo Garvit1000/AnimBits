@@ -27,12 +27,15 @@ import { AlertTriangle } from "lucide-react"
     <ShakeIcon trigger="hover" intensity={10} className="cursor-pointer">
       <AlertTriangle className="w-8 h-8 text-yellow-500" />
     </ShakeIcon>
+    <span className="text-xs text-yellow-500">Hover</span>
     <ShakeIcon trigger="tap" intensity={15}>
       <AlertCircle className="w-8 h-8 text-red-500" />
     </ShakeIcon>
+    <span className="text-xs text-red-500">Tap</span>
     <ShakeIcon trigger="mount" intensity={8}>
       <Info className="w-8 h-8 text-blue-500" />
     </ShakeIcon>
+    <span className="text-xs text-blue-500">Mount</span>
   </div>
 </Preview>
 
@@ -372,6 +375,7 @@ export default function Example() {
 >
   <ShakeIcon trigger="hover" intensity={5} className="cursor-pointer">
     <Info className="w-12 h-12 text-blue-500" />
+    <span className="text-xs text-blue-500">Hover</span>
   </ShakeIcon>
 </Preview>
 

@@ -26,12 +26,15 @@ import { Bell } from "lucide-react"
   <div className="flex gap-8 items-center justify-center">
     <WiggleIcon trigger="hover" intensity={10} className="cursor-pointer">
       <Bell className="w-8 h-8 text-yellow-500" />
+      <span className="text-xs text-yellow-500">Hover</span>
     </WiggleIcon>
     <WiggleIcon trigger="tap" intensity={15}>
       <BellRing className="w-8 h-8 text-blue-500" />
+      <span className="text-xs text-blue-500">Tap</span>
     </WiggleIcon>
     <WiggleIcon trigger="mount" intensity={8}>
       <Phone className="w-8 h-8 text-green-500" />
+      <span className="text-xs text-green-500">Mount</span>
     </WiggleIcon>
   </div>
 </Preview>
@@ -372,6 +375,7 @@ export default function Example() {
 >
   <WiggleIcon trigger="hover" intensity={5} className="cursor-pointer">
     <Phone className="w-12 h-12 text-green-500" />
+    <span className="text-xs text-green-500">Hover</span>
   </WiggleIcon>
 </Preview>
 

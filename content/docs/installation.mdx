@@ -1,6 +1,6 @@
 ---
 title: Installation
-description: AnimBits is not a traditional npm package. You copy the components and hooks directly into your project. This gives you full control over the code and allows you to customize everything.
+description: AnimBits is not a traditional npm package. You can download using shadcn cli or copy the components and hooks directly into your project. This gives you full control over the code and allows you to customize everything.
 ---
 
 import { Tab, Tabs } from 'fumadocs-ui/components/tabs';
@@ -170,15 +170,14 @@ Start by selecting your framework of choice. Then follow the instructions to ins
     ```
   </Step>
   
-  <Step>
+       <Step>
     ### Create Directory Structure
     
     Create the necessary folders in your project:
     
     ```bash
-    mkdir -p lib/hooks
-    mkdir -p lib/components
-    mkdir -p components/animations
+    mkdir -p lib
+    mkdir -p components
     ```
     
     Your structure should look like:
@@ -186,21 +185,21 @@ Start by selecting your framework of choice. Then follow the instructions to ins
     ```
     your-project/
     ├── lib/
-    │   ├── hooks/          # Animation primitive hooks
-    │   └── components/     # Generic wrapper components
+    │   ├── use-hover-lift.ts    # Animation primitive hooks
+    │   ├── use-press.ts
+    │   └── utils.ts
     └── components/
-        └── animations/     # Semantic animation components
-            ├── buttons/
-            ├── cards/
-            ├── icons/
-            └── ...
+        ├── buttons-lift
+        ├── cards-hover-glow     # components goes here
+        ├── cards-tilt
+        └── ...
     ```
   </Step>
   
   <Step>
     ### Copy Your First Component
     
-    Browse the [components](/docs/components/buttons) or [hooks](/docs/hooks/hover-lift) documentation and copy the code you need.
+    Browse the [components](/docs/animations/buttons/lift) or [hooks](/docs/hooks/hover-lift) documentation and copy the code you need.
     
     For example, to use the hover lift animation:
     
@@ -244,7 +243,7 @@ Start by selecting your framework of choice. Then follow the instructions to ins
     "use client"
 
     import { motion, type HTMLMotionProps } from "framer-motion"
-    import { useHoverLift } from "@/lib/hooks/use-hover-lift"
+    import { useHoverLift } from "@/lib/use-hover-lift"
 
     export interface LiftButtonProps extends Omit<HTMLMotionProps<"button">, "animate"> {
       children: React.ReactNode
@@ -297,7 +296,7 @@ Start by selecting your framework of choice. Then follow the instructions to ins
       <Tab value="Using Hook">
         ```tsx title="app/page.tsx"
         import { motion } from 'framer-motion'
-        import { useHoverLift } from '@/lib/hooks/use-hover-lift'
+        import { useHoverLift } from '@/lib/use-hover-lift'
 
         export default function Home() {
           const liftProps = useHoverLift({ liftDistance: 12 })
@@ -379,11 +378,6 @@ Start by creating a new Next.js project. You will be asked if you want to use Ty
   </Tab>
 </Tabs>
 
-#### Create folder structure
-
-```bash
-mkdir -p lib/hooks lib/components components/animations
-```
 
 #### Add utility function
 
@@ -571,11 +565,6 @@ Update your `tsconfig.json` (or `tsconfig.app.json`) to support path aliases:
 }
 ```
 
-#### Create folder structure
-
-```bash
-mkdir -p src/lib/hooks src/components/animations
-```
 
 #### Add utility function
 
@@ -624,20 +613,19 @@ For any other React framework (Remix, Gatsby, Astro with React, etc.) or custom 
 Create these folders in your project (adjust paths based on your framework):
 
 ```bash
-mkdir -p lib/hooks
-mkdir -p lib/components
-mkdir -p components/animations
+mkdir -p lib/
+mkdir -p components/
 ```
 
 **Step 3: Copy animation primitives**
 
-Browse the [hooks documentation](/docs/hooks/hover-lift) and copy the hooks you need into `lib/hooks/`.
+Browse the [hooks documentation](/docs/hooks/hover-lift) and copy the hooks you need into `lib/`.
 
 **Step 4: Use in your components**
 
 ```tsx
 import { motion } from "framer-motion"
-import { useHoverLift } from "./lib/hooks/use-hover-lift"
+import { useHoverLift } from "./lib/use-hover-lift"
 
 function MyComponent() {
   const liftProps = useHoverLift({ liftDistance: 12 })
@@ -681,20 +669,19 @@ No additional setup required beyond installing Framer Motion.
 **Step 2: Create folder structure**
 
 ```bash
-mkdir -p src/lib/hooks
-mkdir -p src/lib/components
-mkdir -p src/components/animations
+mkdir -p src/lib/
+mkdir -p src/components/
 ```
 
 **Step 3: Copy hooks from documentation**
 
-Copy the animation hooks you need from the [hooks documentation](/docs/hooks/hover-lift) into `src/lib/hooks/`.
+Copy the animation hooks you need from the [hooks documentation](/docs/hooks/hover-lift) into `src/lib/`.
 
 **Step 4: Use in your app**
 
 ```tsx title="src/App.tsx"
 import { motion } from "framer-motion"
-import { useHoverLift } from "./lib/hooks/use-hover-lift"
+import { useHoverLift } from "./lib/use-hover-lift"
 
 function App() {
   const liftProps = useHoverLift()
@@ -848,24 +835,10 @@ Make sure you're using TypeScript 4.9 or later and have proper type definitions 
     </span>
   </a>
   
-  <a href="/docs/components/buttons" className="group rounded-lg border border-zinc-800 bg-zinc-950/30 p-6 transition-all hover:border-zinc-700 hover:shadow-lg">
+  <a href="/docs/animations/buttons/lift" className="group rounded-lg border border-zinc-800 bg-zinc-950/30 p-6 transition-all hover:border-zinc-700 hover:shadow-lg">
     <h3 className="mb-2 font-semibold group-hover:text-primary">Browse Components</h3>
     <span className="text-sm text-zinc-400 block">
       Check out pre-built animation components ready to use.
-    </span>
-  </a>
-  
-  <a href="/docs/examples" className="group rounded-lg border border-zinc-800 bg-zinc-950/30 p-6 transition-all hover:border-zinc-700 hover:shadow-lg">
-    <h3 className="mb-2 font-semibold group-hover:text-primary">View Examples</h3>
-    <span className="text-sm text-zinc-400 block">
-      See real-world examples and implementation patterns.
-    </span>
-  </a>
-  
-  <a href="/docs/guides/composing-animations" className="group rounded-lg border border-zinc-800 bg-zinc-950/30 p-6 transition-all hover:border-zinc-700 hover:shadow-lg">
-    <h3 className="mb-2 font-semibold group-hover:text-primary">Learn to Compose</h3>
-    <span className="text-sm text-zinc-400 block">
-      Learn how to combine multiple animations together.
     </span>
   </a>
 </div>

@@ -1,7 +1,6 @@
 {
   "title": "Loaders",
   "pages": [
-    "index",
     "spinner",
     "dots",
     "bars",

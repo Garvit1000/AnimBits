@@ -60,43 +60,6 @@ export function usePulse(options: UsePulseOptions = {}): MotionProps {
   };
 }
 
-```tsx
- * import { usePulse } from "@/lib/hooks"
- * import { motion } from "framer-motion"
- *
- * function NotificationBadge() {
- *   const pulseProps = usePulse({ scaleTo: 1.1, duration: 0.8 })
- *   return (
- *     <motion.div {...pulseProps}>
- *       🔔
- *     </motion.div>
- *   )
- * }
- * ```
- */
-export function usePulse(options: UsePulseOptions = {}): MotionProps {
-  const {
-    scaleFrom = 1,
-    scaleTo = 1.05,
-    duration = 1,
-    ease = "easeInOut",
-    repeat = Infinity,
-    delay = 0,
-  } = options;
-
-  return {
-    animate: {
-      scale: [scaleFrom, scaleTo, scaleFrom],
-    },
-    transition: {
-      duration,
-      ease,
-      repeat,
-      delay,
-    },
-  };
-}
-
 ```
   </Tab>
   <Tab value="CLI">
@@ -355,40 +318,6 @@ const pulseProps = usePulse({
 })
 ```
 
-## Common Use Cases
-
-### Notification Badge
-
-```tsx
-<motion.span {...usePulse({ scaleTo: 1.1, duration: 1.2 })}>
-  {unreadCount}
-</motion.span>
-```
-
-### Live Status Indicator
-
-```tsx
-<motion.div {...usePulse({ scaleTo: 1.15, duration: 1.5 })}>
-  🔴 LIVE
-</motion.div>
-```
-
-### Call-to-Action Button
-
-```tsx
-<motion.button {...usePulse({ scaleTo: 1.03, duration: 2 })}>
-  Limited Offer!
-</motion.button>
-```
-
-### Recording Indicator
-
-```tsx
-<motion.div {...usePulse({ scaleTo: 1.3, duration: 0.8 })}>
-  ⏺️ Recording
-</motion.div>
-```
-
 ## Accessibility
 
 <Callout type="warn">
@@ -412,8 +341,3 @@ Works in all modern browsers that support CSS transforms and Framer Motion:
 - Firefox 88+
 - Safari 14+
 
-## Performance Tips
-
-- Pulse animations are GPU-accelerated via CSS transforms
-- Avoid pulsing too many elements simultaneously
-- Use `will-change: transform` for better performance on complex layouts

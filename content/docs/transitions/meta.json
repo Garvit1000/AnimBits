@@ -1,7 +1,6 @@
 {
   "title": "Transitions",
   "pages": [
-    "index",
     "theme-toggle-circular",
     "theme-toggle-slide-top",
     "theme-toggle-slide-bottom",

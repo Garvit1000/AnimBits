@@ -45,34 +45,6 @@ export function useWordCarousel(options: UseWordCarouselOptions) {
   };
 }
 
-```tsx
- * const { currentWord, key } = useWordCarousel({ 
- *   words: ["Fast", "Modern", "Beautiful"] 
- * })
- * <AnimatePresence mode="wait">
- *   <motion.span key={key}>{currentWord}</motion.span>
- * </AnimatePresence>
- * ```
- */
-export function useWordCarousel(options: UseWordCarouselOptions) {
-  const { words, interval = 2 } = options
-  const [currentIndex, setCurrentIndex] = React.useState(0)
-
-  React.useEffect(() => {
-    const timer = setInterval(() => {
-      setCurrentIndex((prev) => (prev + 1) % words.length)
-    }, interval * 1000)
-
-    return () => clearInterval(timer)
-  }, [words.length, interval])
-
-  return {
-    currentWord: words[currentIndex],
-    currentIndex,
-    key: currentIndex, // For AnimatePresence
-  }
-}
-
 ```
   </Tab>
   <Tab value="CLI">
@@ -454,22 +426,6 @@ For inline text, use `display: inline-block`:
   {currentWord}
 </motion.span>
 ```
-
-## Performance
-
-- Lightweight - uses simple interval timer
-- No unnecessary re-renders
-- Automatically cleans up on unmount
-
-## Use Cases
-
-- Hero titles with rotating adjectives
-- Feature highlights
-- Testimonial rotation
-- Dynamic taglines
-- Rotating call-to-actions
-- Status indicators
-- Loading messages
 
 <Callout>
   **Accessibility:** Ensure rotating text doesn't convey critical information that users might miss. Consider adding pause controls for accessibility.

@@ -56,41 +56,6 @@ export function usePress(options: UsePressOptions = {}): MotionProps {
   };
 }
 
-```tsx
- * import { usePress } from "@/lib/hooks"
- * import { motion } from "framer-motion"
- *
- * function MyButton() {
- *   const pressProps = usePress({ pressScale: 0.92 })
- *   return (
- *     <motion.button {...pressProps}>
- *       Click me
- *     </motion.button>
- *   )
- * }
- * ```
- */
-export function usePress(options: UsePressOptions = {}): MotionProps {
-  const {
-    pressScale = 0.95,
-    duration = 0.1,
-    ease = "easeInOut",
-    addRotation = false,
-    rotationAmount = 2,
-  } = options;
-
-  return {
-    whileTap: {
-      scale: pressScale,
-      rotate: addRotation ? rotationAmount : 0,
-    },
-    transition: {
-      duration,
-      ease,
-    },
-  };
-}
-
 ```
   </Tab>
   <Tab value="CLI">

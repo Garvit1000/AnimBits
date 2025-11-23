@@ -70,61 +70,6 @@ export function useBounce(options: UseBounceOptions = {}): MotionProps {
   };
 }
 
-```tsx
- * import { useBounce } from "@/lib/hooks"
- * import { motion } from "framer-motion"
- *
- * function BouncyIcon() {
- *   const bounceProps = useBounce({ bounceHeight: -30 })
- *   return (
- *     <motion.div {...bounceProps}>
- *       ⬆️
- *     </motion.div>
- *   )
- * }
- *
- * // Bounce on hover
- * function HoverBounce() {
- *   const bounceProps = useBounce({ onHover: true })
- *   return <motion.button {...bounceProps}>Hover me</motion.button>
- * }
- * ```
- */
-export function useBounce(options: UseBounceOptions = {}): MotionProps {
-  const {
-    bounceHeight = -20,
-    duration = 0.6,
-    ease = [0.68, -0.55, 0.265, 1.55],
-    repeat = Infinity,
-    delay = 0,
-    onHover = false,
-  } = options;
-
-  if (onHover) {
-    return {
-      whileHover: {
-        y: [0, bounceHeight, 0],
-      },
-      transition: {
-        duration,
-        ease,
-      },
-    };
-  }
-
-  return {
-    animate: {
-      y: [0, bounceHeight, 0],
-    },
-    transition: {
-      duration,
-      ease,
-      repeat,
-      delay,
-    },
-  };
-}
-
 ```
   </Tab>
   <Tab value="CLI">
@@ -136,22 +81,6 @@ export function useBounce(options: UseBounceOptions = {}): MotionProps {
 
 ## Usage
 
-### Basic Example (Continuous)
-
-```tsx
-import { motion } from "framer-motion"
-import { useBounce } from "@/lib/hooks/use-bounce"
-
-export function BouncyIcon() {
-  const bounceProps = useBounce()
-  
-  return (
-    <motion.div {...bounceProps} className="icon">
-      🎉
-    </motion.div>
-  )
-}
-```
 
 ### Bounce on Hover
 
@@ -170,25 +99,7 @@ export function HoverBounce() {
 }
 ```
 
-### Custom Bounce Height
 
-```tsx
-import { motion } from "framer-motion"
-import { useBounce } from "@/lib/hooks/use-bounce"
-
-export function HighBounce() {
-  const bounceProps = useBounce({ 
-    bounceHeight: -40,  // Higher bounce
-    duration: 0.8 
-  })
-  
-  return (
-    <motion.div {...bounceProps}>
-      ⬆️ High bounce
-    </motion.div>
-  )
-}
-```
 
 ### Limited Bounces
 
@@ -267,7 +178,7 @@ const bounceProps = useBounce({
 
 ```tsx
 <motion.div {...useBounce({ repeat: 3, bounceHeight: -30 })}>
-  ✅ Success!
+  Success!
 </motion.div>
 ```
 

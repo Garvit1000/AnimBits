@@ -113,7 +113,7 @@ import { CardTilt } from "@/components/animations/cards/tilt"
 
 ### Portfolio Grid
 
-<PreviewGrid cols={3}>
+<PreviewGrid cols={2}>
   <Preview
     background="dots"
     code={`<CardTilt>Project 1</CardTilt>`}
@@ -140,18 +140,6 @@ import { CardTilt } from "@/components/animations/cards/tilt"
     </CardTilt>
   </Preview>
   
-  <Preview
-    background="dots"
-    code={`<CardTilt>Project 3</CardTilt>`}
-  >
-    <CardTilt className="overflow-hidden bg-white dark:bg-neutral-900 rounded-lg border border-neutral-200 dark:border-neutral-800">
-      <img src="https://images.unsplash.com/photo-1559028012-481c04fa702d?w=300&h=200&fit=crop" alt="Project" className="w-full h-32 object-cover" />
-      <div className="p-4">
-        <h3 className="font-semibold text-sm">Branding</h3>
-        <p className="text-xs text-neutral-600 dark:text-neutral-400 mt-1">Logo Design</p>
-      </div>
-    </CardTilt>
-  </Preview>
 </PreviewGrid>
 
 ## Props
@@ -162,10 +150,3 @@ import { CardTilt } from "@/components/animations/cards/tilt"
 | `duration` | `number` | `0.3` | Animation duration in seconds |
 | `className` | `string` | `undefined` | Additional CSS classes |
 
-## Use Cases
-
-- Interactive product showcases
-- Portfolio items
-- Feature highlights
-- Gaming cards
-- Creative presentations

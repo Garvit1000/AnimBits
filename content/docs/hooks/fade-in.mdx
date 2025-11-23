@@ -65,48 +65,6 @@ export function useFadeIn(options: UseFadeInOptions = {}): MotionProps {
   };
 }
 
-```tsx
- * import { useFadeIn } from "@/lib/hooks"
- * import { motion } from "framer-motion"
- *
- * function MyCard() {
- *   const fadeProps = useFadeIn({ duration: 0.6, delay: 0.2 })
- *   return (
- *     <motion.div {...fadeProps}>
- *       Content fades in
- *     </motion.div>
- *   )
- * }
- * ```
- */
-export function useFadeIn(options: UseFadeInOptions = {}): MotionProps {
-  const {
-    duration = 0.5,
-    delay = 0,
-    from = 0,
-    to = 1,
-    ease = "easeOut",
-    viewport = "once",
-  } = options;
-
-  return {
-    initial: {
-      opacity: from,
-    },
-    whileInView: {
-      opacity: to,
-    },
-    viewport: {
-      once: viewport === "once",
-    },
-    transition: {
-      duration,
-      delay,
-      ease,
-    },
-  };
-}
-
 ```
   </Tab>
   <Tab value="CLI">
@@ -442,9 +400,3 @@ Works in all modern browsers that support CSS opacity and Framer Motion:
 - Safari 14+
 - All mobile browsers
 
-## Performance
-
-- Opacity animations are GPU-accelerated
-- Very performant, even with many elements
-- No layout recalculation needed
-- Ideal for large lists and grids

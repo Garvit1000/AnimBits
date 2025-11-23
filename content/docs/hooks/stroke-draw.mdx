@@ -48,46 +48,6 @@ export function useStrokeDraw(options: UseStrokeDrawOptions = {}): MotionProps {
   };
 }
 
-```tsx
- * // Use with SVG path
- * const strokeProps = useStrokeDraw()
- * <svg>
- *   <motion.path d="M..." {...strokeProps} />
- * </svg>
- *
- * // Custom duration and delay
- * const strokeProps = useStrokeDraw({ duration: 2, delay: 0.5 })
- * <svg>
- *   <motion.path d="M..." {...strokeProps} />
- * </svg>
- *
- * // Repeating animation
- * const strokeProps = useStrokeDraw({ repeat: true })
- * <svg>
- *   <motion.path d="M..." {...strokeProps} />
- * </svg>
- * ```
- */
-export function useStrokeDraw(options: UseStrokeDrawOptions = {}): MotionProps {
-  const {
-    duration = 1.5,
-    delay = 0,
-    repeat = false,
-    ease = "easeInOut",
-  } = options;
-
-  return {
-    initial: { pathLength: 0, opacity: 0 },
-    animate: { pathLength: 1, opacity: 1 },
-    transition: {
-      pathLength: { duration, delay, ease },
-      opacity: { duration: 0.2, delay },
-      repeat: repeat ? Infinity : 0,
-      repeatDelay: 1,
-    },
-  };
-}
-
 ```
   </Tab>
   <Tab value="CLI">
@@ -416,21 +376,6 @@ const strokeProps = useStrokeDraw({
 })
 ```
 
-## Performance
-
-- Uses Framer Motion's optimized path animations
-- Hardware accelerated
-- Smooth 60fps animation
-
-## Use Cases
-
-- Logo reveals
-- Signature animations
-- Loading indicators
-- Decorative elements
-- Icon animations
-- Infographic reveals
-- Map route animations
 
 <Callout type="warn">
   **SVG Required:** This hook only works with SVG path elements. For other animations, use different hooks.

@@ -26,12 +26,15 @@ import { Star } from "lucide-react"
   <div className="flex gap-8 items-center justify-center">
     <BounceIcon trigger="hover" className="cursor-pointer">
       <Star className="w-8 h-8 text-yellow-500 fill-yellow-500" />
+      <span className="text-xs text-yellow-500">Hover</span>
     </BounceIcon>
     <BounceIcon trigger="tap">
       <Heart className="w-8 h-8 text-red-500 fill-red-500" />
+      <span className="text-xs text-red-500">Tap</span>
     </BounceIcon>
     <BounceIcon trigger="mount">
       <Sparkles className="w-8 h-8 text-purple-500" />
+      <span className="text-xs text-purple-500">Mount</span>
     </BounceIcon>
   </div>
 </Preview>

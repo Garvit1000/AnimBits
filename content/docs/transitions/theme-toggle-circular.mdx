@@ -353,37 +353,3 @@ You can customize the easing function for different animation feels:
   animation: circle-reverse 0.7s ease-in;
 }
 ```
-
-## Features
-
-- ✅ Hardware accelerated (GPU transforms and clip-path)
-- ✅ Bidirectional animations (new theme always expands)
-- ✅ Click position tracking for natural ripple effect
-- ✅ Respects `prefers-reduced-motion`
-- ✅ Graceful fallback for unsupported browsers
-- ✅ Prevents double-clicks during transition
-- ✅ Minimal bundle size (~1KB)
-- ✅ Framework agnostic
-
-## Browser Support
-
-- Chrome 111+
-- Edge 111+
-- Opera 97+
-- Falls back to instant theme change in other browsers
-
-## How It Works
-
-The component uses a bidirectional approach to ensure the **new theme always expands** from the click position:
-
-### Light → Dark
-- **OLD** (light): Stays static in the background (z-index: -1)
-- **NEW** (dark): Expands with `circle` animation from click point (z-index: 1)
-- **Result**: Dark theme appears to grow from your click
-
-### Dark → Light  
-- **OLD** (dark): Shrinks with `circle-reverse` animation (z-index: 1)
-- **NEW** (light): Stays static in the background (z-index: -1)
-- **Result**: Dark shrinks away, revealing light underneath (appears as light expanding)
-
-This creates a consistent visual experience where clicking always makes the new theme appear to expand outward from your cursor.

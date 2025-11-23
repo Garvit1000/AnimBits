@@ -16,10 +16,10 @@ import { Callout } from 'fumadocs-ui/components/callout';
     Get Started
   </a>
   <a
-    href="/docs/components/buttons"
+    href="/docs/animations/buttons/lift"
     className="inline-flex items-center justify-center rounded-lg border bg-background px-6 py-3 font-semibold transition-colors hover:bg-accent"
   >
-    Browse Components
+    Browse Animations
   </a>
 </div>
 
@@ -124,30 +124,6 @@ AnimBits is a collection of **copy-paste animation components** and **primitive 
   </Step>
 </Steps>
 
-## Architecture
-
-AnimBits uses a layered architecture that gives you flexibility in how you use it:
-
-```
-┌─────────────────────────────────────────┐
-│ Layer 3: Semantic Components            │
-│ (buttons/lift, cards/hover-glow, etc.)  │
-│ Quick to use, opinionated examples      │
-└─────────────────────────────────────────┘
-                  ↓ uses
-┌─────────────────────────────────────────┐
-│ Layer 2: Generic Wrappers (Optional)    │
-│ (<Animated />, merge utilities)         │
-│ Convenience layer for common patterns   │
-└─────────────────────────────────────────┘
-                  ↓ uses
-┌─────────────────────────────────────────┐
-│ Layer 1: Animation Primitives           │
-│ (useHoverLift, useGlow, useFadeIn...)   │
-│ Component-agnostic, maximum flexibility │
-└─────────────────────────────────────────┘
-```
-
 ### Choose Your Layer
 
 <Tabs items={['Semantic Components', 'Primitive Hooks', 'Generic Wrappers']}>
@@ -214,9 +190,6 @@ AnimBits uses a layered architecture that gives you flexibility in how you use i
   - Learn by reading the source
 </Callout>
 
-### Why Copy-Paste?
-
-Traditional animation libraries force you into their patterns. AnimBits gives you **the building blocks** and gets out of your way. Want to modify the easing? Change the shadow? Combine three different animations? Go for it. It's your code.
 
 ## What's Included
 
@@ -388,9 +361,8 @@ Traditional animation libraries force you into their patterns. AnimBits gives yo
 
 ## Community & Support
 
-- [GitHub Repository](https://github.com/yourusername/animbits) - Star us and contribute!
-- [Discord Community](https://discord.gg/animbits) - Get help and share your creations
-- [Twitter](https://twitter.com/animbits) - Follow for updates
+- [GitHub Repository](https://github.com/Garvit1000/AnimBits) - Star us and contribute!
+- [Twitter](https://x.com/Garvit1000) - Follow for updates
 
 
 
