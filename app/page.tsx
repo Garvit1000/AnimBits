@@ -316,10 +316,26 @@ export default async function Home() {
                                 title="Icons"
                                 description="Heartbeat, Pulse, Spin"
                                 header={
-                                    <div className="flex h-full min-h-[6rem] w-full items-center justify-center">
-                                        <HeartbeatIcon className="text-red-500">
-                                            <Heart className="h-12 w-12 fill-current" />
-                                        </HeartbeatIcon>
+                                    <div className="flex h-full min-h-[6rem] w-full items-center justify-center p-6">
+                                        <div className="flex items-center gap-6">
+                                            <div className="flex flex-col items-center gap-2">
+                                                <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-red-50 dark:bg-red-950/30">
+                                                    <HeartbeatIcon className="text-red-500">
+                                                        <Heart className="h-8 w-8 fill-current" />
+                                                    </HeartbeatIcon>
+                                                </div>
+                                            </div>
+                                            <div className="flex flex-col items-center gap-2">
+                                                <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-blue-50 dark:bg-blue-950/30">
+                                                    <div className="h-8 w-8 animate-spin rounded-full border-[3px] border-blue-500 border-t-transparent" />
+                                                </div>
+                                            </div>
+                                            <div className="flex flex-col items-center gap-2">
+                                                <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-purple-50 dark:bg-purple-950/30">
+                                                    <div className="h-8 w-8 animate-pulse rounded-full bg-purple-500" />
+                                                </div>
+                                            </div>
+                                        </div>
                                     </div>
                                 }
                                 className="h-full"
@@ -335,13 +351,23 @@ export default async function Home() {
                                 title="Lists"
                                 description="Staggered animations"
                                 header={
-                                    <div className="flex h-full min-h-[6rem] w-full items-center justify-center">
-                                        <StaggerFadeList className="w-32 space-y-2">
-                                            {[1, 2, 3].map((i) => (
+                                    <div className="flex h-full w-full items-start justify-center overflow-hidden pt-8 px-4">
+                                        <StaggerFadeList className="w-full max-w-[180px] space-y-2.5">
+                                            {["Midnight Dreams", "Neon Lights", "Ocean Waves"].map((song, i) => (
                                                 <div
                                                     key={i}
-                                                    className="h-2 w-full rounded-full bg-neutral-300 dark:bg-neutral-700"
-                                                />
+                                                    className="flex items-center gap-2.5 rounded-lg bg-neutral-100 p-2.5 dark:bg-neutral-800"
+                                                >
+                                                    <div className="h-9 w-9 flex-shrink-0 rounded bg-gradient-to-br from-blue-500 to-purple-600" />
+                                                    <div className="flex-1 min-w-0">
+                                                        <div className="text-xs font-medium text-neutral-900 dark:text-white truncate">
+                                                            {song}
+                                                        </div>
+                                                        <div className="text-[10px] text-neutral-500 dark:text-neutral-400">
+                                                            Artist {i + 1}
+                                                        </div>
+                                                    </div>
+                                                </div>
                                             ))}
                                         </StaggerFadeList>
                                     </div>
@@ -418,7 +444,12 @@ export default async function Home() {
                                 header={
                                     <div className="flex h-full min-h-[6rem] w-full items-center justify-center">
                                         <ThemeToggleCircular>
-                                            <div className="h-10 w-10 rounded-full bg-neutral-900 dark:bg-neutral-100" />
+                                            <div className="relative flex h-12 w-12 items-center justify-center rounded-full bg-gradient-to-br from-blue-500 to-purple-600 shadow-lg">
+                                                <div className="absolute inset-0 rounded-full bg-gradient-to-br from-blue-400 to-purple-500 opacity-0 blur-md transition-opacity duration-300 group-hover:opacity-100" />
+                                                <svg className="relative h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+                                                </svg>
+                                            </div>
                                         </ThemeToggleCircular>
                                     </div>
                                 }
@@ -457,11 +488,18 @@ export default async function Home() {
                                 title="Pages"
                                 description="Smooth page transitions"
                                 header={
-                                    <div className="flex h-full min-h-[6rem] w-full items-center justify-center">
-                                        <div className="rounded-lg border-2 border-dashed border-neutral-300 p-6 dark:border-neutral-700">
-                                            <span className="text-sm font-medium text-neutral-700 dark:text-neutral-300">
-                                                Page Transition
-                                            </span>
+                                    <div className="flex h-full min-h-[6rem] w-full items-center justify-center p-4">
+                                        <div className="relative h-32 w-40">
+                                            <div className="absolute inset-0 rounded-lg border border-neutral-200 bg-white p-4 shadow-sm dark:border-neutral-700 dark:bg-neutral-800">
+                                                <div className="mb-2 h-2 w-3/4 rounded bg-neutral-200 dark:bg-neutral-700" />
+                                                <div className="mb-2 h-2 w-full rounded bg-neutral-200 dark:bg-neutral-700" />
+                                                <div className="h-2 w-1/2 rounded bg-neutral-200 dark:bg-neutral-700" />
+                                            </div>
+                                            <div className="absolute inset-0 translate-x-4 translate-y-4 rounded-lg border border-neutral-300 bg-gradient-to-br from-blue-50 to-purple-50 p-4 opacity-60 shadow-md dark:border-neutral-600 dark:from-blue-950 dark:to-purple-950">
+                                                <div className="mb-2 h-2 w-3/4 rounded bg-blue-200 dark:bg-blue-800" />
+                                                <div className="mb-2 h-2 w-full rounded bg-blue-200 dark:bg-blue-800" />
+                                                <div className="h-2 w-1/2 rounded bg-blue-200 dark:bg-blue-800" />
+                                            </div>
                                         </div>
                                     </div>
                                 }
@@ -469,17 +507,22 @@ export default async function Home() {
                             />
                         </Link>
 
-                        {/* Morphing */}
+                        {/* Hooks */}
                         <Link
-                            href="/docs/animations/loaders/morphing"
+                            href="/docs/hooks/hover-glow"
                             className="group/item block h-full w-full"
                         >
                             <BentoGridItem
-                                title="Morphing"
-                                description="Shape-shifting animation"
+                                title="Hooks"
+                                description="Reusable animation hooks"
                                 header={
-                                    <div className="flex h-full min-h-[6rem] w-full items-center justify-center">
-                                        <LoaderMorphing size={60} color="#ec4899" duration={1.5} />
+                                    <div className="flex h-full min-h-[6rem] w-full items-center justify-center p-6">
+                                        <div className="relative">
+                                            <div className="absolute -inset-4 rounded-xl bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 opacity-20 blur-xl" />
+                                            <div className="relative rounded-lg border border-neutral-200 bg-white px-6 py-3 font-mono text-sm font-medium text-neutral-900 shadow-lg transition-all hover:scale-105 dark:border-neutral-700 dark:bg-neutral-800 dark:text-white">
+                                                useHoverGlow()
+                                            </div>
+                                        </div>
                                     </div>
                                 }
                                 className="h-full"
