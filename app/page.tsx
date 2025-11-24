@@ -7,7 +7,6 @@ import { TextShimmer } from "@/registry/new-york/animations/text/shimmer";
 import { RippleButton } from "@/registry/new-york/animations/buttons/ripple";
 import { CardParallaxTilt } from "@/registry/new-york/animations/cards/parallax-tilt";
 import { LoaderOrbit } from "@/registry/new-york/animations/loaders/orbit";
-import { LoaderMorphing } from "@/registry/new-york/animations/loaders/morphing";
 import { HeartbeatIcon } from "@/registry/new-york/animations/icons/heartbeat";
 import { StaggerFadeList } from "@/registry/new-york/animations/lists/stagger-fade";
 
