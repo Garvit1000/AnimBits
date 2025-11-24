@@ -352,18 +352,26 @@ export default async function Home() {
                                 header={
                                     <div className="flex h-full w-full items-start justify-center overflow-hidden pt-8 px-4">
                                         <StaggerFadeList className="w-full max-w-[180px] space-y-2.5">
-                                            {["Midnight Dreams", "Neon Lights", "Ocean Waves"].map((song, i) => (
+                                            {[
+                                                { song: "Midnight Dreams", artist: "Luna Bay", image: "https://images.unsplash.com/photo-1470225620780-dba8ba36b745?w=100&h=100&fit=crop" },
+                                                { song: "Neon Lights", artist: "The Synthwave", image: "https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=100&h=100&fit=crop" },
+                                                { song: "Ocean Waves", artist: "Coastal Vibes", image: "https://images.unsplash.com/photo-1459749411175-04bf5292ceea?w=100&h=100&fit=crop" }
+                                            ].map((item, i) => (
                                                 <div
                                                     key={i}
                                                     className="flex items-center gap-2.5 rounded-lg bg-neutral-100 p-2.5 dark:bg-neutral-800"
                                                 >
-                                                    <div className="h-9 w-9 flex-shrink-0 rounded bg-gradient-to-br from-blue-500 to-purple-600" />
+                                                    <img
+                                                        src={item.image}
+                                                        alt={item.song}
+                                                        className="h-9 w-9 flex-shrink-0 rounded object-cover"
+                                                    />
                                                     <div className="flex-1 min-w-0">
                                                         <div className="text-xs font-medium text-neutral-900 dark:text-white truncate">
-                                                            {song}
+                                                            {item.song}
                                                         </div>
                                                         <div className="text-[10px] text-neutral-500 dark:text-neutral-400">
-                                                            Artist {i + 1}
+                                                            {item.artist}
                                                         </div>
                                                     </div>
                                                 </div>
@@ -443,8 +451,8 @@ export default async function Home() {
                                 header={
                                     <div className="flex h-full min-h-[6rem] w-full items-center justify-center">
                                         <ThemeToggleCircular>
-                                            <div className="relative flex h-12 w-12 items-center justify-center rounded-full bg-gradient-to-br from-blue-500 to-purple-600 shadow-lg">
-                                                <div className="absolute inset-0 rounded-full bg-gradient-to-br from-blue-400 to-purple-500 opacity-0 blur-md transition-opacity duration-300 group-hover:opacity-100" />
+                                            <div className="relative flex h-12 w-12 items-center justify-center rounded-full bg-blue-600 shadow-lg">
+                                                <div className="absolute inset-0 rounded-full bg-blue-500 opacity-0 blur-md transition-opacity duration-300 group-hover:opacity-100" />
                                                 <svg className="relative h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
                                                 </svg>
@@ -494,7 +502,7 @@ export default async function Home() {
                                                 <div className="mb-2 h-2 w-full rounded bg-neutral-200 dark:bg-neutral-700" />
                                                 <div className="h-2 w-1/2 rounded bg-neutral-200 dark:bg-neutral-700" />
                                             </div>
-                                            <div className="absolute inset-0 translate-x-4 translate-y-4 rounded-lg border border-neutral-300 bg-gradient-to-br from-blue-50 to-purple-50 p-4 opacity-60 shadow-md dark:border-neutral-600 dark:from-blue-950 dark:to-purple-950">
+                                            <div className="absolute inset-0 translate-x-4 translate-y-4 rounded-lg border border-neutral-300 bg-blue-50 p-4 opacity-60 shadow-md dark:border-neutral-600 dark:bg-blue-950">
                                                 <div className="mb-2 h-2 w-3/4 rounded bg-blue-200 dark:bg-blue-800" />
                                                 <div className="mb-2 h-2 w-full rounded bg-blue-200 dark:bg-blue-800" />
                                                 <div className="h-2 w-1/2 rounded bg-blue-200 dark:bg-blue-800" />
