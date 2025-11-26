@@ -54,7 +54,8 @@ export function SvgTextDraw({
     const text = String(children).toLowerCase();
     const totalWidth = text.length * letterWidth;
 
-    const calc = (x: number) => x * speed;
+    // Higher speed = faster animation (divide duration by speed)
+    const calc = (x: number) => x / speed;
 
     return (
         <motion.svg
@@ -76,7 +77,7 @@ export function SvgTextDraw({
                 if (!path) return null;
 
                 const xOffset = index * letterWidth;
-                const charDelay = delay + index * 0.15 * speed;
+                const charDelay = delay + (index * 0.15) / speed;
 
                 return (
                     <motion.path
