@@ -1,0 +1,244 @@
+---
+title: SVG Text Draw
+description: SVG path drawing animation that reveals text letter by letter with stroke animation.
+secondary: "#60A5FA"
+---
+
+import { Tab, Tabs } from 'fumadocs-ui/components/tabs';
+import { Preview, PreviewGrid } from '@/components/preview';
+import { SvgTextDraw } from '@/registry/new-york/animations/text/svg-text-draw';
+
+## Overview
+
+The `SvgTextDraw` component creates a smooth SVG drawing animation where each letter is drawn stroke-by-stroke using SVG path animations, similar to handwriting or signature effects.
+
+## Preview
+
+<Preview
+  background="default"
+  code={`import { SvgTextDraw } from "@/components/animations/text/svg-text-draw"
+
+<SvgTextDraw className="text-4xl font-semibold">
+  hello world
+</SvgTextDraw>`}
+>
+  <SvgTextDraw className="text-4xl font-semibold">hello world</SvgTextDraw>
+</Preview>
+
+## Installation
+
+<Tabs items={['CLI', 'Manual']}>
+  <Tab value="CLI">
+    ```bash
+    npx shadcn add https://animbits.dev/r/text-svg-text-draw.json
+    ```
+  </Tab>
+  <Tab value="Manual">
+    **Step 1: Add the utility**
+
+    ```tsx title="lib/utils.ts"
+    import { clsx, type ClassValue } from "clsx"
+    import { twMerge } from "tailwind-merge"
+
+    export function cn(...inputs: ClassValue[]) {
+      return twMerge(clsx(inputs))
+    }
+    ```
+
+    **Step 2: Copy the component**
+
+    ```tsx title="components/animations/text/svg-text-draw.tsx"
+"use client";
+import * as React from "react";
+import { motion, SVGMotionProps } from "framer-motion";
+import { cn } from "@/lib/utils";
+
+export interface SvgTextDrawProps extends Omit<SVGMotionProps<SVGSVGElement>, "children"> {
+  children: string;
+  delay?: number;
+  speed?: number;
+  className?: string;
+}
+
+// Simple letter path definitions (lowercase letters)
+const letterPaths: Record<string, string> = {
+  a: "M 10 30 Q 10 10, 25 10 Q 40 10, 40 25 Q 40 40, 25 40 Q 15 40, 10 35 M 40 10 L 40 40",
+  b: "M 10 0 L 10 40 M 10 20 Q 10 10, 20 10 Q 30 10, 30 25 Q 30 40, 20 40 Q 10 40, 10 35",
+  c: "M 35 15 Q 30 10, 20 10 Q 10 10, 10 25 Q 10 40, 20 40 Q 30 40, 35 35",
+  d: "M 40 0 L 40 40 M 40 10 Q 40 10, 25 10 Q 10 10, 10 25 Q 10 40, 25 40 Q 40 40, 40 35",
+  e: "M 35 25 L 10 25 Q 10 10, 25 10 Q 40 10, 40 25 Q 40 40, 25 40 Q 10 40, 10 35",
+  f: "M 30 5 Q 25 0, 20 0 M 20 0 L 20 40 M 10 15 L 30 15",
+  g: "M 40 10 Q 40 10, 25 10 Q 10 10, 10 25 Q 10 40, 25 40 Q 40 40, 40 30 L 40 45 Q 40 50, 25 50",
+  h: "M 10 0 L 10 40 M 10 20 Q 10 10, 20 10 Q 30 10, 30 20 L 30 40",
+  i: "M 20 5 L 20 8 M 20 15 L 20 40",
+  j: "M 25 5 L 25 8 M 25 15 L 25 40 Q 25 50, 15 50",
+  k: "M 10 0 L 10 40 M 30 15 L 10 25 L 30 40",
+  l: "M 20 0 L 20 40",
+  m: "M 10 40 L 10 10 Q 10 10, 17 10 Q 24 10, 24 17 L 24 40 M 24 10 Q 24 10, 31 10 Q 38 10, 38 17 L 38 40",
+  n: "M 10 40 L 10 10 Q 10 10, 20 10 Q 30 10, 30 20 L 30 40",
+  o: "M 25 10 Q 10 10, 10 25 Q 10 40, 25 40 Q 40 40, 40 25 Q 40 10, 25 10",
+  p: "M 10 50 L 10 10 Q 10 10, 20 10 Q 30 10, 30 25 Q 30 40, 20 40 Q 10 40, 10 35",
+  q: "M 40 10 Q 40 10, 25 10 Q 10 10, 10 25 Q 10 40, 25 40 Q 40 40, 40 35 L 40 50",
+  r: "M 10 40 L 10 10 Q 10 10, 20 10 Q 30 10, 30 15",
+  s: "M 35 15 Q 30 10, 20 10 Q 10 10, 10 17 Q 10 25, 30 25 Q 40 25, 40 33 Q 40 40, 20 40 Q 10 40, 10 35",
+  t: "M 20 5 L 20 35 Q 20 40, 25 40 M 10 15 L 30 15",
+  u: "M 10 10 L 10 30 Q 10 40, 20 40 Q 30 40, 30 30 L 30 10",
+  v: "M 10 10 L 20 40 L 30 10",
+  w: "M 10 10 L 15 40 L 25 10 L 30 40 L 35 10",
+  x: "M 10 10 L 30 40 M 30 10 L 10 40",
+  y: "M 10 10 L 20 30 L 30 10 M 20 30 L 20 45 Q 20 50, 10 50",
+  z: "M 10 10 L 30 10 L 10 40 L 30 40",
+  " ": "",
+};
+
+const letterWidth = 50; // Width allocated for each letter
+
+export function SvgTextDraw({
+  children,
+  className,
+  delay = 0,
+  speed = 1,
+  ...props
+}: SvgTextDrawProps) {
+  // Convert children to string and lowercase
+  const text = String(children).toLowerCase();
+  const totalWidth = text.length * letterWidth;
+
+  const calc = (x: number) => x * speed;
+
+  return (
+    <motion.svg
+      className={cn("h-12", className)}
+      xmlns="http://www.w3.org/2000/svg"
+      viewBox={`0 0 ${totalWidth} 60`}
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="3"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      initial={{ opacity: 1 }}
+      animate={{ opacity: 1 }}
+      {...props}
+    >
+      <title>{children}</title>
+      {text.split("").map((char, index) => {
+        const path = letterPaths[char] || "";
+        if (!path) return null;
+
+        const xOffset = index * letterWidth;
+        const charDelay = delay + index * 0.15 * speed;
+
+        return (
+          <motion.path
+            key={`${char}-${index}`}
+            d={path}
+            transform={`translate(${xOffset}, 0)`}
+            initial={{ pathLength: 0, opacity: 0 }}
+            animate={{ pathLength: 1, opacity: 1 }}
+            transition={{
+              pathLength: {
+                duration: calc(0.5),
+                ease: "easeInOut",
+                delay: calc(charDelay),
+              },
+              opacity: {
+                duration: calc(0.3),
+                delay: calc(charDelay),
+              },
+            }}
+          />
+        );
+      })}
+    </motion.svg>
+  );
+}
+
+```
+  </Tab>
+</Tabs>
+
+## Usage
+
+```tsx
+import { SvgTextDraw } from "@/components/animations/text/svg-text-draw"
+
+<SvgTextDraw>hello world</SvgTextDraw>
+```
+
+> **Note:** The component currently supports lowercase letters and spaces. Text will be automatically converted to lowercase.
+
+## Examples
+
+### Different Speeds
+
+<PreviewGrid cols={2}>
+  <Preview background="dots" code={`<SvgTextDraw speed={0.5}>slow draw</SvgTextDraw>`}>
+    <SvgTextDraw speed={0.5} className="h-16">slow draw</SvgTextDraw>
+  </Preview>
+  
+  <Preview background="dots" code={`<SvgTextDraw speed={2}>fast draw</SvgTextDraw>`}>
+    <SvgTextDraw speed={2} className="h-16">fast draw</SvgTextDraw>
+  </Preview>
+</PreviewGrid>
+
+### With Delay
+
+<Preview background="default" code={`<SvgTextDraw delay={0.5}>delayed</SvgTextDraw>`}>
+  <SvgTextDraw delay={0.5} className="h-16">delayed</SvgTextDraw>
+</Preview>
+
+### Hero Title
+
+<Preview background="gradient" code={`<SvgTextDraw className="h-20 text-white">welcome</SvgTextDraw>`}>
+  <SvgTextDraw className="h-20 text-white">welcome</SvgTextDraw>
+</Preview>
+
+### Multiple Words
+
+<Preview background="default">
+  <div className="space-y-6">
+    <SvgTextDraw className="h-12" delay={0}>
+      hello
+    </SvgTextDraw>
+    <SvgTextDraw className="h-12" delay={1}>
+      world
+    </SvgTextDraw>
+  </div>
+</Preview>
+
+## Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `children` | `string` | Required | Text to animate (lowercase only) |
+| `delay` | `number` | `0` | Delay before animation starts (seconds) |
+| `speed` | `number` | `1` | Animation speed multiplier |
+| `className` | `string` | - | Additional CSS classes |
+
+## Styling Tips
+
+Adjust the height to scale the text:
+
+```tsx
+<SvgTextDraw className="h-16">
+  larger text
+</SvgTextDraw>
+```
+
+Change stroke color:
+
+```tsx
+<SvgTextDraw className="h-12 text-blue-500">
+  colored text
+</SvgTextDraw>
+```
+
+Use with gradients:
+
+```tsx
+<SvgTextDraw className="h-12 text-transparent bg-gradient-to-r from-purple-500 to-pink-500 bg-clip-text">
+  gradient
+</SvgTextDraw>
+```
+
+> **Note:** This component uses SVG path drawing animation. Only lowercase letters (a-z) and spaces are currently supported. The text will be automatically converted to lowercase.

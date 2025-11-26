@@ -9,6 +9,7 @@
     "slide-up",
     "split-reveal",
     "shimmer",
-    "word-carousel"
+    "word-carousel",
+    "svg-text-draw"
   ]
 }

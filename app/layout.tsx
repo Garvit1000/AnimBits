@@ -18,6 +18,18 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "Animbits - Animation Registry for UI",
   description: "Production-ready animation components for React",
+  openGraph: {
+    title: "Animbits - Animation Registry for UI",
+    description: "Production-ready animation components for React",
+    images: ["/animbits.png"],
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Animbits - Animation Registry for UI",
+    description: "Production-ready animation components for React",
+    images: ["/animbits.png"],
+  },
 };
 
 export default function RootLayout({

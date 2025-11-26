@@ -1148,6 +1148,29 @@
       ]
     },
     {
+      "name": "text-svg-text-draw",
+      "type": "registry:component",
+      "title": "SVG Text Draw",
+      "description": "SVG path drawing animation that reveals text letter by letter with stroke animation",
+      "tags": [
+        "text",
+        "svg",
+        "draw",
+        "writing",
+        "entrance",
+        "stroke"
+      ],
+      "dependencies": [
+        "framer-motion"
+      ],
+      "files": [
+        {
+          "path": "registry/new-york/animations/text/svg-text-draw.tsx",
+          "type": "registry:component"
+        }
+      ]
+    },
+    {
       "name": "loaders-spinner",
       "type": "registry:component",
       "title": "Spinner Loader",
