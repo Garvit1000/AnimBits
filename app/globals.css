@@ -420,3 +420,21 @@ html {
         -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 40%);
     }
 }
+
+/* Custom Sidebar Active State */
+[data-fd-sidebar-link][data-active='true'],
+[data-active='true'][data-sidebar-link],
+.fd-sidebar-link[data-active='true'] {
+    color: var(--brand) !important;
+    border-left: 1px solid var(--brand);
+    padding-left: 0.75rem;
+    /* Adjust padding to align with border */
+    background-color: transparent !important;
+    border-radius: 0 !important;
+}
+
+[data-fd-sidebar-link][data-active='true'] *,
+[data-active='true'][data-sidebar-link] *,
+.fd-sidebar-link[data-active='true'] * {
+    color: var(--brand) !important;
+}

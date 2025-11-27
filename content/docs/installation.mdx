@@ -74,11 +74,11 @@ Start by selecting your framework of choice. Then follow the instructions to ins
         <span className="text-lg font-semibold text-zinc-900 dark:text-white">Manual Installation</span>
       </a>
 
-      <a href="#create-react-app" className="group relative flex flex-col items-center justify-center gap-6 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/50 py-8 px-8 h-48 transition-all hover:shadow-lg hover:shadow-zinc-200/50 dark:hover:shadow-zinc-900/50 hover:border-zinc-300 dark:hover:border-zinc-700 hover:-translate-y-1">
+      <a href="#react-router" className="group relative flex flex-col items-center justify-center gap-6 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/50 py-8 px-8 h-48 transition-all hover:shadow-lg hover:shadow-zinc-200/50 dark:hover:shadow-zinc-900/50 hover:border-zinc-300 dark:hover:border-zinc-700 hover:-translate-y-1">
         <div className="flex items-center justify-center h-16 w-16">
           <img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/react/react-original.svg" alt="React" className="h-16 w-16 transition-transform group-hover:scale-110 group-hover:rotate-180" />
         </div>
-        <span className="text-lg font-semibold text-zinc-900 dark:text-white">Create React App</span>
+        <span className="text-lg font-semibold text-zinc-900 dark:text-white">React Router</span>
       </a>
     </div>
 
@@ -639,65 +639,204 @@ function MyComponent() {
 }
 ```
 
-### Create React App
+### React Router
 
-No additional setup required beyond installing Framer Motion.
+AnimBits works seamlessly with React Router for building single-page applications with routing.
 
-**Step 1: Install Dependencies**
+#### Create project
 
-<Tabs items={['npm', 'pnpm', 'yarn', 'bun']}>
-  <Tab value="npm">
-    ```bash
-    npm install framer-motion clsx tailwind-merge
-    ```
-  </Tab>
+Start by creating a new Vite project with React Router:
+
+<Tabs items={['pnpm', 'npm', 'yarn', 'bun']}>
   <Tab value="pnpm">
     ```bash
-    pnpm add framer-motion clsx tailwind-merge
+    pnpm create vite@latest my-app --template react-ts
+    cd my-app
+    ```
+  </Tab>
+  <Tab value="npm">
+    ```bash
+    npm create vite@latest my-app -- --template react-ts
+    cd my-app
     ```
   </Tab>
   <Tab value="yarn">
     ```bash
-    yarn add framer-motion clsx tailwind-merge
+    yarn create vite my-app --template react-ts
+    cd my-app
     ```
   </Tab>
   <Tab value="bun">
     ```bash
-    bun add framer-motion clsx tailwind-merge
+    bun create vite my-app --template react-ts
+    cd my-app
     ```
   </Tab>
 </Tabs>
 
-**Step 2: Create folder structure**
+#### Install dependencies
 
-```bash
-mkdir -p src/lib/
-mkdir -p src/components/
+<Tabs items={['pnpm', 'npm', 'yarn', 'bun']}>
+  <Tab value="pnpm">
+    ```bash
+    pnpm install
+    pnpm add react-router-dom framer-motion clsx tailwind-merge
+    ```
+  </Tab>
+  <Tab value="npm">
+    ```bash
+    npm install
+    npm install react-router-dom framer-motion clsx tailwind-merge
+    ```
+  </Tab>
+  <Tab value="yarn">
+    ```bash
+    yarn
+    yarn add react-router-dom framer-motion clsx tailwind-merge
+    ```
+  </Tab>
+  <Tab value="bun">
+    ```bash
+    bun install
+    bun add react-router-dom framer-motion clsx tailwind-merge
+    ```
+  </Tab>
+</Tabs>
+
+#### Add Tailwind CSS
+
+<Tabs items={['pnpm', 'npm', 'yarn', 'bun']}>
+  <Tab value="pnpm">
+    ```bash
+    pnpm add -D tailwindcss postcss autoprefixer
+    pnpm dlx tailwindcss init -p
+    ```
+  </Tab>
+  <Tab value="npm">
+    ```bash
+    npm install -D tailwindcss postcss autoprefixer
+    npx tailwindcss init -p
+    ```
+  </Tab>
+  <Tab value="yarn">
+    ```bash
+    yarn add -D tailwindcss postcss autoprefixer
+    yarn dlx tailwindcss init -p
+    ```
+  </Tab>
+  <Tab value="bun">
+    ```bash
+    bun add -D tailwindcss postcss autoprefixer
+    bunx tailwindcss init -p
+    ```
+  </Tab>
+</Tabs>
+
+Configure your `tailwind.config.js`:
+
+```js title="tailwind.config.js"
+/** @type {import('tailwindcss').Config} */
+export default {
+  content: [
+    "./index.html",
+    "./src/**/*.{js,ts,jsx,tsx}",
+  ],
+  theme: {
+    extend: {},
+  },
+  plugins: [],
+}
 ```
 
-**Step 3: Copy hooks from documentation**
+Replace everything in `src/index.css` with:
 
-Copy the animation hooks you need from the [hooks documentation](/docs/hooks/hover-lift) into `src/lib/`.
+```css title="src/index.css"
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+```
 
-**Step 4: Use in your app**
+#### Set up routing
+
+Update your `src/main.tsx` to include React Router:
+
+```tsx title="src/main.tsx"
+import { StrictMode } from 'react'
+import { createRoot } from 'react-dom/client'
+import { BrowserRouter } from 'react-router-dom'
+import App from './App.tsx'
+import './index.css'
+
+createRoot(document.getElementById('root')!).render(
+  <StrictMode>
+    <BrowserRouter>
+      <App />
+    </BrowserRouter>
+  </StrictMode>,
+)
+```
+
+Create a basic router structure in `src/App.tsx`:
 
 ```tsx title="src/App.tsx"
-import { motion } from "framer-motion"
-import { useHoverLift } from "./lib/use-hover-lift"
+import { Routes, Route, Link } from 'react-router-dom'
+import { motion } from 'framer-motion'
+import { useHoverLift } from './lib/use-hover-lift'
 
-function App() {
+function Home() {
   const liftProps = useHoverLift()
   
   return (
-    <div className="App">
-      <motion.button {...liftProps} className="btn">
+    <div className="p-8">
+      <h1 className="text-3xl font-bold mb-4">Home</h1>
+      <motion.button 
+        {...liftProps} 
+        className="px-6 py-3 bg-blue-600 text-white rounded-lg"
+      >
         Hover me!
       </motion.button>
     </div>
   )
 }
 
+function About() {
+  return (
+    <div className="p-8">
+      <h1 className="text-3xl font-bold">About</h1>
+    </div>
+  )
+}
+
+function App() {
+  return (
+    <div>
+      <nav className="p-4 bg-gray-100">
+        <Link to="/" className="mr-4 text-blue-600 hover:underline">Home</Link>
+        <Link to="/about" className="text-blue-600 hover:underline">About</Link>
+      </nav>
+      
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/about" element={<About />} />
+      </Routes>
+    </div>
+  )
+}
+
 export default App
+```
+
+#### Add utility function
+
+Create a `src/lib/utils.ts` file:
+
+```ts title="src/lib/utils.ts"
+import { type ClassValue, clsx } from "clsx"
+import { twMerge } from "tailwind-merge"
+
+export function cn(...inputs: ClassValue[]) {
+  return twMerge(clsx(inputs))
+}
 ```
 
 ## TypeScript Configuration
