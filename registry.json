@@ -9,7 +9,7 @@
       "title": "Use Hover Lift",
       "description": "The use-hover-lift hook.",
       "dependencies": [
-        "framer-motion"
+        "motion"
       ],
       "files": [
         {
@@ -24,7 +24,7 @@
       "title": "Use Hover Glow",
       "description": "The use-hover-glow hook.",
       "dependencies": [
-        "framer-motion"
+        "motion"
       ],
       "files": [
         {
@@ -39,7 +39,7 @@
       "title": "Use Press",
       "description": "The use-press hook.",
       "dependencies": [
-        "framer-motion"
+        "motion"
       ],
       "files": [
         {
@@ -54,7 +54,7 @@
       "title": "Use Fade In",
       "description": "The use-fade-in hook.",
       "dependencies": [
-        "framer-motion"
+        "motion"
       ],
       "files": [
         {
@@ -69,7 +69,7 @@
       "title": "Use Scale In",
       "description": "The use-scale-in hook.",
       "dependencies": [
-        "framer-motion"
+        "motion"
       ],
       "files": [
         {
@@ -84,7 +84,7 @@
       "title": "Use Slide In",
       "description": "The use-slide-in hook.",
       "dependencies": [
-        "framer-motion"
+        "motion"
       ],
       "files": [
         {
@@ -99,7 +99,7 @@
       "title": "Use Pulse",
       "description": "The use-pulse hook.",
       "dependencies": [
-        "framer-motion"
+        "motion"
       ],
       "files": [
         {
@@ -114,7 +114,7 @@
       "title": "Use Bounce",
       "description": "The use-bounce hook.",
       "dependencies": [
-        "framer-motion"
+        "motion"
       ],
       "files": [
         {
@@ -129,7 +129,7 @@
       "title": "Use Shimmer",
       "description": "The use-shimmer hook.",
       "dependencies": [
-        "framer-motion"
+        "motion"
       ],
       "files": [
         {
@@ -144,7 +144,7 @@
       "title": "Use Scramble",
       "description": "The use-scramble hook.",
       "dependencies": [
-        "framer-motion"
+        "motion"
       ],
       "files": [
         {
@@ -159,7 +159,7 @@
       "title": "Use Word Carousel",
       "description": "The use-word-carousel hook.",
       "dependencies": [
-        "framer-motion"
+        "motion"
       ],
       "files": [
         {
@@ -174,7 +174,7 @@
       "title": "Use Magnetic",
       "description": "The use-magnetic hook.",
       "dependencies": [
-        "framer-motion"
+        "motion"
       ],
       "files": [
         {
@@ -189,7 +189,7 @@
       "title": "Use Parallax Tilt",
       "description": "The use-parallax-tilt hook.",
       "dependencies": [
-        "framer-motion"
+        "motion"
       ],
       "files": [
         {
@@ -204,7 +204,7 @@
       "title": "Use Stroke Draw",
       "description": "The use-stroke-draw hook.",
       "dependencies": [
-        "framer-motion"
+        "motion"
       ],
       "files": [
         {
@@ -219,7 +219,7 @@
       "title": "Index",
       "description": "The index hook.",
       "dependencies": [
-        "framer-motion"
+        "motion"
       ],
       "files": [
         {
@@ -240,7 +240,7 @@
         "loop"
       ],
       "dependencies": [
-        "framer-motion"
+        "motion"
       ],
       "files": [
         {
@@ -265,7 +265,7 @@
         "interactive"
       ],
       "dependencies": [
-        "framer-motion"
+        "motion"
       ],
       "files": [
         {
@@ -290,7 +290,7 @@
         "loop"
       ],
       "dependencies": [
-        "framer-motion"
+        "motion"
       ],
       "files": [
         {
@@ -316,7 +316,7 @@
         "loop"
       ],
       "dependencies": [
-        "framer-motion"
+        "motion"
       ],
       "files": [
         {
@@ -337,7 +337,7 @@
         "interactive"
       ],
       "dependencies": [
-        "framer-motion"
+        "motion"
       ],
       "files": [
         {
@@ -362,7 +362,7 @@
         "interactive"
       ],
       "dependencies": [
-        "framer-motion"
+        "motion"
       ],
       "files": [
         {
@@ -388,7 +388,7 @@
         "loop"
       ],
       "dependencies": [
-        "framer-motion"
+        "motion"
       ],
       "files": [
         {
@@ -412,7 +412,7 @@
         "fade"
       ],
       "dependencies": [
-        "framer-motion"
+        "motion"
       ],
       "files": [
         {
@@ -436,7 +436,7 @@
         "scale"
       ],
       "dependencies": [
-        "framer-motion"
+        "motion"
       ],
       "files": [
         {
@@ -461,7 +461,7 @@
         "scale"
       ],
       "dependencies": [
-        "framer-motion"
+        "motion"
       ],
       "files": [
         {
@@ -486,7 +486,7 @@
         "interactive"
       ],
       "dependencies": [
-        "framer-motion"
+        "motion"
       ],
       "files": [
         {
@@ -512,7 +512,7 @@
         "entrance"
       ],
       "dependencies": [
-        "framer-motion"
+        "motion"
       ],
       "files": [
         {
@@ -537,7 +537,7 @@
         "tap"
       ],
       "dependencies": [
-        "framer-motion"
+        "motion"
       ],
       "files": [
         {
@@ -562,7 +562,7 @@
         "hover"
       ],
       "dependencies": [
-        "framer-motion"
+        "motion"
       ],
       "files": [
         {
@@ -587,7 +587,7 @@
         "hover"
       ],
       "dependencies": [
-        "framer-motion"
+        "motion"
       ],
       "files": [
         {
@@ -612,7 +612,7 @@
         "hover"
       ],
       "dependencies": [
-        "framer-motion"
+        "motion"
       ],
       "files": [
         {
@@ -632,7 +632,7 @@
         "fade"
       ],
       "dependencies": [
-        "framer-motion"
+        "motion"
       ],
       "files": [
         {
@@ -656,7 +656,7 @@
         "slide"
       ],
       "dependencies": [
-        "framer-motion"
+        "motion"
       ],
       "files": [
         {
@@ -681,7 +681,7 @@
         "click"
       ],
       "dependencies": [
-        "framer-motion"
+        "motion"
       ],
       "files": [
         {
@@ -702,7 +702,7 @@
         "hover"
       ],
       "dependencies": [
-        "framer-motion"
+        "motion"
       ],
       "files": [
         {
@@ -727,7 +727,7 @@
         "continuous"
       ],
       "dependencies": [
-        "framer-motion"
+        "motion"
       ],
       "files": [
         {
@@ -748,7 +748,7 @@
         "hover"
       ],
       "dependencies": [
-        "framer-motion"
+        "motion"
       ],
       "files": [
         {
@@ -773,7 +773,7 @@
         "hover"
       ],
       "dependencies": [
-        "framer-motion"
+        "motion"
       ],
       "files": [
         {
@@ -797,7 +797,7 @@
         "fade"
       ],
       "dependencies": [
-        "framer-motion"
+        "motion"
       ],
       "files": [
         {
@@ -817,7 +817,7 @@
         "scale"
       ],
       "dependencies": [
-        "framer-motion"
+        "motion"
       ],
       "files": [
         {
@@ -841,7 +841,7 @@
         "slide"
       ],
       "dependencies": [
-        "framer-motion"
+        "motion"
       ],
       "files": [
         {
@@ -867,7 +867,7 @@
         "3d"
       ],
       "dependencies": [
-        "framer-motion"
+        "motion"
       ],
       "files": [
         {
@@ -889,7 +889,7 @@
         "3d"
       ],
       "dependencies": [
-        "framer-motion"
+        "motion"
       ],
       "files": [
         {
@@ -912,7 +912,7 @@
         "3d"
       ],
       "dependencies": [
-        "framer-motion"
+        "motion"
       ],
       "files": [
         {
@@ -938,7 +938,7 @@
         "background"
       ],
       "dependencies": [
-        "framer-motion"
+        "motion"
       ],
       "files": [
         {
@@ -959,7 +959,7 @@
         "stagger"
       ],
       "dependencies": [
-        "framer-motion"
+        "motion"
       ],
       "files": [
         {
@@ -980,7 +980,7 @@
         "stagger"
       ],
       "dependencies": [
-        "framer-motion"
+        "motion"
       ],
       "files": [
         {
@@ -1000,7 +1000,7 @@
         "animation"
       ],
       "dependencies": [
-        "framer-motion"
+        "motion"
       ],
       "files": [
         {
@@ -1021,7 +1021,7 @@
         "loop"
       ],
       "dependencies": [
-        "framer-motion"
+        "motion"
       ],
       "files": [
         {
@@ -1042,7 +1042,7 @@
         "stagger"
       ],
       "dependencies": [
-        "framer-motion"
+        "motion"
       ],
       "files": [
         {
@@ -1063,7 +1063,7 @@
         "continuous"
       ],
       "dependencies": [
-        "framer-motion"
+        "motion"
       ],
       "files": [
         {
@@ -1088,7 +1088,7 @@
         "entrance"
       ],
       "dependencies": [
-        "framer-motion"
+        "motion"
       ],
       "files": [
         {
@@ -1113,7 +1113,7 @@
         "continuous"
       ],
       "dependencies": [
-        "framer-motion"
+        "motion"
       ],
       "files": [
         {
@@ -1138,7 +1138,7 @@
         "entrance"
       ],
       "dependencies": [
-        "framer-motion"
+        "motion"
       ],
       "files": [
         {
@@ -1161,7 +1161,7 @@
         "stroke"
       ],
       "dependencies": [
-        "framer-motion"
+        "motion"
       ],
       "files": [
         {
@@ -1182,7 +1182,7 @@
         "continuous"
       ],
       "dependencies": [
-        "framer-motion"
+        "motion"
       ],
       "files": [
         {
@@ -1203,7 +1203,7 @@
         "continuous"
       ],
       "dependencies": [
-        "framer-motion"
+        "motion"
       ],
       "files": [
         {
@@ -1224,7 +1224,7 @@
         "continuous"
       ],
       "dependencies": [
-        "framer-motion"
+        "motion"
       ],
       "files": [
         {
@@ -1245,7 +1245,7 @@
         "continuous"
       ],
       "dependencies": [
-        "framer-motion"
+        "motion"
       ],
       "files": [
         {
@@ -1267,7 +1267,7 @@
         "continuous"
       ],
       "dependencies": [
-        "framer-motion"
+        "motion"
       ],
       "files": [
         {
@@ -1289,7 +1289,7 @@
         "continuous"
       ],
       "dependencies": [
-        "framer-motion"
+        "motion"
       ],
       "files": [
         {
@@ -1311,7 +1311,7 @@
         "continuous"
       ],
       "dependencies": [
-        "framer-motion"
+        "motion"
       ],
       "files": [
         {
@@ -1333,7 +1333,7 @@
         "continuous"
       ],
       "dependencies": [
-        "framer-motion"
+        "motion"
       ],
       "files": [
         {
@@ -1354,7 +1354,7 @@
         "stagger"
       ],
       "dependencies": [
-        "framer-motion"
+        "motion"
       ],
       "files": [
         {
@@ -1375,7 +1375,7 @@
         "stagger"
       ],
       "dependencies": [
-        "framer-motion"
+        "motion"
       ],
       "files": [
         {
@@ -1396,7 +1396,7 @@
         "interactive"
       ],
       "dependencies": [
-        "framer-motion"
+        "motion"
       ],
       "files": [
         {
@@ -1418,7 +1418,7 @@
         "image"
       ],
       "dependencies": [
-        "framer-motion"
+        "motion"
       ],
       "files": [
         {
@@ -1439,7 +1439,7 @@
         "loading"
       ],
       "dependencies": [
-        "framer-motion"
+        "motion"
       ],
       "files": [
         {
