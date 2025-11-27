@@ -21,7 +21,7 @@ The `useFadeIn` hook creates a smooth fade-in entrance animation. One of the mos
     Copy and paste the hook code into your project:
 
     ```tsx title="lib/hooks/use-fade-in.ts"
-import { type MotionProps, type Easing } from "framer-motion";
+import { type MotionProps, type Easing } from "motion/react";
 
 export interface UseFadeInOptions {
   duration?: number;
@@ -79,7 +79,7 @@ export function useFadeIn(options: UseFadeInOptions = {}): MotionProps {
 ### Basic Example
 
 ```tsx
-import { motion } from "framer-motion"
+import { motion } from "motion/react"
 import { useFadeIn } from "@/lib/hooks/use-fade-in"
 
 export function Hero() {
@@ -97,7 +97,7 @@ export function Hero() {
 ### Slow Fade
 
 ```tsx
-import { motion } from "framer-motion"
+import { motion } from "motion/react"
 import { useFadeIn } from "@/lib/hooks/use-fade-in"
 
 export function SlowReveal() {
@@ -116,7 +116,7 @@ export function SlowReveal() {
 ### Delayed Fade
 
 ```tsx
-import { motion } from "framer-motion"
+import { motion } from "motion/react"
 import { useFadeIn } from "@/lib/hooks/use-fade-in"
 
 export function DelayedContent() {
@@ -136,7 +136,7 @@ export function DelayedContent() {
 ### Staggered Fade
 
 ```tsx
-import { motion } from "framer-motion"
+import { motion } from "motion/react"
 import { useFadeIn } from "@/lib/hooks/use-fade-in"
 
 export function StaggeredList({ items }) {
@@ -163,7 +163,7 @@ export function StaggeredList({ items }) {
 <Tabs items={['Text', 'Image', 'Card', 'Modal']}>
   <Tab value="Text">
     ```tsx
-    import { motion } from "framer-motion"
+    import { motion } from "motion/react"
     import { useFadeIn } from "@/lib/hooks/use-fade-in"
 
     export function FadeText() {
@@ -179,7 +179,7 @@ export function StaggeredList({ items }) {
   </Tab>
   <Tab value="Image">
     ```tsx
-    import { motion } from "framer-motion"
+    import { motion } from "motion/react"
     import { useFadeIn } from "@/lib/hooks/use-fade-in"
 
     export function FadeImage() {
@@ -197,7 +197,7 @@ export function StaggeredList({ items }) {
   </Tab>
   <Tab value="Card">
     ```tsx
-    import { motion } from "framer-motion"
+    import { motion } from "motion/react"
     import { useFadeIn } from "@/lib/hooks/use-fade-in"
 
     export function FadeCard() {
@@ -214,7 +214,7 @@ export function StaggeredList({ items }) {
   </Tab>
   <Tab value="Modal">
     ```tsx
-    import { motion } from "framer-motion"
+    import { motion } from "motion/react"
     import { useFadeIn } from "@/lib/hooks/use-fade-in"
 
     export function Modal({ isOpen }) {

@@ -1,6 +1,6 @@
 "use client";
 import * as motion from "framer-motion/client";
-import type { HTMLMotionProps } from "framer-motion";
+import type { HTMLMotionProps } from "motion/react";
 import { bounceVariants } from "@/lib/animation-presets";
 import { useState } from "react";
 interface BounceIconProps extends Omit<HTMLMotionProps<"div">, "animate"> {

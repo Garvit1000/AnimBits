@@ -1,5 +1,5 @@
 import * as React from "react";
-import { useMotionValue, useSpring, useTransform } from "framer-motion";
+import { useMotionValue, useSpring, useTransform } from "motion/react";
 
 export interface UseParallaxTiltOptions {
   maxTilt?: number;

@@ -1,5 +1,5 @@
 "use client";
-import { motion, type HTMLMotionProps } from "framer-motion";
+import { motion, type HTMLMotionProps } from "motion/react";
 interface ShineButtonProps extends Omit<HTMLMotionProps<"button">, "animate"> {
   children: React.ReactNode;
   direction?: "left" | "right";

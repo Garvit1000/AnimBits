@@ -43,7 +43,7 @@ The `LiftButton` component creates a button that lifts up on hover with an optio
     **Step 1: Copy the hook**
     
     ```tsx title="lib/hooks/use-hover-lift.ts"
-    import { type MotionProps, type Easing } from "framer-motion";
+    import { type MotionProps, type Easing } from "motion/react";
 
     export interface UseHoverLiftOptions {
       liftDistance?: number;
@@ -94,7 +94,7 @@ The `LiftButton` component creates a button that lifts up on hover with an optio
 
     ```tsx title="components/animations/buttons/lift.tsx"
 "use client";
-import { motion, type HTMLMotionProps } from "framer-motion";
+import { motion, type HTMLMotionProps } from "motion/react";
 import { useHoverLift } from "@/lib/use-hover-lift";
 interface LiftButtonProps extends Omit<HTMLMotionProps<"button">, "animate"> {
   children: React.ReactNode;
@@ -230,7 +230,7 @@ export function Example() {
 For maximum flexibility, use the `useHoverLift` hook on any element:
 
 ```tsx
-import { motion } from "framer-motion"
+import { motion } from "motion/react"
 import { useHoverLift } from "@/lib/hooks"
 
 export function CustomElement() {
@@ -251,7 +251,7 @@ export function CustomElement() {
 ## Combining with Other Effects
 
 ```tsx
-import { motion } from "framer-motion"
+import { motion } from "motion/react"
 import { useHoverLift, useHoverGlow } from "@/lib/hooks"
 
 export function LiftAndGlow() {

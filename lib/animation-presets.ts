@@ -1,4 +1,4 @@
-import { type Variants, type Transition, type Easing } from "framer-motion";
+import { type Variants, type Transition, type Easing } from "motion/react";
 
 /**
  * Comprehensive animation presets for AnimBits

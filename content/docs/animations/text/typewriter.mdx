@@ -49,7 +49,7 @@ The `TextTypewriter` creates a classic typewriter effect with optional blinking 
     ```tsx title="components/animations/text/typewriter.tsx"
 "use client";
 import * as React from "react";
-import { motion, HTMLMotionProps } from "framer-motion";
+import { motion, HTMLMotionProps } from "motion/react";
 import { cn } from "@/lib/utils";
 export interface TextTypewriterProps
   extends Omit<HTMLMotionProps<"p">, "children"> {

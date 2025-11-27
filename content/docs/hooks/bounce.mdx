@@ -19,7 +19,7 @@ The `useBounce` hook creates a bouncing animation effect. Use it continuously fo
 <Tabs items={['Manual', 'CLI']}>
   <Tab value="Manual">
     ```tsx title="lib/hooks/use-bounce.ts"
-import { type MotionProps, type Easing } from "framer-motion";
+import { type MotionProps, type Easing } from "motion/react";
 
 export interface UseBounceOptions {
   bounceHeight?: number;
@@ -85,7 +85,7 @@ export function useBounce(options: UseBounceOptions = {}): MotionProps {
 ### Bounce on Hover
 
 ```tsx
-import { motion } from "framer-motion"
+import { motion } from "motion/react"
 import { useBounce } from "@/lib/hooks/use-bounce"
 
 export function HoverBounce() {
@@ -104,7 +104,7 @@ export function HoverBounce() {
 ### Limited Bounces
 
 ```tsx
-import { motion } from "framer-motion"
+import { motion } from "motion/react"
 import { useBounce } from "@/lib/hooks/use-bounce"
 
 export function ThreeBounces() {

@@ -21,7 +21,7 @@ The `usePulse` hook creates a continuous pulsing animation, perfect for notifica
     Copy and paste the hook code into your project:
 
     ```tsx title="lib/hooks/use-pulse.ts"
-import { type MotionProps, type Easing } from "framer-motion";
+import { type MotionProps, type Easing } from "motion/react";
 
 export interface UsePulseOptions {
   scaleFrom?: number;
@@ -74,7 +74,7 @@ export function usePulse(options: UsePulseOptions = {}): MotionProps {
 ### Basic Example
 
 ```tsx
-import { motion } from "framer-motion"
+import { motion } from "motion/react"
 import { usePulse } from "@/lib/hooks/use-pulse"
 
 export function NotificationBadge() {
@@ -94,7 +94,7 @@ export function NotificationBadge() {
 ### Custom Intensity
 
 ```tsx
-import { motion } from "framer-motion"
+import { motion } from "motion/react"
 import { usePulse } from "@/lib/hooks/use-pulse"
 
 export function StrongPulse() {
@@ -114,7 +114,7 @@ export function StrongPulse() {
 ### Slow Breathing Effect
 
 ```tsx
-import { motion } from "framer-motion"
+import { motion } from "motion/react"
 import { usePulse } from "@/lib/hooks/use-pulse"
 
 export function BreathingDot() {
@@ -134,7 +134,7 @@ export function BreathingDot() {
 <Tabs items={['Badge', 'Icon', 'Button', 'Dot']}>
   <Tab value="Badge">
     ```tsx
-    import { motion } from "framer-motion"
+    import { motion } from "motion/react"
     import { usePulse } from "@/lib/hooks/use-pulse"
 
     export function UnreadBadge({ count }: { count: number }) {
@@ -150,7 +150,7 @@ export function BreathingDot() {
   </Tab>
   <Tab value="Icon">
     ```tsx
-    import { motion } from "framer-motion"
+    import { motion } from "motion/react"
     import { usePulse } from "@/lib/hooks/use-pulse"
 
     export function LiveIndicator() {
@@ -170,7 +170,7 @@ export function BreathingDot() {
   </Tab>
   <Tab value="Button">
     ```tsx
-    import { motion } from "framer-motion"
+    import { motion } from "motion/react"
     import { usePulse } from "@/lib/hooks/use-pulse"
 
     export function CTAButton() {
@@ -189,7 +189,7 @@ export function BreathingDot() {
   </Tab>
   <Tab value="Dot">
     ```tsx
-    import { motion } from "framer-motion"
+    import { motion } from "motion/react"
     import { usePulse } from "@/lib/hooks/use-pulse"
 
     export function StatusDot({ status }: { status: 'online' | 'offline' }) {

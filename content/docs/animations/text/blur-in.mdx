@@ -49,7 +49,7 @@ The `TextBlurIn` creates a staggered blur-in effect for text.
     ```tsx title="components/animations/text/blur-in.tsx"
 "use client";
 import * as React from "react";
-import { motion, HTMLMotionProps } from "framer-motion";
+import { motion, HTMLMotionProps } from "motion/react";
 import { cn } from "@/lib/utils";
 export interface TextBlurInProps
   extends Omit<HTMLMotionProps<"p">, "children"> {

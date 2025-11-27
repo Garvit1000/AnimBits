@@ -19,7 +19,7 @@ The `useStrokeDraw` hook animates SVG paths with a drawing effect, perfect for l
 <Tabs items={['Manual', 'CLI']}>
   <Tab value="Manual">
     ```tsx title="lib/hooks/use-stroke-draw.ts"
-import { type MotionProps, type Easing } from "framer-motion";
+import { type MotionProps, type Easing } from "motion/react";
 
 export interface UseStrokeDrawOptions {
   duration?: number;
@@ -62,7 +62,7 @@ export function useStrokeDraw(options: UseStrokeDrawOptions = {}): MotionProps {
 ### Basic Example
 
 ```tsx
-import { motion } from "framer-motion"
+import { motion } from "motion/react"
 import { useStrokeDraw } from "@/lib/hooks/use-stroke-draw"
 
 export function DrawingLogo() {
@@ -85,7 +85,7 @@ export function DrawingLogo() {
 ### With Custom Duration
 
 ```tsx
-import { motion } from "framer-motion"
+import { motion } from "motion/react"
 import { useStrokeDraw } from "@/lib/hooks/use-stroke-draw"
 
 export function SlowDraw() {
@@ -111,7 +111,7 @@ export function SlowDraw() {
 ### Repeating Animation
 
 ```tsx
-import { motion } from "framer-motion"
+import { motion } from "motion/react"
 import { useStrokeDraw } from "@/lib/hooks/use-stroke-draw"
 
 export function ContinuousDraw() {
@@ -141,7 +141,7 @@ export function ContinuousDraw() {
 <Tabs items={['Sequential', 'Staggered', 'Simultaneous']}>
   <Tab value="Sequential">
     ```tsx
-    import { motion } from "framer-motion"
+    import { motion } from "motion/react"
     import { useStrokeDraw } from "@/lib/hooks/use-stroke-draw"
 
     export function SequentialDraw() {
@@ -161,7 +161,7 @@ export function ContinuousDraw() {
   </Tab>
   <Tab value="Staggered">
     ```tsx
-    import { motion } from "framer-motion"
+    import { motion } from "motion/react"
     import { useStrokeDraw } from "@/lib/hooks/use-stroke-draw"
 
     export function StaggeredDraw() {
@@ -181,7 +181,7 @@ export function ContinuousDraw() {
   </Tab>
   <Tab value="Simultaneous">
     ```tsx
-    import { motion } from "framer-motion"
+    import { motion } from "motion/react"
     import { useStrokeDraw } from "@/lib/hooks/use-stroke-draw"
 
     export function SimultaneousDraw() {
@@ -251,7 +251,7 @@ Returns `MotionProps` to spread on `motion.path` or other SVG elements
 ### Logo Reveal
 
 ```tsx
-import { motion } from "framer-motion"
+import { motion } from "motion/react"
 import { useStrokeDraw } from "@/lib/hooks/use-stroke-draw"
 
 export function LogoReveal() {
@@ -275,7 +275,7 @@ export function LogoReveal() {
 ### Signature Effect
 
 ```tsx
-import { motion } from "framer-motion"
+import { motion } from "motion/react"
 import { useStrokeDraw } from "@/lib/hooks/use-stroke-draw"
 
 export function Signature() {
@@ -302,7 +302,7 @@ export function Signature() {
 ### Loading Spinner
 
 ```tsx
-import { motion } from "framer-motion"
+import { motion } from "motion/react"
 import { useStrokeDraw } from "@/lib/hooks/use-stroke-draw"
 
 export function DrawSpinner() {
@@ -330,7 +330,7 @@ export function DrawSpinner() {
 ### Checkmark Animation
 
 ```tsx
-import { motion } from "framer-motion"
+import { motion } from "motion/react"
 import { useStrokeDraw } from "@/lib/hooks/use-stroke-draw"
 
 export function CheckmarkDraw() {

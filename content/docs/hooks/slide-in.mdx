@@ -19,7 +19,7 @@ The `useSlideIn` hook creates a slide-in entrance animation from any direction (
 <Tabs items={['Manual', 'CLI']}>
   <Tab value="Manual">
     ```tsx title="lib/hooks/use-slide-in.ts"
-import { type MotionProps, type Easing } from "framer-motion";
+import { type MotionProps, type Easing } from "motion/react";
 
 export type SlideDirection = "left" | "right" | "up" | "down";
 
@@ -102,7 +102,7 @@ export function useSlideIn(options: UseSlideInOptions = {}): MotionProps {
 ### Basic Example
 
 ```tsx
-import { motion } from "framer-motion"
+import { motion } from "motion/react"
 import { useSlideIn } from "@/lib/hooks/use-slide-in"
 
 export function Card() {
@@ -122,7 +122,7 @@ export function Card() {
 <Tabs items={['From Left', 'From Right', 'From Top', 'From Bottom']}>
   <Tab value="From Left">
     ```tsx
-    import { motion } from "framer-motion"
+    import { motion } from "motion/react"
     import { useSlideIn } from "@/lib/hooks/use-slide-in"
 
     export function SlideFromLeft() {
@@ -141,7 +141,7 @@ export function Card() {
   </Tab>
   <Tab value="From Right">
     ```tsx
-    import { motion } from "framer-motion"
+    import { motion } from "motion/react"
     import { useSlideIn } from "@/lib/hooks/use-slide-in"
 
     export function SlideFromRight() {
@@ -160,7 +160,7 @@ export function Card() {
   </Tab>
   <Tab value="From Top">
     ```tsx
-    import { motion } from "framer-motion"
+    import { motion } from "motion/react"
     import { useSlideIn } from "@/lib/hooks/use-slide-in"
 
     export function SlideFromTop() {
@@ -179,7 +179,7 @@ export function Card() {
   </Tab>
   <Tab value="From Bottom">
     ```tsx
-    import { motion } from "framer-motion"
+    import { motion } from "motion/react"
     import { useSlideIn } from "@/lib/hooks/use-slide-in"
 
     export function SlideFromBottom() {
@@ -201,7 +201,7 @@ export function Card() {
 ### Sidebar/Drawer
 
 ```tsx
-import { motion } from "framer-motion"
+import { motion } from "motion/react"
 import { useSlideIn } from "@/lib/hooks/use-slide-in"
 
 export function Sidebar({ isOpen }: { isOpen: boolean }) {
@@ -224,7 +224,7 @@ export function Sidebar({ isOpen }: { isOpen: boolean }) {
 ### Staggered List
 
 ```tsx
-import { motion } from "framer-motion"
+import { motion } from "motion/react"
 import { useSlideIn } from "@/lib/hooks/use-slide-in"
 
 export function FeatureList({ features }) {

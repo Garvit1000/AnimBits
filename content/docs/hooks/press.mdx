@@ -21,7 +21,7 @@ The `usePress` hook adds a press-down effect when clicking or tapping elements, 
     Copy and paste the hook code into your project:
 
     ```tsx title="lib/hooks/use-press.ts"
-import { type MotionProps, type Easing } from "framer-motion";
+import { type MotionProps, type Easing } from "motion/react";
 
 export interface UsePressOptions {
   pressScale?: number;
@@ -70,7 +70,7 @@ export function usePress(options: UsePressOptions = {}): MotionProps {
 ### Basic Example
 
 ```tsx
-import { motion } from "framer-motion"
+import { motion } from "motion/react"
 import { usePress } from "@/lib/hooks/use-press"
 
 export function PressButton() {
@@ -90,7 +90,7 @@ export function PressButton() {
 ### With Custom Scale
 
 ```tsx
-import { motion } from "framer-motion"
+import { motion } from "motion/react"
 import { usePress } from "@/lib/hooks/use-press"
 
 export function StrongPress() {
@@ -110,7 +110,7 @@ export function StrongPress() {
 ### With Rotation
 
 ```tsx
-import { motion } from "framer-motion"
+import { motion } from "motion/react"
 import { usePress } from "@/lib/hooks/use-press"
 
 export function RotatingPress() {
@@ -132,7 +132,7 @@ export function RotatingPress() {
 <Tabs items={['Button', 'Card', 'Icon', 'Image']}>
   <Tab value="Button">
     ```tsx
-    import { motion } from "framer-motion"
+    import { motion } from "motion/react"
     import { usePress } from "@/lib/hooks/use-press"
 
     export function ActionButton() {
@@ -148,7 +148,7 @@ export function RotatingPress() {
   </Tab>
   <Tab value="Card">
     ```tsx
-    import { motion } from "framer-motion"
+    import { motion } from "motion/react"
     import { usePress } from "@/lib/hooks/use-press"
 
     export function InteractiveCard() {
@@ -165,7 +165,7 @@ export function RotatingPress() {
   </Tab>
   <Tab value="Icon">
     ```tsx
-    import { motion } from "framer-motion"
+    import { motion } from "motion/react"
     import { usePress } from "@/lib/hooks/use-press"
 
     export function IconButton() {
@@ -181,7 +181,7 @@ export function RotatingPress() {
   </Tab>
   <Tab value="Image">
     ```tsx
-    import { motion } from "framer-motion"
+    import { motion } from "motion/react"
     import { usePress } from "@/lib/hooks/use-press"
 
     export function ClickableImage() {

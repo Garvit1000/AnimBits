@@ -1,4 +1,4 @@
-import { type MotionProps, type Easing } from "framer-motion";
+import { type MotionProps, type Easing } from "motion/react";
 
 export interface UseBounceOptions {
   bounceHeight?: number;

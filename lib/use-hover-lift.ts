@@ -1,4 +1,4 @@
-import { type MotionProps, type Easing } from "framer-motion";
+import { type MotionProps, type Easing } from "motion/react";
 
 export interface UseHoverLiftOptions {
   liftDistance?: number;

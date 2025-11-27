@@ -49,7 +49,7 @@ The `TextSlideUp` creates a staggered slide-up effect for text.
     ```tsx title="components/animations/text/slide-up.tsx"
 "use client";
 import * as React from "react";
-import { motion, HTMLMotionProps } from "framer-motion";
+import { motion, HTMLMotionProps } from "motion/react";
 import { cn } from "@/lib/utils";
 export interface TextSlideUpProps
   extends Omit<HTMLMotionProps<"p">, "children"> {

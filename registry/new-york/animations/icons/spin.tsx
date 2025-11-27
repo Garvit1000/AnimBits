@@ -1,6 +1,6 @@
 "use client";
 import * as motion from "framer-motion/client";
-import type { HTMLMotionProps } from "framer-motion";
+import type { HTMLMotionProps } from "motion/react";
 interface SpinIconProps extends Omit<HTMLMotionProps<"div">, "animate"> {
   children: React.ReactNode;
   duration?: number;

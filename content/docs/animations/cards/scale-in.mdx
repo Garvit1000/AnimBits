@@ -48,7 +48,7 @@ The `CardScaleIn` scales up from a smaller size when entering the viewport, crea
     **Step 1: Copy the hook**
     
     ```tsx title="lib/hooks/use-scale-in.ts"
-    import { type MotionProps, type Easing } from "framer-motion";
+    import { type MotionProps, type Easing } from "motion/react";
 
     export interface UseScaleInOptions {
       duration?: number;
@@ -97,7 +97,7 @@ The `CardScaleIn` scales up from a smaller size when entering the viewport, crea
     ```tsx title="components/animations/cards/scale-in.tsx"
 "use client";
 import * as React from "react";
-import { motion, HTMLMotionProps } from "framer-motion";
+import { motion, HTMLMotionProps } from "motion/react";
 import { cn } from "@/lib/utils";
 import { useScaleIn } from "@/lib/use-scale-in";
 export interface CardScaleInProps extends HTMLMotionProps<"div"> {

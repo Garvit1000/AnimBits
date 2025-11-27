@@ -50,7 +50,7 @@ The `ShineButton` creates a shine/shimmer effect that sweeps across the button o
 
     ```tsx title="components/animations/buttons/shine.tsx"
 "use client";
-import { motion, type HTMLMotionProps } from "framer-motion";
+import { motion, type HTMLMotionProps } from "motion/react";
 interface ShineButtonProps extends Omit<HTMLMotionProps<"button">, "animate"> {
   children: React.ReactNode;
   direction?: "left" | "right";

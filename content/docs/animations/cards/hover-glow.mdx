@@ -50,7 +50,7 @@ The `CardHoverGlow` adds a glowing shadow effect on hover with customizable colo
     **Step 1: Copy the hook**
     
     ```tsx title="lib/hooks/use-hover-glow.ts"
-    import { type MotionProps, type Easing } from "framer-motion";
+    import { type MotionProps, type Easing } from "motion/react";
 
     export interface UseHoverGlowOptions {
       /**
@@ -150,7 +150,7 @@ The `CardHoverGlow` adds a glowing shadow effect on hover with customizable colo
     ```tsx title="components/animations/cards/hover-glow.tsx"
 "use client";
 import * as React from "react";
-import { motion, HTMLMotionProps } from "framer-motion";
+import { motion, HTMLMotionProps } from "motion/react";
 import { cn } from "@/lib/utils";
 import { useHoverGlow } from "@/lib/use-hover-glow";
 export interface CardHoverGlowProps extends HTMLMotionProps<"div"> {

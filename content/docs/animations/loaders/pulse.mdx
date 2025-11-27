@@ -51,7 +51,7 @@ The `LoaderPulse` component creates a pulsing circle animation. Perfect for subt
     ```tsx title="components/animations/loaders/pulse.tsx"
 "use client";
 import * as React from "react";
-import { motion, HTMLMotionProps } from "framer-motion";
+import { motion, HTMLMotionProps } from "motion/react";
 import { cn } from "@/lib/utils";
 export interface LoaderPulseProps extends HTMLMotionProps<"div"> {
   size?: number;

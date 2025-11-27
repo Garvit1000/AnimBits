@@ -44,7 +44,7 @@ The `MagneticButton` creates a magnetic attraction effect where the button smoot
 
     ```tsx title="lib/hooks/use-magnetic.ts"
     import * as React from "react"
-    import { useMotionValue, useSpring } from "framer-motion"
+    import { useMotionValue, useSpring } from "motion/react"
 
     export interface UseMagneticOptions {
       strength?: number
@@ -108,7 +108,7 @@ The `MagneticButton` creates a magnetic attraction effect where the button smoot
     ```tsx title="components/animations/buttons/magnetic.tsx"
 "use client";
 import * as React from "react";
-import { motion, HTMLMotionProps } from "framer-motion";
+import { motion, HTMLMotionProps } from "motion/react";
 import { cn } from "@/lib/utils";
 import { useMagnetic, type UseMagneticOptions } from "@/lib/use-magnetic";
 interface MagneticButtonProps

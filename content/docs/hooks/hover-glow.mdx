@@ -17,7 +17,7 @@ The `useHoverGlow` hook adds a colored glow effect (via box-shadow) when hoverin
     Copy the hook into your project:
 
     ```tsx title="lib/hooks/use-hover-glow.ts"
-import { type MotionProps, type Easing } from "framer-motion";
+import { type MotionProps, type Easing } from "motion/react";
 
 export interface UseHoverGlowOptions {
   glowColor?: string;
@@ -86,7 +86,7 @@ export function useHoverGlow(options: UseHoverGlowOptions = {}): MotionProps {
 ### Basic Example
 
 ```tsx
-import { motion } from "framer-motion"
+import { motion } from "motion/react"
 import { useHoverGlow } from "@/lib/hooks/use-hover-glow"
 
 export function GlowButton() {
@@ -106,7 +106,7 @@ export function GlowButton() {
 ### Custom Colors
 
 ```tsx
-import { motion } from "framer-motion"
+import { motion } from "motion/react"
 import { useHoverGlow } from "@/lib/hooks/use-hover-glow"
 
 export function ColoredGlows() {

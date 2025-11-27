@@ -1,6 +1,6 @@
 "use client";
 import * as React from "react";
-import { motion, SVGMotionProps } from "framer-motion";
+import { motion, SVGMotionProps } from "motion/react";
 import { cn } from "@/lib/utils";
 
 export interface SvgTextDrawProps extends Omit<SVGMotionProps<SVGSVGElement>, "children"> {

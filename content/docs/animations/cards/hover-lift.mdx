@@ -52,7 +52,7 @@ The `CardHoverLift` creates a subtle lift effect on hover, making cards feel int
     **Step 1: Copy the hook**
     
     ```tsx title="lib/hooks/use-hover-lift.ts"
-    import { type MotionProps, type Easing } from "framer-motion";
+    import { type MotionProps, type Easing } from "motion/react";
 
     export interface UseHoverLiftOptions {
       /**
@@ -144,7 +144,7 @@ The `CardHoverLift` creates a subtle lift effect on hover, making cards feel int
     ```tsx title="components/animations/cards/hover-lift.tsx"
 "use client";
 import * as React from "react";
-import { motion, HTMLMotionProps } from "framer-motion";
+import { motion, HTMLMotionProps } from "motion/react";
 import { cn } from "@/lib/utils";
 import { useHoverLift } from "@/lib/use-hover-lift";
 export interface CardHoverLiftProps extends HTMLMotionProps<"div"> {

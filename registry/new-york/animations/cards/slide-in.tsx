@@ -1,6 +1,6 @@
 "use client";
 import * as React from "react";
-import { motion, HTMLMotionProps } from "framer-motion";
+import { motion, HTMLMotionProps } from "motion/react";
 import { cn } from "@/lib/utils";
 import { useSlideIn, type SlideDirection } from "@/lib/use-slide-in";
 export interface CardSlideInProps extends HTMLMotionProps<"div"> {

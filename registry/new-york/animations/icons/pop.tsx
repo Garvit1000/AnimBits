@@ -1,6 +1,6 @@
 "use client";
 import * as motion from "framer-motion/client";
-import type { HTMLMotionProps } from "framer-motion";
+import type { HTMLMotionProps } from "motion/react";
 import { popVariants } from "@/lib/animation-presets";
 import { useState } from "react";
 interface PopIconProps extends Omit<HTMLMotionProps<"div">, "animate"> {

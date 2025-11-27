@@ -48,7 +48,7 @@ The `CardSlideIn` slides in from a specified direction when entering the viewpor
     **Step 1: Copy the hook**
     
     ```tsx title="lib/hooks/use-slide-in.ts"
-    import { type MotionProps, type Easing } from "framer-motion";
+    import { type MotionProps, type Easing } from "motion/react";
 
     export type SlideDirection = "left" | "right" | "up" | "down";
 
@@ -112,7 +112,7 @@ The `CardSlideIn` slides in from a specified direction when entering the viewpor
     ```tsx title="components/animations/cards/slide-in.tsx"
 "use client";
 import * as React from "react";
-import { motion, HTMLMotionProps } from "framer-motion";
+import { motion, HTMLMotionProps } from "motion/react";
 import { cn } from "@/lib/utils";
 import { useSlideIn, type SlideDirection } from "@/lib/use-slide-in";
 export interface CardSlideInProps extends HTMLMotionProps<"div"> {

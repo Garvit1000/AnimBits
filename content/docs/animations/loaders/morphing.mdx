@@ -38,7 +38,7 @@ The `LoaderMorphing` component creates a shape that morphs between different for
     ```tsx title="components/animations/loaders/morphing.tsx"
 "use client";
 import * as React from "react";
-import { motion, HTMLMotionProps } from "framer-motion";
+import { motion, HTMLMotionProps } from "motion/react";
 import { cn } from "@/lib/utils";
 export interface LoaderMorphingProps
   extends Omit<HTMLMotionProps<"div">, "children"> {

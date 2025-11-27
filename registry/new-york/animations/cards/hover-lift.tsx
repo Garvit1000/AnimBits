@@ -1,6 +1,6 @@
 "use client";
 import * as React from "react";
-import { motion, HTMLMotionProps } from "framer-motion";
+import { motion, HTMLMotionProps } from "motion/react";
 import { cn } from "@/lib/utils";
 import { useHoverLift } from "@/lib/use-hover-lift";
 export interface CardHoverLiftProps extends HTMLMotionProps<"div"> {

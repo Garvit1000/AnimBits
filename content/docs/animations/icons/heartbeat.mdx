@@ -48,7 +48,7 @@ import { Heart } from "lucide-react"
     **Step 1: Copy the presets**
 
     ```tsx title="lib/animation-presets.ts"
-    import { type Variants, type Transition, type Easing } from "framer-motion";
+    import { type Variants, type Transition, type Easing } from "motion/react";
 
     export const fadeInVariants: Variants = {
       hidden: { opacity: 0 },
@@ -274,7 +274,7 @@ import { Heart } from "lucide-react"
     ```tsx title="components/animations/icons/heartbeat.tsx"
 "use client";
 import * as motion from "framer-motion/client";
-import type { HTMLMotionProps } from "framer-motion";
+import type { HTMLMotionProps } from "motion/react";
 import { heartbeatVariants } from "@/lib/animation-presets";
 interface HeartbeatIconProps extends Omit<HTMLMotionProps<"div">, "animate"> {
   children: React.ReactNode;

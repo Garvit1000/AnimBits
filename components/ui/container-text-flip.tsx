@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect, useId } from "react";
 
-import { motion } from "framer-motion";
+import { motion } from "motion/react";
 import { cn } from "@/lib/utils";
 
 export interface ContainerTextFlipProps {

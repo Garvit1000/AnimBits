@@ -21,7 +21,7 @@ The `useHoverLift` hook returns Framer Motion props that add a lift effect with 
     Copy and paste the hook code into your project:
 
     ```tsx title="lib/hooks/use-hover-lift.ts"
-import { type MotionProps, type Easing } from "framer-motion";
+import { type MotionProps, type Easing } from "motion/react";
 
 export interface UseHoverLiftOptions {
   liftDistance?: number;
@@ -87,7 +87,7 @@ export function useHoverLift(options: UseHoverLiftOptions = {}): MotionProps {
 ### Basic Example
 
 ```tsx
-import { motion } from "framer-motion"
+import { motion } from "motion/react"
 import { useHoverLift } from "@/lib/hooks/use-hover-lift"
 
 export function Card() {
@@ -108,7 +108,7 @@ export function Card() {
 ### With Custom Options
 
 ```tsx
-import { motion } from "framer-motion"
+import { motion } from "motion/react"
 import { useHoverLift } from "@/lib/hooks/use-hover-lift"
 
 export function ProductCard() {
@@ -134,7 +134,7 @@ export function ProductCard() {
 <Tabs items={['Button', 'Card', 'Image', 'Link']}>
   <Tab value="Button">
     ```tsx
-    import { motion } from "framer-motion"
+    import { motion } from "motion/react"
     import { useHoverLift } from "@/lib/hooks/use-hover-lift"
 
     export function LiftButton() {
@@ -153,7 +153,7 @@ export function ProductCard() {
   </Tab>
   <Tab value="Card">
     ```tsx
-    import { motion } from "framer-motion"
+    import { motion } from "motion/react"
     import { useHoverLift } from "@/lib/hooks/use-hover-lift"
 
     export function InfoCard() {
@@ -170,7 +170,7 @@ export function ProductCard() {
   </Tab>
   <Tab value="Image">
     ```tsx
-    import { motion } from "framer-motion"
+    import { motion } from "motion/react"
     import { useHoverLift } from "@/lib/hooks/use-hover-lift"
 
     export function GalleryImage() {
@@ -192,7 +192,7 @@ export function ProductCard() {
   </Tab>
   <Tab value="Link">
     ```tsx
-    import { motion } from "framer-motion"
+    import { motion } from "motion/react"
     import { useHoverLift } from "@/lib/hooks/use-hover-lift"
 
     export function NavLink() {

@@ -1,6 +1,6 @@
 "use client";
 import * as React from "react";
-import { motion, HTMLMotionProps } from "framer-motion";
+import { motion, HTMLMotionProps } from "motion/react";
 interface BorderGradientButtonProps
   extends Omit<HTMLMotionProps<"button">, "children"> {
   children: React.ReactNode;

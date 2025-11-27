@@ -1,6 +1,6 @@
 "use client";
 import * as React from "react";
-import { motion, HTMLMotionProps } from "framer-motion";
+import { motion, HTMLMotionProps } from "motion/react";
 import { cn } from "@/lib/utils";
 export interface LoaderOrbitProps
   extends Omit<HTMLMotionProps<"div">, "children"> {

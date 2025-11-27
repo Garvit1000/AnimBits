@@ -3,7 +3,7 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { cva, type VariantProps } from 'class-variance-authority';
 import { Star } from 'lucide-react';
-import { motion, useInView, type SpringOptions, type UseInViewOptions } from 'framer-motion';
+import { motion, useInView, type SpringOptions, type UseInViewOptions } from "motion/react";
 import { cn } from '@/lib/utils';
 
 const githubButtonVariants = cva(

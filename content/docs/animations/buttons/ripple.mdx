@@ -52,7 +52,7 @@ The `RippleButton` creates a Material Design-inspired ripple effect that expands
     ```tsx title="components/animations/buttons/ripple.tsx"
 "use client";
 import * as React from "react";
-import { motion, HTMLMotionProps } from "framer-motion";
+import { motion, HTMLMotionProps } from "motion/react";
 import { cn } from "@/lib/utils";
 interface RippleButtonProps extends Omit<HTMLMotionProps<"button">, "onClick"> {
   children: React.ReactNode;

@@ -39,7 +39,7 @@ The `BorderGradientButton` creates an animated gradient border that continuously
     ```tsx title="components/animations/buttons/border-gradient.tsx"
 "use client";
 import * as React from "react";
-import { motion, HTMLMotionProps } from "framer-motion";
+import { motion, HTMLMotionProps } from "motion/react";
 interface BorderGradientButtonProps
   extends Omit<HTMLMotionProps<"button">, "children"> {
   children: React.ReactNode;

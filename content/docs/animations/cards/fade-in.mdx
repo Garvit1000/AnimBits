@@ -48,7 +48,7 @@ The `CardFadeIn` smoothly fades in when the component mounts, perfect for entran
     ```tsx title="components/animations/cards/fade-in.tsx"
 "use client";
 import * as React from "react";
-import { motion, HTMLMotionProps } from "framer-motion";
+import { motion, HTMLMotionProps } from "motion/react";
 import { cn } from "@/lib/utils";
 export interface CardFadeInProps extends HTMLMotionProps<"div"> {
   duration?: number;

@@ -43,7 +43,7 @@ The `GlowButton` component adds a colored glow effect on hover. Built using the 
     **Step 1: Copy the hook**
     
     ```tsx title="lib/hooks/use-hover-glow.ts"
-    import { type MotionProps, type Easing } from "framer-motion";
+    import { type MotionProps, type Easing } from "motion/react";
 
     export interface UseHoverGlowOptions {
       glowColor?: string;
@@ -97,7 +97,7 @@ The `GlowButton` component adds a colored glow effect on hover. Built using the 
     
     ```tsx title="components/animations/buttons/glow.tsx"
 "use client";
-import { motion, type HTMLMotionProps } from "framer-motion";
+import { motion, type HTMLMotionProps } from "motion/react";
 import { useHoverGlow } from "@/lib/use-hover-glow";
 interface GlowButtonProps extends Omit<HTMLMotionProps<"button">, "animate"> {
   children: React.ReactNode;
@@ -174,7 +174,7 @@ import { GlowButton } from "@/components/animations/buttons/glow"
 ## Using the Hook Directly
 
 ```tsx
-import { motion } from "framer-motion"
+import { motion } from "motion/react"
 import { useHoverGlow } from "@/lib/hooks"
 
 const glowProps = useHoverGlow({ glowColor: "rgba(236, 72, 153, 0.6)" })

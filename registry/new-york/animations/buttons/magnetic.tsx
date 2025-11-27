@@ -1,6 +1,6 @@
 "use client";
 import * as React from "react";
-import { motion, HTMLMotionProps } from "framer-motion";
+import { motion, HTMLMotionProps } from "motion/react";
 import { cn } from "@/lib/utils";
 import { useMagnetic, type UseMagneticOptions } from "@/lib/use-magnetic";
 interface MagneticButtonProps

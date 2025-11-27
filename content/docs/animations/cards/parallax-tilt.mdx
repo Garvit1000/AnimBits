@@ -50,7 +50,7 @@ The `CardParallaxTilt` creates an advanced 3D tilt effect with shadow separation
 
     ```tsx title="lib/hooks/use-parallax-tilt.ts"
     import * as React from "react"
-    import { useMotionValue, useSpring, useTransform } from "framer-motion"
+    import { useMotionValue, useSpring, useTransform } from "motion/react"
 
     export interface UseParallaxTiltOptions {
       maxTilt?: number
@@ -136,7 +136,7 @@ The `CardParallaxTilt` creates an advanced 3D tilt effect with shadow separation
     ```tsx title="components/animations/cards/parallax-tilt.tsx"
 "use client";
 import * as React from "react";
-import { motion, HTMLMotionProps } from "framer-motion";
+import { motion, HTMLMotionProps } from "motion/react";
 import { cn } from "@/lib/utils";
 import {
   useParallaxTilt,

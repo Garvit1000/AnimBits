@@ -208,7 +208,7 @@ Start by selecting your framework of choice. Then follow the instructions to ins
     **Option 1: Copy the hook (recommended for flexibility)**
     
     ```tsx title="lib/hooks/use-hover-lift.ts"
-    import { type MotionProps } from "framer-motion"
+    import { type MotionProps } from "motion/react"
 
     export interface UseHoverLiftOptions {
       liftDistance?: number
@@ -244,7 +244,7 @@ Start by selecting your framework of choice. Then follow the instructions to ins
     ```tsx title="components/animations/buttons/lift.tsx"
     "use client"
 
-    import { motion, type HTMLMotionProps } from "framer-motion"
+    import { motion, type HTMLMotionProps } from "motion/react"
     import { useHoverLift } from "@/lib/use-hover-lift"
 
     export interface LiftButtonProps extends Omit<HTMLMotionProps<"button">, "animate"> {
@@ -297,7 +297,7 @@ Start by selecting your framework of choice. Then follow the instructions to ins
       </Tab>
       <Tab value="Using Hook">
         ```tsx title="app/page.tsx"
-        import { motion } from 'framer-motion'
+        import { motion } from "motion/react"
         import { useHoverLift } from '@/lib/use-hover-lift'
 
         export default function Home() {
@@ -401,7 +401,7 @@ Add the `"use client"` directive to any component that uses animations.
 ```tsx title="components/animations/buttons/lift.tsx"
 "use client"
 
-import { motion } from "framer-motion"
+import { motion } from "motion/react"
 import { useHoverLift } from "@/lib/hooks/use-hover-lift"
 
 export function LiftButton({ children }: { children: React.ReactNode }) {
@@ -626,7 +626,7 @@ Browse the [hooks documentation](/docs/hooks/hover-lift) and copy the hooks you 
 **Step 4: Use in your components**
 
 ```tsx
-import { motion } from "framer-motion"
+import { motion } from "motion/react"
 import { useHoverLift } from "./lib/use-hover-lift"
 
 function MyComponent() {
@@ -780,7 +780,7 @@ Create a basic router structure in `src/App.tsx`:
 
 ```tsx title="src/App.tsx"
 import { Routes, Route, Link } from 'react-router-dom'
-import { motion } from 'framer-motion'
+import { motion } from "motion/react"
 import { useHoverLift } from './lib/use-hover-lift'
 
 function Home() {

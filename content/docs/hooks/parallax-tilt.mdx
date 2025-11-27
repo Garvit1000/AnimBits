@@ -20,7 +20,7 @@ The `useParallaxTilt` hook creates a stunning 3D tilt effect where elements rota
   <Tab value="Manual">
     ```tsx title="lib/hooks/use-parallax-tilt.ts"
 import * as React from "react";
-import { useMotionValue, useSpring, useTransform } from "framer-motion";
+import { useMotionValue, useSpring, useTransform } from "motion/react";
 
 export interface UseParallaxTiltOptions {
   maxTilt?: number;
@@ -103,7 +103,7 @@ export function useParallaxTilt(options: UseParallaxTiltOptions = {}) {
 ### Basic Example
 
 ```tsx
-import { motion } from "framer-motion"
+import { motion } from "motion/react"
 import { useParallaxTilt } from "@/lib/hooks/use-parallax-tilt"
 
 export function TiltCard() {
@@ -125,7 +125,7 @@ export function TiltCard() {
 ### With Custom Tilt Angle
 
 ```tsx
-import { motion } from "framer-motion"
+import { motion } from "motion/react"
 import { useParallaxTilt } from "@/lib/hooks/use-parallax-tilt"
 
 export function DramaticTilt() {
@@ -152,7 +152,7 @@ export function DramaticTilt() {
 <Tabs items={['Card', 'Image', 'Button', 'Profile']}>
   <Tab value="Card">
     ```tsx
-    import { motion } from "framer-motion"
+    import { motion } from "motion/react"
     import { useParallaxTilt } from "@/lib/hooks/use-parallax-tilt"
 
     export function ProductCard() {
@@ -174,7 +174,7 @@ export function DramaticTilt() {
   </Tab>
   <Tab value="Image">
     ```tsx
-    import { motion } from "framer-motion"
+    import { motion } from "motion/react"
     import { useParallaxTilt } from "@/lib/hooks/use-parallax-tilt"
 
     export function TiltImage() {
@@ -201,7 +201,7 @@ export function DramaticTilt() {
   </Tab>
   <Tab value="Button">
     ```tsx
-    import { motion } from "framer-motion"
+    import { motion } from "motion/react"
     import { useParallaxTilt } from "@/lib/hooks/use-parallax-tilt"
 
     export function TiltButton() {
@@ -224,7 +224,7 @@ export function DramaticTilt() {
   </Tab>
   <Tab value="Profile">
     ```tsx
-    import { motion } from "framer-motion"
+    import { motion } from "motion/react"
     import { useParallaxTilt } from "@/lib/hooks/use-parallax-tilt"
 
     export function ProfileCard() {
@@ -350,7 +350,7 @@ const { tiltProps, ref } = useParallaxTilt({
 Create depth with nested elements:
 
 ```tsx
-import { motion } from "framer-motion"
+import { motion } from "motion/react"
 import { useParallaxTilt } from "@/lib/hooks/use-parallax-tilt"
 
 export function LayeredCard() {

@@ -38,7 +38,7 @@ The `LoaderGooeyBlobs` component creates blobs that appear to merge together wit
     ```tsx title="components/animations/loaders/gooey-blobs.tsx"
 "use client";
 import * as React from "react";
-import { motion, HTMLMotionProps } from "framer-motion";
+import { motion, HTMLMotionProps } from "motion/react";
 import { cn } from "@/lib/utils";
 export interface LoaderGooeyBlobsProps
   extends Omit<HTMLMotionProps<"div">, "children"> {

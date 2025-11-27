@@ -38,7 +38,7 @@ The `LoaderBars` component creates animated bars with varying heights. Perfect f
     ```tsx title="components/animations/loaders/bars.tsx"
 "use client";
 import * as React from "react";
-import { motion, HTMLMotionProps } from "framer-motion";
+import { motion, HTMLMotionProps } from "motion/react";
 import { cn } from "@/lib/utils";
 export interface LoaderBarsProps
   extends Omit<HTMLMotionProps<"div">, "children"> {

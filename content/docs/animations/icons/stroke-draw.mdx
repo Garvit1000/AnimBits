@@ -75,7 +75,7 @@ The `StrokeDrawIcon` component animates SVG paths by drawing them stroke by stro
     **Step 2: Copy the hook**
 
     ```tsx title="lib/hooks/use-stroke-draw.ts"
-    import { type MotionProps, type Easing } from "framer-motion";
+    import { type MotionProps, type Easing } from "motion/react";
 
     export interface UseStrokeDrawOptions {
       duration?: number;
@@ -256,7 +256,7 @@ This component is built using the `useStrokeDraw()` hook. You can use the hook d
 
 ```tsx
 import { useStrokeDraw } from "@/lib/hooks/use-stroke-draw"
-import { motion } from "framer-motion"
+import { motion } from "motion/react"
 
 export function CustomStrokeIcon() {
   const strokeProps = useStrokeDraw({ duration: 2, delay: 0.5 })

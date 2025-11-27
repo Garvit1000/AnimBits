@@ -1,5 +1,5 @@
 import * as React from "react";
-import { useMotionValue, useSpring } from "framer-motion";
+import { useMotionValue, useSpring } from "motion/react";
 
 export interface UseMagneticOptions {
   strength?: number;

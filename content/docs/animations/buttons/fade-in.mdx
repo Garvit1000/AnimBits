@@ -38,7 +38,7 @@ The `FadeInButton` creates a smooth fade-in entrance animation, perfect for sequ
     **Step 1: Copy the presets**
 
     ```tsx title="lib/animation-presets.ts"
-    import { type Variants, type Transition, type Easing } from "framer-motion";
+    import { type Variants, type Transition, type Easing } from "motion/react";
 
     export const fadeInVariants: Variants = {
       hidden: { opacity: 0 },
@@ -263,7 +263,7 @@ The `FadeInButton` creates a smooth fade-in entrance animation, perfect for sequ
 
     ```tsx title="components/animations/buttons/fade-in.tsx"
 "use client";
-import { motion, type HTMLMotionProps } from "framer-motion";
+import { motion, type HTMLMotionProps } from "motion/react";
 import {
   fadeInVariants,
   createDelayedTransition,

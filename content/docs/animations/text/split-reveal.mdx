@@ -49,7 +49,7 @@ The `TextSplitReveal` reveals text with a dramatic vertical split effect.
     ```tsx title="components/animations/text/split-reveal.tsx"
 "use client";
 import * as React from "react";
-import { motion, HTMLMotionProps } from "framer-motion";
+import { motion, HTMLMotionProps } from "motion/react";
 import { cn } from "@/lib/utils";
 export interface TextSplitRevealProps
   extends Omit<HTMLMotionProps<"p">, "children"> {

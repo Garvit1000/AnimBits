@@ -1,5 +1,5 @@
 "use client";
-import { motion, type HTMLMotionProps } from "framer-motion";
+import { motion, type HTMLMotionProps } from "motion/react";
 import { usePress } from "@/lib/use-press";
 interface PressButtonProps extends Omit<HTMLMotionProps<"button">, "animate"> {
   children: React.ReactNode;
