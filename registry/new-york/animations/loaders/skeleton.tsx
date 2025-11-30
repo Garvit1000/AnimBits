@@ -15,25 +15,29 @@ export function LoaderSkeleton({
   width = "100%",
   height = 20,
   borderRadius = 4,
-  baseColor = "#e5e7eb",
-  highlightColor = "#f3f4f6",
+  baseColor,
+  highlightColor,
   duration = 1.5,
   ...props
 }: LoaderSkeletonProps) {
   return (
     <div
-      className={cn("relative overflow-hidden", className)}
+      className={cn(
+        "relative overflow-hidden bg-zinc-200 dark:bg-zinc-800",
+        className
+      )}
       style={{
         width: width,
         height: height,
         borderRadius: borderRadius,
-        backgroundColor: baseColor,
+        ...(baseColor && { backgroundColor: baseColor }),
       }}
     >
       <motion.div
         className="absolute inset-0"
         style={{
-          background: `linear-gradient(90deg, transparent, ${highlightColor}, transparent)`,
+          background: `linear-gradient(90deg, transparent, ${highlightColor || "rgba(255, 255, 255, 0.3)"
+            }, transparent)`,
         }}
         animate={{
           x: ["-100%", "100%"],

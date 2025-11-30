@@ -1,0 +1,192 @@
+---
+title: Reaction Dock
+description: A smooth, scaling dock of reaction emojis with magnification effect.
+component: true
+---
+
+import { Tab, Tabs } from 'fumadocs-ui/components/tabs';
+import { Steps, Step } from 'fumadocs-ui/components/steps';
+import { Preview } from '@/components/preview';
+import ReactionDockDemo from '@/registry/new-york/animations/specials/reaction-dock-demo';
+
+<Preview
+  code={`"use client";
+
+import { ReactionDock } from "./reaction-dock";
+import { Heart, ThumbsUp, Laugh, Frown, Angry, PartyPopper } from "lucide-react";
+
+export default function ReactionDockDemo() {
+    const reactions = [
+        {
+            icon: <ThumbsUp className="h-5 w-5 text-zinc-500 dark:text-zinc-400" />,
+            label: "Like",
+            onClick: () => console.log("Like"),
+        },
+        {
+            icon: <Heart className="h-5 w-5 text-red-500" />,
+            label: "Love",
+            onClick: () => console.log("Love"),
+        },
+        {
+            icon: <Laugh className="h-5 w-5 text-amber-500" />,
+            label: "Haha",
+            onClick: () => console.log("Haha"),
+        },
+        {
+            icon: <PartyPopper className="h-5 w-5 text-blue-500" />,
+            label: "Celebrate",
+            onClick: () => console.log("Celebrate"),
+        },
+        {
+            icon: <Frown className="h-5 w-5 text-zinc-500 dark:text-zinc-400" />,
+            label: "Sad",
+            onClick: () => console.log("Sad"),
+        },
+        {
+            icon: <Angry className="h-5 w-5 text-orange-500" />,
+            label: "Angry",
+            onClick: () => console.log("Angry"),
+        },
+    ];
+
+    return (
+        <div className="flex min-h-[200px] items-center justify-center p-8">
+            <ReactionDock items={reactions} />
+        </div>
+    );
+}`}
+>
+  <ReactionDockDemo />
+</Preview>
+
+## Installation
+
+<Tabs items={['CLI', 'Manual']}>
+  <Tab value="CLI">
+    ```bash
+    npx shadcn add https://animbits.dev/r/specials-reaction-dock.json
+    ```
+  </Tab>
+  <Tab value="Manual">
+    <Steps>
+      <Step>
+        **Install dependencies**
+        ```bash
+        npm install motion lucide-react
+        ```
+      </Step>
+      <Step>
+        **Copy the component code**
+        ```tsx title="components/animations/specials/reaction-dock.tsx"
+"use client";
+
+import * as React from "react";
+import { motion, useMotionValue, useSpring, useTransform, MotionValue } from "motion/react";
+import { cn } from "@/lib/utils";
+
+interface ReactionDockProps {
+    items: {
+        icon: React.ReactNode;
+        label: string;
+        onClick?: () => void;
+    }[];
+    className?: string;
+}
+
+export function ReactionDock({ items, className }: ReactionDockProps) {
+    const mouseX = useMotionValue(Infinity);
+
+    return (
+        <motion.div
+            onMouseMove={(e) => mouseX.set(e.pageX)}
+            onMouseLeave={() => mouseX.set(Infinity)}
+            className={cn(
+                "mx-auto flex h-16 items-end gap-4 rounded-2xl bg-zinc-50 dark:bg-zinc-900 px-4 pb-3 border border-zinc-200 dark:border-zinc-800",
+                className
+            )}
+        >
+            {items.map((item, i) => (
+                <DockItem key={i} mouseX={mouseX} onClick={item.onClick}>
+                    <div className="relative group">
+                        <span className="absolute -top-8 left-1/2 -translate-x-1/2 rounded bg-zinc-900 dark:bg-zinc-100 px-2 py-0.5 text-xs text-white dark:text-zinc-900 opacity-0 transition-opacity group-hover:opacity-100 whitespace-nowrap">
+                            {item.label}
+                        </span>
+                        {item.icon}
+                    </div>
+                </DockItem>
+            ))}
+        </motion.div>
+    );
+}
+
+function DockItem({
+    mouseX,
+    children,
+    onClick,
+}: {
+    mouseX: MotionValue;
+    children: React.ReactNode;
+    onClick?: () => void;
+}) {
+    const ref = React.useRef<HTMLDivElement>(null);
+
+    const distance = useTransform(mouseX, (val) => {
+        const bounds = ref.current?.getBoundingClientRect() ?? { x: 0, width: 0 };
+        return val - bounds.x - bounds.width / 2;
+    });
+
+    const widthSync = useTransform(distance, [-150, 0, 150], [40, 80, 40]);
+    const width = useSpring(widthSync, { mass: 0.1, stiffness: 150, damping: 12 });
+
+    return (
+        <motion.div
+            ref={ref}
+            style={{ width }}
+            onClick={onClick}
+            className="aspect-square w-10 cursor-pointer rounded-full bg-zinc-200 dark:bg-zinc-800 flex items-center justify-center hover:bg-zinc-300 dark:hover:bg-zinc-700 transition-colors"
+        >
+            {children}
+        </motion.div>
+    );
+}
+        ```
+      </Step>
+    </Steps>
+  </Tab>
+</Tabs>
+
+## Usage
+
+```tsx
+import { ReactionDock } from "@/components/animations/specials/reaction-dock"
+import { Heart, ThumbsUp, Laugh } from "lucide-react"
+
+export function ReactionDockDemo() {
+  const items = [
+    {
+      icon: <ThumbsUp className="h-5 w-5" />,
+      label: "Like",
+      onClick: () => console.log("Like"),
+    },
+    {
+      icon: <Heart className="h-5 w-5 text-red-500" />,
+      label: "Love",
+      onClick: () => console.log("Love"),
+    },
+    {
+      icon: <Laugh className="h-5 w-5 text-amber-500" />,
+      label: "Haha",
+      onClick: () => console.log("Haha"),
+    },
+  ]
+
+  return <ReactionDock items={items} />
+}
+```
+
+## Props
+
+| Prop | Type | Default | Description |
+| :--- | :--- | :--- | :--- |
+| `items` | `Array<{ icon: ReactNode, label: string, onClick?: () => void }>` | - | Array of items to display in the dock. |
+| `className` | `string` | - | Additional CSS classes. |

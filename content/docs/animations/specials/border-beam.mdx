@@ -1,0 +1,286 @@
+---
+title: Border Beam
+description: An animated gradient border effect that travels around a container.
+component: true
+---
+
+import { Tab, Tabs } from 'fumadocs-ui/components/tabs';
+import { Steps, Step } from 'fumadocs-ui/components/steps';
+import { Preview } from '@/components/preview';
+import BorderBeamDemo from '@/registry/new-york/animations/specials/border-beam-demo';
+import { BorderBeam } from '@/registry/new-york/animations/specials/border-beam';
+import { User, ArrowRight, Search} from 'lucide-react';
+
+<Preview
+  code={`"use client";
+
+import { BorderBeam } from "./border-beam";
+import { User, ArrowRight, Search } from "lucide-react";
+
+export default function BorderBeamDemo() {
+  return (
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 w-full max-w-5xl p-4">
+      {/* Example 1: Standard Card (Rounded) */}
+      <div className="relative flex h-[200px] w-full flex-col items-center justify-center overflow-hidden rounded-xl border bg-background md:shadow-xl">
+        <span className="pointer-events-none whitespace-pre-wrap bg-gradient-to-b from-black to-gray-300/80 bg-clip-text text-center text-5xl font-semibold leading-none text-transparent dark:from-white dark:to-slate-900/10">
+          Card
+        </span>
+        <BorderBeam size={250} duration={12} radius={12} />
+      </div>
+
+      {/* Example 2: Square Card (No Radius) */}
+      <div className="relative flex h-[200px] w-full flex-col items-center justify-center overflow-hidden border bg-background md:shadow-xl">
+        <span className="pointer-events-none text-xl font-semibold text-foreground">
+          Square
+        </span>
+        <BorderBeam size={250} duration={12} radius={0} />
+      </div>
+
+      {/* Example 3: Circle (Avatar) */}
+      <div className="flex items-center justify-center">
+        <div className="relative flex h-32 w-32 items-center justify-center rounded-full border bg-background shadow-sm">
+          <User className="h-12 w-12 text-neutral-500" />
+          <BorderBeam size={100} duration={10} delay={0} radius={9999} borderWidth={2} />
+        </div>
+      </div>
+
+      {/* Example 4: Input Field */}
+      <div className="flex items-center justify-center w-full">
+        <div className="relative w-full max-w-xs rounded-md border bg-background">
+          <div className="flex items-center px-3 py-2">
+            <Search className="mr-2 h-4 w-4 text-muted-foreground" />
+            <input
+              type="text"
+              placeholder="Search..."
+              className="flex h-full w-full bg-transparent text-sm outline-none placeholder:text-muted-foreground"
+            />
+          </div>
+          <BorderBeam size={80} duration={6} delay={2} radius={6} borderWidth={1.5} />
+        </div>
+      </div>
+
+      {/* Example 5: Rounded Button */}
+      <div className="flex items-center justify-center">
+        <button className="relative inline-flex h-12 overflow-hidden rounded-full p-[1px] focus:outline-none focus:ring-2 focus:ring-slate-400 focus:ring-offset-2 focus:ring-offset-slate-50">
+          <span className="absolute inset-[-1000%] animate-[spin_2s_linear_infinite] bg-[conic-gradient(from_90deg_at_50%_50%,#E2CBFF_0%,#393BB2_50%,#E2CBFF_100%)]" />
+          <span className="inline-flex h-full w-full cursor-pointer items-center justify-center rounded-full bg-slate-950 px-8 py-1 text-sm font-medium text-white backdrop-blur-3xl">
+            Click Me
+            <ArrowRight className="ml-2 h-4 w-4" />
+            <BorderBeam size={40} duration={4} delay={0} radius={9999} borderWidth={2} />
+          </span>
+        </button>
+      </div>
+
+      {/* Example 6: Asymmetric Radius */}
+      <div className="flex items-center justify-center">
+        <div className="relative flex h-[150px] w-full flex-col items-center justify-center overflow-hidden rounded-tl-3xl rounded-br-3xl border bg-background md:shadow-xl">
+          <span className="text-lg font-medium">Asymmetric</span>
+          <BorderBeam size={150} duration={10} delay={5} radius={24} />
+        </div>
+      </div>
+      
+    </div>
+  );
+}`}
+>
+  <BorderBeamDemo />
+</Preview>
+
+## Installation
+
+<Tabs items={['CLI', 'Manual']}>
+  <Tab value="CLI">
+    ```bash
+    npx shadcn add https://animbits.dev/r/specials-border-beam.json
+    ```
+  </Tab>
+  <Tab value="Manual">
+    <Steps>
+      <Step>
+        **Install dependencies**
+        ```bash
+        npm install motion
+        ```
+      </Step>
+      <Step>
+        **Copy the component code**
+        ```tsx title="components/animations/specials/border-beam.tsx"
+"use client";
+
+import { cn } from "@/lib/utils";
+import { motion } from "motion/react";
+
+interface BorderBeamProps {
+  className?: string;
+  size?: number;
+  duration?: number;
+  borderWidth?: number;
+  anchor?: number;
+  colorFrom?: string;
+  colorTo?: string;
+  delay?: number;
+  radius?: number;
+}
+
+export function BorderBeam({
+  className,
+  size = 200,
+  duration = 15,
+  anchor = 90,
+  borderWidth = 1.5,
+  colorFrom = "#ffaa40",
+  colorTo = "#9c40ff",
+  delay = 0,
+  radius = 0,
+}: BorderBeamProps) {
+  return (
+    <div
+      style={
+        {
+          "--size": size,
+          "--duration": duration,
+          "--anchor": anchor,
+          "--border-width": borderWidth,
+          "--color-from": colorFrom,
+          "--color-to": colorTo,
+          "--delay": delay,
+          "--radius": radius,
+        } as React.CSSProperties
+      }
+      className={cn(
+        "pointer-events-none absolute inset-0 rounded-[inherit] [border:calc(var(--border-width)*1px)_solid_transparent]",
+        // mask styles
+        "![mask-clip:padding-box,border-box] ![mask-composite:intersect] [mask:linear-gradient(transparent,transparent),linear-gradient(white,white)]",
+        // pseudo styles
+        "after:absolute after:aspect-square after:w-[calc(var(--size)*1px)] after:animate-border-beam after:[animation-delay:calc(var(--delay)*1s)] after:[background:linear-gradient(to_left,var(--color-from),var(--color-to),transparent)] after:[offset-anchor:calc(var(--anchor)*1%)_50%] after:[offset-path:rect(0_auto_auto_0_round_calc(var(--radius)*1px))]",
+        className,
+      )}
+    />
+  );
+}
+        ```
+      </Step>
+      <Step>
+        **Update tailwind.css**
+        Add the following keyframes to your `app/globals.css` or `tailwind.config.ts`:
+        ```css
+        @keyframes border-beam {
+          100% {
+            offset-distance: 100%;
+          }
+        }
+        ```
+      </Step>
+    </Steps>
+  </Tab>
+</Tabs>
+
+## Examples
+
+### Cards
+
+<Preview code={`<div className="relative flex h-[200px] w-full flex-col items-center justify-center overflow-hidden rounded-xl border bg-background md:shadow-xl">
+  <span className="pointer-events-none whitespace-pre-wrap bg-gradient-to-b from-black to-gray-300/80 bg-clip-text text-center text-5xl font-semibold leading-none text-transparent dark:from-white dark:to-slate-900/10">
+    Card
+  </span>
+  <BorderBeam size={250} duration={12} radius={12} />
+</div>`}>
+  <div className="relative flex h-[200px] w-full flex-col items-center justify-center overflow-hidden rounded-xl border bg-background md:shadow-xl">
+    <span className="pointer-events-none whitespace-pre-wrap bg-gradient-to-b from-black to-gray-300/80 bg-clip-text text-center text-5xl font-semibold leading-none text-transparent dark:from-white dark:to-slate-900/10">
+      Card
+    </span>
+    <BorderBeam size={250} duration={12} radius={12} />
+  </div>
+</Preview>
+
+### Buttons
+
+<Preview code={`<button className="relative inline-flex h-12 overflow-hidden rounded-full p-[1px] focus:outline-none focus:ring-2 focus:ring-slate-400 focus:ring-offset-2 focus:ring-offset-slate-50">
+  <span className="absolute inset-[-1000%] animate-[spin_2s_linear_infinite] bg-[conic-gradient(from_90deg_at_50%_50%,#E2CBFF_0%,#393BB2_50%,#E2CBFF_100%)]" />
+  <span className="inline-flex h-full w-full cursor-pointer items-center justify-center rounded-full bg-slate-950 px-8 py-1 text-sm font-medium text-white backdrop-blur-3xl">
+    Click Me
+    <ArrowRight className="ml-2 h-4 w-4" />
+    <BorderBeam size={40} duration={4} delay={0} radius={9999} borderWidth={2} />
+  </span>
+</button>`}>
+  <div className="flex items-center justify-center">
+    <button className="relative inline-flex h-12 overflow-hidden rounded-full p-[1px] focus:outline-none focus:ring-2 focus:ring-slate-400 focus:ring-offset-2 focus:ring-offset-slate-50">
+      <span className="absolute inset-[-1000%] animate-[spin_2s_linear_infinite] bg-[conic-gradient(from_90deg_at_50%_50%,#E2CBFF_0%,#393BB2_50%,#E2CBFF_100%)]" />
+      <span className="inline-flex h-full w-full cursor-pointer items-center justify-center rounded-full bg-slate-950 px-8 py-1 text-sm font-medium text-white backdrop-blur-3xl">
+        Click Me
+        <ArrowRight className="ml-2 h-4 w-4" />
+        <BorderBeam size={40} duration={4} delay={0} radius={9999} borderWidth={2} />
+      </span>
+    </button>
+  </div>
+</Preview>
+
+### Inputs
+
+<Preview code={`<div className="relative w-full max-w-xs rounded-md border bg-background">
+  <div className="flex items-center px-3 py-2">
+    <Search className="mr-2 h-4 w-4 text-muted-foreground" />
+    <input
+      type="text"
+      placeholder="Search..."
+      className="flex h-full w-full bg-transparent text-sm outline-none placeholder:text-muted-foreground"
+    />
+  </div>
+  <BorderBeam size={80} duration={6} delay={2} radius={6} borderWidth={1.5} />
+</div>`}>
+  <div className="flex items-center justify-center w-full">
+    <div className="relative w-full max-w-xs rounded-md border bg-background">
+      <div className="flex items-center px-3 py-2">
+        <Search className="mr-2 h-4 w-4 text-muted-foreground" />
+        <input
+          type="text"
+          placeholder="Search..."
+          className="flex h-full w-full bg-transparent text-sm outline-none placeholder:text-muted-foreground"
+        />
+      </div>
+      <BorderBeam size={80} duration={6} delay={2} radius={6} borderWidth={1.5} />
+    </div>
+  </div>
+</Preview>
+
+### Avatars
+
+<Preview code={`<div className="relative flex h-32 w-32 items-center justify-center rounded-full border bg-background shadow-sm">
+  <User className="h-12 w-12 text-neutral-500" />
+  <BorderBeam size={100} duration={10} delay={0} radius={9999} borderWidth={2} />
+</div>`}>
+  <div className="flex items-center justify-center">
+    <div className="relative flex h-32 w-32 items-center justify-center rounded-full border bg-background shadow-sm">
+      <User className="h-12 w-12 text-neutral-500" />
+      <BorderBeam size={100} duration={10} delay={0} radius={9999} borderWidth={2} />
+    </div>
+  </div>
+</Preview>
+
+### Asymmetric Radius
+
+<Preview code={`<div className="relative flex h-[150px] w-full flex-col items-center justify-center overflow-hidden rounded-tl-3xl rounded-br-3xl border bg-background md:shadow-xl">
+  <span className="text-lg font-medium">Asymmetric</span>
+  <BorderBeam size={150} duration={10} delay={5} radius={24} />
+</div>`}>
+  <div className="flex items-center justify-center">
+    <div className="relative flex h-[150px] w-full flex-col items-center justify-center overflow-hidden rounded-tl-3xl rounded-br-3xl border bg-background md:shadow-xl">
+      <span className="text-lg font-medium">Asymmetric</span>
+      <BorderBeam size={150} duration={10} delay={5} radius={24} />
+    </div>
+  </div>
+</Preview>
+
+
+## Props
+
+| Prop | Type | Default | Description |
+| :--- | :--- | :--- | :--- |
+| `size` | `number` | `200` | The length of the beam. |
+| `duration` | `number` | `15` | The duration of the animation in seconds. |
+| `borderWidth` | `number` | `1.5` | The width of the border. |
+| `colorFrom` | `string` | `"#ffaa40"` | The starting color of the gradient. |
+| `colorTo` | `string` | `"#9c40ff"` | The ending color of the gradient. |
+| `delay` | `number` | `0` | The delay before the animation starts. |
+| `radius` | `number` | `0` | The border radius of the path. Set this to match the container's border radius. |
+| `className` | `string` | - | Additional CSS classes. |

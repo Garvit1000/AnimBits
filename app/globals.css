@@ -48,6 +48,8 @@
     --animate-scale-in: scale-in 0.5s ease-out forwards;
     --color-brand-foreground: var(--brand-foreground);
     --color-brand: var(--brand);
+    --animate-border-beam: border-beam calc(var(--duration)*1s) infinite linear;
+
 
     @keyframes fade-in-up {
         0% {
@@ -311,83 +313,72 @@ html {
 }
 
 /* Slide Transitions */
-.theme-slide-top::view-transition-old(root) {
-    animation: slide-out-top var(--transition-speed) cubic-bezier(0.4, 0, 0.2, 1);
+/* Slide Transitions (Clip Path Wipes) */
+.theme-slide-top::view-transition-old(root),
+.theme-slide-bottom::view-transition-old(root),
+.theme-slide-left::view-transition-old(root),
+.theme-slide-right::view-transition-old(root) {
+    animation: none;
+    z-index: -1;
 }
 
 .theme-slide-top::view-transition-new(root) {
-    animation: slide-in-top var(--transition-speed) cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.theme-slide-bottom::view-transition-old(root) {
-    animation: slide-out-bottom var(--transition-speed) cubic-bezier(0.4, 0, 0.2, 1);
+    animation: wipe-in-down var(--transition-speed) cubic-bezier(0.25, 1, 0.5, 1);
+    z-index: 1;
 }
 
 .theme-slide-bottom::view-transition-new(root) {
-    animation: slide-in-bottom var(--transition-speed) cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.theme-slide-left::view-transition-old(root) {
-    animation: slide-out-left var(--transition-speed) cubic-bezier(0.4, 0, 0.2, 1);
+    animation: wipe-in-up var(--transition-speed) cubic-bezier(0.25, 1, 0.5, 1);
+    z-index: 1;
 }
 
 .theme-slide-left::view-transition-new(root) {
-    animation: slide-in-left var(--transition-speed) cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.theme-slide-right::view-transition-old(root) {
-    animation: slide-out-right var(--transition-speed) cubic-bezier(0.4, 0, 0.2, 1);
+    animation: wipe-in-right var(--transition-speed) cubic-bezier(0.25, 1, 0.5, 1);
+    z-index: 1;
 }
 
 .theme-slide-right::view-transition-new(root) {
-    animation: slide-in-right var(--transition-speed) cubic-bezier(0.4, 0, 0.2, 1);
+    animation: wipe-in-left var(--transition-speed) cubic-bezier(0.25, 1, 0.5, 1);
+    z-index: 1;
 }
 
-@keyframes slide-out-top {
-    to {
-        transform: translateY(-100%);
-    }
-}
-
-@keyframes slide-in-top {
+@keyframes wipe-in-down {
     from {
-        transform: translateY(-100%);
+        clip-path: inset(0 0 100% 0);
     }
-}
 
-@keyframes slide-out-bottom {
     to {
-        transform: translateY(100%);
+        clip-path: inset(0 0 0 0);
     }
 }
 
-@keyframes slide-in-bottom {
+@keyframes wipe-in-up {
     from {
-        transform: translateY(100%);
+        clip-path: inset(100% 0 0 0);
     }
-}
 
-@keyframes slide-out-left {
     to {
-        transform: translateX(-100%);
+        clip-path: inset(0 0 0 0);
     }
 }
 
-@keyframes slide-in-left {
+@keyframes wipe-in-right {
     from {
-        transform: translateX(-100%);
+        clip-path: inset(0 100% 0 0);
     }
-}
 
-@keyframes slide-out-right {
     to {
-        transform: translateX(100%);
+        clip-path: inset(0 0 0 0);
     }
 }
 
-@keyframes slide-in-right {
+@keyframes wipe-in-left {
     from {
-        transform: translateX(100%);
+        clip-path: inset(0 0 0 100%);
+    }
+
+    to {
+        clip-path: inset(0 0 0 0);
     }
 }
 
@@ -437,4 +428,10 @@ html {
 [data-active='true'][data-sidebar-link] *,
 .fd-sidebar-link[data-active='true'] * {
     color: var(--brand) !important;
+}
+
+@keyframes border-beam {
+    100% {
+        offset-distance: 100%;
+    }
 }

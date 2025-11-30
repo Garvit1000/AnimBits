@@ -18,9 +18,11 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "Animbits - Animation Registry for UI",
   description: "Production-ready animation components for React",
+  applicationName: "Animbits",
   openGraph: {
     title: "Animbits - Animation Registry for UI",
     description: "Production-ready animation components for React",
+    siteName: "Animbits",
     images: ["/animbits.png"],
     type: "website",
   },
@@ -29,6 +31,11 @@ export const metadata: Metadata = {
     title: "Animbits - Animation Registry for UI",
     description: "Production-ready animation components for React",
     images: ["/animbits.png"],
+  },
+  icons: {
+    icon: "/favicon.ico",
+    shortcut: "/favicon.ico",
+    apple: "/animbits.png",
   },
 };
 

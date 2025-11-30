@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import { Navbar } from "@/components/navbar";
 import { BentoGrid, BentoGridItem } from "@/components/ui/bento-grid";
 import { ContainerTextFlip } from "@/components/ui/container-text-flip";
@@ -17,6 +18,7 @@ import { Footer } from "@/components/footer";
 import { GithubButton } from "@/components/ui/github-button";
 import { StickyBanner } from "@/components/ui/sticky-banner";
 import { CTASection } from "@/components/cta-with-rectangle";
+import { WhyAnimBits } from "@/components/why-animbits";
 
 import { ArrowRight, Sparkles, Heart, ChevronRight } from "lucide-react";
 import * as motion from "framer-motion/client";
@@ -57,7 +59,7 @@ async function getStarCount() {
 export default async function Home() {
     const stars = await getStarCount();
     return (
-        <div className="min-h-screen bg-white dark:bg-neutral-950">
+        <div className="min-h-screen bg-white dark:bg-neutral-950 overflow-x-hidden">
             <StickyBanner>
                 <span className="flex items-center gap-1 text-xs md:text-sm font-medium">
                     Now Available: Hooks — structured, reusable motion for your UI.
@@ -179,9 +181,11 @@ export default async function Home() {
                                 whileHover={{ scale: 1.1, y: -2 }}
                                 transition={{ duration: 0.2 }}
                             >
-                                <img
+                                <Image
                                     src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/nextjs/nextjs-original.svg"
                                     alt="Next.js"
+                                    width={28}
+                                    height={28}
                                     className="h-6 w-6 2xl:h-7 2xl:w-7 dark:invert"
                                 />
                                 <span className="text-sm 2xl:text-base font-medium">Next.js</span>
@@ -195,9 +199,11 @@ export default async function Home() {
                                 whileHover={{ scale: 1.1, y: -2 }}
                                 transition={{ duration: 0.2 }}
                             >
-                                <img
+                                <Image
                                     src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/react/react-original.svg"
                                     alt="React"
+                                    width={24}
+                                    height={24}
                                     className="h-6 w-6"
                                 />
                                 <span className="text-sm font-medium">React</span>
@@ -211,9 +217,11 @@ export default async function Home() {
                                 whileHover={{ scale: 1.1, y: -2 }}
                                 transition={{ duration: 0.2 }}
                             >
-                                <img
+                                <Image
                                     src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/tailwindcss/tailwindcss-original.svg"
                                     alt="Tailwind CSS"
+                                    width={24}
+                                    height={24}
                                     className="h-6 w-6"
                                 />
                                 <span className="text-sm font-medium">Tailwind</span>
@@ -227,9 +235,11 @@ export default async function Home() {
                                 whileHover={{ scale: 1.1, y: -2 }}
                                 transition={{ duration: 0.2 }}
                             >
-                                <img
+                                <Image
                                     src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/framermotion/framermotion-original.svg"
                                     alt="Framer Motion"
+                                    width={28}
+                                    height={28}
                                     className="h-6 w-6 2xl:h-7 2xl:w-7 dark:invert"
                                 />
                                 <span className="text-sm font-medium">Framer Motion</span>
@@ -243,9 +253,11 @@ export default async function Home() {
                                 whileHover={{ scale: 1.1, y: -2 }}
                                 transition={{ duration: 0.2 }}
                             >
-                                <img
+                                <Image
                                     src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/typescript/typescript-original.svg"
                                     alt="TypeScript"
+                                    width={24}
+                                    height={24}
                                     className="h-6 w-6"
                                 />
                                 <span className="text-sm font-medium">TypeScript</span>
@@ -254,6 +266,9 @@ export default async function Home() {
                     </div>
                 </div>
             </section>
+
+            {/* Why AnimBits Section */}
+            <WhyAnimBits />
 
             {/* Animation Categories */}
             <section className="relative bg-white py-24 2xl:py-32 dark:bg-neutral-950">
@@ -361,9 +376,11 @@ export default async function Home() {
                                                     key={i}
                                                     className="flex items-center gap-2.5 rounded-lg bg-neutral-100 p-2.5 dark:bg-neutral-800"
                                                 >
-                                                    <img
+                                                    <Image
                                                         src={item.image}
                                                         alt={item.song}
+                                                        width={36}
+                                                        height={36}
                                                         className="h-9 w-9 flex-shrink-0 rounded object-cover"
                                                     />
                                                     <div className="flex-1 min-w-0">
@@ -394,9 +411,11 @@ export default async function Home() {
                                 header={
                                     <div className="flex h-full min-h-[6rem] w-full items-center justify-center p-4">
                                         <CardParallaxTilt className="w-full max-w-xs overflow-hidden rounded-xl border border-neutral-200 bg-white shadow-md dark:border-neutral-800 dark:bg-neutral-900">
-                                            <img
+                                            <Image
                                                 src="https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=400&h=300&fit=crop"
                                                 alt="Beautiful mountain landscape"
+                                                width={400}
+                                                height={300}
                                                 className="h-48 w-full object-cover"
                                             />
                                             <div className="p-4">

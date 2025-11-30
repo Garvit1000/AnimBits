@@ -1,0 +1,222 @@
+---
+title: Reaction Button
+description: A generic reaction button with burst animation support for any icon.
+component: true
+---
+
+import { Tab, Tabs } from 'fumadocs-ui/components/tabs';
+import { Steps, Step } from 'fumadocs-ui/components/steps';
+import { Preview } from '@/components/preview';
+import ReactionButtonDemo from '@/registry/new-york/animations/specials/reaction-button-demo';
+import { ReactionButton } from '@/registry/new-york/animations/specials/reaction-button';
+import { ReactionButtonHeart, ReactionButtonStar, ReactionButtonThumbsUp } from '@/registry/new-york/animations/specials/reaction-button-examples';
+import { Heart, Star, ThumbsUp, Bookmark } from 'lucide-react';
+
+<Preview>
+  <ReactionButtonDemo />
+</Preview>
+
+## Installation
+
+<Tabs items={['CLI', 'Manual']}>
+  <Tab value="CLI">
+    ```bash
+    npx shadcn add https://animbits.dev/r/specials-reaction-button.json
+    ```
+  </Tab>
+  <Tab value="Manual">
+    <Steps>
+      <Step>
+        **Install dependencies**
+        ```bash
+        npm install motion lucide-react
+        ```
+      </Step>
+      <Step>
+        **Copy the component code**
+        ```tsx title="components/animations/specials/reaction-button.tsx"
+"use client";
+
+import * as React from "react";
+import * as motion from "motion/react-client";
+import type { Easing } from "motion/react";
+import { cn } from "@/lib/utils";
+import { LucideIcon } from "lucide-react";
+
+export interface ReactionButtonProps {
+    Icon: LucideIcon;
+    size?: number;
+    colors?: {
+        initial?: string;
+        liked?: string;
+    };
+    isLiked?: boolean;
+    onToggle?: (isLiked: boolean) => void;
+    className?: string;
+}
+
+export function ReactionButton({
+    Icon,
+    size = 24,
+    colors = {
+        initial: "currentColor",
+        liked: "#ef4444",
+    },
+    isLiked = false,
+    onToggle,
+    className,
+}: ReactionButtonProps) {
+    const [liked, setLiked] = React.useState(isLiked);
+    const [showBurst, setShowBurst] = React.useState(false);
+
+    const handleClick = () => {
+        const newState = !liked;
+        setLiked(newState);
+        onToggle?.(newState);
+
+        if (newState) {
+            setShowBurst(true);
+            setTimeout(() => setShowBurst(false), 1000);
+        }
+    };
+
+    const MotionIcon = motion.create(Icon);
+
+    return (
+        <div className={cn("relative inline-flex items-center justify-center", className)} style={{ width: size, height: size }}>
+            <MotionIcon
+                size={size}
+                onClick={handleClick}
+                className="cursor-pointer z-10 relative"
+                initial={false}
+                animate={{
+                    scale: liked ? [1, 1.3, 1] : 1,
+                    fill: liked ? colors.liked : "transparent",
+                    stroke: liked ? colors.liked : colors.initial,
+                }}
+                transition={{
+                    duration: 0.4,
+                    ease: [0.34, 1.56, 0.64, 1] as Easing,
+                }}
+            />
+
+            {/* Background ring pulse when liked */}
+            {liked && (
+                <motion.div
+                    className="absolute inset-0 rounded-full border"
+                    style={{ borderColor: colors.liked }}
+                    initial={{ scale: 0.8, opacity: 0.5 }}
+                    animate={{ scale: 1.5, opacity: 0 }}
+                    transition={{ duration: 0.6, ease: "easeOut" as Easing }}
+                />
+            )}
+
+            {/* Sparkle effects when liked */}
+            {liked && (
+                <>
+                    {/* Top-left sparkle */}
+                    <motion.div
+                        className="absolute top-0 left-0 rounded-full"
+                        style={{ width: size * 0.1, height: size * 0.1, backgroundColor: colors.liked }}
+                        initial={{ scale: 0, opacity: 0, x: 0, y: 0 }}
+                        animate={{ scale: [0, 1, 0], opacity: [0, 1, 0], x: -size * 0.4, y: -size * 0.4 }}
+                        transition={{ duration: 0.5, delay: 0.2 }}
+                    />
+
+                    {/* Top-right sparkle */}
+                    <motion.div
+                        className="absolute top-0 right-0 rounded-full"
+                        style={{ width: size * 0.1, height: size * 0.1, backgroundColor: colors.liked }}
+                        initial={{ scale: 0, opacity: 0, x: 0, y: 0 }}
+                        animate={{ scale: [0, 1, 0], opacity: [0, 1, 0], x: size * 0.4, y: -size * 0.4 }}
+                        transition={{ duration: 0.5, delay: 0.25 }}
+                    />
+                </>
+            )}
+
+            {/* Particle burst */}
+            {showBurst && (
+                <div className="absolute inset-0 pointer-events-none">
+                    {[0, 45, 90, 135, 180, 225, 270, 315].map((angle) => {
+                        const radian = (angle * Math.PI) / 180;
+                        const distance = size * 0.8;
+                        const x = Math.cos(radian) * distance;
+                        const y = Math.sin(radian) * distance;
+
+                        return (
+                            <motion.div
+                                key={angle}
+                                className="absolute top-1/2 left-1/2 rounded-full"
+                                style={{
+                                    width: size * 0.15,
+                                    height: size * 0.15,
+                                    backgroundColor: colors.liked,
+                                }}
+                                initial={{ x: 0, y: 0, scale: 0, opacity: 1 }}
+                                animate={{
+                                    x,
+                                    y,
+                                    scale: [0, 1, 0],
+                                    opacity: [1, 1, 0],
+                                }}
+                                transition={{
+                                    duration: 0.6,
+                                    ease: "easeOut" as Easing,
+                                    delay: Math.random() * 0.1,
+                                }}
+                            />
+                        );
+                    })}
+                </div>
+            )}
+        </div>
+    );
+}
+        ```
+      </Step>
+    </Steps>
+  </Tab>
+</Tabs>
+
+## Examples
+
+### Heart (Classic)
+
+<Preview code={`<ReactionButton 
+  Icon={Heart} 
+  size={48} 
+  colors={{ liked: "#ef4444", initial: "currentColor" }} 
+/>`}>
+  <ReactionButtonHeart />
+</Preview>
+
+### Star (Favorite)
+
+<Preview code={`<ReactionButton 
+  Icon={Star} 
+  size={48} 
+  colors={{ liked: "#eab308", initial: "currentColor" }} 
+/>`}>
+  <ReactionButtonStar />
+</Preview>
+
+### Thumbs Up (Approve)
+
+<Preview code={`<ReactionButton 
+  Icon={ThumbsUp} 
+  size={48} 
+  colors={{ liked: "#3b82f6", initial: "currentColor" }} 
+/>`}>
+  <ReactionButtonThumbsUp />
+</Preview>
+
+## Props
+
+| Prop | Type | Default | Description |
+| :--- | :--- | :--- | :--- |
+| `Icon` | `LucideIcon` | - | The Lucide icon component to render. |
+| `size` | `number` | `24` | The size of the button in pixels. |
+| `colors` | `object` | `{ initial: "currentColor", liked: "#ef4444" }` | Object containing `initial` and `liked` colors. |
+| `isLiked` | `boolean` | `false` | Initial state of the button. |
+| `onToggle` | `(isLiked: boolean) => void` | - | Callback function when the button is toggled. |
+| `className` | `string` | - | Additional CSS classes. |

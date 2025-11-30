@@ -526,6 +526,130 @@
       ]
     },
     {
+      "name": "specials-reaction-dock",
+      "type": "registry:component",
+      "title": "Reaction Dock",
+      "description": "A smooth, scaling dock of reaction emojis with magnification effect",
+      "tags": [
+        "specials",
+        "dock",
+        "reaction",
+        "magnification",
+        "animation"
+      ],
+      "dependencies": [
+        "motion",
+        "lucide-react"
+      ],
+      "files": [
+        {
+          "path": "registry/new-york/animations/specials/reaction-dock.tsx",
+          "type": "registry:component"
+        }
+      ]
+    },
+    {
+      "name": "specials-reaction-dock-demo",
+      "type": "registry:component",
+      "title": "Reaction Dock Demo",
+      "description": "Demo for the Reaction Dock component",
+      "tags": [
+        "specials",
+        "demo"
+      ],
+      "dependencies": [
+        "motion",
+        "lucide-react"
+      ],
+      "files": [
+        {
+          "path": "registry/new-york/animations/specials/reaction-dock-demo.tsx",
+          "type": "registry:component"
+        }
+      ]
+    },
+    {
+      "name": "specials-animated-toast",
+      "type": "registry:component",
+      "title": "Animated Toast",
+      "description": "Detailed toast notification with slide-in animation, icon, and auto-dismiss progress bar",
+      "tags": [
+        "specials",
+        "toast",
+        "notification",
+        "micro-interaction",
+        "alert"
+      ],
+      "dependencies": [
+        "motion"
+      ],
+      "files": [
+        {
+          "path": "registry/new-york/animations/specials/animated-toast.tsx",
+          "type": "registry:component"
+        },
+        {
+          "path": "registry/new-york/animations/specials/toast-trigger.tsx",
+          "type": "registry:component"
+        }
+      ]
+    },
+    {
+      "name": "reaction-button",
+      "type": "registry:ui",
+      "dependencies": [
+        "motion",
+        "lucide-react"
+      ],
+      "files": [
+        {
+          "path": "registry/new-york/animations/specials/reaction-button.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "specials-border-beam",
+      "type": "registry:component",
+      "title": "Border Beam",
+      "description": "An animated gradient border effect that travels around a container",
+      "tags": [
+        "specials",
+        "border",
+        "beam",
+        "gradient",
+        "animation"
+      ],
+      "dependencies": [
+        "motion"
+      ],
+      "files": [
+        {
+          "path": "registry/new-york/animations/specials/border-beam.tsx",
+          "type": "registry:component"
+        }
+      ]
+    },
+    {
+      "name": "specials-border-beam-demo",
+      "type": "registry:component",
+      "title": "Border Beam Demo",
+      "description": "Demo for the Border Beam component",
+      "tags": [
+        "specials",
+        "demo"
+      ],
+      "dependencies": [
+        "motion"
+      ],
+      "files": [
+        {
+          "path": "registry/new-york/animations/specials/border-beam-demo.tsx",
+          "type": "registry:component"
+        }
+      ]
+    },
+    {
       "name": "buttons-press",
       "type": "registry:component",
       "title": "Press Button",
