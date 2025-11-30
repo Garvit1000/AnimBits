@@ -7,7 +7,7 @@ import { ArrowRight, Layers, MousePointer2, Component, CheckCircle2 } from "luci
 const features = [
     {
         title: "Motion Hooks, Not Just Components",
-        description: "Don't replace your buttons. Enhance them. Use our hooks like useHoverGlow or usePhysicsThrow to add magic to the UI you already have.",
+        description: "Don't replace your buttons. Enhance them. Use our hooks like useHoverGlow or useHoverlift to add magic to the UI you already have.",
         icon: Component,
     },
     {
