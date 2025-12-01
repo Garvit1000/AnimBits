@@ -10,6 +10,7 @@
     "split-reveal",
     "shimmer",
     "word-carousel",
-    "svg-text-draw"
+    "svg-text-draw",
+    "text-highlight"
   ]
 }
