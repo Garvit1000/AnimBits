@@ -1915,6 +1915,47 @@
           }
         }
       }
+    },
+    {
+      "name": "text-highlight",
+      "type": "registry:component",
+      "title": "Text Highlight",
+      "description": "A smooth, hand-drawn marker highlight animation for text.",
+      "tags": [
+        "text",
+        "highlight",
+        "marker",
+        "animation"
+      ],
+      "dependencies": [
+        "motion"
+      ],
+      "files": [
+        {
+          "path": "registry/new-york/animations/text/text-highlight.tsx",
+          "type": "registry:component"
+        }
+      ]
+    },
+    {
+      "name": "text-highlight-demo",
+      "type": "registry:component",
+      "title": "Text Highlight Demo",
+      "description": "Demo for the Text Highlight component.",
+      "tags": [
+        "text",
+        "demo"
+      ],
+      "dependencies": [
+        "motion"
+      ],
+      "files": [
+        {
+          "path": "registry/new-york/animations/text/text-highlight-demo.tsx",
+          "type": "registry:component"
+        }
+      ]
     }
+    
   ]
 }
