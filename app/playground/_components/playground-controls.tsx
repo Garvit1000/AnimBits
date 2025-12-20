@@ -3,8 +3,9 @@
 import { usePlayground } from "@/app/playground/_lib/store";
 import { REGISTRY_MAP } from "@/app/playground/_lib/registry-map";
 import { Button } from "@/components/ui/button";
-import { Rows, Columns, LayoutGrid, Code2, ChevronUp, ChevronDown, Trash2, Grip } from "lucide-react";
+import { Rows, Columns, LayoutGrid, Code2, ChevronUp, ChevronDown, ChevronLeft, ChevronRight, Trash2, Grip, Play, Pause } from "lucide-react";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
+import { Switch } from "@/components/ui/switch";
 import { Slider } from "@/components/ui/slider";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
@@ -244,24 +245,44 @@ export function PlaygroundControls({ onShowCode }: PlaygroundControlsProps) {
                             <div className="space-y-2">
                                 <Label className="text-xs font-semibold">Actions</Label>
                                 <div className="flex gap-2">
-                                    <Button
-                                        variant="outline"
-                                        size="sm"
-                                        onClick={() => reorderComponent(selectedComponentId!, "up")}
-                                        disabled={selectedComponent.order === 0}
-                                        className="flex-1"
-                                    >
-                                        <ChevronUp className="h-4 w-4" />
-                                    </Button>
-                                    <Button
-                                        variant="outline"
-                                        size="sm"
-                                        onClick={() => reorderComponent(selectedComponentId!, "down")}
-                                        disabled={selectedComponent.order === components.length - 1}
-                                        className="flex-1"
-                                    >
-                                        <ChevronDown className="h-4 w-4" />
-                                    </Button>
+                                    <div className="grid grid-cols-2 gap-2 flex-1">
+                                        <Button
+                                            variant="outline"
+                                            size="sm"
+                                            onClick={() => reorderComponent(selectedComponentId!, "up")}
+                                            disabled={selectedComponent.order === 0}
+                                            title="Move Up"
+                                        >
+                                            <ChevronUp className="h-4 w-4" />
+                                        </Button>
+                                        <Button
+                                            variant="outline"
+                                            size="sm"
+                                            onClick={() => reorderComponent(selectedComponentId!, "down")}
+                                            disabled={selectedComponent.order === components.length - 1}
+                                            title="Move Down"
+                                        >
+                                            <ChevronDown className="h-4 w-4" />
+                                        </Button>
+                                        <Button
+                                            variant="outline"
+                                            size="sm"
+                                            onClick={() => reorderComponent(selectedComponentId!, "up")}
+                                            disabled={selectedComponent.order === 0}
+                                            title="Move Left"
+                                        >
+                                            <ChevronLeft className="h-4 w-4" />
+                                        </Button>
+                                        <Button
+                                            variant="outline"
+                                            size="sm"
+                                            onClick={() => reorderComponent(selectedComponentId!, "down")}
+                                            disabled={selectedComponent.order === components.length - 1}
+                                            title="Move Right"
+                                        >
+                                            <ChevronRight className="h-4 w-4" />
+                                        </Button>
+                                    </div>
                                     <Button
                                         variant="destructive"
                                         size="sm"
@@ -270,6 +291,18 @@ export function PlaygroundControls({ onShowCode }: PlaygroundControlsProps) {
                                     >
                                         <Trash2 className="h-4 w-4" />
                                     </Button>
+                                </div>
+                                <div className="flex items-center space-x-2 pt-2">
+                                    <Switch
+                                        id="disable-animation"
+                                        checked={selectedComponent.props.disableAnimation || false}
+                                        onCheckedChange={(checked) =>
+                                            updateComponentProps(selectedComponentId!, {
+                                                disableAnimation: checked,
+                                            })
+                                        }
+                                    />
+                                    <Label htmlFor="disable-animation" className="text-xs font-semibold">Disable Animation</Label>
                                 </div>
                             </div>
 
