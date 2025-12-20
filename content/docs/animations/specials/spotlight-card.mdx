@@ -1,0 +1,182 @@
+---
+title: Spotlight Card
+description: An interactive card component with a dynamic spotlight effect that tracks mouse movement.
+component: true
+links:
+  doc: https://motion.dev/docs/
+  api: https://motion.dev/docs/react-use-motion-value
+---
+
+import { Tab, Tabs } from 'fumadocs-ui/components/tabs';
+import { Steps, Step } from 'fumadocs-ui/components/steps';
+import { Preview } from '@/components/preview';
+import SpotlightCardDemo from '@/registry/new-york/animations/specials/spotlight-card-demo';
+
+<Preview
+  code={`"use client";
+
+import { SpotlightCard } from "@/registry/new-york/animations/specials/spotlight-card";
+import { Lock } from "lucide-react";
+
+export default function Example() {
+  return (
+    <div className="flex items-center justify-center p-8 bg-neutral-950">
+      <SpotlightCard className="w-full max-w-sm bg-neutral-900 border-neutral-800 p-8" spotlightColor="rgba(0, 229, 255, 0.2)">
+        <div className="flex flex-col gap-4">
+            <div className="p-3 rounded-2xl bg-cyan-900/30 text-cyan-300 w-fit">
+                <Lock className="w-6 h-6" />
+            </div>
+            <div>
+                <h2 className="text-2xl font-bold text-white mb-2">Secure Auth</h2>
+                <p className="text-neutral-400">Hover over this card to see the spotlight effect.</p>
+            </div>
+        </div>
+      </SpotlightCard>
+    </div>
+  );
+}`}
+>
+  <SpotlightCardDemo />
+</Preview>
+
+## Installation
+
+<Tabs items={['CLI', 'Manual']}>
+  <Tab value="CLI">
+    <Steps>
+      <Step>
+        **Run the add command**
+        ```bash
+        npx shadcn@latest add "https://animbits.dev/r/spotlight-card.json"
+        ```
+      </Step>
+    </Steps>
+  </Tab>
+  <Tab value="Manual">
+    <Steps>
+      <Step>
+        **Install dependencies**
+        ```bash
+        npm install motion lucide-react clsx tailwind-merge
+        ```
+      </Step>
+      <Step>
+        **Add utility**
+        ```ts title="lib/utils.ts"
+import { type ClassValue, clsx } from "clsx"
+import { twMerge } from "tailwind-merge"
+
+export function cn(...inputs: ClassValue[]) {
+  return twMerge(clsx(inputs))
+}
+        ```
+      </Step>
+      <Step>
+        **Copy the component code**
+        ```tsx title="components/animations/specials/spotlight-card.tsx"
+"use client";
+
+import { cn } from "@/lib/utils";
+import { motion, useMotionTemplate, useMotionValue, useSpring } from "motion/react";
+import { useRef } from "react";
+
+interface SpotlightCardProps {
+  children: React.ReactNode;
+  className?: string;
+  spotlightColor?: string;
+  spotlightSize?: number;
+  hoverScale?: number;
+}
+
+export function SpotlightCard({
+  children,
+  className,
+  spotlightColor = "rgba(255, 255, 255, 0.25)",
+  spotlightSize = 350,
+  hoverScale = 1.05,
+}: SpotlightCardProps) {
+  const cardRef = useRef<HTMLDivElement>(null);
+  
+  const mouseX = useMotionValue(-spotlightSize);
+  const mouseY = useMotionValue(-spotlightSize);
+
+  const springConfig = { damping: 20, stiffness: 200, mass: 0.5 };
+  const smoothMouseX = useSpring(mouseX, springConfig);
+  const smoothMouseY = useSpring(mouseY, springConfig);
+
+  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (!cardRef.current) return;
+    const rect = cardRef.current.getBoundingClientRect();
+    mouseX.set(e.clientX - rect.left);
+    mouseY.set(e.clientY - rect.top);
+  };
+
+  const handleMouseLeave = () => {
+    // Leave logic
+  };
+
+  const spotlightGradient = useMotionTemplate\`
+    radial-gradient(
+      \${spotlightSize}px circle at \${smoothMouseX}px \${smoothMouseY}px,
+      \${spotlightColor},
+      transparent 80%
+    )
+  \`;
+
+  return (
+    <motion.div
+      ref={cardRef}
+      className={cn(
+        "group relative overflow-hidden rounded-xl border border-neutral-200 bg-white dark:border-neutral-800 dark:bg-neutral-900 shadow-sm",
+        className
+      )}
+      onMouseMove={handleMouseMove}
+      onMouseLeave={handleMouseLeave}
+      whileHover={{ 
+          scale: hoverScale,
+          rotate: 0,
+          boxShadow: "0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1)"
+      }}
+      transition={{ type: "spring", stiffness: 300, damping: 20 }}
+    >
+      <motion.div
+        className="pointer-events-none absolute inset-0 z-20 opacity-0 transition-opacity duration-300 group-hover:opacity-100"
+        style={{ background: spotlightGradient }}
+      />
+       <motion.div
+        className="pointer-events-none absolute inset-0 z-20 rounded-xl opacity-0 transition-opacity duration-300 group-hover:opacity-100"
+        style={{
+            borderWidth: 2,
+            borderStyle: "solid",
+            borderColor: spotlightColor,
+            maskImage: spotlightGradient,
+            WebkitMaskImage: spotlightGradient,
+        }}
+      />
+      <div 
+        className="absolute inset-0 z-0 opacity-[0.05] pointer-events-none"
+        style={{
+            backgroundImage: \`url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E")\`
+        }}
+      />
+      <div className="relative z-10 h-full w-full transition-transform duration-300 group-hover:translate-y-[-2px]">
+        {children}
+      </div>
+    </motion.div>
+  );
+}
+        ```
+      </Step>
+    </Steps>
+  </Tab>
+</Tabs>
+
+## Props
+
+| Prop | Type | Default | Description |
+| :--- | :--- | :--- | :--- |
+| `children` | `ReactNode` | - | Content to display inside the card. |
+| `className` | `string` | - | Additional CSS classes. |
+| `spotlightColor` | `string` | `"rgba(255, 255, 255, 0.25)"` | Color of the spotlight gradient. |
+| `spotlightSize` | `number` | `350` | Size of the spotlight circle. |
+| `hoverScale` | `number` | `1.05` | Scale factor on hover. |

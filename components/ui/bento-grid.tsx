@@ -38,17 +38,17 @@ export const BentoGridItem = ({
 }) => {
   return (
     <div className={cn("group/bento relative row-span-1", className)}>
-      {/* Subtle hover glow effect */}
-      <div className="absolute inset-0 rounded-2xl bg-blue-500/10 opacity-0 blur-xl transition-opacity duration-500 group-hover/bento:opacity-100 dark:bg-blue-400/20" />
-
       {/* Card container */}
-      <div className="relative flex h-full flex-col overflow-hidden rounded-2xl border border-neutral-200/60 bg-gradient-to-br from-white to-neutral-50/50 shadow-sm transition-all duration-300 group-hover/bento:border-neutral-300/80 group-hover/bento:shadow-lg dark:border-neutral-800/60 dark:from-neutral-900 dark:to-neutral-950/50 dark:group-hover/bento:border-neutral-700/80">
-        {/* Subtle dot pattern overlay */}
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_1px_1px,rgb(0_0_0/0.03)_1px,transparent_0)] [background-size:16px_16px] dark:bg-[radial-gradient(circle_at_1px_1px,rgb(255_255_255/0.03)_1px,transparent_0)]" />
+      <div className="relative flex h-full flex-col overflow-hidden rounded-3xl border border-neutral-200 bg-white shadow-md transition-all duration-300 group-hover/bento:border-neutral-300 group-hover/bento:shadow-xl dark:border-neutral-800 dark:bg-neutral-900 dark:group-hover/bento:border-neutral-700">
+        {/* Subtle gradient overlay */}
+        <div className="absolute inset-0 bg-gradient-to-br from-neutral-50/50 via-transparent to-transparent dark:from-neutral-800/30" />
+
+        {/* Refined dot pattern overlay */}
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_1px_1px,rgb(0_0_0/0.02)_1px,transparent_0)] [background-size:20px_20px] dark:bg-[radial-gradient(circle_at_1px_1px,rgb(255_255_255/0.02)_1px,transparent_0)]" />
 
         {/* Plus icon in top-right corner */}
-        <div className="absolute right-4 top-4 z-10 flex h-6 w-6 items-center justify-center rounded-lg border border-neutral-200/80 bg-white/90 opacity-50 backdrop-blur-sm transition-all duration-300 group-hover/bento:opacity-100 group-hover/bento:scale-110 dark:border-neutral-700/80 dark:bg-neutral-800/90">
-          <Plus className="h-3.5 w-3.5 text-neutral-600 dark:text-neutral-400" />
+        <div className="absolute right-4 top-4 z-10 flex h-7 w-7 items-center justify-center rounded-xl border border-neutral-200 bg-white/95 opacity-40 shadow-sm backdrop-blur-sm transition-all duration-300 group-hover/bento:opacity-100 group-hover/bento:scale-110 group-hover/bento:shadow-md dark:border-neutral-700 dark:bg-neutral-800/95">
+          <Plus className="h-4 w-4 text-neutral-600 dark:text-neutral-400" />
         </div>
 
         {/* Header/Visual content */}
@@ -57,9 +57,9 @@ export const BentoGridItem = ({
         </div>
 
         {/* Text content */}
-        <div className="relative space-y-1.5 border-t border-neutral-100/50 bg-white/50 p-6 pt-4 backdrop-blur-sm dark:border-neutral-800/50 dark:bg-neutral-900/50">
+        <div className="relative space-y-1.5 border-t border-neutral-200/80 bg-gradient-to-b from-white/80 to-white/95 p-6 pt-4 backdrop-blur-sm dark:border-neutral-800/80 dark:from-neutral-900/80 dark:to-neutral-900/95">
           {icon}
-          <div className="text-base font-semibold text-neutral-900 dark:text-white">
+          <div className="text-base font-semibold tracking-tight text-neutral-900 dark:text-white">
             {title}
           </div>
           <div className="text-sm text-neutral-600 dark:text-neutral-400">

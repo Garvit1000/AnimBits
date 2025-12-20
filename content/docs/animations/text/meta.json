@@ -11,6 +11,7 @@
     "shimmer",
     "word-carousel",
     "svg-text-draw",
-    "text-highlight"
+    "text-highlight",
+    "dia-text"
   ]
 }

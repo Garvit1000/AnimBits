@@ -1,11 +1,16 @@
 @import "fumadocs-ui/style.css";
 @import "tailwindcss";
 @import "tw-animate-css";
-@import "fumadocs-ui/css/neutral.css";
+@import "fumadocs-ui/css/black.css";
 @import "fumadocs-ui/css/preset.css";
 @custom-variant dark (&:is(.dark *));
 
 @theme inline {
+    /* Lighter ocean blue customization for Black theme */
+    --color-fd-primary: hsl(199 89% 65%);
+    --color-fd-primary-foreground: hsl(0 0% 98%);
+    --color-fd-ring: hsl(199 89% 65%);
+
     --color-background: var(--background);
     --color-foreground: var(--foreground);
     --font-sans: var(--font-geist-sans);

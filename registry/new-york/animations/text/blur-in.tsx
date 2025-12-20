@@ -33,7 +33,7 @@ export function TextBlurIn({
           }}
           style={{ display: "inline-block" }}
         >
-          {unit}
+          {unit === " " ? "\u00A0" : unit}
           {by === "word" && index < units.length - 1 && "\u00A0"}
         </motion.span>
       ))}

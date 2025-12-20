@@ -1,0 +1,213 @@
+---
+title: Swipeable Stack
+description: A deck of interactive cards with swipe gestures and physics.
+component: true
+links:
+  doc: https://motion.dev/docs/gestures/
+---
+
+import { Tab, Tabs } from 'fumadocs-ui/components/tabs';
+import { Steps, Step } from 'fumadocs-ui/components/steps';
+import { Preview } from '@/components/preview';
+import SwipeableStackDemo from '@/registry/new-york/animations/specials/swipeable-stack-demo';
+
+<Preview
+  code={`"use client";
+
+import { SwipeableStack } from "@/registry/new-york/animations/specials/swipeable-stack";
+
+export default function Example() {
+  return (
+    <div className="h-[400px] w-full flex items-center justify-center">
+        <div className="w-64 h-80">
+            <SwipeableStack>
+                <div className="flex h-full w-full items-center justify-center bg-red-500 text-white text-2xl font-bold rounded-xl">1</div>
+                <div className="flex h-full w-full items-center justify-center bg-blue-500 text-white text-2xl font-bold rounded-xl">2</div>
+                <div className="flex h-full w-full items-center justify-center bg-green-500 text-white text-2xl font-bold rounded-xl">3</div>
+            </SwipeableStack>
+        </div>
+    </div>
+  );
+}`}
+>
+  <SwipeableStackDemo />
+</Preview>
+
+## Installation
+
+<Tabs items={['CLI', 'Manual']}>
+  <Tab value="CLI">
+    <Steps>
+      <Step>
+        **Run the add command**
+        ```bash
+        npx shadcn@latest add "https://animbits.dev/r/swipeable-stack.json"
+        ```
+      </Step>
+    </Steps>
+  </Tab>
+  <Tab value="Manual">
+    <Steps>
+      <Step>
+        **Install dependencies**
+        ```bash
+        npm install motion lucide-react clsx tailwind-merge
+        ```
+      </Step>
+      <Step>
+        **Add utility**
+        ```ts title="lib/utils.ts"
+import { type ClassValue, clsx } from "clsx"
+import { twMerge } from "tailwind-merge"
+
+export function cn(...inputs: ClassValue[]) {
+  return twMerge(clsx(inputs))
+}
+        ```
+      </Step>
+      <Step>
+        **Copy the component code**
+        ```tsx title="components/animations/specials/swipeable-stack.tsx"
+"use client";
+
+import React, { useState } from "react";
+import { motion, useMotionValue, useTransform, useAnimation, PanInfo, AnimatePresence } from "motion/react";
+import { cn } from "@/lib/utils";
+
+interface SwipeableStackProps {
+  children: React.ReactNode[];
+  className?: string;
+  onSwipeRight?: (index: number) => void;
+  onSwipeLeft?: (index: number) => void;
+}
+
+export function SwipeableStack({ children, className, onSwipeRight, onSwipeLeft }: SwipeableStackProps) {
+    const [cards, setCards] = useState(React.Children.toArray(children));
+    const [history, setHistory] = useState<React.ReactNode[]>([]);
+
+    const activeCard = cards[cards.length - 1];
+
+    const removeCard = (direction: "left" | "right") => {
+        const removed = cards.pop();
+        if (removed) {
+             setHistory([...history, removed]);
+             const index = cards.length;
+             if (direction === "right" && onSwipeRight) onSwipeRight(index);
+             if (direction === "left" && onSwipeLeft) onSwipeLeft(index);
+             setCards([...cards]);
+        }
+    };
+
+    return (
+        <div className={cn("relative h-full w-full flex items-center justify-center", className)}>
+            <AnimatePresence>
+                {cards.map((child, index) => {
+                    const isFront = index === cards.length - 1;
+                    return (
+                        <Card 
+                            key={index}
+                            index={index}
+                            isFront={isFront}
+                            drag={isFront}
+                            total={cards.length}
+                            onRemove={removeCard}
+                        >
+                            {child}
+                        </Card>
+                    );
+                })}
+            </AnimatePresence>
+            {cards.length === 0 && (
+                 <div className="text-center text-neutral-500">
+                     No more items
+                     <button 
+                        onClick={() => {
+                            setCards(React.Children.toArray(children));
+                            setHistory([]);
+                        }}
+                        className="mt-4 block mx-auto text-blue-500 hover:underline"
+                    >
+                        Reset
+                     </button>
+                 </div>
+            )}
+        </div>
+    );
+}
+
+function Card({ 
+    children, 
+    index, 
+    isFront,
+    drag,
+    total,
+    onRemove 
+}: { 
+    children: React.ReactNode; 
+    index: number; 
+    isFront: boolean; 
+    drag: boolean;
+    total: number;
+    onRemove: (dir: "left" | "right") => void;
+}) {
+    const x = useMotionValue(0);
+    const rotate = useTransform(x, [-200, 200], [-25, 25]);
+    const opacity = useTransform(x, [-150, 0, 150], [0.5, 1, 0.5]);
+    
+    // Stacking logic
+    const reverseIndex = total - 1 - index;
+    const scale = 1 - reverseIndex * 0.05;
+    const y = reverseIndex * 15;
+    const zIndex = total - reverseIndex;
+
+    const controls = useAnimation();
+
+    const handleDragEnd = async (_: any, info: PanInfo) => {
+        if (info.offset.x > 100) {
+            await controls.start({ x: 500, opacity: 0 });
+            onRemove("right");
+        } else if (info.offset.x < -100) {
+            await controls.start({ x: -500, opacity: 0 });
+            onRemove("left");
+        } else {
+            controls.start({ x: 0 });
+        }
+    };
+
+    return (
+        <motion.div
+            style={{
+                x,
+                rotate,
+                scale: isFront ? 1 : scale,
+                y: isFront ? 0 : y,
+                zIndex,
+            }}
+            initial={{ scale, y }}
+            animate={controls}
+            drag={drag ? "x" : false}
+            dragConstraints={{ left: 0, right: 0, top: 0, bottom: 0 }}
+            dragElastic={0.7}
+            onDragEnd={handleDragEnd}
+            className="absolute left-0 right-0 top-0 bottom-0 mx-auto cursor-grab active:cursor-grabbing origin-bottom"
+            whileDrag={{ scale: 1.05 }}
+        >
+            <div className="h-full w-full rounded-2xl bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 shadow-xl overflow-hidden">
+                {children}
+            </div>
+        </motion.div>
+    );
+}
+        ```
+      </Step>
+    </Steps>
+  </Tab>
+</Tabs>
+
+## Props
+
+| Prop | Type | Default | Description |
+| :--- | :--- | :--- | :--- |
+| `children` | `ReactNode[]` | - | Array of items to stack. |
+| `onSwipeRight` | `(index) => void` | - | Callback when swiped right. |
+| `onSwipeLeft` | `(index) => void` | - | Callback when swiped left. |

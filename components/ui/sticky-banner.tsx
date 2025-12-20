@@ -22,7 +22,7 @@ export const StickyBanner = ({
           exit={{ height: 0, opacity: 0 }}
           transition={{ duration: 0.3 }}
           className={cn(
-            "relative z-40 flex w-full items-center justify-center bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 px-4 py-2.5 text-white shadow-md",
+            "relative z-40 flex w-full items-center justify-center bg-gradient-to-r from-blue-600 via-blue-500 to-cyan-500 px-4 py-2.5 text-white shadow-md",
             className
           )}
         >

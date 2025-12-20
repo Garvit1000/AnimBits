@@ -38,7 +38,7 @@ export function Navbar() {
 
   return (
     <nav className="border-b border-neutral-200 dark:border-neutral-800 bg-white/80 dark:bg-neutral-950/80 backdrop-blur-sm sticky top-0 z-50">
-      <div className="container mx-auto px-4 h-16 2xl:h-20 flex items-center justify-between">
+      <div className="flex items-center justify-between h-16 2xl:h-20 px-6 lg:px-8">
         <div className="flex items-center gap-8">
           <Link href="/" className="flex items-center gap-2 2xl:gap-3" onClick={() => setIsOpen(false)}>
             <AnimatedLogo className="w-10 h-10 2xl:w-12 2xl:h-12 text-neutral-900 dark:text-neutral-50" />
@@ -51,6 +51,9 @@ export function Navbar() {
             </Link>
             <Link href="/docs/animations/buttons/lift" className="text-sm 2xl:text-base text-neutral-600 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-neutral-50 transition-colors">
               Animations
+            </Link>
+            <Link href="/playground" className="text-sm 2xl:text-base text-neutral-600 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-neutral-50 transition-colors">
+              Playground
             </Link>
           </div>
         </div>
@@ -88,12 +91,13 @@ export function Navbar() {
             <GithubButton
               repoUrl="https://github.com/Garvit1000/AnimBits"
               label="Star"
+              initialStars={stars}
               targetStars={stars}
               showGithubIcon={true}
               showStarIcon={true}
               variant="default"
               size="sm"
-              autoAnimate={true}
+              autoAnimate={false}
               filled={true}
             />
           </div>
@@ -114,7 +118,7 @@ export function Navbar() {
       {/* Mobile Menu */}
       {isOpen && (
         <div className="md:hidden border-t border-neutral-200 dark:border-neutral-800 bg-white dark:bg-neutral-950">
-          <div className="container mx-auto px-4 py-4 flex flex-col gap-4">
+          <div className="px-6 py-4 flex flex-col gap-4">
             <Link
               href="/docs"
               className="text-sm font-medium text-neutral-600 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-neutral-50"
@@ -128,6 +132,13 @@ export function Navbar() {
               onClick={() => setIsOpen(false)}
             >
               Animations
+            </Link>
+            <Link
+              href="/playground"
+              className="text-sm font-medium text-neutral-600 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-neutral-50"
+              onClick={() => setIsOpen(false)}
+            >
+              Playground
             </Link>
             <button
               onClick={handleSearchClick}
@@ -156,12 +167,13 @@ export function Navbar() {
               <GithubButton
                 repoUrl="https://github.com/Garvit1000/AnimBits"
                 label="Star"
+                initialStars={stars}
                 targetStars={stars}
                 showGithubIcon={true}
                 showStarIcon={true}
                 variant="default"
                 size="sm"
-                autoAnimate={true}
+                autoAnimate={false}
                 filled={true}
               />
             </div>
