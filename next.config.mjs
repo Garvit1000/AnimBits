@@ -17,6 +17,18 @@ const config = {
         protocol: 'https',
         hostname: 'api.dicebear.com',
       },
+      {
+        protocol: 'https',
+        hostname: 'pbs.twimg.com',
+      },
+      {
+        protocol: 'https',
+        hostname: 'unavatar.io',
+      },
+      {
+        protocol: 'https',
+        hostname: 'animbits.dev',
+      },
     ],
     dangerouslyAllowSVG: true,
     contentDispositionType: 'attachment',

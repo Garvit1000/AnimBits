@@ -4,6 +4,10 @@
         "animated-toast",
         "reaction-button",
         "reaction-dock",
-        "border-beam"
+        "border-beam",
+        "swipeable-stack",
+        "magnetic-drawer",
+        "spotlight-card",
+        "image-text"
     ]
 }

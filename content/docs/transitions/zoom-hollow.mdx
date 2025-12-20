@@ -1,0 +1,149 @@
+---
+title: Zoom Hollow Text
+description: A beautiful text transition that zooms in with a hollow outline effect, perfect for theme toggles
+---
+
+import { Preview } from '@/components/preview';
+import { ZoomHollowText } from "@/registry/new-york/animations/transitions/zoom-hollow";
+
+## Overview
+
+The `ZoomHollowText` component creates a stunning text transition with zoom-in animation and hollow outline effect. Perfect for hero sections, theme toggles, and attention-grabbing headlines. Works seamlessly with light and dark modes.
+
+## Preview
+
+<Preview
+  background="default"
+  code={`import { ZoomHollowText } from "@/registry/new-york/animations/transitions/zoom-hollow";
+
+export default function Example() {
+  return (
+    <ZoomHollowText
+      words={["Design", "Create", "Innovate", "Build"]}
+      className="text-7xl font-black"
+    />
+  );
+}`}
+>
+  <ZoomHollowText
+    words={["Design", "Create", "Innovate", "Build"]}
+    className="text-7xl font-black"
+  />
+</Preview>
+
+## Usage
+
+```tsx
+import { ZoomHollowText } from "@/components/animbits/zoom-hollow";
+
+export default function Example() {
+  return (
+    <ZoomHollowText
+      words={["Design", "Create", "Innovate", "Build"]}
+      className="text-7xl font-black"
+    />
+  );
+}
+```
+
+## Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `words` | `string[]` | Required | Array of words to cycle through |
+| `className` | `string` | `""` | Additional CSS classes |
+| `duration` | `number` | `0.8` | Animation duration in seconds |
+| `interval` | `number` | `2500` | Time between word changes in ms |
+| `strokeWidth` | `number` | `2` | Width of the text outline |
+| `fillColor` | `string` | `"transparent"` | Fill color of the text |
+| `strokeColor` | `string` | `"currentColor"` | Color of the text outline |
+
+## Examples
+
+### Custom Colors
+
+```tsx
+<ZoomHollowText
+  words={["Bold", "Bright", "Beautiful"]}
+  className="text-6xl font-black"
+  strokeColor="#3b82f6"
+  fillColor="transparent"
+  strokeWidth={3}
+/>
+```
+
+### Faster Animation
+
+```tsx
+<ZoomHollowText
+  words={["Fast", "Quick", "Rapid"]}
+  className="text-5xl font-bold"
+  duration={0.5}
+  interval={1500}
+/>
+```
+
+### Filled Text
+
+```tsx
+<ZoomHollowText
+  words={["Solid", "Bold", "Strong"]}
+  className="text-6xl font-black"
+  fillColor="currentColor"
+  strokeWidth={0}
+/>
+```
+
+### Theme-Aware Colors
+
+The component automatically adapts to your theme using `currentColor`:
+
+```tsx
+<ZoomHollowText
+  words={["Light", "Dark", "Auto"]}
+  className="text-6xl font-black text-foreground"
+  strokeColor="currentColor"
+/>
+```
+
+## Features
+
+- ✅ Smooth zoom-in and zoom-out transitions
+- ✅ Beautiful hollow/outlined text effect
+- ✅ Blur effect during transitions
+- ✅ Customizable colors and stroke width
+- ✅ Adjustable animation timing
+- ✅ Fully responsive
+- ✅ **Dark mode compatible** - uses CSS variables
+- ✅ Theme toggle friendly
+
+## How It Works
+
+The component uses:
+- **Motion/React** for smooth animations
+- **AnimatePresence** for exit animations
+- **WebKit Text Stroke** for hollow text effect
+- **Scale + Blur** for zoom transitions
+- **Custom easing** for professional feel
+- **CSS currentColor** for theme compatibility
+
+## CSS Customization
+
+The hollow effect is created using webkit text stroke. You can customize it with CSS:
+
+```css
+.custom-hollow {
+  -webkit-text-stroke: 3px currentColor;
+  -webkit-text-fill-color: transparent;
+  paint-order: stroke fill;
+}
+```
+
+For dark mode support, use CSS variables:
+
+```css
+.theme-aware-hollow {
+  -webkit-text-stroke: 2px hsl(var(--foreground));
+  -webkit-text-fill-color: transparent;
+}
+```

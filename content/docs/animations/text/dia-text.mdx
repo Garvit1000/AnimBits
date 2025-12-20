@@ -1,0 +1,185 @@
+---
+title: Dia Text
+description: Scroll-driven text reveal with precision blur and spring physics.
+---
+
+import { Tab, Tabs } from 'fumadocs-ui/components/tabs';
+import { Preview } from '@/components/preview';
+import { DiaText } from '@/registry/new-york/animations/text/dia-text';
+
+## Overview
+
+The `DiaText` component is a dynamic word rotator where each word enters with a fast, multi-color gradient trace that solidifies to black, before swiping away for the next word. Inspired by modern kinetic typography.
+
+## Preview
+
+<Preview
+  background="default"
+  code={`import { DiaText } from "@/registry/new-york/animations/text/dia-text";
+
+export default function Hero() {
+  return (
+    <h1 className="text-4xl md:text-6xl font-bold text-center">
+      <DiaText words={["Chat", "Build", "Ship"]} /> with your tabs
+    </h1>
+  );
+}`}
+>
+  <div className="h-[40vh] w-full flex items-center justify-center p-10 bg-background border rounded-lg">
+    <h1 className="text-4xl md:text-6xl font-bold text-center">
+      <DiaText words={["Chat", "Build", "Ship"]} /> with your tabs
+    </h1>
+  </div>
+</Preview>
+
+## Examples
+
+### Light Font Weight
+
+<Preview background="default" code={`import { DiaText } from "@/registry/new-york/animations/text/dia-text";
+
+export function DiaTextLight() {
+  return (
+    <div className="text-3xl font-light text-center">
+      Thinking <DiaText words={["clearly", "simply", "lightly"]} className="font-light" />
+    </div>
+  );
+}`}>
+    <div className="flex items-center justify-center h-40">
+        <div className="text-3xl font-light text-center">
+            Thinking <DiaText words={["clearly", "simply", "lightly"]} className="font-light" />
+        </div>
+    </div>
+</Preview>
+
+### Colored Text
+
+<Preview background="default" code={`import { DiaText } from "@/registry/new-york/animations/text/dia-text";
+
+export function DiaTextColor() {
+  return (
+    <div className="text-4xl font-bold text-center text-emerald-500">
+      Build <DiaText words={["Sustainable", "Reliable", "Scalable"]} duration={1500} /> Systems
+    </div>
+  );
+}`}>
+    <div className="flex items-center justify-center p-8 h-40">
+        <div className="text-4xl font-bold text-center text-emerald-500">
+            Build <DiaText words={["Sustainable", "Reliable", "Scalable"]} duration={1500} /> Systems
+        </div>
+    </div>
+</Preview>
+
+## Usage
+
+```tsx
+import { DiaText } from "@/registry/new-york/animations/text/dia-text";
+
+export default function Hero() {
+  return (
+    <h1 className="text-4xl font-bold">
+      <DiaText words={["Chat", "Build", "Ship"]} /> with your tabs
+    </h1>
+  );
+}
+```
+
+## Installation
+
+<Tabs items={['CLI', 'Manual']}>
+  <Tab value="CLI">
+    ```bash
+    npx shadcn@latest add "https://animbits.dev/r/text-dia.json"
+    ```
+  </Tab>
+  <Tab value="Manual">
+    **Step 1: Add the component**
+
+    ```tsx title="registry/new-york/animations/text/dia-text.tsx"
+    "use client";
+
+    import { useState, useEffect } from "react";
+    import { motion, AnimatePresence } from "motion/react";
+    import { cn } from "@/lib/utils";
+
+    export interface DiaTextProps extends React.HTMLAttributes<HTMLSpanElement> {
+        words: string[];
+        duration?: number;
+        className?: string;
+    }
+
+    export function DiaText({
+        words,
+        duration = 2000,
+        className,
+        ...props
+    }: DiaTextProps) {
+        const [index, setIndex] = useState(0);
+
+        useEffect(() => {
+            const interval = setInterval(() => {
+                setIndex((prev) => (prev + 1) % words.length);
+            }, duration);
+
+            return () => clearInterval(interval);
+        }, [words, duration]);
+
+        return (
+            <span
+                className={cn("relative inline-block overflow-hidden min-w-[2ch] align-bottom text-black dark:text-white", className)} 
+                style={{ verticalAlign: "bottom" }} 
+                {...props}
+            >
+                <AnimatePresence mode="wait">
+                    <motion.span
+                        key={index}
+                        initial={{ y: "100%", opacity: 0, filter: "blur(4px)" }}
+                        animate={{ y: "0%", opacity: 1, filter: "blur(0px)" }}
+                        exit={{ y: "-100%", opacity: 0, filter: "blur(4px)" }}
+                        transition={{
+                            y: { type: "spring", stiffness: 300, damping: 30 },
+                            opacity: { duration: 0.2 },
+                            filter: { duration: 0.2 },
+                        }}
+                        className="absolute inset-0 inline-block"
+                    >
+                        <motion.span
+                            className="inline-block bg-clip-text pb-1"
+                            style={{
+                                WebkitTextFillColor: "transparent",
+                                backgroundImage: "linear-gradient(90deg, currentColor 50%, #2563EB 50%, #EA580C, #DB2777, #9333EA)", 
+                                backgroundSize: "250% 100%", 
+                            }}
+                            initial={{
+                                backgroundPosition: "100% 0%",
+                            }}
+                            animate={{
+                                backgroundPosition: "0% 0%", 
+                            }}
+                            transition={{
+                                duration: 0.8,
+                                ease: "easeInOut",
+                                delay: 0.1,
+                            }}
+                        >
+                            {words[index]}
+                        </motion.span>
+                    </motion.span>
+                </AnimatePresence>
+                
+                {/* Spacer for layout stability */}
+                <span className="invisible" aria-hidden="true">{words[index]}</span>
+            </span>
+        );
+    }
+    ```
+  </Tab>
+</Tabs>
+
+## Props
+
+| Prop        | Type                  | Default       | Description                                      |
+| :---        | :---                  | :---          | :---                                             |
+| words       | string[]              | Required      | Array of words to cycle through                  |
+| duration    | number                | 2000          | Duration to display each word (ms)               |
+| className   | string                | -             | Additional classes for the container wrapper     |

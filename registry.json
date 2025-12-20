@@ -595,6 +595,27 @@
       ]
     },
     {
+      "name": "spotlight-card",
+      "type": "registry:ui",
+      "description": "An interactive card with a spotlight effect.",
+      "dependencies": [
+        "motion",
+        "lucide-react",
+        "clsx",
+        "tailwind-merge"
+      ],
+      "files": [
+        {
+          "path": "registry/new-york/animations/specials/spotlight-card.tsx",
+          "type": "registry:ui"
+        },
+        {
+          "path": "registry/new-york/animations/specials/spotlight-card-demo.tsx",
+          "type": "registry:component"
+        }
+      ]
+    },
+    {
       "name": "reaction-button",
       "type": "registry:ui",
       "dependencies": [
@@ -1171,6 +1192,28 @@
       "files": [
         {
           "path": "registry/new-york/animations/text/blur-in.tsx",
+          "type": "registry:component"
+        }
+      ]
+    },
+    {
+      "name": "text-dia",
+      "type": "registry:component",
+      "title": "Dia Text",
+      "description": "Scroll-driven text reveal with precision blur and spring physics",
+      "tags": [
+        "text",
+        "scroll",
+        "blur",
+        "reveal",
+        "spring"
+      ],
+      "dependencies": [
+        "motion"
+      ],
+      "files": [
+        {
+          "path": "registry/new-york/animations/text/dia-text.tsx",
           "type": "registry:component"
         }
       ]
@@ -1955,7 +1998,157 @@
           "type": "registry:component"
         }
       ]
+    },
+    {
+      "name": "specials-swipeable-stack",
+      "type": "registry:component",
+      "title": "Swipeable Stack",
+      "description": "A deck of interactive cards with swipe gestures",
+      "tags": [
+        "specials",
+        "stack",
+        "cards",
+        "swipe",
+        "animation"
+      ],
+      "dependencies": [
+        "motion",
+        "lucide-react"
+      ],
+      "files": [
+        {
+          "path": "registry/new-york/animations/specials/swipeable-stack.tsx",
+          "type": "registry:component"
+        }
+      ]
+    },
+    {
+      "name": "specials-swipeable-stack-demo",
+      "type": "registry:component",
+      "title": "Swipeable Stack Demo",
+      "description": "Demo for the Swipeable Stack component",
+      "tags": [
+        "specials",
+        "demo"
+      ],
+      "dependencies": [
+        "motion",
+        "lucide-react"
+      ],
+      "files": [
+        {
+          "path": "registry/new-york/animations/specials/swipeable-stack-demo.tsx",
+          "type": "registry:component"
+        }
+      ]
+    },
+    {
+      "name": "specials-magnetic-drawer",
+      "type": "registry:component",
+      "title": "Magnetic Drawer",
+      "description": "A physics-based drawer with magnetic snap points",
+      "tags": [
+        "specials",
+        "drawer",
+        "modal",
+        "physics",
+        "animation"
+      ],
+      "dependencies": [
+        "motion",
+        "lucide-react"
+      ],
+      "files": [
+        {
+          "path": "registry/new-york/animations/specials/magnetic-drawer.tsx",
+          "type": "registry:component"
+        }
+      ]
+    },
+    {
+      "name": "specials-magnetic-drawer-demo",
+      "type": "registry:component",
+      "title": "Magnetic Drawer Demo",
+      "description": "Demo for the Magnetic Drawer component",
+      "tags": [
+        "specials",
+        "demo"
+      ],
+      "dependencies": [
+        "motion",
+        "lucide-react"
+      ],
+      "files": [
+        {
+          "path": "registry/new-york/animations/specials/magnetic-drawer-demo.tsx",
+          "type": "registry:component"
+        }
+      ]
+    },
+    {
+      "name": "specials-spotlight-card",
+      "type": "registry:component",
+      "title": "Spotlight Card",
+      "description": "Interactive card with mouse-tracking spotlight effect",
+      "tags": [
+        "specials",
+        "card",
+        "spotlight",
+        "hover",
+        "animation"
+      ],
+      "dependencies": [
+        "motion",
+        "lucide-react"
+      ],
+      "files": [
+        {
+          "path": "registry/new-york/animations/specials/spotlight-card.tsx",
+          "type": "registry:component"
+        }
+      ]
+    },
+    {
+      "name": "specials-spotlight-card-demo",
+      "type": "registry:component",
+      "title": "Spotlight Card Demo",
+      "description": "Demo for the Spotlight Card component",
+      "tags": [
+        "specials",
+        "demo"
+      ],
+      "dependencies": [
+        "motion",
+        "lucide-react"
+      ],
+      "files": [
+        {
+          "path": "registry/new-york/animations/specials/spotlight-card-demo.tsx",
+          "type": "registry:component"
+        }
+      ]
+    },
+    {
+      "name": "image-text",
+      "type": "registry:component",
+      "title": "Image Text",
+      "description": "Text with a dynamic, animated image mask background.",
+      "tags": [
+        "specials",
+        "text",
+        "image",
+        "mask",
+        "animation"
+      ],
+      "dependencies": [
+        "motion"
+      ],
+      "files": [
+        {
+          "path": "registry/new-york/animations/specials/image-text.tsx",
+          "type": "registry:component"
+        }
+      ]
     }
-    
   ]
 }

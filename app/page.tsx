@@ -2,8 +2,8 @@ import Link from "next/link";
 import Image from "next/image";
 import { Navbar } from "@/components/navbar";
 import { BentoGrid, BentoGridItem } from "@/components/ui/bento-grid";
-import { ContainerTextFlip } from "@/components/ui/container-text-flip";
-import { CodeBlockWithCopy } from "@/components/ui/code-block-with-copy";
+import { TextBlurIn } from "@/registry/new-york/animations/text/blur-in";
+
 import { TextShimmer } from "@/registry/new-york/animations/text/shimmer";
 import { RippleButton } from "@/registry/new-york/animations/buttons/ripple";
 import { CardParallaxTilt } from "@/registry/new-york/animations/cards/parallax-tilt";
@@ -12,35 +12,28 @@ import { HeartbeatIcon } from "@/registry/new-york/animations/icons/heartbeat";
 import { StaggerFadeList } from "@/registry/new-york/animations/lists/stagger-fade";
 
 import { ThemeToggleCircular } from "@/registry/new-york/animations/transitions/theme-toggle-circular";
-import DatabaseWithRestApi from "@/components/ui/database-with-rest-api";
 import { TestimonialsHorizontal } from "@/components/testimonials-horizontal";
 import { Footer } from "@/components/footer";
 import { GithubButton } from "@/components/ui/github-button";
 import { StickyBanner } from "@/components/ui/sticky-banner";
 import { CTASection } from "@/components/cta-with-rectangle";
-import { WhyAnimBits } from "@/components/why-animbits";
 
 import { ArrowRight, Sparkles, Heart, ChevronRight } from "lucide-react";
 import * as motion from "framer-motion/client";
 
 const testimonials = [
+
     {
-        text: "AnimBits saved me hours of development time. The animations are smooth and production-ready!",
-        image: "https://api.dicebear.com/7.x/avataaars/svg?seed=Felix",
-        name: "Sarah Chen",
-        role: "Frontend Developer",
+        text: "cool lib! it would be cool to add theme change animations. added it to my list",
+        image: "https://unavatar.io/twitter/orcdev",
+        name: "orcdev",
+        role: "Creator of 8bitcn",
     },
     {
-        text: "The best animation library for React. Easy to use and looks amazing!",
-        image: "https://api.dicebear.com/7.x/avataaars/svg?seed=Aneka",
-        name: "Mike Johnson",
-        role: "UI/UX Designer",
-    },
-    {
-        text: "Copy-paste simplicity with professional results. Highly recommended!",
-        image: "https://api.dicebear.com/7.x/avataaars/svg?seed=Jasmine",
-        name: "Emily Rodriguez",
-        role: "Product Manager",
+        text: "U got great animations on animbits",
+        image: "https://unavatar.io/x/divv919",
+        name: "Div919",
+        role: "Developer",
     },
 ];
 
@@ -59,7 +52,7 @@ async function getStarCount() {
 export default async function Home() {
     const stars = await getStarCount();
     return (
-        <div className="min-h-screen bg-white dark:bg-neutral-950 overflow-x-hidden">
+        <div className="min-h-screen bg-white dark:bg-black overflow-x-hidden">
             <StickyBanner>
                 <span className="flex items-center gap-1 text-xs md:text-sm font-medium">
                     Now Available: Hooks — structured, reusable motion for your UI.
@@ -77,45 +70,42 @@ export default async function Home() {
                     <div className="mx-auto max-w-4xl 2xl:max-w-5xl text-center">
                         {/* Badge */}
                         <motion.div
-                            className="mb-8 inline-flex items-center gap-2 rounded-full px-3 py-1 text-sm relative bg-neutral-50 dark:bg-neutral-900"
-                            style={{
-                                backgroundImage:
-                                    "linear-gradient(135deg, rgb(59 130 246) 0%, rgb(229 231 235) 30%, rgb(229 231 235) 100%)",
-                                backgroundOrigin: "border-box",
-                                backgroundClip: "padding-box, border-box",
-                                border: "1px solid transparent",
-                            }}
+                            className="mb-8 inline-flex items-center gap-2 rounded-full border border-neutral-200 bg-neutral-50/80 px-3 py-1 text-sm font-medium text-neutral-800 backdrop-blur-sm dark:border-neutral-800 dark:bg-neutral-900/80 dark:text-neutral-200"
                             initial={{ opacity: 0, y: -20 }}
                             animate={{ opacity: 1, y: 0 }}
                             transition={{ duration: 0.5 }}
                         >
-                            <div className="absolute inset-0 rounded-full bg-neutral-50 dark:bg-neutral-900 m-[1px]" />
-                            <Sparkles className="h-3.5 w-3.5 text-blue-600 relative z-10" />
-                            <span className="font-medium text-neutral-700 dark:text-neutral-300 relative z-10">
-                                Production-ready animations
-                            </span>
+                            <Sparkles className="h-3.5 w-3.5 text-neutral-600 dark:text-neutral-400" />
+                            <span>Production-ready animations</span>
+                            <ArrowRight className="h-3.5 w-3.5 text-neutral-600 dark:text-neutral-400" />
                         </motion.div>
 
                         {/* Main Heading */}
                         <motion.div
                             className="mb-6"
-                            initial={{ opacity: 0, y: 20 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            transition={{ duration: 0.5, delay: 0.1 }}
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            transition={{ duration: 0.8, delay: 0.2 }}
                         >
-                            <h1 className="mb-4 text-4xl font-bold leading-tight tracking-tight text-neutral-900 dark:text-white md:text-5xl lg:text-6xl 2xl:text-7xl">
-                                The Foundation for Your
-                            </h1>
-                            <div className="flex justify-center">
-                                <ContainerTextFlip
-                                    words={[
-                                        "Animation System",
-                                        "Design System",
-                                        "Component Library",
-                                    ]}
-                                    className="text-3xl md:text-5xl lg:text-6xl 2xl:text-7xl"
-                                    textClassName="font-bold"
-                                />
+                            <div className="flex flex-col items-center">
+                                <TextBlurIn
+                                    className="text-4xl font-bold leading-tight tracking-tight text-neutral-900 dark:text-white md:text-5xl lg:text-6xl 2xl:text-7xl text-center"
+                                    by="character"
+                                    staggerDelay={0.02}
+                                    duration={1.2}
+                                    delay={0.3}
+                                >
+                                    The Animation Library
+                                </TextBlurIn>
+                                <TextBlurIn
+                                    className="mb-4 text-4xl font-bold leading-tight tracking-tight text-neutral-900 dark:text-white md:text-5xl lg:text-6xl 2xl:text-7xl text-center"
+                                    by="character"
+                                    staggerDelay={0.02}
+                                    duration={1.2}
+                                    delay={1.2}
+                                >
+                                    for Modern React
+                                </TextBlurIn>
                             </div>
                         </motion.div>
 
@@ -267,8 +257,7 @@ export default async function Home() {
                 </div>
             </section>
 
-            {/* Why AnimBits Section */}
-            <WhyAnimBits />
+
 
             {/* Animation Categories */}
             <section className="relative bg-white py-24 2xl:py-32 dark:bg-neutral-950">
@@ -282,14 +271,14 @@ export default async function Home() {
                     >
                         <div className="mb-4 inline-block rounded-full border border-neutral-200 bg-neutral-50 px-4 py-1.5 dark:border-neutral-800 dark:bg-neutral-900">
                             <span className="text-sm font-medium text-neutral-700 dark:text-neutral-300">
-                                Production Ready
+                                Comprehensive Collection
                             </span>
                         </div>
                         <h2 className="mb-4 text-4xl font-bold text-neutral-900 dark:text-white md:text-5xl">
-                            Animation Categories
+                            Every Animation You'll Ever Need
                         </h2>
                         <p className="mx-auto max-w-2xl text-lg text-neutral-600 dark:text-neutral-400">
-                            Explore our collection of production-ready animations
+                            From subtle micro-interactions to eye-catching transitions, beautifully crafted and ready to ship
                         </p>
                     </motion.div>
 
@@ -303,9 +292,9 @@ export default async function Home() {
                                 title="Text"
                                 description="Shimmer, Scramble, and more"
                                 header={
-                                    <div className="flex h-full min-h-[6rem] w-full items-center justify-center">
+                                    <div className="flex h-full min-h-[6rem] w-full flex-col items-center justify-center gap-3 p-6">
                                         <TextShimmer
-                                            className="text-3xl font-bold"
+                                            className="text-4xl font-bold bg-gradient-to-r from-neutral-900 via-neutral-700 to-neutral-900 dark:from-white dark:via-neutral-300 dark:to-white bg-clip-text"
                                             colors={[
                                                 "transparent",
                                                 "rgba(59, 130, 246, 0.9)",
@@ -313,8 +302,11 @@ export default async function Home() {
                                             ]}
                                             duration={2.5}
                                         >
-                                            Text
+                                            Shimmer
                                         </TextShimmer>
+                                        <div className="text-xs text-neutral-500 dark:text-neutral-400 font-medium">
+                                            Animated text effects
+                                        </div>
                                     </div>
                                 }
                                 className="h-full"
@@ -331,22 +323,22 @@ export default async function Home() {
                                 description="Heartbeat, Pulse, Spin"
                                 header={
                                     <div className="flex h-full min-h-[6rem] w-full items-center justify-center p-6">
-                                        <div className="flex items-center gap-6">
-                                            <div className="flex flex-col items-center gap-2">
-                                                <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-red-50 dark:bg-red-950/30">
+                                        <div className="flex items-center gap-8">
+                                            <div className="flex flex-col items-center gap-3">
+                                                <div className="flex h-20 w-20 items-center justify-center rounded-3xl bg-gradient-to-br from-red-50 to-red-100 dark:from-red-950/40 dark:to-red-900/40 shadow-lg">
                                                     <HeartbeatIcon className="text-red-500">
-                                                        <Heart className="h-8 w-8 fill-current" />
+                                                        <Heart className="h-10 w-10 fill-current" />
                                                     </HeartbeatIcon>
                                                 </div>
                                             </div>
-                                            <div className="flex flex-col items-center gap-2">
-                                                <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-blue-50 dark:bg-blue-950/30">
-                                                    <div className="h-8 w-8 animate-spin rounded-full border-[3px] border-blue-500 border-t-transparent" />
+                                            <div className="flex flex-col items-center gap-3">
+                                                <div className="flex h-20 w-20 items-center justify-center rounded-3xl bg-gradient-to-br from-blue-50 to-blue-100 dark:from-blue-950/40 dark:to-blue-900/40 shadow-lg">
+                                                    <div className="h-10 w-10 animate-spin rounded-full border-[3px] border-blue-500 border-t-transparent" />
                                                 </div>
                                             </div>
-                                            <div className="flex flex-col items-center gap-2">
-                                                <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-purple-50 dark:bg-purple-950/30">
-                                                    <div className="h-8 w-8 animate-pulse rounded-full bg-purple-500" />
+                                            <div className="flex flex-col items-center gap-3">
+                                                <div className="flex h-20 w-20 items-center justify-center rounded-3xl bg-gradient-to-br from-purple-50 to-purple-100 dark:from-purple-950/40 dark:to-purple-900/40 shadow-lg">
+                                                    <div className="h-10 w-10 animate-pulse rounded-full bg-purple-500" />
                                                 </div>
                                             </div>
                                         </div>
@@ -365,35 +357,46 @@ export default async function Home() {
                                 title="Lists"
                                 description="Staggered animations"
                                 header={
-                                    <div className="flex h-full w-full items-start justify-center overflow-hidden pt-8 px-4">
-                                        <StaggerFadeList className="w-full max-w-[180px] space-y-2.5">
+                                    <div className="flex h-full w-full items-center justify-center p-6">
+                                        <div className="w-full max-w-[160px] space-y-2">
                                             {[
                                                 { song: "Midnight Dreams", artist: "Luna Bay", image: "https://images.unsplash.com/photo-1470225620780-dba8ba36b745?w=100&h=100&fit=crop" },
                                                 { song: "Neon Lights", artist: "The Synthwave", image: "https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=100&h=100&fit=crop" },
                                                 { song: "Ocean Waves", artist: "Coastal Vibes", image: "https://images.unsplash.com/photo-1459749411175-04bf5292ceea?w=100&h=100&fit=crop" }
                                             ].map((item, i) => (
-                                                <div
+                                                <motion.div
                                                     key={i}
-                                                    className="flex items-center gap-2.5 rounded-lg bg-neutral-100 p-2.5 dark:bg-neutral-800"
+                                                    className="flex items-center gap-2 rounded-lg bg-neutral-100 p-2 dark:bg-neutral-800"
+                                                    animate={{
+                                                        opacity: [0, 1, 1, 0],
+                                                        x: [-20, 0, 0, -20]
+                                                    }}
+                                                    transition={{
+                                                        duration: 2.5,
+                                                        delay: i * 0.25,
+                                                        repeat: Infinity,
+                                                        repeatDelay: 1,
+                                                        ease: "easeInOut"
+                                                    }}
                                                 >
                                                     <Image
                                                         src={item.image}
                                                         alt={item.song}
-                                                        width={36}
-                                                        height={36}
-                                                        className="h-9 w-9 flex-shrink-0 rounded object-cover"
+                                                        width={32}
+                                                        height={32}
+                                                        className="h-8 w-8 flex-shrink-0 rounded object-cover"
                                                     />
                                                     <div className="flex-1 min-w-0">
-                                                        <div className="text-xs font-medium text-neutral-900 dark:text-white truncate">
+                                                        <div className="text-[11px] font-medium text-neutral-900 dark:text-white truncate">
                                                             {item.song}
                                                         </div>
-                                                        <div className="text-[10px] text-neutral-500 dark:text-neutral-400">
+                                                        <div className="text-[9px] text-neutral-500 dark:text-neutral-400">
                                                             {item.artist}
                                                         </div>
                                                     </div>
-                                                </div>
+                                                </motion.div>
                                             ))}
-                                        </StaggerFadeList>
+                                        </div>
                                     </div>
                                 }
                                 className="h-full"
@@ -409,31 +412,45 @@ export default async function Home() {
                                 title="Cards"
                                 description="3D Tilt, Hover effects"
                                 header={
-                                    <div className="flex h-full min-h-[6rem] w-full items-center justify-center p-4">
-                                        <CardParallaxTilt className="w-full max-w-xs overflow-hidden rounded-xl border border-neutral-200 bg-white shadow-md dark:border-neutral-800 dark:bg-neutral-900">
-                                            <Image
-                                                src="https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=400&h=300&fit=crop"
-                                                alt="Beautiful mountain landscape"
-                                                width={400}
-                                                height={300}
-                                                className="h-48 w-full object-cover"
-                                            />
-                                            <div className="p-4">
-                                                <div className="flex items-center justify-between">
-                                                    <div>
-                                                        <div className="text-sm font-semibold text-neutral-900 dark:text-white">
-                                                            Mountain View
+                                    <div className="flex h-full min-h-[6rem] w-full items-center justify-center p-4" style={{ perspective: "1000px" }}>
+                                        <motion.div
+                                            className="w-full max-w-xs"
+                                            animate={{
+                                                rotateY: [0, 180, 180, 360]
+                                            }}
+                                            transition={{
+                                                duration: 6,
+                                                repeat: Infinity,
+                                                ease: "easeInOut",
+                                                times: [0, 0.3, 0.7, 1]
+                                            }}
+                                            style={{ transformStyle: "preserve-3d" }}
+                                        >
+                                            <CardParallaxTilt className="overflow-hidden rounded-xl border border-neutral-200 bg-white shadow-md dark:border-neutral-800 dark:bg-neutral-900">
+                                                <Image
+                                                    src="https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=400&h=300&fit=crop"
+                                                    alt="Beautiful mountain landscape"
+                                                    width={400}
+                                                    height={300}
+                                                    className="h-48 w-full object-cover"
+                                                />
+                                                <div className="p-4">
+                                                    <div className="flex items-center justify-between">
+                                                        <div>
+                                                            <div className="text-sm font-semibold text-neutral-900 dark:text-white">
+                                                                Mountain View
+                                                            </div>
+                                                            <div className="text-xs text-neutral-500 dark:text-neutral-400">
+                                                                Premium Landscape
+                                                            </div>
                                                         </div>
-                                                        <div className="text-xs text-neutral-500 dark:text-neutral-400">
-                                                            Premium Landscape
-                                                        </div>
+                                                        <span className="rounded-full bg-blue-600 px-2 py-1 text-xs font-semibold text-white">
+                                                            New
+                                                        </span>
                                                     </div>
-                                                    <span className="rounded-full bg-blue-600 px-2 py-1 text-xs font-semibold text-white">
-                                                        New
-                                                    </span>
                                                 </div>
-                                            </div>
-                                        </CardParallaxTilt>
+                                            </CardParallaxTilt>
+                                        </motion.div>
                                     </div>
                                 }
                                 className="h-full"
@@ -449,10 +466,13 @@ export default async function Home() {
                                 title="Buttons"
                                 description="Ripple, Magnetic, and more"
                                 header={
-                                    <div className="flex h-full min-h-[6rem] w-full items-center justify-center">
-                                        <RippleButton className="rounded-lg bg-blue-600 px-6 py-2.5 font-semibold text-white shadow-sm hover:bg-blue-700">
+                                    <div className="flex h-full min-h-[6rem] w-full flex-col items-center justify-center gap-3 p-6">
+                                        <RippleButton className="rounded-lg bg-gradient-to-r from-blue-600 to-blue-700 px-8 py-3 font-semibold text-white shadow-lg hover:shadow-xl transition-shadow">
                                             Click Me
                                         </RippleButton>
+                                        <div className="text-xs text-neutral-500 dark:text-neutral-400 font-medium">
+                                            Interactive button effects
+                                        </div>
                                     </div>
                                 }
                                 className="h-full"
@@ -468,15 +488,60 @@ export default async function Home() {
                                 title="Transitions"
                                 description="Theme toggles and more"
                                 header={
-                                    <div className="flex h-full min-h-[6rem] w-full items-center justify-center">
-                                        <ThemeToggleCircular>
-                                            <div className="relative flex h-12 w-12 items-center justify-center rounded-full bg-blue-600 shadow-lg">
-                                                <div className="absolute inset-0 rounded-full bg-blue-500 opacity-0 blur-md transition-opacity duration-300 group-hover:opacity-100" />
-                                                <svg className="relative h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
-                                                </svg>
-                                            </div>
-                                        </ThemeToggleCircular>
+                                    <div className="flex h-full min-h-[6rem] w-full flex-col items-center justify-center gap-3 p-6 overflow-hidden relative">
+                                        {/* Base background */}
+                                        <div className="absolute inset-0 bg-black" />
+
+                                        {/* Animated overlay that wipes vertically */}
+                                        <motion.div
+                                            className="absolute inset-0 bg-white"
+                                            animate={{
+                                                y: ["-100%", "0%", "100%", "0%", "-100%"]
+                                            }}
+                                            transition={{
+                                                duration: 6,
+                                                repeat: Infinity,
+                                                ease: "easeInOut",
+                                                times: [0, 0.25, 0.5, 0.75, 1]
+                                            }}
+                                        />
+
+                                        {/* Toggle button */}
+                                        <motion.div
+                                            className="relative z-10 flex h-14 w-14 items-center justify-center rounded-full bg-blue-600 shadow-xl"
+                                            animate={{
+                                                rotate: [0, 360]
+                                            }}
+                                            transition={{
+                                                duration: 6,
+                                                repeat: Infinity,
+                                                ease: "linear"
+                                            }}
+                                        >
+                                            <svg className="h-7 w-7 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+                                            </svg>
+                                        </motion.div>
+                                        <motion.div
+                                            className="relative z-10 text-xs font-medium"
+                                            animate={{
+                                                color: [
+                                                    "rgb(255, 255, 255)",
+                                                    "rgb(64, 64, 64)",
+                                                    "rgb(255, 255, 255)",
+                                                    "rgb(64, 64, 64)",
+                                                    "rgb(255, 255, 255)"
+                                                ]
+                                            }}
+                                            transition={{
+                                                duration: 6,
+                                                repeat: Infinity,
+                                                ease: "easeInOut",
+                                                times: [0, 0.25, 0.5, 0.75, 1]
+                                            }}
+                                        >
+                                            Smooth theme transitions
+                                        </motion.div>
                                     </div>
                                 }
                                 className="h-full"
@@ -492,13 +557,25 @@ export default async function Home() {
                                 title="Loaders"
                                 description="Orbit, Gooey, Morphing"
                                 header={
-                                    <div className="flex h-full min-h-[6rem] w-full items-center justify-center">
-                                        <LoaderOrbit
-                                            size={60}
-                                            particleCount={4}
-                                            color="#8b5cf6"
-                                            particleSize={10}
-                                        />
+                                    <div className="flex h-full min-h-[6rem] w-full items-center justify-center gap-8 p-6">
+                                        <div className="flex flex-col items-center gap-2">
+                                            <LoaderOrbit
+                                                size={50}
+                                                particleCount={4}
+                                                color="#8b5cf6"
+                                                particleSize={8}
+                                            />
+                                        </div>
+                                        <div className="flex flex-col items-center gap-2">
+                                            <div className="h-10 w-10 animate-spin rounded-full border-4 border-blue-500 border-t-transparent" />
+                                        </div>
+                                        <div className="flex flex-col items-center gap-2">
+                                            <div className="flex gap-1">
+                                                <div className="h-3 w-3 animate-bounce rounded-full bg-pink-500" style={{ animationDelay: '0s' }} />
+                                                <div className="h-3 w-3 animate-bounce rounded-full bg-pink-500" style={{ animationDelay: '0.1s' }} />
+                                                <div className="h-3 w-3 animate-bounce rounded-full bg-pink-500" style={{ animationDelay: '0.2s' }} />
+                                            </div>
+                                        </div>
                                     </div>
                                 }
                                 className="h-full"
@@ -514,18 +591,48 @@ export default async function Home() {
                                 title="Pages"
                                 description="Smooth page transitions"
                                 header={
-                                    <div className="flex h-full min-h-[6rem] w-full items-center justify-center p-4">
-                                        <div className="relative h-32 w-40">
-                                            <div className="absolute inset-0 rounded-lg border border-neutral-200 bg-white p-4 shadow-sm dark:border-neutral-700 dark:bg-neutral-800">
-                                                <div className="mb-2 h-2 w-3/4 rounded bg-neutral-200 dark:bg-neutral-700" />
-                                                <div className="mb-2 h-2 w-full rounded bg-neutral-200 dark:bg-neutral-700" />
-                                                <div className="h-2 w-1/2 rounded bg-neutral-200 dark:bg-neutral-700" />
-                                            </div>
-                                            <div className="absolute inset-0 translate-x-4 translate-y-4 rounded-lg border border-neutral-300 bg-blue-50 p-4 opacity-60 shadow-md dark:border-neutral-600 dark:bg-blue-950">
-                                                <div className="mb-2 h-2 w-3/4 rounded bg-blue-200 dark:bg-blue-800" />
-                                                <div className="mb-2 h-2 w-full rounded bg-blue-200 dark:bg-blue-800" />
-                                                <div className="h-2 w-1/2 rounded bg-blue-200 dark:bg-blue-800" />
-                                            </div>
+                                    <div className="flex h-full min-h-[6rem] w-full items-center justify-center p-6">
+                                        <div className="relative h-36 w-48">
+                                            <motion.div
+                                                className="absolute inset-0 rounded-xl border-2 border-neutral-200 bg-white p-4 shadow-xl dark:border-neutral-700 dark:bg-neutral-800"
+                                                initial={{ opacity: 1, scale: 1, y: 0 }}
+                                                animate={{
+                                                    opacity: [1, 0, 0, 1],
+                                                    scale: [1, 0.95, 0.95, 1],
+                                                    y: [0, -10, -10, 0]
+                                                }}
+                                                transition={{
+                                                    duration: 3,
+                                                    repeat: Infinity,
+                                                    repeatDelay: 1,
+                                                    times: [0, 0.3, 0.7, 1]
+                                                }}
+                                            >
+                                                <div className="mb-2 h-3 w-3/4 rounded-full bg-neutral-200 dark:bg-neutral-700" />
+                                                <div className="mb-2 h-2 w-full rounded-full bg-neutral-200 dark:bg-neutral-700" />
+                                                <div className="mb-2 h-2 w-5/6 rounded-full bg-neutral-200 dark:bg-neutral-700" />
+                                                <div className="h-2 w-2/3 rounded-full bg-neutral-200 dark:bg-neutral-700" />
+                                            </motion.div>
+                                            <motion.div
+                                                className="absolute inset-0 rounded-xl border-2 border-blue-300 bg-gradient-to-br from-blue-50 to-blue-100 p-4 shadow-xl dark:border-blue-700 dark:from-blue-950 dark:to-blue-900"
+                                                initial={{ opacity: 0, scale: 0.95, y: 10 }}
+                                                animate={{
+                                                    opacity: [0, 1, 1, 0],
+                                                    scale: [0.95, 1, 1, 0.95],
+                                                    y: [10, 0, 0, 10]
+                                                }}
+                                                transition={{
+                                                    duration: 3,
+                                                    repeat: Infinity,
+                                                    repeatDelay: 1,
+                                                    times: [0, 0.3, 0.7, 1]
+                                                }}
+                                            >
+                                                <div className="mb-2 h-3 w-3/4 rounded-full bg-blue-300 dark:bg-blue-700" />
+                                                <div className="mb-2 h-2 w-full rounded-full bg-blue-200 dark:bg-blue-800" />
+                                                <div className="mb-2 h-2 w-5/6 rounded-full bg-blue-200 dark:bg-blue-800" />
+                                                <div className="h-2 w-2/3 rounded-full bg-blue-200 dark:bg-blue-800" />
+                                            </motion.div>
                                         </div>
                                     </div>
                                 }
@@ -543,10 +650,26 @@ export default async function Home() {
                                 description="Reusable animation hooks"
                                 header={
                                     <div className="flex h-full min-h-[6rem] w-full items-center justify-center p-6">
-                                        <div className="relative">
-                                            <div className="absolute -inset-4 rounded-xl bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 opacity-20 blur-xl" />
-                                            <div className="relative rounded-lg border border-neutral-200 bg-white px-6 py-3 font-mono text-sm font-medium text-neutral-900 shadow-lg transition-all hover:scale-105 dark:border-neutral-700 dark:bg-neutral-800 dark:text-white">
-                                                useHoverGlow()
+                                        <div className="w-full max-w-[220px] rounded-xl border-2 border-neutral-200 bg-neutral-50 p-4 font-mono text-xs dark:border-neutral-700 dark:bg-neutral-800">
+                                            <div className="space-y-2">
+                                                <div className="flex items-center gap-2">
+                                                    <span className="text-purple-600 dark:text-purple-400">import</span>
+                                                    <span className="text-neutral-900 dark:text-white">{'{'}</span>
+                                                    <span className="text-blue-600 dark:text-blue-400">useHover</span>
+                                                    <span className="text-neutral-900 dark:text-white">{'}'}</span>
+                                                </div>
+                                                <div className="h-px bg-neutral-200 dark:bg-neutral-700" />
+                                                <div className="flex items-center gap-2">
+                                                    <span className="text-purple-600 dark:text-purple-400">const</span>
+                                                    <span className="text-neutral-900 dark:text-white">hover</span>
+                                                    <span className="text-neutral-500">=</span>
+                                                    <span className="text-blue-600 dark:text-blue-400">useHover()</span>
+                                                    <motion.span
+                                                        className="inline-block h-3 w-1.5 bg-blue-500"
+                                                        animate={{ opacity: [1, 0, 1] }}
+                                                        transition={{ duration: 1, repeat: Infinity }}
+                                                    />
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
@@ -558,118 +681,7 @@ export default async function Home() {
                 </div>
             </section>
 
-            {/* How It Works Section */}
-            <section className="bg-white py-20 2xl:py-28 dark:bg-neutral-950">
-                <div className="container mx-auto px-4">
-                    <motion.div
-                        className="mb-16 text-center"
-                        initial={{ opacity: 0, y: 20 }}
-                        whileInView={{ opacity: 1, y: 0 }}
-                        viewport={{ once: true }}
-                        transition={{ duration: 0.5 }}
-                    >
-                        <h2 className="mb-3 text-3xl font-bold text-neutral-900 dark:text-white md:text-4xl">
-                            How It Works
-                        </h2>
-                        <p className="text-base text-neutral-600 dark:text-neutral-400">
-                            Simple CLI command to add any animation to your project
-                        </p>
-                    </motion.div>
 
-                    <div className="mx-auto grid max-w-6xl 2xl:max-w-7xl items-center gap-12 2xl:gap-16 lg:grid-cols-2">
-                        {/* Diagram - Left Side */}
-                        <motion.div
-                            className="flex justify-center"
-                            initial={{ opacity: 0, x: -20 }}
-                            whileInView={{ opacity: 1, x: 0 }}
-                            viewport={{ once: true }}
-                            transition={{ duration: 0.5, delay: 0.2 }}
-                        >
-                            <DatabaseWithRestApi
-                                circleText="CLI"
-                                badgeTexts={{
-                                    first: "text",
-                                    second: "button",
-                                    third: "card",
-                                    fourth: "loader",
-                                }}
-                                buttonTexts={{
-                                    first: "AnimBits",
-                                    second: "registry",
-                                }}
-                                title="Animation categories connected to your components"
-                                lightColor="#3b82f6"
-                            />
-                        </motion.div>
-
-                        {/* Text Content - Right Side */}
-                        <motion.div
-                            className="space-y-6"
-                            initial={{ opacity: 0, x: 20 }}
-                            whileInView={{ opacity: 1, x: 0 }}
-                            viewport={{ once: true }}
-                            transition={{ duration: 0.5, delay: 0.4 }}
-                        >
-                            <div>
-                                <h3 className="mb-3 text-2xl font-bold text-neutral-900 dark:text-white">
-                                    Install with One Command
-                                </h3>
-                                <p className="text-base leading-relaxed text-neutral-600 dark:text-neutral-400">
-                                    Add any animation to your project with a single CLI command.
-                                    No need to copy-paste code or manage dependencies manually.
-                                </p>
-                            </div>
-
-                            <CodeBlockWithCopy code="npx shadcn add https://animbits.dev/r/buttons-lift.json" />
-
-                            <div className="space-y-4">
-                                <div className="flex items-start gap-3">
-                                    <div className="mt-1 flex h-6 w-6 items-center justify-center rounded-full bg-blue-600 text-xs font-bold text-white">
-                                        1
-                                    </div>
-                                    <div>
-                                        <h4 className="mb-1 font-semibold text-neutral-900 dark:text-white">
-                                            Choose Your Animation
-                                        </h4>
-                                        <p className="text-sm text-neutral-600 dark:text-neutral-400">
-                                            Browse our collection of text, button, card, and loader
-                                            animations
-                                        </p>
-                                    </div>
-                                </div>
-
-                                <div className="flex items-start gap-3">
-                                    <div className="mt-1 flex h-6 w-6 items-center justify-center rounded-full bg-blue-600 text-xs font-bold text-white">
-                                        2
-                                    </div>
-                                    <div>
-                                        <h4 className="mb-1 font-semibold text-neutral-900 dark:text-white">
-                                            Run the CLI Command
-                                        </h4>
-                                        <p className="text-sm text-neutral-600 dark:text-neutral-400">
-                                            Install the animation component with all dependencies
-                                        </p>
-                                    </div>
-                                </div>
-
-                                <div className="flex items-start gap-3">
-                                    <div className="mt-1 flex h-6 w-6 items-center justify-center rounded-full bg-blue-600 text-xs font-bold text-white">
-                                        3
-                                    </div>
-                                    <div>
-                                        <h4 className="mb-1 font-semibold text-neutral-900 dark:text-white">
-                                            Use in Your Project
-                                        </h4>
-                                        <p className="text-sm text-neutral-600 dark:text-neutral-400">
-                                            Import and customize the animation to match your design
-                                        </p>
-                                    </div>
-                                </div>
-                            </div>
-                        </motion.div>
-                    </div>
-                </div>
-            </section>
 
             {/* Testimonials Section */}
             <section className="bg-neutral-50 py-20 dark:bg-neutral-900/50">
@@ -691,6 +703,117 @@ export default async function Home() {
 
                     <div className="[mask-image:linear-gradient(to_right,transparent,black_10%,black_90%,transparent)] max-w-7xl mx-auto">
                         <TestimonialsHorizontal testimonials={testimonials} duration={30} />
+                    </div>
+                </div>
+            </section>
+
+            {/* Featured Video Section */}
+            <section className="relative overflow-hidden bg-white dark:bg-neutral-950 py-20 md:py-28">
+                <div className="container mx-auto px-4">
+                    <motion.div
+                        className="mx-auto mb-16 max-w-3xl text-center"
+                        initial={{ opacity: 0, y: 20 }}
+                        whileInView={{ opacity: 1, y: 0 }}
+                        viewport={{ once: true }}
+                        transition={{ duration: 0.5 }}
+                    >
+                        <h2 className="mb-4 text-3xl font-bold text-neutral-900 dark:text-white md:text-4xl">
+                            Featured
+                        </h2>
+                        <p className="text-base text-neutral-600 dark:text-neutral-400">
+                            See AnimBits in action and featured coverage
+                        </p>
+                    </motion.div>
+
+                    <div className="mx-auto max-w-5xl space-y-8">
+                        {/* YouTube Video */}
+                        <motion.div
+                            initial={{ opacity: 0, y: 20 }}
+                            whileInView={{ opacity: 1, y: 0 }}
+                            viewport={{ once: true }}
+                            transition={{ duration: 0.5, delay: 0.1 }}
+                        >
+                            <div className="overflow-hidden rounded-3xl border border-neutral-200 bg-white shadow-lg dark:border-neutral-800 dark:bg-neutral-900">
+                                <div className="relative aspect-video">
+                                    <iframe
+                                        width="100%"
+                                        height="100%"
+                                        src="https://www.youtube.com/embed/D2mzsmNXEm8?si=GcpmHztd4IP2v42F&start=2227"
+                                        title="YouTube video player"
+                                        frameBorder="0"
+                                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                                        referrerPolicy="strict-origin-when-cross-origin"
+                                        allowFullScreen
+                                        className="absolute inset-0"
+                                    />
+                                </div>
+                                <div className="p-6 md:p-8">
+                                    <div className="mb-3 flex items-center gap-3 text-sm text-neutral-500 dark:text-neutral-400">
+                                        <span className="flex items-center gap-1.5">
+                                            <svg className="h-4 w-4" fill="currentColor" viewBox="0 0 24 24">
+                                                <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z" />
+                                            </svg>
+                                            YouTube
+                                        </span>
+                                        <span>•</span>
+                                        <span>Reviewing YOUR Open Source Projects</span>
+                                    </div>
+                                    <h3 className="text-2xl font-bold text-neutral-900 dark:text-white">
+                                        AnimBits Featured on YouTube
+                                    </h3>
+                                </div>
+                            </div>
+                        </motion.div>
+
+                        {/* Blog Post Card */}
+                        <motion.a
+                            href="https://kachibito.net/useful-resource/animbits"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            initial={{ opacity: 0, y: 20 }}
+                            whileInView={{ opacity: 1, y: 0 }}
+                            viewport={{ once: true }}
+                            transition={{ duration: 0.5, delay: 0.2 }}
+                            className="group block"
+                        >
+                            <div className="overflow-hidden rounded-3xl border border-neutral-200 bg-white shadow-lg transition-all duration-300 hover:shadow-xl dark:border-neutral-800 dark:bg-neutral-900">
+                                <div className="grid md:grid-cols-2 gap-0">
+                                    <div className="relative aspect-video md:aspect-auto overflow-hidden bg-white dark:bg-neutral-900">
+                                        <Image
+                                            src="/animbits.png"
+                                            alt="AnimBits - Featured on Kachibito"
+                                            width={1200}
+                                            height={630}
+                                            className="h-full w-full object-contain p-8 transition-transform duration-300 group-hover:scale-105"
+                                        />
+                                    </div>
+                                    <div className="p-6 md:p-8 flex flex-col justify-center">
+                                        <div className="mb-3 flex items-center gap-3 text-sm text-neutral-500 dark:text-neutral-400">
+                                            <span className="flex items-center gap-1.5">
+                                                <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z" />
+                                                </svg>
+                                                Blog Post
+                                            </span>
+                                            <span>•</span>
+                                            <span>Kachibito</span>
+                                        </div>
+                                        <h3 className="mb-3 text-2xl font-bold text-neutral-900 dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
+                                            Featured on Kachibito
+                                        </h3>
+                                        <p className="mb-4 text-neutral-600 dark:text-neutral-400">
+                                            Read about AnimBits on Kachibito, a popular Japanese web design and development resource blog.
+                                        </p>
+                                        <div className="flex items-center text-sm font-semibold text-blue-600 dark:text-blue-400">
+                                            Read Article
+                                            <svg className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                                            </svg>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </motion.a>
                     </div>
                 </div>
             </section>

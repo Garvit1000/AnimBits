@@ -1,0 +1,239 @@
+---
+title: Image Text
+description: Text with a dynamic, animated image mask background.
+component: true
+---
+
+import { ImageText } from "@/registry/new-york/animations/specials/image-text"
+import { Preview } from "@/components/preview"
+
+## Image Text
+
+A component that reveals an animated background image through text using `background-clip: text`.
+
+## Preview
+
+<Preview background="default" code={`import { ImageText } from "@/registry/new-york/animations/specials/image-text";
+
+export function ImageTextDemo() {
+  return (
+    <div className="flex items-center justify-center p-8 rounded-lg">
+      <ImageText 
+        text="Anything"
+        imageUrl="https://images.unsplash.com/photo-1518531933037-91b2f5f229cc?q=80&w=1567&auto=format&fit=crop"
+        className="text-8xl md:text-9xl font-semibold text-center"
+      />
+    </div>
+  );
+}`}>
+    <div className="flex items-center justify-center p-8 rounded-lg w-full">
+      <ImageText 
+        text="Anything"
+        imageUrl="https://images.unsplash.com/photo-1518531933037-91b2f5f229cc?q=80&w=1567&auto=format&fit=crop"
+        className="text-6xl md:text-9xl font-semibold text-center"
+      />
+    </div>
+</Preview>
+
+## Examples
+
+### Word Variations
+
+<div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+    <Preview background="default" title="Rule" code={`<ImageText 
+  text="Rule"
+  imageUrl="https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?q=80&w=2613&auto=format&fit=crop"
+  className="text-7xl font-semibold"
+/>`}>
+        <div className="flex items-center justify-center p-8 h-40">
+            <ImageText 
+                text="Rule"
+                imageUrl="https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?q=80&w=2613&auto=format&fit=crop"
+                className="text-7xl font-semibold"
+            />
+        </div>
+    </Preview>
+
+    <Preview background="default" title="Nature" code={`<ImageText 
+  text="Nature"
+  imageUrl="https://images.unsplash.com/photo-1490730141103-6cac27aaab94?q=80&w=2670&auto=format&fit=crop"
+  className="text-7xl font-semibold"
+/>`}>
+        <div className="flex items-center justify-center p-8 h-40">
+            <ImageText 
+                text="Nature"
+                imageUrl="https://images.unsplash.com/photo-1490730141103-6cac27aaab94?q=80&w=2670&auto=format&fit=crop"
+                className="text-7xl font-semibold"
+            />
+        </div>
+    </Preview>
+</div>
+
+### Changing Images
+
+<Preview background="default" code={`import { ImageText } from "@/registry/new-york/animations/specials/image-text";
+
+export function ImageTextChanging() {
+  return (
+    <div className="flex items-center justify-center p-8 rounded-lg">
+      <ImageText 
+        text="Seasons"
+        imageUrl={[
+            "https://images.unsplash.com/photo-1490750967868-58cb75063ed4?q=80&w=2670&auto=format&fit=crop", // Spring
+            "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?q=80&w=2673&auto=format&fit=crop", // Summer
+            "https://images.unsplash.com/photo-1523712999610-f77fbcfc3843?q=80&w=2670&auto=format&fit=crop" // Autumn
+        ]}
+        direction="none"
+        interval={3000}
+        className="text-8xl font-black"
+      />
+    </div>
+  );
+}`}>
+    <div className="flex items-center justify-center p-8 rounded-lg w-full">
+      <ImageText 
+        text="Seasons"
+        imageUrl={[
+            "https://images.unsplash.com/photo-1490750967868-58cb75063ed4?q=80&w=2670&auto=format&fit=crop", // Spring
+            "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?q=80&w=2673&auto=format&fit=crop", // Summer
+            "https://images.unsplash.com/photo-1518531933037-91b2f5f229cc?q=80&w=2670&auto=format&fit=crop", // Autumn
+            "https://images.unsplash.com/photo-1457269449834-928af64c684d?q=80&w=2670&auto=format&fit=crop"  // Winter
+        ]}
+        direction="none"
+        interval={3000}
+        className="text-6xl md:text-8xl font-black text-center"
+      />
+    </div>
+</Preview>
+
+## Installation
+
+```bash
+npx shadcn@latest add "https://animbits.dev/r/image-text.json"
+```
+
+## Manual Installation
+
+```tsx title="registry/new-york/animations/specials/image-text.tsx"
+    "use client";
+
+    import React, { useState, useEffect } from "react";
+    import { motion, HTMLMotionProps, AnimatePresence } from "motion/react";
+    import { cn } from "@/lib/utils";
+
+    interface ImageTextProps extends HTMLMotionProps<"h1"> {
+        text: string;
+        imageUrl: string | string[] | { src: string } | { src: string }[];
+        className?: string;
+        direction?: "horizontal" | "vertical" | "diagonal" | "none";
+        interval?: number;
+    }
+
+    export function ImageText({
+        text,
+        imageUrl,
+        className,
+        direction = "horizontal",
+        interval = 3000,
+        ...props
+    }: ImageTextProps) {
+        const images = Array.isArray(imageUrl) ? imageUrl : [imageUrl];
+        const [currentImageIndex, setCurrentImageIndex] = useState(0);
+
+        useEffect(() => {
+            if (!Array.isArray(imageUrl) || imageUrl.length <= 1) return;
+
+            const timer = setInterval(() => {
+                setCurrentImageIndex((prev) => (prev + 1) % images.length);
+            }, interval);
+
+            return () => clearInterval(timer);
+        }, [imageUrl, interval, images.length]);
+
+        const getCurrentImageUrl = () => {
+            const img = images[currentImageIndex];
+            return typeof img === "string" ? img : img.src;
+        };
+
+        const getAnimation = () => {
+            switch (direction) {
+                case "horizontal":
+                    return {
+                        backgroundPosition: ["0% 50%", "100% 50%", "0% 50%"],
+                    };
+                case "vertical":
+                    return {
+                        backgroundPosition: ["50% 0%", "50% 100%", "50% 0%"],
+                    };
+                case "diagonal":
+                    return {
+                        backgroundPosition: ["0% 0%", "100% 100%", "0% 0%"],
+                    };
+                case "none":
+                    return {
+                        backgroundPosition: "center",
+                    }
+                default:
+                    return {
+                        backgroundPosition: ["0% 50%", "100% 50%", "0% 50%"],
+                    };
+            }
+        };
+
+        return (
+        <span className={cn("inline-block relative", className)}>
+             {/* Invisible layout placeholder ensuring size doesn't collapse */}
+            <h1 className={cn("text-9xl font-serif italic font-bold tracking-tighter inline-block invisible", className)}>
+                {text}
+            </h1>
+
+            <AnimatePresence>
+                <motion.h1
+                    key={currentImageIndex} // Re-render for image change
+                    className={cn(
+                        "text-9xl font-serif italic font-bold tracking-tighter inline-block absolute inset-0",
+                        className
+                    )}
+                    style={{
+                        backgroundImage: `url(${getCurrentImageUrl()})`,
+                        backgroundSize: direction === "none" ? "cover" : "150% auto",
+                        backgroundClip: "text",
+                        WebkitBackgroundClip: "text",
+                        WebkitTextFillColor: "transparent",
+                        color: "transparent",
+                    }}
+                    initial={{ opacity: 0 }}
+                    animate={{
+                         ...getAnimation(),
+                         opacity: 1
+                    }}
+                    exit={{ opacity: 0 }}
+                    transition={{
+                        // Smooth opacity fade for texture change
+                        opacity: { duration: 1 },
+                        // Continuous background movement
+                        backgroundPosition: {
+                            duration: 15,
+                            ease: "linear",
+                            repeat: Infinity,
+                        }
+                    }}
+                    {...props}
+                >
+                    {text}
+                </motion.h1>
+            </AnimatePresence>
+        </span>
+    );
+}
+```
+
+## Props
+
+| Prop | Type | Default | Description |
+| :--- | :--- | :--- | :--- |
+| `text` | `string` | - | The text content to display. |
+| `imageUrl` | `string \| string[] \| StaticImageData` | - | The URL(s) or imported image object(s) of the background. |
+| `direction` | `"horizontal" \| "vertical" \| "diagonal" \| "none"` | `"horizontal"` | The direction of the background animation. |
+| `interval` | `number` | `3000` | The duration (ms) to show each image when `imageUrl` is an array. |
+| `className` | `string` | - | Additional classes for custom text styling (size, weight). |

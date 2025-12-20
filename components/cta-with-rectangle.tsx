@@ -3,6 +3,7 @@
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { cn } from "@/lib/utils"
+import { ArrowRight } from "lucide-react"
 
 interface CTAProps {
   badge?: {
@@ -28,44 +29,59 @@ export function CTASection({
   className,
 }: CTAProps) {
   return (
-    <section className={cn("overflow-hidden pt-0 md:pt-0", className)}>
-      <div className="relative mx-auto flex max-w-6xl flex-col items-center gap-6 px-4 py-12 text-center sm:gap-8 md:px-8 md:py-24">
-        {/* Badge */}
-        {badge && (
-          <Badge
-            variant="outline"
-            className="opacity-0 animate-fade-in-up delay-100"
-          >
-            <span className="text-muted-foreground">{badge.text}</span>
-          </Badge>
-        )}
+    <section className={cn("overflow-hidden bg-white dark:bg-black", className)}>
+      <div className="relative mx-auto max-w-[1400px] px-4 py-24 md:py-32">
+        {/* Content */}
+        <div className="relative flex flex-col items-center gap-8 text-center z-10">
+          {/* Badge */}
+          {badge && (
+            <Badge
+              variant="outline"
+              className="border-neutral-200 dark:border-neutral-800 bg-white/50 dark:bg-neutral-900/50 backdrop-blur-sm"
+            >
+              <span className="text-neutral-700 dark:text-neutral-300 font-medium">{badge.text}</span>
+            </Badge>
+          )}
 
-        {/* Title */}
-        <h2 className="text-3xl font-semibold sm:text-5xl opacity-0 animate-fade-in-up delay-200">
-          {title}
-        </h2>
+          {/* Title */}
+          <h2 className="text-4xl font-bold tracking-tight text-neutral-900 dark:text-white md:text-5xl lg:text-6xl max-w-4xl">
+            {title}
+          </h2>
 
-        {/* Description */}
-        {description && (
-          <p className="text-muted-foreground opacity-0 animate-fade-in-up delay-300">
-            {description}
-          </p>
-        )}
+          {/* Description */}
+          {description && (
+            <p className="text-lg text-neutral-600 dark:text-neutral-400 max-w-2xl leading-relaxed">
+              {description}
+            </p>
+          )}
 
-        {/* Action Button */}
-        <Button
-          variant={action.variant || "default"}
-          size="lg"
-          className="opacity-0 animate-fade-in-up delay-500"
-          asChild
-        >
-          <a href={action.href}>{action.text}</a>
-        </Button>
+          {/* Buttons */}
+          <div className="flex flex-col sm:flex-row items-center gap-4 mt-4">
+            <Button
+              variant={action.variant || "default"}
+              size="lg"
+              className="h-12 px-8 text-base font-semibold gap-2 min-w-[200px]"
+              asChild
+            >
+              <a href={action.href}>
+                {action.text}
+                <ArrowRight className="h-4 w-4" />
+              </a>
+            </Button>
 
-        {/* Glow Effect */}
-        {withGlow && (
-          <div className="fade-top-lg pointer-events-none absolute inset-0 rounded-2xl shadow-glow opacity-0 animate-scale-in delay-700" />
-        )}
+            <Button
+              variant="outline"
+              size="lg"
+              className="h-12 px-8 text-base font-semibold gap-2 min-w-[200px] bg-white dark:bg-neutral-900"
+              asChild
+            >
+              <a href="https://github.com/garvit1000/animbits" target="_blank" rel="noopener noreferrer">
+                Star on GitHub
+                <span className="ml-1 text-neutral-500">★ 12</span>
+              </a>
+            </Button>
+          </div>
+        </div>
       </div>
     </section>
   )
