@@ -2,7 +2,7 @@
 
 import { usePlayground } from "@/app/playground/_lib/store";
 import { REGISTRY_MAP } from "@/app/playground/_lib/registry-map";
-import { AnimatePresence, motion } from "motion/react";
+import { AnimatePresence, motion, MotionConfig } from "motion/react";
 import { cn } from "@/lib/utils";
 import {
     DndContext,
@@ -145,8 +145,8 @@ export function PlaygroundCanvas() {
                     <div
                         key={i}
                         className={`w-[300px] h-[400px] bg-gradient-to-br ${i === 0 ? 'from-purple-500 to-pink-500' :
-                                i === 1 ? 'from-blue-500 to-cyan-500' :
-                                    'from-orange-500 to-red-500'
+                            i === 1 ? 'from-blue-500 to-cyan-500' :
+                                'from-orange-500 to-red-500'
                             } rounded-2xl p-6 flex items-center justify-center text-white text-2xl font-bold shadow-xl`}
                     >
                         {card.content || `Card ${i + 1}`}
@@ -156,39 +156,113 @@ export function PlaygroundCanvas() {
             delete props.cards; // Remove cards prop as it's been converted to children
         }
 
+        const disableAnimation = props.disableAnimation === true;
+        // Remove disableAnimation from props to avoid passing it to DOM
+        const { disableAnimation: _, ...cleanProps } = props;
+        props = cleanProps;
+
+        // KILL SWITCH: Comprehensive animation disabling
+        if (disableAnimation) {
+            // Define animation props that should be overridden
+            const animationOverrides: Record<string, any> = {
+                duration: 0,
+                delay: 0,
+                staggerDelay: 0,
+                animationDuration: 0,
+                transitionDuration: 0,
+                speed: 0, // For typewriter
+                interval: 0, // For morph, zoom-hollow, image-text, dia-text
+                whileHover: undefined, // Disable hover animations
+                whileTap: undefined, // Disable tap animations
+                whileFocus: undefined, // Disable focus animations
+                whileInView: undefined, // Disable viewport animations
+                initial: false, // Disable initial animation state
+                animate: undefined, // Disable animate prop
+            };
+
+            // ONLY apply overrides if the prop already exists in the component's props
+            Object.keys(animationOverrides).forEach(key => {
+                if (key in props || key in registryItem.defaultProps) {
+                    props[key] = animationOverrides[key];
+                }
+            });
+
+            // Force transition to zero duration if component uses transitions
+            if ('transition' in props || 'transition' in registryItem.defaultProps) {
+                props.transition = { duration: 0, delay: 0, type: false };
+            }
+
+            // Add CSS class for animation disabling
+            props.className = cn(props.className, "animation-disabled");
+
+            // Inline styles (only for CSS properties, won't cause React warnings)
+            props.style = {
+                ...props.style,
+                animationDuration: '0s',
+                animationDelay: '0s',
+                transitionDuration: '0s',
+                transitionDelay: '0s',
+                animationIterationCount: '0',
+                transform: 'none',
+                filter: 'none',
+            };
+        }
+
         return (
             <DraggableComponent
-                key={`${instance.id}-${animationKey}`} // Key changes on replay to remount and re-trigger animations
+                key={`${instance.id}-${animationKey}`}
                 instance={instance}
                 isSelected={selectedComponentId === instance.id}
                 isPreviewMode={isPreviewMode}
                 onSelect={() => selectComponent(instance.id)}
                 onRemove={() => removeComponent(instance.id)}
             >
-                {instance.isContainer ? (
-                    <div className="relative">
-                        <Component {...props} key={`comp-${instance.id}-${animationKey}`}>
-                            <DropZone
-                                parentId={instance.id}
-                                isEmpty={children.length === 0}
-                            >
-                                {children.length > 0 && (
-                                    <SortableContext
-                                        items={children.map(c => c.id)}
-                                        strategy={verticalListSortingStrategy}
-                                    >
-                                        {children.map(child => renderComponent(child))}
-                                    </SortableContext>
-                                )}
-                            </DropZone>
-                        </Component>
+                <MotionConfig
+                    transition={disableAnimation ? { duration: 0, delay: 0, type: false } : undefined}
+                    reducedMotion={disableAnimation ? "always" : undefined}
+                >
+                    {/* Triple-layer wrapper for maximum animation blocking */}
+                    <div
+                        className={disableAnimation ? "animation-disabled-container" : undefined}
+                        style={disableAnimation ? {
+                            pointerEvents: 'none',
+                            userSelect: 'none',
+                        } : undefined}
+                    >
+                        <div
+                            className={disableAnimation ? "disable-animations" : undefined}
+                            style={disableAnimation ? {
+                                animationPlayState: 'paused',
+                                animationDuration: '0s',
+                                transitionDuration: '0s',
+                            } : undefined}
+                        >
+                            {instance.isContainer ? (
+                                <div className="relative">
+                                    <Component {...props} key={`comp-${instance.id}-${animationKey}`}>
+                                        <DropZone
+                                            parentId={instance.id}
+                                            isEmpty={children.length === 0}
+                                        >
+                                            {children.length > 0 && (
+                                                <SortableContext
+                                                    items={children.map(c => c.id)}
+                                                    strategy={verticalListSortingStrategy}
+                                                >
+                                                    {children.map(child => renderComponent(child))}
+                                                </SortableContext>
+                                            )}
+                                        </DropZone>
+                                    </Component>
+                                </div>
+                            ) : (
+                                <Component {...props} key={`comp-${instance.id}-${animationKey}`}>
+                                    {props.children}
+                                </Component>
+                            )}
+                        </div>
                     </div>
-                ) : (
-                    // For non-container components, render with their props (including children if present)
-                    <Component {...props} key={`comp-${instance.id}-${animationKey}`}>
-                        {props.children}
-                    </Component>
-                )}
+                </MotionConfig>
             </DraggableComponent>
         );
     };

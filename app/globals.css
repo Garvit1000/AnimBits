@@ -415,6 +415,42 @@ html {
         mask-image: linear-gradient(to bottom, transparent 0%, black 40%);
         -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 40%);
     }
+
+    /* ANIMATION KILL SWITCH - Nuclear option for playground */
+    .animation-disabled-container,
+    .animation-disabled-container *,
+    .disable-animations,
+    .disable-animations *,
+    .animation-disabled,
+    .animation-disabled * {
+        /* Kill CSS animations */
+        animation: none !important;
+        animation-duration: 0s !important;
+        animation-delay: 0s !important;
+        animation-iteration-count: 0 !important;
+        animation-play-state: paused !important;
+        
+        /* Kill transitions */
+        transition: none !important;
+        transition-duration: 0s !important;
+        transition-delay: 0s !important;
+        
+        /* Kill transforms and filters that might be animated */
+        transform: none !important;
+        filter: none !important;
+        
+        /* Prevent pointer events that trigger hover animations */
+        pointer-events: none !important;
+        
+        /* Disable user interactions */
+        user-select: none !important;
+        -webkit-user-select: none !important;
+    }
+
+    /* Re-enable pointer events for draggable wrapper */
+    .animation-disabled-container {
+        pointer-events: auto !important;
+    }
 }
 
 /* Custom Sidebar Active State */
