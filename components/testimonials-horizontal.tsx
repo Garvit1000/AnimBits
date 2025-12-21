@@ -36,7 +36,7 @@ export const TestimonialsHorizontal = (props: {
                     {[
                         ...new Array(2).fill(0).map((_, index) => (
                             <React.Fragment key={index}>
-                                {props.testimonials.map(({ text, image, name, role, username, timestamp }, i) => (
+                                {props.testimonials.map(({ text, image, name, role, username }, i) => (
                                     <div
                                         className="group relative p-5 rounded-xl border border-neutral-200 dark:border-neutral-800 w-[350px] flex-shrink-0 bg-white dark:bg-black transition-all duration-300 hover:shadow-sm"
                                         key={i}

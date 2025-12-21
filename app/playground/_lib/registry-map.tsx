@@ -83,7 +83,7 @@ import { ReactionDock } from "@/registry/new-york/animations/specials/reaction-d
 import { ReactionButton } from "@/registry/new-york/animations/specials/reaction-button";
 
 
-function MagneticDrawerPreview(props: any) {
+function MagneticDrawerPreview(props: React.ComponentProps<typeof MagneticDrawer>) {
     const [isOpen, setIsOpen] = useState(false);
     return (
         <div className="w-full h-full flex flex-col items-center justify-center p-4 bg-muted/20 border rounded-lg">
@@ -109,7 +109,9 @@ export type ComponentCategory = "Card" | "Text" | "Loader" | "Button" | "Icon" |
 
 export interface PlaygroundComponent {
     name: string;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     component: ComponentType<any>;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     defaultProps: Record<string, any>;
     description: string;
 }
@@ -212,7 +214,7 @@ export const REGISTRY_MAP: Record<ComponentCategory, Record<string, PlaygroundCo
         },
         "border-beam": {
             name: "Border Beam",
-            component: ({ children, ...props }: any) => (
+            component: ({ children, ...props }: React.ComponentProps<typeof BorderBeam> & { children: React.ReactNode }) => (
                 <div className="relative w-[400px] h-[300px] bg-background border rounded-xl flex items-center justify-center overflow-hidden p-6">
                     {children}
                     <BorderBeam {...props} />
@@ -423,7 +425,7 @@ export const REGISTRY_MAP: Record<ComponentCategory, Record<string, PlaygroundCo
         "reaction": {
             name: "Reaction",
             component: ReactionButton,
-            defaultProps: { Icon: ({ className }: any) => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z" /></svg> },
+            defaultProps: { Icon: ({ className }: { className?: string }) => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z" /></svg> },
             description: "Like button with reactions"
         },
         "slide-in-button": {
