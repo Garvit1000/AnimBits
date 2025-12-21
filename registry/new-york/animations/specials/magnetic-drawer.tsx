@@ -27,21 +27,36 @@ export function MagneticDrawer({
     onOpenChange,
     snapPoints = [0.5, 0.9],
     className,
-}: MagneticDrawerProps) {
+    portal = true,
+}: MagneticDrawerProps & { portal?: boolean }) {
     const [mounted, setMounted] = useState(false);
     const [drawerHeight, setDrawerHeight] = useState(0);
     const containerRef = useRef<HTMLDivElement>(null);
+    const parentRef = useRef<HTMLDivElement>(null);
     const y = useMotionValue(0);
 
     useEffect(() => {
         setMounted(true);
         if (typeof window !== "undefined") {
-            setDrawerHeight(window.innerHeight);
-            const handleResize = () => setDrawerHeight(window.innerHeight);
-            window.addEventListener("resize", handleResize);
-            return () => window.removeEventListener("resize", handleResize);
+            if (portal) {
+                setDrawerHeight(window.innerHeight);
+                const handleResize = () => setDrawerHeight(window.innerHeight);
+                window.addEventListener("resize", handleResize);
+                return () => window.removeEventListener("resize", handleResize);
+            } else if (parentRef.current) {
+                // Initial height measurement for inline mode
+                setDrawerHeight(parentRef.current.offsetHeight);
+                // Optional: Resize observer for parent
+                const observer = new ResizeObserver((entries) => {
+                    for (const entry of entries) {
+                        setDrawerHeight(entry.contentRect.height);
+                    }
+                });
+                observer.observe(parentRef.current);
+                return () => observer.disconnect();
+            }
         }
-    }, []);
+    }, [portal]);
 
     useEffect(() => {
         if (open) {
@@ -95,12 +110,12 @@ export function MagneticDrawer({
 
     if (!mounted) return null;
 
-    return createPortal(
+    const drawerContent = (
         <AnimatePresence>
             {open && (
                 <>
                     <motion.div
-                        className="fixed inset-0 z-[99]"
+                        className={cn(portal ? "fixed" : "absolute", "inset-0 z-[99]")}
                         style={{ backgroundColor: "black", opacity: backdropOpacity, pointerEvents }}
                         onClick={() => onOpenChange(false)}
                         initial={{ opacity: 0 }}
@@ -111,7 +126,8 @@ export function MagneticDrawer({
                     <motion.div
                         ref={containerRef}
                         className={cn(
-                            "fixed bottom-0 left-0 right-0 z-[100] flex flex-col rounded-t-[20px] bg-white shadow-2xl outline-none dark:bg-neutral-900",
+                            portal ? "fixed" : "absolute",
+                            "bottom-0 left-0 right-0 z-[100] flex flex-col rounded-t-[20px] bg-white shadow-xl outline-none dark:bg-neutral-900",
                             className
                         )}
                         style={{ y, height: drawerHeight, touchAction: "none" }}
@@ -137,7 +153,16 @@ export function MagneticDrawer({
                     </motion.div>
                 </>
             )}
-        </AnimatePresence>,
-        document.body
+        </AnimatePresence>
+    );
+
+    if (portal) {
+        return createPortal(drawerContent, document.body);
+    }
+
+    return (
+        <div ref={parentRef} className="relative w-full h-full overflow-hidden">
+            {drawerContent}
+        </div>
     );
 }

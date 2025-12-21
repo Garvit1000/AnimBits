@@ -5,10 +5,12 @@ import type { HTMLMotionProps } from "motion/react";
 import { cn } from "@/lib/utils";
 export interface CardGrayscaleProps
   extends Omit<HTMLMotionProps<"div">, "children"> {
-  children: React.ReactNode;
+  image?: string;
+  children?: React.ReactNode;
   duration?: number;
 }
 export function CardGrayscale({
+  image,
   children,
   className,
   duration = 0.5,
@@ -26,7 +28,13 @@ export function CardGrayscale({
       transition={{ duration }}
       {...props}
     >
-      {children}
+      {image && (
+        <div
+          className="absolute inset-0 bg-cover bg-center"
+          style={{ backgroundImage: `url(${image})` }}
+        />
+      )}
+      <div className="relative z-10">{children}</div>
     </motion.div>
   );
 }

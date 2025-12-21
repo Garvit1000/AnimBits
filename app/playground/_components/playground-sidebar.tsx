@@ -51,9 +51,12 @@ export function PlaygroundSidebar() {
 
     const handleReplay = () => {
         // Force re-render of all animations by updating key
-        setReplayKey(prev => prev + 1);
-        // Trigger re-render in parent
-        window.dispatchEvent(new CustomEvent('replay-animations', { detail: { key: replayKey + 1 } }));
+        const newKey = replayKey + 1;
+        setReplayKey(newKey);
+        // Use setTimeout to ensure state update completes before dispatching event
+        setTimeout(() => {
+            window.dispatchEvent(new CustomEvent('replay-animations', { detail: { key: newKey } }));
+        }, 0);
     };
 
     return (

@@ -126,7 +126,7 @@ export function PlaygroundCanvas() {
         const children = getChildren(instance.id);
 
         // Special handling for List components - convert items array to children elements
-        const isListComponent = ['slide-in', 'stagger-fade'].includes(instance.componentId);
+        const isListComponent = ['slide-in-list', 'stagger-fade'].includes(instance.componentId);
         if (isListComponent && props.items && Array.isArray(props.items)) {
             props = {
                 ...props,
@@ -154,6 +154,28 @@ export function PlaygroundCanvas() {
                 ))
             };
             delete props.cards; // Remove cards prop as it's been converted to children
+        }
+
+        // Special handling for image-based cards - update children and props when imageUrl changes
+        // Store imageUrl before deleting it for use in component key
+        const imageUrl = props.imageUrl;
+        if (imageUrl) {
+            if (instance.componentId === 'background-zoom') {
+                // CardBackgroundZoom expects backgroundImage prop, not imageUrl
+                props = {
+                    ...props,
+                    backgroundImage: imageUrl,
+                    children: <div key={imageUrl} className="w-full h-full" />
+                };
+                delete props.imageUrl;
+            } else if (instance.componentId === 'grayscale-card') {
+                // CardGrayscale now accepts image prop directly
+                props = {
+                    ...props,
+                    image: imageUrl
+                };
+                delete props.imageUrl;
+            }
         }
 
         const disableAnimation = props.disableAnimation === true;
@@ -210,7 +232,7 @@ export function PlaygroundCanvas() {
 
         return (
             <DraggableComponent
-                key={`${instance.id}-${animationKey}`}
+                key={instance.id}
                 instance={instance}
                 isSelected={selectedComponentId === instance.id}
                 isPreviewMode={isPreviewMode}
@@ -239,7 +261,7 @@ export function PlaygroundCanvas() {
                         >
                             {instance.isContainer ? (
                                 <div className="relative">
-                                    <Component {...props} key={`comp-${instance.id}-${animationKey}`}>
+                                    <Component {...props} key={imageUrl ? `comp-${instance.id}-${animationKey}-${imageUrl}` : `comp-${instance.id}-${animationKey}`}>
                                         <DropZone
                                             parentId={instance.id}
                                             isEmpty={children.length === 0}
@@ -256,7 +278,7 @@ export function PlaygroundCanvas() {
                                     </Component>
                                 </div>
                             ) : (
-                                <Component {...props} key={`comp-${instance.id}-${animationKey}`}>
+                                <Component {...props} key={imageUrl ? `comp-${instance.id}-${animationKey}-${imageUrl}` : `comp-${instance.id}-${animationKey}`}>
                                     {props.children}
                                 </Component>
                             )}
@@ -340,10 +362,7 @@ export function PlaygroundCanvas() {
                     onDragStart={handleDragStart}
                     onDragEnd={handleDragEnd}
                 >
-                    <motion.div
-                        initial={{ opacity: 0, scale: 0.95 }}
-                        animate={{ opacity: 1, scale: 1 }}
-                        transition={{ duration: 0.3 }}
+                    <div
                         className={cn(
                             "relative z-10 flex p-8 w-full pl-16", // Extra left padding for drag handles
                             layoutClasses[layout],
@@ -359,7 +378,7 @@ export function PlaygroundCanvas() {
                                 {rootComponents.map(instance => renderComponent(instance))}
                             </AnimatePresence>
                         </SortableContext>
-                    </motion.div>
+                    </div>
 
                     {/* Drag Overlay */}
                     <DragOverlay>
