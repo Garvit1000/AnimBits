@@ -65,7 +65,7 @@ export default async function Home() {
                 <div className="absolute inset-0 bg-[radial-gradient(circle_at_1px_1px,rgb(0_0_0/0.05)_1px,transparent_0)] [background-size:24px_24px] dark:bg-[radial-gradient(circle_at_1px_1px,rgb(255_255_255/0.05)_1px,transparent_0)]" />
 
                 <div className="container relative z-10 mx-auto px-4 py-20 md:py-28 lg:py-36 2xl:py-44">
-                    <div className="mx-auto max-w-4xl 2xl:max-w-5xl text-center">
+                    <div className="mx-auto max-w-5xl 2xl:max-w-7xl text-center">
                         {/* Badge */}
                         <motion.div
                             className="mb-8 inline-flex items-center gap-2 rounded-full border border-neutral-200 bg-neutral-50/80 px-3 py-1 text-sm font-medium text-neutral-800 backdrop-blur-sm dark:border-neutral-800 dark:bg-neutral-900/80 dark:text-neutral-200"
@@ -93,33 +93,21 @@ export default async function Home() {
                                     duration={1.2}
                                     delay={0.3}
                                 >
-                                    The Animation Library
+                                    The Foundation for Interactive UI
                                 </TextBlurIn>
-                                <TextBlurIn
-                                    className="mb-4 text-4xl font-bold leading-tight tracking-tight text-neutral-900 dark:text-white md:text-5xl lg:text-6xl 2xl:text-7xl text-center"
-                                    by="character"
-                                    staggerDelay={0.02}
-                                    duration={1.2}
-                                    delay={1.2}
-                                >
-                                    for Modern React
-                                </TextBlurIn>
+
                             </div>
                         </motion.div>
 
                         {/* Description */}
                         <motion.div
-                            className="mx-auto mb-10 max-w-2xl 2xl:max-w-3xl text-base leading-relaxed text-neutral-600 dark:text-neutral-400 md:text-lg 2xl:text-xl"
+                            className="mx-auto mb-12 max-w-3xl text-base leading-relaxed text-neutral-600 dark:text-neutral-400 md:text-lg 2xl:text-xl"
                             initial={{ opacity: 0, y: 20 }}
                             animate={{ opacity: 1, y: 0 }}
                             transition={{ duration: 0.5, delay: 0.2 }}
                         >
-                            <p className="mb-4">
-                                A set of beautifully designed animations that you can install
-                                with one command.
-                            </p>
-                            <p className="mb-4">
-                                Stop writing repetitive Motion code.Open Source. Open Code.
+                            <p>
+                                A curated suite of animations, hooks, and components. Designed to make your applications feel alive. Copy, paste, and ship premium interfaces.
                             </p>
                         </motion.div>
 
@@ -258,28 +246,8 @@ export default async function Home() {
 
 
             {/* Animation Categories */}
-            <section className="relative bg-white py-24 2xl:py-32 dark:bg-neutral-950">
+            <section className="relative bg-white pt-4 pb-24 2xl:pb-32 dark:bg-neutral-950">
                 <div className="container mx-auto px-4">
-                    <motion.div
-                        className="mb-20 text-center"
-                        initial={{ opacity: 0, y: 20 }}
-                        whileInView={{ opacity: 1, y: 0 }}
-                        viewport={{ once: true }}
-                        transition={{ duration: 0.5 }}
-                    >
-                        <div className="mb-4 inline-block rounded-full border border-neutral-200 bg-neutral-50 px-4 py-1.5 dark:border-neutral-800 dark:bg-neutral-900">
-                            <span className="text-sm font-medium text-neutral-700 dark:text-neutral-300">
-                                Comprehensive Collection
-                            </span>
-                        </div>
-                        <h2 className="mb-4 text-4xl font-bold text-neutral-900 dark:text-white md:text-5xl">
-                            Every Animation You&apos;ll Ever Need
-                        </h2>
-
-                        <p className="mx-auto max-w-2xl text-lg text-neutral-600 dark:text-neutral-400">
-                            From subtle micro-interactions to eye-catching transitions, beautifully crafted and ready to ship
-                        </p>
-                    </motion.div>
 
                     <BentoGrid className="mx-auto max-w-7xl 2xl:max-w-\[1400px\]">
                         {/* Text */}

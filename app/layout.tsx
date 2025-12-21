@@ -16,20 +16,20 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Animbits - Animation Registry for UI",
-  description: "Production-ready animation components for React",
+  title: "Animbits - The Foundation for Interactive UI",
+  description: "A curated suite of animations, hooks, and components. Designed to make your applications feel alive. Copy, paste, and ship premium interfaces.",
   applicationName: "Animbits",
   openGraph: {
-    title: "Animbits - Animation Registry for UI",
-    description: "Production-ready animation components for React",
+    title: "Animbits - The Foundation for Interactive UI",
+    description: "A curated suite of animations, hooks, and components. Designed to make your applications feel alive. Copy, paste, and ship premium interfaces.",
     siteName: "Animbits",
     images: ["/animbits.png"],
     type: "website",
   },
   twitter: {
     card: "summary_large_image",
-    title: "Animbits - Animation Registry for UI",
-    description: "Production-ready animation components for React",
+    title: "Animbits - The Foundation for Interactive UI",
+    description: "A curated suite of animations, hooks, and components. Designed to make your applications feel alive. Copy, paste, and ship premium interfaces.",
     images: ["/animbits.png"],
   },
   icons: {
