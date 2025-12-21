@@ -1,4 +1,4 @@
-import { ComponentType } from "react";
+import { ComponentType, useState } from "react";
 
 // Import ALL components from registry
 
@@ -83,7 +83,29 @@ import { ReactionDock } from "@/registry/new-york/animations/specials/reaction-d
 import { ReactionButton } from "@/registry/new-york/animations/specials/reaction-button";
 
 
-export type ComponentCategory = "Card" | "Text" | "Loader" | "Button" | "Icon" | "List" | "Special";
+function MagneticDrawerPreview(props: any) {
+    const [isOpen, setIsOpen] = useState(false);
+    return (
+        <div className="w-full h-full flex flex-col items-center justify-center p-4 bg-muted/20 border rounded-lg">
+            <div className="text-center space-y-4">
+                <p className="text-sm text-muted-foreground">Magnetic Drawer Component</p>
+                <button
+                    onClick={() => setIsOpen(true)}
+                    className="px-4 py-2 bg-primary text-primary-foreground rounded-md text-sm font-medium hover:bg-primary/90 shadow-sm"
+                >
+                    Open Drawer
+                </button>
+            </div>
+            <MagneticDrawer
+                {...props}
+                open={isOpen}
+                onOpenChange={setIsOpen}
+            />
+        </div>
+    );
+}
+
+export type ComponentCategory = "Card" | "Text" | "Loader" | "Button" | "Icon" | "List" | "Special" | "Transition";
 
 export interface PlaygroundComponent {
     name: string;
@@ -116,7 +138,8 @@ export const REGISTRY_MAP: Record<ComponentCategory, Record<string, PlaygroundCo
             component: CardBackgroundZoom,
             defaultProps: {
                 className: "w-[400px] h-[300px]",
-                children: <div className="w-full h-full bg-cover bg-center" style={{ backgroundImage: "url(https://images.unsplash.com/photo-1579546929518-9e396f3cc809)" }} />
+                imageUrl: "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800&q=80",
+                children: <div className="w-full h-full bg-cover bg-center" style={{ backgroundImage: "url(https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800&q=80)" }} />
             },
             description: "Zoom background on hover",
         },
@@ -142,7 +165,8 @@ export const REGISTRY_MAP: Record<ComponentCategory, Record<string, PlaygroundCo
             component: CardGrayscale,
             defaultProps: {
                 className: "w-[400px] h-[300px]",
-                children: <div className="w-full h-full bg-cover bg-center" style={{ backgroundImage: "url(https://images.unsplash.com/photo-1579546929518-9e396f3cc809)" }} />
+                imageUrl: "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800&q=80",
+                children: <div className="w-full h-full bg-cover bg-center" style={{ backgroundImage: "url(https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800&q=80)" }} />
             },
             description: "Color on hover",
         },
@@ -170,8 +194,8 @@ export const REGISTRY_MAP: Record<ComponentCategory, Record<string, PlaygroundCo
             },
             description: "Parallax tilt effect",
         },
-        "scale-in": {
-            name: "Scale In",
+        "scale-in-card": {
+            name: "Scale In Card",
             component: CardScaleIn,
             defaultProps: {
                 className: "w-[400px] h-[300px] bg-background border flex items-center justify-center p-6",
@@ -221,8 +245,8 @@ export const REGISTRY_MAP: Record<ComponentCategory, Record<string, PlaygroundCo
             defaultProps: { children: "Typing Content...", speed: 30, className: "text-4xl font-bold" },
             description: "Typewriter effect",
         },
-        "fade-in": {
-            name: "Fade In",
+        "fade-in-text": {
+            name: "Fade In Text",
             component: TextFadeIn,
             defaultProps: { children: "Fading In", className: "text-4xl font-bold" },
             description: "Smooth fade in",
@@ -286,55 +310,94 @@ export const REGISTRY_MAP: Record<ComponentCategory, Record<string, PlaygroundCo
         "liquid-progress": {
             name: "Liquid Progress",
             component: LoaderLiquidProgress,
-            defaultProps: { progress: 60, height: 12 },
+            defaultProps: {
+                progress: 60,
+                height: 12,
+                className: "w-[300px]",
+                color: "#3b82f6",
+                duration: 1,
+            },
             description: "Liquid progress bar",
         },
         "bars": {
             name: "Bars",
             component: LoaderBars,
-            defaultProps: {},
+            defaultProps: {
+                className: "w-fit",
+                barWidth: 4,
+                barHeight: 30,
+                count: 5,
+                gap: 4,
+            },
             description: "Animated bars loader",
         },
         "dots": {
             name: "Dots",
             component: LoaderDots,
-            defaultProps: {},
+            defaultProps: {
+                className: "w-fit",
+                dotSize: 12,
+                count: 3,
+                gap: 8,
+            },
             description: "Bouncing dots loader",
         },
         "gooey-blobs": {
             name: "Gooey Blobs",
             component: LoaderGooeyBlobs,
-            defaultProps: {},
+            defaultProps: {
+                className: "w-fit",
+                size: 60,
+            },
             description: "Morphing gooey blobs",
         },
         "morphing": {
             name: "Morphing",
             component: LoaderMorphing,
-            defaultProps: {},
+            defaultProps: {
+                className: "w-fit",
+                size: 40,
+            },
             description: "Shape morphing loader",
         },
         "orbit": {
             name: "Orbit",
             component: LoaderOrbit,
-            defaultProps: {},
+            defaultProps: {
+                className: "w-fit",
+                size: 40,
+                particleSize: 8,
+                particleCount: 3,
+            },
             description: "Orbiting circles loader",
         },
-        "pulse": {
-            name: "Pulse",
+        "pulse-loader": {
+            name: "Pulse Loader",
             component: LoaderPulse,
-            defaultProps: {},
+            defaultProps: {
+                className: "w-fit",
+                size: 40,
+            },
             description: "Pulsing circle loader",
         },
         "skeleton": {
             name: "Skeleton",
             component: LoaderSkeleton,
-            defaultProps: {},
+            defaultProps: {
+                className: "w-full",
+                width: "300px",
+                height: 20,
+                borderRadius: 4,
+            },
             description: "Skeleton loading state",
         },
         "spinner": {
             name: "Spinner",
             component: LoaderSpinner,
-            defaultProps: {},
+            defaultProps: {
+                className: "w-fit",
+                size: 40,
+            },
             description: "Classic spinner loader",
         }
     },
@@ -363,8 +426,8 @@ export const REGISTRY_MAP: Record<ComponentCategory, Record<string, PlaygroundCo
             defaultProps: { Icon: ({ className }: any) => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z" /></svg> },
             description: "Like button with reactions"
         },
-        "slide-in": {
-            name: "Slide In",
+        "slide-in-button": {
+            name: "Slide In Button",
             component: SlideInButton,
             defaultProps: { children: "Slide In", className: "bg-primary text-primary-foreground px-6 py-2 rounded-md" },
             description: "Slide in effect",
@@ -387,8 +450,8 @@ export const REGISTRY_MAP: Record<ComponentCategory, Record<string, PlaygroundCo
             defaultProps: { children: "Lift Mode", className: "bg-primary text-primary-foreground px-6 py-2 rounded-md" },
             description: "Lifts on hover",
         },
-        "fade-in": {
-            name: "Fade In",
+        "fade-in-button": {
+            name: "Fade In Button",
             component: FadeInButton,
             defaultProps: { children: "Fade In", className: "bg-primary text-primary-foreground px-6 py-2 rounded-md" },
             description: "Fade in entrance",
@@ -413,8 +476,8 @@ export const REGISTRY_MAP: Record<ComponentCategory, Record<string, PlaygroundCo
             },
             description: "Bounce on trigger",
         },
-        "fade-in": {
-            name: "Fade In",
+        "fade-in-icon": {
+            name: "Fade In Icon",
             component: FadeInIcon,
             defaultProps: {
                 className: "w-12 h-12",
@@ -436,7 +499,12 @@ export const REGISTRY_MAP: Record<ComponentCategory, Record<string, PlaygroundCo
             component: MorphIcon,
             defaultProps: {
                 className: "w-12 h-12",
-                children: <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z" /></svg>
+                viewBox: "0 0 24 24",
+                paths: [
+                    "M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z",
+                    "M12 2 L22 8.5 L22 15.5 L12 22 L2 15.5 L2 8.5 Z",
+                    "M12 2 A10 10 0 1 1 12 22 A10 10 0 1 1 12 2",
+                ]
             },
             description: "Shape morphing",
         },
@@ -449,8 +517,8 @@ export const REGISTRY_MAP: Record<ComponentCategory, Record<string, PlaygroundCo
             },
             description: "Pop scale effect",
         },
-        "pulse": {
-            name: "Pulse",
+        "pulse-icon": {
+            name: "Pulse Icon",
             component: PulseIcon,
             defaultProps: {
                 className: "w-12 h-12",
@@ -467,8 +535,8 @@ export const REGISTRY_MAP: Record<ComponentCategory, Record<string, PlaygroundCo
             },
             description: "Rotation animation",
         },
-        "scale-in": {
-            name: "Scale In",
+        "scale-in-icon": {
+            name: "Scale In Icon",
             component: ScaleInIcon,
             defaultProps: {
                 className: "w-12 h-12",
@@ -499,7 +567,12 @@ export const REGISTRY_MAP: Record<ComponentCategory, Record<string, PlaygroundCo
             component: StrokeDrawIcon,
             defaultProps: {
                 className: "w-12 h-12",
-                children: <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m18 2 4 4-4 4M10 18l-4-4 4-4M14.5 4.5l-9 15" /></svg>
+                viewBox: "0 0 24 24",
+                width: "48",
+                height: "48",
+                pathData: "m18 2 4 4-4 4M10 18l-4-4 4-4M14.5 4.5l-9 15",
+                duration: 2,
+                repeat: true,
             },
             description: "SVG stroke drawing",
         },
@@ -514,8 +587,8 @@ export const REGISTRY_MAP: Record<ComponentCategory, Record<string, PlaygroundCo
         }
     },
     List: {
-        "slide-in": {
-            name: "Slide In",
+        "slide-in-list": {
+            name: "Slide In List",
             component: SlideInList,
             defaultProps: {
                 items: ["Item 1", "Item 2", "Item 3"],
@@ -536,11 +609,13 @@ export const REGISTRY_MAP: Record<ComponentCategory, Record<string, PlaygroundCo
     Special: {
         "magnetic-drawer": {
             name: "Magnetic Drawer",
-            component: MagneticDrawer,
+            component: MagneticDrawerPreview,
             defaultProps: {
-                open: true,
-                onOpenChange: () => { },
-                children: <div className="h-[200px] p-4 flex items-center justify-center">Drawer Content</div>
+                className: "w-full focus:outline-none",
+                children: <div className="h-[300px] p-8 flex flex-col items-center justify-center text-center space-y-4">
+                    <h3 className="text-2xl font-bold">Hello World</h3>
+                    <p className="text-muted-foreground">This is a smooth magnetic drawer.</p>
+                </div>
             },
             description: "Mobile-style drawer",
         },
@@ -572,7 +647,7 @@ export const REGISTRY_MAP: Record<ComponentCategory, Record<string, PlaygroundCo
             component: ImageText,
             defaultProps: {
                 text: "VISUALS",
-                imageUrl: "https://images.unsplash.com/photo-1579546929518-9e396f3cc809",
+                imageUrl: "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800&q=80",
                 className: "text-6xl font-bold"
             },
             description: "Text masked with image",
