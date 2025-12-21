@@ -9,9 +9,7 @@ import { RippleButton } from "@/registry/new-york/animations/buttons/ripple";
 import { CardParallaxTilt } from "@/registry/new-york/animations/cards/parallax-tilt";
 import { LoaderOrbit } from "@/registry/new-york/animations/loaders/orbit";
 import { HeartbeatIcon } from "@/registry/new-york/animations/icons/heartbeat";
-import { StaggerFadeList } from "@/registry/new-york/animations/lists/stagger-fade";
 
-import { ThemeToggleCircular } from "@/registry/new-york/animations/transitions/theme-toggle-circular";
 import { TestimonialsHorizontal } from "@/components/testimonials-horizontal";
 import { Footer } from "@/components/footer";
 import { GithubButton } from "@/components/ui/github-button";
@@ -275,8 +273,9 @@ export default async function Home() {
                             </span>
                         </div>
                         <h2 className="mb-4 text-4xl font-bold text-neutral-900 dark:text-white md:text-5xl">
-                            Every Animation You'll Ever Need
+                            Every Animation You&apos;ll Ever Need
                         </h2>
+
                         <p className="mx-auto max-w-2xl text-lg text-neutral-600 dark:text-neutral-400">
                             From subtle micro-interactions to eye-catching transitions, beautifully crafted and ready to ship
                         </p>

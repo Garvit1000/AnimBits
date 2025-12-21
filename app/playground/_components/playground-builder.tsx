@@ -7,7 +7,7 @@ import { PlaygroundCanvas } from "@/app/playground/_components/playground-canvas
 import { PlaygroundControls } from "@/app/playground/_components/playground-controls";
 import { CodeModal } from "@/app/playground/_components/code-modal";
 import { generateCode } from "@/app/playground/_lib/code-generator";
-import { Button } from "@/components/ui/button";
+
 
 function PlaygroundContent() {
     const [isCodeModalOpen, setIsCodeModalOpen] = useState(false);
