@@ -28,7 +28,7 @@ export default function PrivacyPolicy() {
 
                     <div className="prose prose-neutral dark:prose-invert max-w-none prose-headings:font-semibold prose-a:text-neutral-900 dark:prose-a:text-white hover:prose-a:text-blue-600 dark:hover:prose-a:text-blue-400 transistion-colors">
                         <p className="lead text-lg text-neutral-600 dark:text-neutral-300">
-                            At Animbits ("we," "our," or "us"), we respect your privacy and are committed to protecting it through our compliance with this policy.
+                            At Animbits (&quot;we,&quot; &quot;our,&quot; or &quot;us&quot;), we respect your privacy and are committed to protecting it through our compliance with this policy.
                         </p>
 
                         <div className="my-8 h-px w-full bg-neutral-200 dark:bg-neutral-800" />
