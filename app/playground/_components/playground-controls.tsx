@@ -3,7 +3,7 @@
 import { usePlayground } from "@/app/playground/_lib/store";
 import { REGISTRY_MAP } from "@/app/playground/_lib/registry-map";
 import { Button } from "@/components/ui/button";
-import { Rows, Columns, LayoutGrid, Code2, ChevronUp, ChevronDown, ChevronLeft, ChevronRight, Trash2, Grip, Play, Pause } from "lucide-react";
+import { Rows, Columns, LayoutGrid, Code2, ChevronUp, ChevronDown, ChevronLeft, ChevronRight, Trash2 } from "lucide-react";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { Switch } from "@/components/ui/switch";
 import { Slider } from "@/components/ui/slider";
@@ -12,7 +12,7 @@ import { Separator } from "@/components/ui/separator";
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { cn } from "@/lib/utils";
+
 
 // Helper to find component in registry
 function findComponentInRegistry(componentId: string) {
@@ -24,48 +24,7 @@ function findComponentInRegistry(componentId: string) {
     return null;
 }
 
-// Helper to generate code
-function generateCode(components: any[], layout: string, gap: number) {
-    if (components.length === 0) return "// Add components to generate code";
 
-    const imports = new Set<string>();
-    const componentCode = components
-        .sort((a, b) => a.order - b.order)
-        .map((instance) => {
-            const registryItem = findComponentInRegistry(instance.componentId);
-            if (!registryItem) return "";
-
-            // Add import (simplified - would need actual import paths)
-            imports.add(`import { ${registryItem.name.replace(/\s/g, "")} } from "@/components/animations";`);
-
-            // Generate component JSX
-            const props = Object.entries(instance.props)
-                .map(([key, value]) => {
-                    if (typeof value === "string") return `${key}="${value}"`;
-                    if (typeof value === "number") return `${key}={${value}}`;
-                    if (typeof value === "boolean") return value ? key : "";
-                    return "";
-                })
-                .filter(Boolean)
-                .join(" ");
-
-            return `  <${registryItem.name.replace(/\s/g, "")} ${props} />`;
-        })
-        .filter(Boolean)
-        .join("\n");
-
-    const layoutClass = layout === "row" ? "flex-row" : layout === "column" ? "flex-col" : "grid grid-cols-2";
-
-    return `${Array.from(imports).join("\n")}
-
-export function AnimationComposition() {
-  return (
-    <div className="flex ${layoutClass}" style={{ gap: "${gap}px" }}>
-${componentCode}
-    </div>
-  );
-}`;
-}
 
 interface PlaygroundControlsProps {
     onShowCode?: () => void;
@@ -90,7 +49,6 @@ export function PlaygroundControls({ onShowCode }: PlaygroundControlsProps) {
     } = usePlayground();
 
     const selectedComponent = components.find(c => c.id === selectedComponentId);
-    const selectedRegistryItem = selectedComponent ? findComponentInRegistry(selectedComponent.componentId) : null;
 
     return (
         <div className="space-y-4">
@@ -108,6 +66,7 @@ export function PlaygroundControls({ onShowCode }: PlaygroundControlsProps) {
                         <ToggleGroup
                             type="single"
                             value={layout}
+                            // eslint-disable-next-line @typescript-eslint/no-explicit-any
                             onValueChange={(v: any) => v && setLayout(v)}
                             className="justify-start"
                         >
@@ -151,6 +110,7 @@ export function PlaygroundControls({ onShowCode }: PlaygroundControlsProps) {
                         <ToggleGroup
                             type="single"
                             value={alignment}
+                            // eslint-disable-next-line @typescript-eslint/no-explicit-any
                             onValueChange={(v: any) => v && setAlignment(v)}
                             className="justify-start"
                         >
@@ -295,7 +255,7 @@ export function PlaygroundControls({ onShowCode }: PlaygroundControlsProps) {
                                 <div className="flex items-center space-x-2 pt-2">
                                     <Switch
                                         id="disable-animation"
-                                        checked={selectedComponent.props.disableAnimation || false}
+                                        checked={(selectedComponent.props.disableAnimation as boolean) || false}
                                         onCheckedChange={(checked) =>
                                             updateComponentProps(selectedComponentId!, {
                                                 disableAnimation: checked,
@@ -313,15 +273,16 @@ export function PlaygroundControls({ onShowCode }: PlaygroundControlsProps) {
                                 <Label className="text-xs font-semibold">Properties</Label>
 
                                 {/* Size Controls for Containers */}
-                                {selectedComponent.isContainer && (
+                                {!!selectedComponent.isContainer && (
                                     <>
                                         <div className="space-y-1">
                                             <Label className="text-xs text-muted-foreground">Width</Label>
                                             <Input
-                                                value={selectedComponent.props.className?.match(/w-\[(\d+)px\]/)?.[1] || "400"}
+                                                value={(selectedComponent.props.className as string)?.match(/w-\[(\d+)px\]/)?.[1] || "400"}
+                                                // eslint-disable-next-line @typescript-eslint/no-explicit-any
                                                 onChange={(e: any) => {
                                                     const width = e.target.value;
-                                                    const currentClass = selectedComponent.props.className || "";
+                                                    const currentClass = (selectedComponent.props.className as string) || "";
                                                     const newClass = currentClass.replace(/w-\[\d+px\]/, "").trim() + ` w-[${width}px]`;
                                                     updateComponentProps(selectedComponentId!, {
                                                         className: newClass.trim(),
@@ -336,10 +297,11 @@ export function PlaygroundControls({ onShowCode }: PlaygroundControlsProps) {
                                         <div className="space-y-1">
                                             <Label className="text-xs text-muted-foreground">Height</Label>
                                             <Input
-                                                value={selectedComponent.props.className?.match(/h-\[(\d+)px\]/)?.[1] || "300"}
+                                                value={(selectedComponent.props.className as string)?.match(/h-\[(\d+)px\]/)?.[1] || "300"}
+                                                // eslint-disable-next-line @typescript-eslint/no-explicit-any
                                                 onChange={(e: any) => {
                                                     const height = e.target.value;
-                                                    const currentClass = selectedComponent.props.className || "";
+                                                    const currentClass = (selectedComponent.props.className as string) || "";
                                                     const newClass = currentClass.replace(/h-\[\d+px\]/, "").trim() + ` h-[${height}px]`;
                                                     updateComponentProps(selectedComponentId!, {
                                                         className: newClass.trim(),
@@ -356,19 +318,19 @@ export function PlaygroundControls({ onShowCode }: PlaygroundControlsProps) {
                                 )}
 
                                 {/* Text Size Controls for Text Components */}
-                                {!selectedComponent.isContainer && selectedComponent.props.children && typeof selectedComponent.props.children === "string" && (
+                                {!selectedComponent.isContainer && !!selectedComponent.props.children && typeof selectedComponent.props.children === "string" && (
                                     <>
                                         <div className="space-y-2">
                                             <div className="flex items-center justify-between">
                                                 <Label className="text-xs text-muted-foreground">Font Size</Label>
                                                 <span className="text-xs font-medium">
-                                                    {selectedComponent.props.className?.match(/text-(\w+)/)?.[1] || "4xl"}
+                                                    {(selectedComponent.props.className as string)?.match(/text-(\w+)/)?.[1] || "4xl"}
                                                 </span>
                                             </div>
                                             <Select
-                                                value={selectedComponent.props.className?.match(/text-(\w+)/)?.[1] || "4xl"}
+                                                value={(selectedComponent.props.className as string)?.match(/text-(\w+)/)?.[1] || "4xl"}
                                                 onValueChange={(size) => {
-                                                    const currentClass = selectedComponent.props.className || "";
+                                                    const currentClass = (selectedComponent.props.className as string) || "";
                                                     const newClass = currentClass.replace(/text-\w+/, "").trim() + ` text-${size}`;
                                                     updateComponentProps(selectedComponentId!, {
                                                         className: newClass.trim(),
@@ -411,6 +373,7 @@ export function PlaygroundControls({ onShowCode }: PlaygroundControlsProps) {
                                             {typeof value === "string" ? (
                                                 <Input
                                                     value={value}
+                                                    // eslint-disable-next-line @typescript-eslint/no-explicit-any
                                                     onChange={(e: any) =>
                                                         updateComponentProps(selectedComponentId!, {
                                                             [key]: e.target.value,
@@ -422,6 +385,7 @@ export function PlaygroundControls({ onShowCode }: PlaygroundControlsProps) {
                                                 <Input
                                                     type="number"
                                                     value={value}
+                                                    // eslint-disable-next-line @typescript-eslint/no-explicit-any
                                                     onChange={(e: any) =>
                                                         updateComponentProps(selectedComponentId!, {
                                                             [key]: Number(e.target.value),
@@ -433,6 +397,7 @@ export function PlaygroundControls({ onShowCode }: PlaygroundControlsProps) {
                                                 <>
                                                     <Input
                                                         value={value.join(", ")}
+                                                        // eslint-disable-next-line @typescript-eslint/no-explicit-any
                                                         onChange={(e: any) => {
                                                             const newWords = e.target.value
                                                                 .split(",")
