@@ -3,6 +3,7 @@ import { REGISTRY_MAP } from "./registry-map";
 export interface ComponentInstance {
     id: string;
     componentId: string;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     props: Record<string, any>;
     parentId: string | null;
     children: string[];
@@ -17,7 +18,8 @@ export function generateImports(components: ComponentInstance[]): string {
 
     components.forEach((instance) => {
         // Find the component in registry
-        for (const [category, items] of Object.entries(REGISTRY_MAP)) {
+        for (const [, items] of Object.entries(REGISTRY_MAP)) {
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
             const component = (items as any)[instance.componentId];
             if (component) {
                 // Determine import path - use @/components format
@@ -48,6 +50,7 @@ export function generateImports(components: ComponentInstance[]): string {
 /**
  * Serialize a prop value to code string
  */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 function serializeProp(value: any): string {
     if (typeof value === "string") {
         return `"${value.replace(/"/g, '\\"')}"`;
@@ -81,6 +84,7 @@ function generateComponentJSX(
     // Find component info
     let componentName = "";
     for (const [, items] of Object.entries(REGISTRY_MAP)) {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const component = (items as any)[instance.componentId];
         if (component) {
             componentName = component.component.name;

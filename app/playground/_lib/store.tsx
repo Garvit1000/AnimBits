@@ -7,7 +7,7 @@ import { v4 as uuidv4 } from "uuid";
 export interface ComponentInstance {
     id: string; // Unique instance ID
     componentId: string; // Registry ID (e.g., "blur-in")
-    props: Record<string, any>; // Component-specific props
+    props: Record<string, unknown>; // Component-specific props
     order: number; // Display order
     parentId: string | null; // null = root level, otherwise parent component ID
     children: string[]; // Array of child component IDs
@@ -34,9 +34,9 @@ export interface PlaygroundState {
     backgroundColor: string;
 
     // Actions - Component Management
-    addComponent: (componentId: string, defaultProps: Record<string, any>, parentId?: string | null, isContainer?: boolean) => void;
+    addComponent: (componentId: string, defaultProps: Record<string, unknown>, parentId?: string | null, isContainer?: boolean) => void;
     removeComponent: (id: string) => void;
-    updateComponentProps: (id: string, props: Record<string, any>) => void;
+    updateComponentProps: (id: string, props: Record<string, unknown>) => void;
     reorderComponent: (id: string, direction: "up" | "down") => void;
     clearAllComponents: () => void;
 
@@ -120,7 +120,7 @@ export function PlaygroundProvider({ children }: { children: ReactNode }) {
 
     const addComponent = (
         componentId: string,
-        defaultProps: Record<string, any>,
+        defaultProps: Record<string, unknown>,
         parentId: string | null = null,
         isContainer: boolean = false
     ) => {
@@ -198,7 +198,7 @@ export function PlaygroundProvider({ children }: { children: ReactNode }) {
         }
     };
 
-    const updateComponentProps = (id: string, props: Record<string, any>) => {
+    const updateComponentProps = (id: string, props: Record<string, unknown>) => {
         setComponents(prev =>
             prev.map(comp =>
                 comp.id === id ? { ...comp, props: { ...comp.props, ...props } } : comp

@@ -25,7 +25,7 @@ export function CTASection({
   title,
   description,
   action,
-  withGlow = true,
+
   className,
 }: CTAProps) {
   return (

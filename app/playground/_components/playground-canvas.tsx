@@ -117,6 +117,7 @@ export function PlaygroundCanvas() {
     };
 
     // Recursive component renderer
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const renderComponent = (instance: any): React.ReactElement | null => {
         const registryItem = findComponent(instance.componentId);
         if (!registryItem) return null;
@@ -141,6 +142,7 @@ export function PlaygroundCanvas() {
         if (instance.componentId === 'swipeable-stack' && props.cards && Array.isArray(props.cards)) {
             props = {
                 ...props,
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
                 children: props.cards.map((card: any, i: number) => (
                     <div
                         key={i}
@@ -179,13 +181,14 @@ export function PlaygroundCanvas() {
         }
 
         const disableAnimation = props.disableAnimation === true;
-        // Remove disableAnimation from props to avoid passing it to DOM
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         const { disableAnimation: _, ...cleanProps } = props;
         props = cleanProps;
 
         // KILL SWITCH: Comprehensive animation disabling
         if (disableAnimation) {
             // Define animation props that should be overridden
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
             const animationOverrides: Record<string, any> = {
                 duration: 0,
                 delay: 0,

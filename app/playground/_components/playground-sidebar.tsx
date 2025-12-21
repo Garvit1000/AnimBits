@@ -10,7 +10,7 @@ import {
 } from "@/components/ui/accordion";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import { Plus, Trash2, Package, RotateCcw } from "lucide-react";
+import { Plus, Trash2, RotateCcw } from "lucide-react";
 import { useState } from "react";
 
 // Define which categories are containers by default
