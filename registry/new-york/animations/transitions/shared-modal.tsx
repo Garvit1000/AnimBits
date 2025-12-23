@@ -1,0 +1,146 @@
+"use client";
+
+import React, { useState, useId } from "react";
+import { motion, AnimatePresence } from "motion/react";
+import { cn } from "@/lib/utils";
+import { Plus } from "lucide-react";
+
+interface SharedModalProps {
+    variant?: "scale" | "slide-bottom" | "slide-right" | "fade-in" | "scale-up";
+}
+
+export function SharedModal({ variant = "scale" }: SharedModalProps = {}) {
+    const [isOpen, setIsOpen] = useState(false);
+    const id = useId();
+
+    const getModalTransition = () => {
+        switch (variant) {
+            case "scale":
+                return { type: "spring" as const, bounce: 0.2, duration: 0.6 };
+            case "slide-bottom":
+                return { type: "spring" as const, bounce: 0.15, duration: 0.5 };
+            case "slide-right":
+                return { type: "spring" as const, bounce: 0.15, duration: 0.5 };
+            case "fade-in":
+                return { type: "tween" as const, duration: 0.3, ease: "easeOut" as const };
+            case "scale-up":
+                return { type: "spring" as const, bounce: 0.5, duration: 0.8 };
+            default:
+                return { type: "spring" as const, bounce: 0.2, duration: 0.6 };
+        }
+    };
+
+    const getModalInitial = () => {
+        switch (variant) {
+            case "slide-bottom":
+                return { opacity: 0, y: "100%" };
+            case "slide-right":
+                return { opacity: 0, x: "100%" };
+            case "fade-in":
+                return { opacity: 0, scale: 1.1 };
+            case "scale-up":
+                return { opacity: 0, scale: 0.5 };
+            default:
+                return {};
+        }
+    };
+
+    const getModalAnimate = () => {
+        switch (variant) {
+            case "slide-bottom":
+                return { opacity: 1, y: 0 };
+            case "slide-right":
+                return { opacity: 1, x: 0 };
+            case "fade-in":
+                return { opacity: 1, scale: 1 };
+            case "scale-up":
+                return { opacity: 1, scale: 1 };
+            default:
+                return {};
+        }
+    };
+
+    return (
+        <div className="flex items-center justify-center p-8 bg-zinc-50 dark:bg-zinc-900 rounded-xl min-h-[400px] w-full">
+            <AnimatePresence>
+                {!isOpen ? (
+                    <motion.div
+                        layoutId={`${id}-modal`}
+                        onClick={() => setIsOpen(true)}
+                        className="h-16 w-16 bg-white dark:bg-zinc-800 rounded-full shadow-lg cursor-pointer flex items-center justify-center border border-zinc-200 dark:border-zinc-700 hover:scale-105 transition-transform"
+                        whileHover={{ scale: 1.05 }}
+                        whileTap={{ scale: 0.95 }}
+                    >
+                        <motion.div layoutId={`${id}-icon`}>
+                            <Plus className="text-zinc-500 dark:text-zinc-400" />
+                        </motion.div>
+                    </motion.div>
+                ) : (
+                    <div className={cn(
+                        "fixed inset-0 z-[100] px-4 pointer-events-none",
+                        (variant === "slide-bottom" || variant === "slide-right") ? "flex" : "grid place-items-center",
+                        variant === "slide-bottom" && "items-end justify-center pb-4",
+                        variant === "slide-right" && "items-center justify-end pr-4"
+                    )}>
+                        <motion.div
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            exit={{ opacity: 0 }}
+                            onClick={() => setIsOpen(false)}
+                            className="absolute inset-0 bg-black/20 backdrop-blur-sm pointer-events-auto"
+                        />
+                        <motion.div
+                            {...(variant === "scale" ? { layoutId: `${id}-modal` } : {})}
+                            className="w-full max-w-sm bg-white dark:bg-zinc-800 rounded-2xl shadow-2xl overflow-hidden z-20 relative pointer-events-auto"
+                            transition={getModalTransition()}
+                            initial={getModalInitial()}
+                            animate={getModalAnimate()}
+                            exit={getModalInitial()}
+                            style={{ transformPerspective: 1000 }}
+                        >
+                            <motion.div layoutId={`${id}-icon`} className="absolute top-4 right-4 z-10">
+                                <button
+                                    onClick={(e) => { e.stopPropagation(); setIsOpen(false); }}
+                                    className="p-1 rounded-full bg-black/10 dark:bg-white/10 hover:bg-black/20 dark:hover:bg-white/20 transition-colors"
+                                >
+                                    <Plus className="rotate-45 text-zinc-500 dark:text-zinc-400" />
+                                </button>
+                            </motion.div>
+
+                            <img
+                                src="https://picsum.photos/seed/modal1/400/200"
+                                alt="Project header"
+                                className="h-32 w-full object-cover"
+                            />
+                            <div className="p-6">
+                                <h3 className="text-xl font-bold text-zinc-900 dark:text-zinc-100 mb-2">New Project</h3>
+                                <p className="text-zinc-500 dark:text-zinc-400 mb-6">Create a new project to get started with your ideas.</p>
+                                <div className="flex justify-end gap-2">
+                                    <button
+                                        onClick={(e) => {
+                                            e.stopPropagation();
+                                            setIsOpen(false);
+                                        }}
+                                        className="px-4 py-2 text-sm font-medium text-zinc-600 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-700 rounded-lg transition-colors"
+                                    >
+                                        Cancel
+                                    </button>
+                                    <button
+                                        onClick={(e) => {
+                                            e.stopPropagation();
+                                            alert("Created!");
+                                            setIsOpen(false);
+                                        }}
+                                        className="px-4 py-2 text-sm font-medium bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 rounded-lg hover:opacity-90 transition-opacity"
+                                    >
+                                        Create
+                                    </button>
+                                </div>
+                            </div>
+                        </motion.div>
+                    </div>
+                )}
+            </AnimatePresence>
+        </div>
+    );
+}

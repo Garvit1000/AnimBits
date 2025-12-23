@@ -1,0 +1,409 @@
+---
+title: Tab Switcher
+description: Animated tab navigation with multiple visual styles.
+---
+
+import { Tab, Tabs } from 'fumadocs-ui/components/tabs';
+import { Preview } from '@/components/preview';
+import { TabSwitcher } from '@/registry/new-york/animations/transitions/tab-switcher';
+import { Home, Settings, User, Bell } from 'lucide-react';
+
+## Overview
+
+The `TabSwitcher` creates smooth animated transitions between tab content with a sliding indicator. Choose from pill, underline, or segmented control styles.
+
+## Preview
+
+<Preview
+  code={`import { TabSwitcher } from "@/components/animations/transitions/tab-switcher"
+
+const tabs = [
+  { id: "overview", label: "Overview", content: <div>Overview content</div> },
+  { id: "analytics", label: "Analytics", content: <div>Analytics content</div> },
+  { id: "reports", label: "Reports", content: <div>Reports content</div> },
+]
+
+<TabSwitcher tabs={tabs} variant="pill" />`}
+>
+  <TabSwitcher 
+    variant="pill"
+    tabs={[
+      { 
+        id: "overview", 
+        label: "Overview", 
+        content: <div className="p-8 space-y-6 max-w-3xl mx-auto">
+          <div className="grid grid-cols-3 gap-6">
+            <div className="space-y-2">
+              <p className="text-xs font-medium text-zinc-500 dark:text-zinc-400 uppercase tracking-wide">Total Users</p>
+              <p className="text-3xl font-bold text-zinc-900 dark:text-zinc-100">12,345</p>
+              <p className="text-sm text-emerald-600 dark:text-emerald-400">↑ 12%</p>
+            </div>
+            <div className="space-y-2">
+              <p className="text-xs font-medium text-zinc-500 dark:text-zinc-400 uppercase tracking-wide">Revenue</p>
+              <p className="text-3xl font-bold text-zinc-900 dark:text-zinc-100">$45,231</p>
+              <p className="text-sm text-emerald-600 dark:text-emerald-400">↑ 8%</p>
+            </div>
+            <div className="space-y-2">
+              <p className="text-xs font-medium text-zinc-500 dark:text-zinc-400 uppercase tracking-wide">Active Now</p>
+              <p className="text-3xl font-bold text-zinc-900 dark:text-zinc-100">573</p>
+              <p className="text-sm text-zinc-500 dark:text-zinc-400">Real-time</p>
+            </div>
+          </div>
+          <div className="space-y-3 pt-4 border-t border-zinc-200 dark:border-zinc-800">
+            <p className="text-sm font-semibold text-zinc-900 dark:text-zinc-100">Recent Activity</p>
+            <div className="space-y-3">
+              <div className="flex items-center justify-between py-2">
+                <span className="text-sm text-zinc-700 dark:text-zinc-300">New user signup</span>
+                <span className="text-xs text-zinc-500 dark:text-zinc-500">2 min ago</span>
+              </div>
+              <div className="flex items-center justify-between py-2">
+                <span className="text-sm text-zinc-700 dark:text-zinc-300">Payment received</span>
+                <span className="text-xs text-zinc-500 dark:text-zinc-500">5 min ago</span>
+              </div>
+              <div className="flex items-center justify-between py-2">
+                <span className="text-sm text-zinc-700 dark:text-zinc-300">Report generated</span>
+                <span className="text-xs text-zinc-500 dark:text-zinc-500">12 min ago</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      },
+      { 
+        id: "analytics", 
+        label: "Analytics", 
+        content: <div className="p-8 max-w-3xl mx-auto">
+          <div className="space-y-4">
+            <p className="text-sm font-semibold text-zinc-900 dark:text-zinc-100 mb-6">Traffic Sources</p>
+            <div className="space-y-5">
+              <div>
+                <div className="flex justify-between text-sm mb-2">
+                  <span className="text-zinc-700 dark:text-zinc-300">Direct</span>
+                  <span className="text-zinc-900 dark:text-zinc-100 font-semibold">45%</span>
+                </div>
+                <div className="w-full bg-zinc-100 dark:bg-zinc-800 rounded-full h-2.5">
+                  <div className="bg-blue-500 h-2.5 rounded-full transition-all" style={{width: '45%'}}></div>
+                </div>
+              </div>
+              <div>
+                <div className="flex justify-between text-sm mb-2">
+                  <span className="text-zinc-700 dark:text-zinc-300">Organic Search</span>
+                  <span className="text-zinc-900 dark:text-zinc-100 font-semibold">30%</span>
+                </div>
+                <div className="w-full bg-zinc-100 dark:bg-zinc-800 rounded-full h-2.5">
+                  <div className="bg-emerald-500 h-2.5 rounded-full transition-all" style={{width: '30%'}}></div>
+                </div>
+              </div>
+              <div>
+                <div className="flex justify-between text-sm mb-2">
+                  <span className="text-zinc-700 dark:text-zinc-300">Social Media</span>
+                  <span className="text-zinc-900 dark:text-zinc-100 font-semibold">25%</span>
+                </div>
+                <div className="w-full bg-zinc-100 dark:bg-zinc-800 rounded-full h-2.5">
+                  <div className="bg-purple-500 h-2.5 rounded-full transition-all" style={{width: '25%'}}></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      },
+      { 
+        id: "reports", 
+        label: "Reports", 
+        content: <div className="p-8 max-w-3xl mx-auto">
+          <div className="space-y-3">
+            <p className="text-sm font-semibold text-zinc-900 dark:text-zinc-100 mb-4">Generated Reports</p>
+            <div className="space-y-3">
+              <div className="flex items-center justify-between py-3 px-4 rounded-lg hover:bg-zinc-50 dark:hover:bg-zinc-800/50 transition-colors">
+                <div className="space-y-1">
+                  <p className="text-sm font-medium text-zinc-900 dark:text-zinc-100">Monthly Revenue Report</p>
+                  <p className="text-xs text-zinc-500 dark:text-zinc-400">Generated on Dec 20, 2024</p>
+                </div>
+                <button className="text-xs font-medium px-4 py-2 bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 rounded-lg hover:opacity-90 transition-opacity">
+                  Download
+                </button>
+              </div>
+              <div className="flex items-center justify-between py-3 px-4 rounded-lg hover:bg-zinc-50 dark:hover:bg-zinc-800/50 transition-colors">
+                <div className="space-y-1">
+                  <p className="text-sm font-medium text-zinc-900 dark:text-zinc-100">User Analytics Q4</p>
+                  <p className="text-xs text-zinc-500 dark:text-zinc-400">Generated on Dec 15, 2024</p>
+                </div>
+                <button className="text-xs font-medium px-4 py-2 bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 rounded-lg hover:opacity-90 transition-opacity">
+                  Download
+                </button>
+              </div>
+              <div className="flex items-center justify-between py-3 px-4 rounded-lg hover:bg-zinc-50 dark:hover:bg-zinc-800/50 transition-colors">
+                <div className="space-y-1">
+                  <p className="text-sm font-medium text-zinc-900 dark:text-zinc-100">Performance Metrics</p>
+                  <p className="text-xs text-zinc-500 dark:text-zinc-400">Generated on Dec 10, 2024</p>
+                </div>
+                <button className="text-xs font-medium px-4 py-2 bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 rounded-lg hover:opacity-90 transition-opacity">
+                  Download
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      },
+    ]} 
+  />
+</Preview>
+
+## Variants
+
+### Underline Style
+Clean underline indicator that slides between tabs.
+
+<Preview
+  code={`<TabSwitcher tabs={tabs} variant="underline" />`}
+>
+  <TabSwitcher 
+    variant="underline"
+    tabs={[
+      { 
+        id: "features", 
+        label: "Features", 
+        content: <div className="p-6 text-zinc-600 dark:text-zinc-400">
+          <h3 className="text-lg font-semibold text-zinc-900 dark:text-zinc-100 mb-3">Product Features</h3>
+          <ul className="space-y-2 text-sm">
+            <li>✓ Advanced analytics dashboard</li>
+            <li>✓ Real-time collaboration</li>
+            <li>✓ Custom integrations</li>
+          </ul>
+        </div>
+      },
+      { 
+        id: "pricing", 
+        label: "Pricing", 
+        content: <div className="p-6 text-zinc-600 dark:text-zinc-400">
+          <h3 className="text-lg font-semibold text-zinc-900 dark:text-zinc-100 mb-3">Pricing Plans</h3>
+          <p className="text-sm">Starting at $29/month for teams</p>
+        </div>
+      },
+      { 
+        id: "testimonials", 
+        label: "Testimonials", 
+        content: <div className="p-6 text-zinc-600 dark:text-zinc-400">
+          <h3 className="text-lg font-semibold text-zinc-900 dark:text-zinc-100 mb-3">What Our Users Say</h3>
+          <p className="text-sm italic">"Best tool we've ever used!"</p>
+        </div>
+      },
+    ]} 
+  />
+</Preview>
+
+### Segmented Control
+iOS-style segmented control with background slide.
+
+<Preview
+  code={`<TabSwitcher tabs={tabs} variant="segmented" />`}
+>
+  <TabSwitcher 
+    variant="segmented"
+    tabs={[
+      { 
+        id: "daily", 
+        label: "Daily", 
+        content: <div className="p-6 text-center text-zinc-600 dark:text-zinc-400">
+          <h3 className="text-lg font-semibold text-zinc-900 dark:text-zinc-100 mb-2">Daily Stats</h3>
+          <p className="text-2xl font-bold text-zinc-900 dark:text-zinc-100">1,234</p>
+          <p className="text-sm">visitors today</p>
+        </div>
+      },
+      { 
+        id: "weekly", 
+        label: "Weekly", 
+        content: <div className="p-6 text-center text-zinc-600 dark:text-zinc-400">
+          <h3 className="text-lg font-semibold text-zinc-900 dark:text-zinc-100 mb-2">Weekly Stats</h3>
+          <p className="text-2xl font-bold text-zinc-900 dark:text-zinc-100">8,567</p>
+          <p className="text-sm">visitors this week</p>
+        </div>
+      },
+      { 
+        id: "monthly", 
+        label: "Monthly", 
+        content: <div className="p-6 text-center text-zinc-600 dark:text-zinc-400">
+          <h3 className="text-lg font-semibold text-zinc-900 dark:text-zinc-100 mb-2">Monthly Stats</h3>
+          <p className="text-2xl font-bold text-zinc-900 dark:text-zinc-100">34,891</p>
+          <p className="text-sm">visitors this month</p>
+        </div>
+      },
+    ]} 
+  />
+</Preview>
+
+### With Icons
+Tabs enhanced with icons for better visual hierarchy.
+
+<Preview
+  code={`import { Home, Settings, User, Bell } from "lucide-react"
+
+<TabSwitcher 
+  tabs={[
+    { id: "home", label: "Home", icon: <Home size={16} />, content: ... },
+    { id: "settings", label: "Settings", icon: <Settings size={16} />, content: ... },
+  ]} 
+  variant="pill" 
+/>`}
+>
+  <TabSwitcher 
+    variant="pill"
+    tabs={[
+      { 
+        id: "home", 
+        label: "Home", 
+        icon: <Home size={16} />,
+        content: <div className="p-6 text-center text-zinc-600 dark:text-zinc-400">
+          <h3 className="text-lg font-semibold text-zinc-900 dark:text-zinc-100 mb-2">Home</h3>
+          <p>Your main dashboard</p>
+        </div>
+      },
+      { 
+        id: "profile", 
+        label: "Profile", 
+        icon: <User size={16} />,
+        content: <div className="p-6 text-center text-zinc-600 dark:text-zinc-400">
+          <h3 className="text-lg font-semibold text-zinc-900 dark:text-zinc-100 mb-2">Profile</h3>
+          <p>Manage your account</p>
+        </div>
+      },
+      { 
+        id: "notifications", 
+        label: "Notifications", 
+        icon: <Bell size={16} />,
+        content: <div className="p-6 text-center text-zinc-600 dark:text-zinc-400">
+          <h3 className="text-lg font-semibold text-zinc-900 dark:text-zinc-100 mb-2">Notifications</h3>
+          <p>3 new notifications</p>
+        </div>
+      },
+      { 
+        id: "settings", 
+        label: "Settings", 
+        icon: <Settings size={16} />,
+        content: <div className="p-6 text-center text-zinc-600 dark:text-zinc-400">
+          <h3 className="text-lg font-semibold text-zinc-900 dark:text-zinc-100 mb-2">Settings</h3>
+          <p>Configure your preferences</p>
+        </div>
+      },
+    ]} 
+  />
+</Preview>
+
+## Installation
+
+<Tabs items={['CLI', 'Manual']}>
+  <Tab value="CLI">
+    ```bash
+    npx shadcn add https://animbits.dev/r/transitions-tab-switcher.json
+    ```
+  </Tab>
+  <Tab value="Manual">
+    Copy and paste the following code into your project.
+
+    ```tsx title="components/animations/transitions/tab-switcher.tsx"
+    "use client";
+
+    import React, { useState, useId } from "react";
+    import { motion, AnimatePresence } from "motion/react";
+    import { cn } from "@/lib/utils";
+
+    interface Tab {
+      id: string;
+      label: string;
+      content: React.ReactNode;
+      icon?: React.ReactNode;
+    }
+
+    interface TabSwitcherProps {
+      tabs: Tab[];
+      defaultTab?: string;
+      className?: string;
+      variant?: "pill" | "underline" | "segmented";
+    }
+
+    export function TabSwitcher({ tabs, defaultTab, className, variant = "pill" }: TabSwitcherProps) {
+      const [activeTab, setActiveTab] = useState(defaultTab || tabs[0].id);
+      const id = useId();
+
+      return (
+        <div className={cn("flex flex-col items-center justify-start p-8 bg-zinc-50 dark:bg-zinc-900 rounded-xl min-h-[400px] w-full", className)}>
+          <div className={cn(
+            "flex items-center",
+            variant === "pill" && "space-x-1 bg-white dark:bg-zinc-950 p-1.5 rounded-full shadow-sm border border-zinc-200 dark:border-zinc-800",
+            variant === "underline" && "border-b border-zinc-200 dark:border-zinc-800 w-full justify-center gap-8",
+            variant === "segmented" && "bg-zinc-100 dark:bg-zinc-800 p-1 rounded-lg w-full max-w-md"
+          )}>
+            {tabs.map((tab) => (
+              <button
+                key={tab.id}
+                onClick={() => setActiveTab(tab.id)}
+                className={cn(
+                  "relative px-4 py-2 text-sm font-semibold outline-none transition-colors duration-200 z-10 flex items-center gap-2",
+                  variant === "pill" && "rounded-full",
+                  variant === "underline" && "rounded-t-md pb-3",
+                  variant === "segmented" && "rounded-md flex-1",
+                  activeTab === tab.id
+                    ? "text-zinc-900 dark:text-zinc-100"
+                    : "text-zinc-500 dark:text-zinc-400 hover:text-zinc-700 dark:hover:text-zinc-200"
+                )}
+                style={{ WebkitTapHighlightColor: "transparent" }}
+              >
+                {activeTab === tab.id && variant === "pill" && (
+                  <motion.div
+                    layoutId={`${id}-bubble`}
+                    className="absolute inset-0 bg-zinc-100 dark:bg-zinc-800 rounded-full -z-10 shadow-sm border border-zinc-200/50 dark:border-zinc-700/50"
+                    transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
+                  />
+                )}
+                {activeTab === tab.id && variant === "underline" && (
+                  <motion.div
+                    layoutId={`${id}-underline`}
+                    className="absolute bottom-0 left-0 right-0 h-0.5 bg-zinc-900 dark:bg-zinc-100"
+                    transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
+                  />
+                )}
+                {activeTab === tab.id && variant === "segmented" && (
+                  <motion.div
+                    layoutId={`${id}-segment`}
+                    className="absolute inset-0 bg-white dark:bg-zinc-900 rounded-md shadow-sm -z-10"
+                    transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
+                  />
+                )}
+                {tab.icon && <span>{tab.icon}</span>}
+                <span>{tab.label}</span>
+              </button>
+            ))}
+          </div>
+
+          <div className="mt-8 w-full max-w-2xl">
+            <AnimatePresence mode="wait">
+              {tabs
+                .filter((tab) => tab.id === activeTab)
+                .map((tab) => (
+                  <motion.div
+                    key={tab.id}
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -10 }}
+                    transition={{ duration: 0.2 }}
+                    className="w-full"
+                  >
+                    {tab.content}
+                  </motion.div>
+                ))}
+            </AnimatePresence>
+          </div>
+        </div>
+      );
+    }
+    ```
+  </Tab>
+</Tabs>
+
+## Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `tabs` | `Tab[]` | - | Array of tab objects with id, label, content, and optional icon. |
+| `defaultTab` | `string` | `tabs[0].id` | ID of the initially active tab. |
+| `variant` | `"pill" \| "underline" \| "segmented"` | `"pill"` | Visual style of the tab indicator. |
+| `className` | `string` | - | Additional CSS classes. |
