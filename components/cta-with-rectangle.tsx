@@ -2,6 +2,7 @@
 
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
+import { GithubButton } from "@/components/ui/github-button"
 import { cn } from "@/lib/utils"
 import { ArrowRight } from "lucide-react"
 
@@ -16,6 +17,7 @@ interface CTAProps {
     href: string
     variant?: "default" | "destructive" | "outline" | "secondary" | "ghost" | "link"
   }
+  stars?: number
   withGlow?: boolean
   className?: string
 }
@@ -25,7 +27,7 @@ export function CTASection({
   title,
   description,
   action,
-
+  stars = 0,
   className,
 }: CTAProps) {
   return (
@@ -69,17 +71,18 @@ export function CTASection({
               </a>
             </Button>
 
-            <Button
+            <GithubButton
+              repoUrl="https://github.com/Garvit1000/AnimBits"
+              label="Star on GitHub"
+              targetStars={stars}
+              showGithubIcon={true}
+              showStarIcon={true}
               variant="outline"
               size="lg"
-              className="h-12 px-8 text-base font-semibold gap-2 min-w-[200px] bg-white dark:bg-neutral-900"
-              asChild
-            >
-              <a href="https://github.com/garvit1000/animbits" target="_blank" rel="noopener noreferrer">
-                Star on GitHub
-                <span className="ml-1 text-neutral-500">★ 12</span>
-              </a>
-            </Button>
+              autoAnimate={true}
+              filled={true}
+              className="h-12 px-8 text-base font-semibold min-w-[200px]"
+            />
           </div>
         </div>
       </div>

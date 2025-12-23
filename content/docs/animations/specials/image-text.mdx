@@ -2,8 +2,11 @@
 title: Image Text
 description: Text with a dynamic, animated image mask background.
 component: true
+badge: New
 ---
 
+import { Tab, Tabs } from 'fumadocs-ui/components/tabs';
+import { Steps, Step } from 'fumadocs-ui/components/steps';
 import { ImageText } from "@/registry/new-york/animations/specials/image-text"
 import { Preview } from "@/components/preview"
 
@@ -34,6 +37,172 @@ export function ImageTextDemo() {
       />
     </div>
 </Preview>
+
+## Installation
+
+<Tabs items={['Terminal', 'Manual']}>
+  <Tab value="Terminal">
+    <Tabs items={['npm', 'pnpm', 'yarn', 'bun']}>
+      <Tab value="npm">
+        ```bash
+        npx shadcn@latest add @animbits/specials-image-text
+        ```
+      </Tab>
+      <Tab value="pnpm">
+        ```bash
+        pnpm dlx shadcn@latest add @animbits/specials-image-text
+        ```
+      </Tab>
+      <Tab value="yarn">
+        ```bash
+        yarn dlx shadcn@latest add @animbits/specials-image-text
+        ```
+      </Tab>
+      <Tab value="bun">
+        ```bash
+        bunx shadcn@latest add @animbits/specials-image-text
+        ```
+      </Tab>
+    </Tabs>
+  </Tab>
+  <Tab value="Manual">
+    <Steps>
+      <Step>
+        **Install dependencies**
+        ```bash
+        npm install motion clsx tailwind-merge
+        ```
+      </Step>
+      <Step>
+        **Add utility**
+        ```ts title="lib/utils.ts"
+import { type ClassValue, clsx } from "clsx"
+import { twMerge } from "tailwind-merge"
+
+export function cn(...inputs: ClassValue[]) {
+  return twMerge(clsx(inputs))
+}
+        ```
+      </Step>
+      <Step>
+        **Copy the component code**
+        ```tsx title="components/animations/specials/image-text.tsx"
+"use client";
+
+import React, { useState, useEffect } from "react";
+import { motion, HTMLMotionProps, AnimatePresence } from "motion/react";
+import { cn } from "@/lib/utils";
+
+interface ImageTextProps extends HTMLMotionProps<"h1"> {
+    text: string;
+    imageUrl: string | string[] | { src: string } | { src: string }[];
+    className?: string;
+    direction?: "horizontal" | "vertical" | "diagonal" | "none";
+    interval?: number;
+}
+
+export function ImageText({
+    text,
+    imageUrl,
+    className,
+    direction = "horizontal",
+    interval = 3000,
+    ...props
+}: ImageTextProps) {
+    const images = Array.isArray(imageUrl) ? imageUrl : [imageUrl];
+    const [currentImageIndex, setCurrentImageIndex] = useState(0);
+
+    useEffect(() => {
+        if (!Array.isArray(imageUrl) || imageUrl.length <= 1) return;
+
+        const timer = setInterval(() => {
+            setCurrentImageIndex((prev) => (prev + 1) % images.length);
+        }, interval);
+
+        return () => clearInterval(timer);
+    }, [imageUrl, interval, images.length]);
+
+    const getCurrentImageUrl = () => {
+        const img = images[currentImageIndex];
+        return typeof img === "string" ? img : img.src;
+    };
+
+    const getAnimation = () => {
+        switch (direction) {
+            case "horizontal":
+                return {
+                    backgroundPosition: ["0% 50%", "100% 50%", "0% 50%"],
+                };
+            case "vertical":
+                return {
+                    backgroundPosition: ["50% 0%", "50% 100%", "50% 0%"],
+                };
+            case "diagonal":
+                return {
+                    backgroundPosition: ["0% 0%", "100% 100%", "0% 0%"],
+                };
+            case "none":
+                return {
+                    backgroundPosition: "center",
+                }
+            default:
+                return {
+                    backgroundPosition: ["0% 50%", "100% 50%", "0% 50%"],
+                };
+        }
+    };
+
+    return (
+    <span className={cn("inline-block relative", className)}>
+         {/* Invisible layout placeholder ensuring size doesn't collapse */}
+        <h1 className={cn("text-9xl font-serif italic font-bold tracking-tighter inline-block invisible", className)}>
+            {text}
+        </h1>
+
+        <AnimatePresence>
+            <motion.h1
+                key={currentImageIndex} // Re-render for image change
+                className={cn(
+                    "text-9xl font-serif italic font-bold tracking-tighter inline-block absolute inset-0",
+                    className
+                )}
+                style={{
+                    backgroundImage: `url(${getCurrentImageUrl()})`,
+                    backgroundSize: direction === "none" ? "cover" : "150% auto",
+                    backgroundClip: "text",
+                    WebkitBackgroundClip: "text",
+                    WebkitTextFillColor: "transparent",
+                    color: "transparent",
+                }}
+                initial={{ opacity: 0 }}
+                animate={{
+                     ...getAnimation(),
+                     opacity: 1
+                }}
+                exit={{ opacity: 0 }}
+                transition={{
+                    // Smooth opacity fade for texture change
+                    opacity: { duration: 1 },
+                    // Continuous background movement
+                    backgroundPosition: {
+                        duration: 15,
+                        ease: "linear",
+                        repeat: Infinity,
+                    }
+                }}
+                {...props}
+            >
+                {text}
+            </motion.h1>
+        </AnimatePresence>
+    </span>
+);
+}
+        ```
+      </Step>
+    </Steps>
+  </Tab>
+</Tabs>
 
 ## Examples
 
@@ -105,128 +274,6 @@ export function ImageTextChanging() {
       />
     </div>
 </Preview>
-
-## Installation
-
-```bash
-npx shadcn@latest add "https://animbits.dev/r/image-text.json"
-```
-
-## Manual Installation
-
-```tsx title="registry/new-york/animations/specials/image-text.tsx"
-    "use client";
-
-    import React, { useState, useEffect } from "react";
-    import { motion, HTMLMotionProps, AnimatePresence } from "motion/react";
-    import { cn } from "@/lib/utils";
-
-    interface ImageTextProps extends HTMLMotionProps<"h1"> {
-        text: string;
-        imageUrl: string | string[] | { src: string } | { src: string }[];
-        className?: string;
-        direction?: "horizontal" | "vertical" | "diagonal" | "none";
-        interval?: number;
-    }
-
-    export function ImageText({
-        text,
-        imageUrl,
-        className,
-        direction = "horizontal",
-        interval = 3000,
-        ...props
-    }: ImageTextProps) {
-        const images = Array.isArray(imageUrl) ? imageUrl : [imageUrl];
-        const [currentImageIndex, setCurrentImageIndex] = useState(0);
-
-        useEffect(() => {
-            if (!Array.isArray(imageUrl) || imageUrl.length <= 1) return;
-
-            const timer = setInterval(() => {
-                setCurrentImageIndex((prev) => (prev + 1) % images.length);
-            }, interval);
-
-            return () => clearInterval(timer);
-        }, [imageUrl, interval, images.length]);
-
-        const getCurrentImageUrl = () => {
-            const img = images[currentImageIndex];
-            return typeof img === "string" ? img : img.src;
-        };
-
-        const getAnimation = () => {
-            switch (direction) {
-                case "horizontal":
-                    return {
-                        backgroundPosition: ["0% 50%", "100% 50%", "0% 50%"],
-                    };
-                case "vertical":
-                    return {
-                        backgroundPosition: ["50% 0%", "50% 100%", "50% 0%"],
-                    };
-                case "diagonal":
-                    return {
-                        backgroundPosition: ["0% 0%", "100% 100%", "0% 0%"],
-                    };
-                case "none":
-                    return {
-                        backgroundPosition: "center",
-                    }
-                default:
-                    return {
-                        backgroundPosition: ["0% 50%", "100% 50%", "0% 50%"],
-                    };
-            }
-        };
-
-        return (
-        <span className={cn("inline-block relative", className)}>
-             {/* Invisible layout placeholder ensuring size doesn't collapse */}
-            <h1 className={cn("text-9xl font-serif italic font-bold tracking-tighter inline-block invisible", className)}>
-                {text}
-            </h1>
-
-            <AnimatePresence>
-                <motion.h1
-                    key={currentImageIndex} // Re-render for image change
-                    className={cn(
-                        "text-9xl font-serif italic font-bold tracking-tighter inline-block absolute inset-0",
-                        className
-                    )}
-                    style={{
-                        backgroundImage: `url(${getCurrentImageUrl()})`,
-                        backgroundSize: direction === "none" ? "cover" : "150% auto",
-                        backgroundClip: "text",
-                        WebkitBackgroundClip: "text",
-                        WebkitTextFillColor: "transparent",
-                        color: "transparent",
-                    }}
-                    initial={{ opacity: 0 }}
-                    animate={{
-                         ...getAnimation(),
-                         opacity: 1
-                    }}
-                    exit={{ opacity: 0 }}
-                    transition={{
-                        // Smooth opacity fade for texture change
-                        opacity: { duration: 1 },
-                        // Continuous background movement
-                        backgroundPosition: {
-                            duration: 15,
-                            ease: "linear",
-                            repeat: Infinity,
-                        }
-                    }}
-                    {...props}
-                >
-                    {text}
-                </motion.h1>
-            </AnimatePresence>
-        </span>
-    );
-}
-```
 
 ## Props
 

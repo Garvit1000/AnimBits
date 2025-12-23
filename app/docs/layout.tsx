@@ -12,6 +12,9 @@ export default function Layout({ children }: { children: ReactNode }) {
       {...base}
       nav={{ ...nav, mode: 'top' }}
       tabMode="navbar"
+      sidebar={{
+        collapsible: true,
+      }}
     >
       {children}
     </DocsLayout>
