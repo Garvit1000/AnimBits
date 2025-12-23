@@ -58,155 +58,32 @@ const items = [
   />
 </Preview>
 
-## Animation Variants
-
-### Slide Up & Scale
-Card slides upward while scaling, creating a lifting effect.
-
-<Preview
-  code={`<ExpandingCard items={items} variant="slide-up" columns={3} />`}
->
-  <ExpandingCard 
-    variant="slide-up"
-    columns={3}
-    items={[
-      {
-        id: "4",
-        title: "Minimalist Interior",
-        description: "Clean spaces, maximum impact",
-        longDescription: "Less is more in these carefully curated interior spaces.",
-        image: "https://picsum.photos/seed/interior1/800/600",
-      },
-      {
-        id: "5",
-        title: "Street Photography",
-        description: "Candid urban moments",
-        longDescription: "Capturing the authentic pulse of city life through unposed moments.",
-        image: "https://picsum.photos/seed/street1/800/600",
-      },
-      {
-        id: "6",
-        title: "Abstract Art",
-        description: "Color and form exploration",
-        longDescription: "Breaking free from representational constraints.",
-        image: "https://picsum.photos/seed/abstract1/800/600",
-      }
-    ]}
-  />
-</Preview>
-
-### Rotate & Scale
-Adds a subtle rotation during expansion for a dynamic feel.
-
-<Preview
-  code={`<ExpandingCard items={items} variant="rotate-scale" columns={3} />`}
->
-  <ExpandingCard 
-    variant="rotate-scale"
-    columns={3}
-    items={[
-      {
-        id: "7",
-        title: "Wildlife Safari",
-        description: "African savanna encounters",
-        longDescription: "Intimate portraits of wildlife in their natural habitat.",
-        image: "https://picsum.photos/seed/wildlife1/800/600",
-      },
-      {
-        id: "8",
-        title: "Food Styling",
-        description: "Culinary art photography",
-        longDescription: "Celebrating the visual artistry of food.",
-        image: "https://picsum.photos/seed/food1/800/600",
-      },
-      {
-        id: "9",
-        title: "Vintage Cars",
-        description: "Classic automobiles",
-        longDescription: "A tribute to automotive design through the decades.",
-        image: "https://picsum.photos/seed/cars1/800/600",
-      }
-    ]}
-  />
-</Preview>
-
-### Elastic Bounce
-Exaggerated spring physics with high bounce for an energetic animation.
-
-<Preview
-  code={`<ExpandingCard items={items} variant="elastic" columns={3} />`}
->
-  <ExpandingCard 
-    variant="elastic"
-    columns={3}
-    items={[
-      {
-        id: "10",
-        title: "E-Commerce Platform",
-        description: "Full-stack web application",
-        longDescription: "Built a complete e-commerce solution with React and Node.js.",
-        image: "https://picsum.photos/seed/ecommerce1/800/600",
-      },
-      {
-        id: "11",
-        title: "Mobile Fitness App",
-        description: "iOS and Android application",
-        longDescription: "Cross-platform fitness tracking with wearable integration.",
-        image: "https://picsum.photos/seed/fitness1/800/600",
-      },
-      {
-        id: "12",
-        title: "AI Content Generator",
-        description: "Machine learning tool",
-        longDescription: "AI-powered content generation using GPT-4.",
-        image: "https://picsum.photos/seed/ai1/800/600",
-      }
-    ]}
-  />
-</Preview>
-
-### Fade & Scale
-Smooth fade-in with subtle scale for a gentle transition.
-
-<Preview
-  code={`<ExpandingCard items={items} variant="fade-scale" columns={3} />`}
->
-  <ExpandingCard 
-    variant="fade-scale"
-    columns={3}
-    items={[
-      {
-        id: "13",
-        title: "Brand Identity",
-        description: "Complete visual system",
-        longDescription: "Comprehensive brand identity for a tech startup.",
-        image: "https://picsum.photos/seed/brand1/800/600",
-      },
-      {
-        id: "14",
-        title: "Dashboard Design",
-        description: "Analytics platform UI",
-        longDescription: "Intuitive analytics dashboard with real-time data.",
-        image: "https://picsum.photos/seed/dashboard1/800/600",
-      },
-      {
-        id: "15",
-        title: "Mobile Banking",
-        description: "Financial app redesign",
-        longDescription: "Redesigned mobile banking app focusing on accessibility.",
-        image: "https://picsum.photos/seed/banking1/800/600",
-      }
-    ]}
-  />
-</Preview>
-
 ## Installation
 
-<Tabs items={['CLI', 'Manual']}>
-  <Tab value="CLI">
-    ```bash
-    npx shadcn add https://animbits.dev/r/transitions-expanding-card.json
-    ```
+<Tabs items={['Terminal', 'Manual']}>
+  <Tab value="Terminal">
+    <Tabs items={['npm', 'pnpm', 'yarn', 'bun']}>
+      <Tab value="npm">
+        ```bash
+        npx shadcn@latest add @animbits/expanding-card
+        ```
+      </Tab>
+      <Tab value="pnpm">
+        ```bash
+        pnpm dlx shadcn@latest add @animbits/expanding-card
+        ```
+      </Tab>
+      <Tab value="yarn">
+        ```bash
+        yarn dlx shadcn@latest add @animbits/expanding-card
+        ```
+      </Tab>
+      <Tab value="bun">
+        ```bash
+        bunx shadcn@latest add @animbits/expanding-card
+        ```
+      </Tab>
+    </Tabs>
   </Tab>
   <Tab value="Manual">
     Copy and paste the following code into your project.
@@ -412,6 +289,148 @@ Smooth fade-in with subtle scale for a gentle transition.
     ```
   </Tab>
 </Tabs>
+
+## Animation Variants
+
+### Slide Up & Scale
+Card slides upward while scaling, creating a lifting effect.
+
+<Preview
+  code={`<ExpandingCard items={items} variant="slide-up" columns={3} />`}
+>
+  <ExpandingCard 
+    variant="slide-up"
+    columns={3}
+    items={[
+      {
+        id: "4",
+        title: "Minimalist Interior",
+        description: "Clean spaces, maximum impact",
+        longDescription: "Less is more in these carefully curated interior spaces.",
+        image: "https://picsum.photos/seed/interior1/800/600",
+      },
+      {
+        id: "5",
+        title: "Street Photography",
+        description: "Candid urban moments",
+        longDescription: "Capturing the authentic pulse of city life through unposed moments.",
+        image: "https://picsum.photos/seed/street1/800/600",
+      },
+      {
+        id: "6",
+        title: "Abstract Art",
+        description: "Color and form exploration",
+        longDescription: "Breaking free from representational constraints.",
+        image: "https://picsum.photos/seed/abstract1/800/600",
+      }
+    ]}
+  />
+</Preview>
+
+### Rotate & Scale
+Adds a subtle rotation during expansion for a dynamic feel.
+
+<Preview
+  code={`<ExpandingCard items={items} variant="rotate-scale" columns={3} />`}
+>
+  <ExpandingCard 
+    variant="rotate-scale"
+    columns={3}
+    items={[
+      {
+        id: "7",
+        title: "Wildlife Safari",
+        description: "African savanna encounters",
+        longDescription: "Intimate portraits of wildlife in their natural habitat.",
+        image: "https://picsum.photos/seed/wildlife1/800/600",
+      },
+      {
+        id: "8",
+        title: "Food Styling",
+        description: "Culinary art photography",
+        longDescription: "Celebrating the visual artistry of food.",
+        image: "https://picsum.photos/seed/food1/800/600",
+      },
+      {
+        id: "9",
+        title: "Vintage Cars",
+        description: "Classic automobiles",
+        longDescription: "A tribute to automotive design through the decades.",
+        image: "https://picsum.photos/seed/cars1/800/600",
+      }
+    ]}
+  />
+</Preview>
+
+### Elastic Bounce
+Exaggerated spring physics with high bounce for an energetic animation.
+
+<Preview
+  code={`<ExpandingCard items={items} variant="elastic" columns={3} />`}
+>
+  <ExpandingCard 
+    variant="elastic"
+    columns={3}
+    items={[
+      {
+        id: "10",
+        title: "E-Commerce Platform",
+        description: "Full-stack web application",
+        longDescription: "Built a complete e-commerce solution with React and Node.js.",
+        image: "https://picsum.photos/seed/ecommerce1/800/600",
+      },
+      {
+        id: "11",
+        title: "Mobile Fitness App",
+        description: "iOS and Android application",
+        longDescription: "Cross-platform fitness tracking with wearable integration.",
+        image: "https://picsum.photos/seed/fitness1/800/600",
+      },
+      {
+        id: "12",
+        title: "AI Content Generator",
+        description: "Machine learning tool",
+        longDescription: "AI-powered content generation using GPT-4.",
+        image: "https://picsum.photos/seed/ai1/800/600",
+      }
+    ]}
+  />
+</Preview>
+
+### Fade & Scale
+Smooth fade-in with subtle scale for a gentle transition.
+
+<Preview
+  code={`<ExpandingCard items={items} variant="fade-scale" columns={3} />`}
+>
+  <ExpandingCard 
+    variant="fade-scale"
+    columns={3}
+    items={[
+      {
+        id: "13",
+        title: "Brand Identity",
+        description: "Complete visual system",
+        longDescription: "Comprehensive brand identity for a tech startup.",
+        image: "https://picsum.photos/seed/brand1/800/600",
+      },
+      {
+        id: "14",
+        title: "Dashboard Design",
+        description: "Analytics platform UI",
+        longDescription: "Intuitive analytics dashboard with real-time data.",
+        image: "https://picsum.photos/seed/dashboard1/800/600",
+      },
+      {
+        id: "15",
+        title: "Mobile Banking",
+        description: "Financial app redesign",
+        longDescription: "Redesigned mobile banking app focusing on accessibility.",
+        image: "https://picsum.photos/seed/banking1/800/600",
+      }
+    ]}
+  />
+</Preview>
 
 ## Props
 

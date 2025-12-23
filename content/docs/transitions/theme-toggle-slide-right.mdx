@@ -27,11 +27,30 @@ Try it live! Adjust the speed and blur sliders, then click the button to see the
 
 ## Installation
 
-<Tabs items={['CLI', 'Manual']}>
-  <Tab value="CLI">
-    ```bash
-    npx shadcn add https://animbits.dev/r/transitions-theme-toggle-slide-right.json
-    ```
+<Tabs items={['Terminal', 'Manual']}>
+  <Tab value="Terminal">
+    <Tabs items={['npm', 'pnpm', 'yarn', 'bun']}>
+      <Tab value="npm">
+        ```bash
+        npx shadcn@latest add @animbits/theme-toggle-slide-right
+        ```
+      </Tab>
+      <Tab value="pnpm">
+        ```bash
+        pnpm dlx shadcn@latest add @animbits/theme-toggle-slide-right
+        ```
+      </Tab>
+      <Tab value="yarn">
+        ```bash
+        yarn dlx shadcn@latest add @animbits/theme-toggle-slide-right
+        ```
+      </Tab>
+      <Tab value="bun">
+        ```bash
+        bunx shadcn@latest add @animbits/theme-toggle-slide-right
+        ```
+      </Tab>
+    </Tabs>
   </Tab>
   <Tab value="Manual">
     ```tsx title="components/animations/transitions/theme-toggle-slide-right.tsx"

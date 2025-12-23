@@ -42,72 +42,32 @@ const items = [
   />
 </Preview>
 
-## Animation Variants
-
-### Stagger Animation
-Items animate in sequence with a cascading effect.
-
-<Preview
-  code={`<ListGrid items={items} variant="stagger" />`}
->
-  <ListGrid 
-    variant="stagger"
-    items={[
-      { id: "p1", title: "Website Redesign", subtitle: "12 tasks remaining", status: "Active", avatar: "https://i.pravatar.cc/150?img=14" },
-      { id: "p2", title: "Mobile App v2.0", subtitle: "8 tasks remaining", status: "Active", avatar: "https://i.pravatar.cc/150?img=16" },
-      { id: "p3", title: "API Integration", subtitle: "Awaiting approval", status: "Pending", avatar: "https://i.pravatar.cc/150?img=18" },
-      { id: "p4", title: "Database Migration", subtitle: "Completed last month", status: "Archived", avatar: "https://i.pravatar.cc/150?img=20" },
-      { id: "p5", title: "Security Audit", subtitle: "In progress", status: "Active", avatar: "https://i.pravatar.cc/150?img=22" },
-      { id: "p6", title: "Performance Optimization", subtitle: "Planning phase", status: "Pending", avatar: "https://i.pravatar.cc/150?img=24" },
-    ]} 
-  />
-</Preview>
-
-### Scale & Fade
-Items scale down and fade out, then scale up and fade in at new positions.
-
-<Preview
-  code={`<ListGrid items={items} variant="scale-fade" />`}
->
-  <ListGrid 
-    variant="scale-fade"
-    items={[
-      { id: "f1", title: "Documents", subtitle: "24 files • 156 MB", status: "Active", avatar: "https://i.pravatar.cc/150?img=26" },
-      { id: "f2", title: "Images", subtitle: "89 files • 2.3 GB", status: "Active", avatar: "https://i.pravatar.cc/150?img=28" },
-      { id: "f3", title: "Videos", subtitle: "12 files • 8.7 GB", status: "Active", avatar: "https://i.pravatar.cc/150?img=30" },
-      { id: "f4", title: "Archive", subtitle: "156 files • 892 MB", status: "Archived", avatar: "https://i.pravatar.cc/150?img=32" },
-      { id: "f5", title: "Downloads", subtitle: "43 files • 1.2 GB", status: "Active", avatar: "https://i.pravatar.cc/150?img=34" },
-      { id: "f6", title: "Trash", subtitle: "7 files • 45 MB", status: "Pending", avatar: "https://i.pravatar.cc/150?img=36" },
-    ]} 
-  />
-</Preview>
-
-### Crossfade
-Smooth opacity transition without scale effects.
-
-<Preview
-  code={`<ListGrid items={items} variant="crossfade" />`}
->
-  <ListGrid 
-    variant="crossfade"
-    items={[
-      { id: "t1", title: "Alex Rivera", subtitle: "Senior Engineer", status: "Active", avatar: "https://i.pravatar.cc/150?img=38" },
-      { id: "t2", title: "Jordan Lee", subtitle: "Design Lead", status: "Active", avatar: "https://i.pravatar.cc/150?img=40" },
-      { id: "t3", title: "Sam Taylor", subtitle: "Data Scientist", status: "Active", avatar: "https://i.pravatar.cc/150?img=42" },
-      { id: "t4", title: "Morgan Blake", subtitle: "QA Engineer", status: "Pending", avatar: "https://i.pravatar.cc/150?img=44" },
-      { id: "t5", title: "Casey Jordan", subtitle: "Tech Writer", status: "Active", avatar: "https://i.pravatar.cc/150?img=46" },
-      { id: "t6", title: "Riley Parker", subtitle: "Support Lead", status: "Archived", avatar: "https://i.pravatar.cc/150?img=48" },
-    ]} 
-  />
-</Preview>
-
 ## Installation
 
-<Tabs items={['CLI', 'Manual']}>
-  <Tab value="CLI">
-    ```bash
-    npx shadcn add https://animbits.dev/r/transitions-view-toggle.json
-    ```
+<Tabs items={['Terminal', 'Manual']}>
+  <Tab value="Terminal">
+    <Tabs items={['npm', 'pnpm', 'yarn', 'bun']}>
+      <Tab value="npm">
+        ```bash
+        npx shadcn@latest add @animbits/view-toggle
+        ```
+      </Tab>
+      <Tab value="pnpm">
+        ```bash
+        pnpm dlx shadcn@latest add @animbits/view-toggle
+        ```
+      </Tab>
+      <Tab value="yarn">
+        ```bash
+        yarn dlx shadcn@latest add @animbits/view-toggle
+        ```
+      </Tab>
+      <Tab value="bun">
+        ```bash
+        bunx shadcn@latest add @animbits/view-toggle
+        ```
+      </Tab>
+    </Tabs>
   </Tab>
   <Tab value="Manual">
     Copy and paste the following code into your project.
@@ -183,28 +143,50 @@ Smooth opacity transition without scale effects.
               <h3 className="text-sm font-semibold text-zinc-500 dark:text-zinc-400 uppercase tracking-wider">
                 Items
               </h3>
-              <div className="flex gap-2 bg-white dark:bg-zinc-800 p-1 rounded-lg border border-zinc-200 dark:border-zinc-700">
-                {views.map((viewMode) => (
-                  <button
-                    key={viewMode}
-                    onClick={() => setView(viewMode)}
-                    className={cn(
-                      "p-2 rounded-md transition-colors",
-                      view === viewMode
-                        ? "bg-zinc-100 dark:bg-zinc-700 text-zinc-900 dark:text-zinc-100"
-                        : "text-zinc-500 dark:text-zinc-400 hover:text-zinc-700 dark:hover:text-zinc-200"
-                    )}
-                  >
-                    {viewMode === "grid" ? <Grid size={16} /> : <List size={16} />}
-                  </button>
-                ))}
+              <div className="flex bg-white dark:bg-zinc-800 rounded-lg p-1 border border-zinc-200 dark:border-zinc-700">
+                <button
+                  onClick={() => setView("grid")}
+                  className={cn(
+                    "p-2 rounded-md transition-colors relative",
+                    view === "grid"
+                      ? "text-zinc-900 dark:text-zinc-100"
+                      : "text-zinc-400 hover:text-zinc-600"
+                  )}
+                >
+                  {view === "grid" && (
+                    <motion.div
+                      layoutId={`${id}-bg`}
+                      className="absolute inset-0 bg-zinc-100 dark:bg-zinc-700 rounded-md -z-10 shadow-sm"
+                      transition={{ duration: 0.2 }}
+                    />
+                  )}
+                  <Grid size={16} />
+                </button>
+                <button
+                  onClick={() => setView("list")}
+                  className={cn(
+                    "p-2 rounded-md transition-colors relative",
+                    view === "list"
+                      ? "text-zinc-900 dark:text-zinc-100"
+                      : "text-zinc-400 hover:text-zinc-600"
+                  )}
+                >
+                  {view === "list" && (
+                    <motion.div
+                      layoutId={`${id}-bg`}
+                      className="absolute inset-0 bg-zinc-100 dark:bg-zinc-700 rounded-md -z-10 shadow-sm"
+                      transition={{ duration: 0.2 }}
+                    />
+                  )}
+                  <List size={16} />
+                </button>
               </div>
             </div>
 
             <motion.div
               layout
               className={cn(
-                "gap-3",
+                "grid gap-4",
                 view === "grid" ? "grid-cols-2" : "grid-cols-1"
               )}
             >
@@ -224,8 +206,8 @@ Smooth opacity transition without scale effects.
                   >
                     <div className="flex items-center gap-3">
                       {item.avatar ? (
-                        <img 
-                          src={item.avatar} 
+                        <img
+                          src={item.avatar}
                           alt={item.title}
                           className="w-10 h-10 rounded-full object-cover"
                         />
@@ -245,14 +227,37 @@ Smooth opacity transition without scale effects.
                     </div>
 
                     {view === "list" && (
-                      <span className={cn(
-                        "text-xs px-2 py-1 rounded-full",
-                        item.status === "Active" && "bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400",
-                        item.status === "Pending" && "bg-yellow-100 dark:bg-yellow-900/30 text-yellow-700 dark:text-yellow-400",
-                        item.status === "Archived" && "bg-zinc-100 dark:bg-zinc-800 text-zinc-500 dark:text-zinc-400"
-                      )}>
+                      <span
+                        className={cn(
+                          "px-2 py-1 rounded-full text-xs font-medium",
+                          item.status === "Active" &&
+                          "bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400",
+                          item.status === "Pending" &&
+                          "bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400",
+                          item.status === "Archived" &&
+                          "bg-zinc-100 text-zinc-700 dark:bg-zinc-800 dark:text-zinc-400"
+                        )}
+                      >
                         {item.status}
                       </span>
+                    )}
+
+                    {view === "grid" && (
+                      <div className="mt-4 flex justify-between items-center">
+                        <span
+                          className={cn(
+                            "px-2 py-1 rounded-full text-xs font-medium",
+                            item.status === "Active" &&
+                            "bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400",
+                            item.status === "Pending" &&
+                            "bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400",
+                            item.status === "Archived" &&
+                            "bg-zinc-100 text-zinc-700 dark:bg-zinc-800 dark:text-zinc-400"
+                          )}
+                        >
+                          {item.status}
+                        </span>
+                      </div>
                     )}
                   </motion.div>
                 ))}
@@ -265,6 +270,65 @@ Smooth opacity transition without scale effects.
     ```
   </Tab>
 </Tabs>
+
+## Animation Variants
+
+### Stagger Animation
+Items animate in sequence with a cascading effect.
+
+<Preview
+  code={`<ListGrid items={items} variant="stagger" />`}
+>
+  <ListGrid 
+    variant="stagger"
+    items={[
+      { id: "p1", title: "Website Redesign", subtitle: "12 tasks remaining", status: "Active", avatar: "https://i.pravatar.cc/150?img=14" },
+      { id: "p2", title: "Mobile App v2.0", subtitle: "8 tasks remaining", status: "Active", avatar: "https://i.pravatar.cc/150?img=16" },
+      { id: "p3", title: "API Integration", subtitle: "Awaiting approval", status: "Pending", avatar: "https://i.pravatar.cc/150?img=18" },
+      { id: "p4", title: "Database Migration", subtitle: "Completed last month", status: "Archived", avatar: "https://i.pravatar.cc/150?img=20" },
+      { id: "p5", title: "Security Audit", subtitle: "In progress", status: "Active", avatar: "https://i.pravatar.cc/150?img=22" },
+      { id: "p6", title: "Performance Optimization", subtitle: "Planning phase", status: "Pending", avatar: "https://i.pravatar.cc/150?img=24" },
+    ]} 
+  />
+</Preview>
+
+### Scale & Fade
+Items scale down and fade out, then scale up and fade in at new positions.
+
+<Preview
+  code={`<ListGrid items={items} variant="scale-fade" />`}
+>
+  <ListGrid 
+    variant="scale-fade"
+    items={[
+      { id: "f1", title: "Documents", subtitle: "24 files • 156 MB", status: "Active", avatar: "https://i.pravatar.cc/150?img=26" },
+      { id: "f2", title: "Images", subtitle: "89 files • 2.3 GB", status: "Active", avatar: "https://i.pravatar.cc/150?img=28" },
+      { id: "f3", title: "Videos", subtitle: "12 files • 8.7 GB", status: "Active", avatar: "https://i.pravatar.cc/150?img=30" },
+      { id: "f4", title: "Archive", subtitle: "156 files • 892 MB", status: "Archived", avatar: "https://i.pravatar.cc/150?img=32" },
+      { id: "f5", title: "Downloads", subtitle: "43 files • 1.2 GB", status: "Active", avatar: "https://i.pravatar.cc/150?img=34" },
+      { id: "f6", title: "Trash", subtitle: "7 files • 45 MB", status: "Pending", avatar: "https://i.pravatar.cc/150?img=36" },
+    ]} 
+  />
+</Preview>
+
+### Crossfade
+Smooth opacity transition without scale effects.
+
+<Preview
+  code={`<ListGrid items={items} variant="crossfade" />`}
+>
+  <ListGrid 
+    variant="crossfade"
+    items={[
+      { id: "t1", title: "Alex Rivera", subtitle: "Senior Engineer", status: "Active", avatar: "https://i.pravatar.cc/150?img=38" },
+      { id: "t2", title: "Jordan Lee", subtitle: "Design Lead", status: "Active", avatar: "https://i.pravatar.cc/150?img=40" },
+      { id: "t3", title: "Sam Taylor", subtitle: "Data Scientist", status: "Active", avatar: "https://i.pravatar.cc/150?img=42" },
+      { id: "t4", title: "Morgan Blake", subtitle: "QA Engineer", status: "Pending", avatar: "https://i.pravatar.cc/150?img=44" },
+      { id: "t5", title: "Casey Jordan", subtitle: "Tech Writer", status: "Active", avatar: "https://i.pravatar.cc/150?img=46" },
+      { id: "t6", title: "Riley Parker", subtitle: "Support Lead", status: "Archived", avatar: "https://i.pravatar.cc/150?img=48" },
+    ]} 
+  />
+</Preview>
 
 ## Props
 

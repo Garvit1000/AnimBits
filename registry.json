@@ -1673,6 +1673,116 @@
       ]
     },
     {
+      "name": "transitions-shared-modal",
+      "type": "registry:component",
+      "title": "Shared Modal",
+      "description": "A trigger that morphs into a modal with multiple animation styles.",
+      "tags": [
+        "transition",
+        "modal",
+        "layout",
+        "shared-element"
+      ],
+      "dependencies": [
+        "motion",
+        "lucide-react"
+      ],
+      "files": [
+        {
+          "path": "registry/new-york/animations/transitions/shared-modal.tsx",
+          "type": "registry:component"
+        }
+      ]
+    },
+    {
+      "name": "transitions-expanding-card",
+      "type": "registry:component",
+      "title": "Expanding Card",
+      "description": "Smoothly expand a card into a detail view with multiple animation styles.",
+      "tags": [
+        "transition",
+        "card",
+        "layout",
+        "expand"
+      ],
+      "dependencies": [
+        "motion",
+        "lucide-react"
+      ],
+      "files": [
+        {
+          "path": "registry/new-york/animations/transitions/expanding-card.tsx",
+          "type": "registry:component"
+        }
+      ]
+    },
+    {
+      "name": "transitions-tab-switcher",
+      "type": "registry:component",
+      "title": "Tab Switcher",
+      "description": "Animated tab navigation with multiple visual styles.",
+      "tags": [
+        "transition",
+        "tabs",
+        "navigation",
+        "layout"
+      ],
+      "dependencies": [
+        "motion"
+      ],
+      "files": [
+        {
+          "path": "registry/new-york/animations/transitions/tab-switcher.tsx",
+          "type": "registry:component"
+        }
+      ]
+    },
+    {
+      "name": "transitions-view-toggle",
+      "type": "registry:component",
+      "title": "View Toggle",
+      "description": "Smoothly rearrange items with multiple animation styles when switching views.",
+      "tags": [
+        "transition",
+        "view",
+        "layout",
+        "grid",
+        "list"
+      ],
+      "dependencies": [
+        "motion",
+        "lucide-react"
+      ],
+      "files": [
+        {
+          "path": "registry/new-york/animations/transitions/list-grid.tsx",
+          "type": "registry:component"
+        }
+      ]
+    },
+    {
+      "name": "transitions-zoom-hollow",
+      "type": "registry:component",
+      "title": "Zoom Hollow Text",
+      "description": "A beautiful text transition that zooms in with a hollow outline effect.",
+      "tags": [
+        "transition",
+        "text",
+        "zoom",
+        "hollow",
+        "animation"
+      ],
+      "dependencies": [
+        "motion"
+      ],
+      "files": [
+        {
+          "path": "registry/new-york/animations/transitions/zoom-hollow.tsx",
+          "type": "registry:component"
+        }
+      ]
+    },
+    {
       "name": "transitions-theme-toggle-circular",
       "type": "registry:component",
       "title": "Theme Toggle Circular",
