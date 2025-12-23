@@ -16,7 +16,31 @@ The `usePress` hook adds a press-down effect when clicking or tapping elements, 
 
 ## Installation
 
-<Tabs items={['Manual', 'CLI']}>
+<Tabs items={['Terminal', 'Manual']}>
+  <Tab value="Terminal">
+    <Tabs items={['npm', 'pnpm', 'yarn', 'bun']}>
+      <Tab value="npm">
+        ```bash
+        npx shadcn@latest add @animbits/hooks-use-press
+        ```
+      </Tab>
+      <Tab value="pnpm">
+        ```bash
+        pnpm dlx shadcn@latest add @animbits/hooks-use-press
+        ```
+      </Tab>
+      <Tab value="yarn">
+        ```bash
+        yarn dlx shadcn@latest add @animbits/hooks-use-press
+        ```
+      </Tab>
+      <Tab value="bun">
+        ```bash
+        bunx shadcn@latest add @animbits/hooks-use-press
+        ```
+      </Tab>
+    </Tabs>
+  </Tab>
   <Tab value="Manual">
     Copy and paste the hook code into your project:
 
@@ -57,11 +81,6 @@ export function usePress(options: UsePressOptions = {}): MotionProps {
 }
 
 ```
-  </Tab>
-  <Tab value="CLI">
-    ```bash
-    npx shadcn add https://animbits.dev/r/hooks-use-press.json
-    ```
   </Tab>
 </Tabs>
 

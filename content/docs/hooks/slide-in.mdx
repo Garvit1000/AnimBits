@@ -16,7 +16,31 @@ The `useSlideIn` hook creates a slide-in entrance animation from any direction (
 
 ## Installation
 
-<Tabs items={['Manual', 'CLI']}>
+<Tabs items={['Terminal', 'Manual']}>
+  <Tab value="Terminal">
+    <Tabs items={['npm', 'pnpm', 'yarn', 'bun']}>
+      <Tab value="npm">
+        ```bash
+        npx shadcn@latest add @animbits/hooks-use-slide-in
+        ```
+      </Tab>
+      <Tab value="pnpm">
+        ```bash
+        pnpm dlx shadcn@latest add @animbits/hooks-use-slide-in
+        ```
+      </Tab>
+      <Tab value="yarn">
+        ```bash
+        yarn dlx shadcn@latest add @animbits/hooks-use-slide-in
+        ```
+      </Tab>
+      <Tab value="bun">
+        ```bash
+        bunx shadcn@latest add @animbits/hooks-use-slide-in
+        ```
+      </Tab>
+    </Tabs>
+  </Tab>
   <Tab value="Manual">
     ```tsx title="lib/hooks/use-slide-in.ts"
 import { type MotionProps, type Easing } from "motion/react";
@@ -89,11 +113,6 @@ export function useSlideIn(options: UseSlideInOptions = {}): MotionProps {
 }
 
 ```
-  </Tab>
-  <Tab value="CLI">
-    ```bash
-    npx shadcn add https://animbits.dev/r/hooks-use-slide-in.json
-    ```
   </Tab>
 </Tabs>
 
