@@ -16,7 +16,31 @@ The `useStrokeDraw` hook animates SVG paths with a drawing effect, perfect for l
 
 ## Installation
 
-<Tabs items={['Manual', 'CLI']}>
+<Tabs items={['Terminal', 'Manual']}>
+  <Tab value="Terminal">
+    <Tabs items={['npm', 'pnpm', 'yarn', 'bun']}>
+      <Tab value="npm">
+        ```bash
+        npx shadcn@latest add @animbits/hooks-use-stroke-draw
+        ```
+      </Tab>
+      <Tab value="pnpm">
+        ```bash
+        pnpm dlx shadcn@latest add @animbits/hooks-use-stroke-draw
+        ```
+      </Tab>
+      <Tab value="yarn">
+        ```bash
+        yarn dlx shadcn@latest add @animbits/hooks-use-stroke-draw
+        ```
+      </Tab>
+      <Tab value="bun">
+        ```bash
+        bunx shadcn@latest add @animbits/hooks-use-stroke-draw
+        ```
+      </Tab>
+    </Tabs>
+  </Tab>
   <Tab value="Manual">
     ```tsx title="lib/hooks/use-stroke-draw.ts"
 import { type MotionProps, type Easing } from "motion/react";
@@ -49,11 +73,6 @@ export function useStrokeDraw(options: UseStrokeDrawOptions = {}): MotionProps {
 }
 
 ```
-  </Tab>
-  <Tab value="CLI">
-    ```bash
-    npx shadcn add https://animbits.dev/r/hooks-use-stroke-draw.json
-    ```
   </Tab>
 </Tabs>
 

@@ -35,16 +35,30 @@ export default function Example() {
 
 ## Installation
 
-<Tabs items={['CLI', 'Manual']}>
-  <Tab value="CLI">
-    <Steps>
-      <Step>
-        **Run the add command**
+<Tabs items={['Terminal', 'Manual']}>
+  <Tab value="Terminal">
+    <Tabs items={['npm', 'pnpm', 'yarn', 'bun']}>
+      <Tab value="npm">
         ```bash
-        npx shadcn@latest add "https://animbits.dev/r/swipeable-stack.json"
+        npx shadcn@latest add @animbits/specials-swipeable-stack
         ```
-      </Step>
-    </Steps>
+      </Tab>
+      <Tab value="pnpm">
+        ```bash
+        pnpm dlx shadcn@latest add @animbits/specials-swipeable-stack
+        ```
+      </Tab>
+      <Tab value="yarn">
+        ```bash
+        yarn dlx shadcn@latest add @animbits/specials-swipeable-stack
+        ```
+      </Tab>
+      <Tab value="bun">
+        ```bash
+        bunx shadcn@latest add @animbits/specials-swipeable-stack
+        ```
+      </Tab>
+    </Tabs>
   </Tab>
   <Tab value="Manual">
     <Steps>

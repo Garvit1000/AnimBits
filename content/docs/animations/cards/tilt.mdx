@@ -40,11 +40,30 @@ The `CardTilt` creates a 3D tilt effect that follows your mouse position, adding
 
 ## Installation
 
-<Tabs items={['CLI', 'Manual']}>
-  <Tab value="CLI">
-    ```bash
-    npx shadcn add https://animbits.dev/r/cards-tilt.json
-    ```
+<Tabs items={['Terminal', 'Manual']}>
+  <Tab value="Terminal">
+    <Tabs items={['npm', 'pnpm', 'yarn', 'bun']}>
+      <Tab value="npm">
+        ```bash
+        npx shadcn@latest add @animbits/cards-tilt
+        ```
+      </Tab>
+      <Tab value="pnpm">
+        ```bash
+        pnpm dlx shadcn@latest add @animbits/cards-tilt
+        ```
+      </Tab>
+      <Tab value="yarn">
+        ```bash
+        yarn dlx shadcn@latest add @animbits/cards-tilt
+        ```
+      </Tab>
+      <Tab value="bun">
+        ```bash
+        bunx shadcn@latest add @animbits/cards-tilt
+        ```
+      </Tab>
+    </Tabs>
   </Tab>
   <Tab value="Manual">
     ```tsx title="components/animations/cards/tilt.tsx"

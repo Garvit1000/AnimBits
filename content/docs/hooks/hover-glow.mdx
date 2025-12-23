@@ -12,7 +12,31 @@ The `useHoverGlow` hook adds a colored glow effect (via box-shadow) when hoverin
 
 ## Installation
 
-<Tabs items={['Manual', 'CLI']}>
+<Tabs items={['Terminal', 'Manual']}>
+  <Tab value="Terminal">
+    <Tabs items={['npm', 'pnpm', 'yarn', 'bun']}>
+      <Tab value="npm">
+        ```bash
+        npx shadcn@latest add @animbits/hooks-use-hover-glow
+        ```
+      </Tab>
+      <Tab value="pnpm">
+        ```bash
+        pnpm dlx shadcn@latest add @animbits/hooks-use-hover-glow
+        ```
+      </Tab>
+      <Tab value="yarn">
+        ```bash
+        yarn dlx shadcn@latest add @animbits/hooks-use-hover-glow
+        ```
+      </Tab>
+      <Tab value="bun">
+        ```bash
+        bunx shadcn@latest add @animbits/hooks-use-hover-glow
+        ```
+      </Tab>
+    </Tabs>
+  </Tab>
   <Tab value="Manual">
     Copy the hook into your project:
 
@@ -73,11 +97,6 @@ export function useHoverGlow(options: UseHoverGlowOptions = {}): MotionProps {
 }
 
 ```
-  </Tab>
-  <Tab value="CLI">
-    ```bash
-    npx shadcn add https://animbits.dev/r/hooks-use-hover-glow.json
-    ```
   </Tab>
 </Tabs>
 

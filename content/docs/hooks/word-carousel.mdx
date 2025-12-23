@@ -16,7 +16,31 @@ The `useWordCarousel` hook cycles through an array of words at a specified inter
 
 ## Installation
 
-<Tabs items={['Manual', 'CLI']}>
+<Tabs items={['Terminal', 'Manual']}>
+  <Tab value="Terminal">
+    <Tabs items={['npm', 'pnpm', 'yarn', 'bun']}>
+      <Tab value="npm">
+        ```bash
+        npx shadcn@latest add @animbits/hooks-use-word-carousel
+        ```
+      </Tab>
+      <Tab value="pnpm">
+        ```bash
+        pnpm dlx shadcn@latest add @animbits/hooks-use-word-carousel
+        ```
+      </Tab>
+      <Tab value="yarn">
+        ```bash
+        yarn dlx shadcn@latest add @animbits/hooks-use-word-carousel
+        ```
+      </Tab>
+      <Tab value="bun">
+        ```bash
+        bunx shadcn@latest add @animbits/hooks-use-word-carousel
+        ```
+      </Tab>
+    </Tabs>
+  </Tab>
   <Tab value="Manual">
     ```tsx title="lib/hooks/use-word-carousel.ts"
 import * as React from "react";
@@ -46,11 +70,6 @@ export function useWordCarousel(options: UseWordCarouselOptions) {
 }
 
 ```
-  </Tab>
-  <Tab value="CLI">
-    ```bash
-    npx shadcn add https://animbits.dev/r/hooks-use-word-carousel.json
-    ```
   </Tab>
 </Tabs>
 

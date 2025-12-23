@@ -28,11 +28,30 @@ The `LoaderSkeleton` component creates a skeleton placeholder with a shimmer eff
 
 ## Installation
 
-<Tabs items={['CLI', 'Manual']}>
-  <Tab value="CLI">
-    ```bash
-    npx shadcn add https://animbits.dev/r/loaders-skeleton.json
-    ```
+<Tabs items={['Terminal', 'Manual']}>
+  <Tab value="Terminal">
+    <Tabs items={['npm', 'pnpm', 'yarn', 'bun']}>
+      <Tab value="npm">
+        ```bash
+        npx shadcn@latest add @animbits/loaders-skeleton
+        ```
+      </Tab>
+      <Tab value="pnpm">
+        ```bash
+        pnpm dlx shadcn@latest add @animbits/loaders-skeleton
+        ```
+      </Tab>
+      <Tab value="yarn">
+        ```bash
+        yarn dlx shadcn@latest add @animbits/loaders-skeleton
+        ```
+      </Tab>
+      <Tab value="bun">
+        ```bash
+        bunx shadcn@latest add @animbits/loaders-skeleton
+        ```
+      </Tab>
+    </Tabs>
   </Tab>
   <Tab value="Manual">
     ```tsx title="components/animations/loaders/skeleton.tsx"
