@@ -31,6 +31,100 @@ export default function Example() {
   />
 </Preview>
 
+## Installation
+
+<Tabs items={['Terminal', 'Manual']}>
+  <Tab value="Terminal">
+    <Tabs items={['npm', 'pnpm', 'yarn', 'bun']}>
+      <Tab value="npm">
+        ```bash
+        npx shadcn@latest add @animbits/zoom-hollow
+        ```
+      </Tab>
+      <Tab value="pnpm">
+        ```bash
+        pnpm dlx shadcn@latest add @animbits/zoom-hollow
+        ```
+      </Tab>
+      <Tab value="yarn">
+        ```bash
+        yarn dlx shadcn@latest add @animbits/zoom-hollow
+        ```
+      </Tab>
+      <Tab value="bun">
+        ```bash
+        bunx shadcn@latest add @animbits/zoom-hollow
+        ```
+      </Tab>
+    </Tabs>
+  </Tab>
+  <Tab value="Manual">
+    Copy and paste the following code into your project.
+
+    ```tsx title="components/animations/transitions/zoom-hollow.tsx"
+    "use client";
+
+    import React, { useState, useEffect } from "react";
+    import { motion, AnimatePresence } from "motion/react";
+    import { cn } from "@/lib/utils";
+
+    interface ZoomHollowTextProps {
+      words: string[];
+      className?: string;
+      duration?: number;
+      interval?: number;
+      strokeWidth?: number;
+      fillColor?: string;
+      strokeColor?: string;
+    }
+
+    export function ZoomHollowText({
+      words,
+      className = "",
+      duration = 0.8,
+      interval = 2500,
+      strokeWidth = 2,
+      fillColor = "transparent",
+      strokeColor = "currentColor",
+    }: ZoomHollowTextProps) {
+      const [index, setIndex] = useState(0);
+
+      useEffect(() => {
+        const timer = setInterval(() => {
+          setIndex((prev) => (prev + 1) % words.length);
+        }, interval);
+        return () => clearInterval(timer);
+      }, [words.length, interval]);
+
+      return (
+        <div className={cn("relative inline-block", className)}>
+          <AnimatePresence mode="wait">
+            <motion.span
+              key={words[index]}
+              initial={{ scale: 0.5, opacity: 0, filter: "blur(10px)" }}
+              animate={{ scale: 1, opacity: 1, filter: "blur(0px)" }}
+              exit={{ scale: 1.5, opacity: 0, filter: "blur(10px)" }}
+              transition={{
+                duration,
+                ease: [0.22, 1, 0.36, 1],
+              }}
+              style={{
+                WebkitTextStroke: `${strokeWidth}px ${strokeColor}`,
+                WebkitTextFillColor: fillColor,
+                paintOrder: "stroke fill",
+              }}
+              className="block"
+            >
+              {words[index]}
+            </motion.span>
+          </AnimatePresence>
+        </div>
+      );
+    }
+    ```
+  </Tab>
+</Tabs>
+
 ## Usage
 
 ```tsx
@@ -45,19 +139,6 @@ export default function Example() {
   );
 }
 ```
-
-## Props
-
-| Prop | Type | Default | Description |
-|------|------|---------|-------------|
-| `words` | `string[]` | Required | Array of words to cycle through |
-| `className` | `string` | `""` | Additional CSS classes |
-| `duration` | `number` | `0.8` | Animation duration in seconds |
-| `interval` | `number` | `2500` | Time between word changes in ms |
-| `strokeWidth` | `number` | `2` | Width of the text outline |
-| `fillColor` | `string` | `"transparent"` | Fill color of the text |
-| `strokeColor` | `string` | `"currentColor"` | Color of the text outline |
-
 ## Examples
 
 ### Custom Colors
@@ -106,27 +187,6 @@ The component automatically adapts to your theme using `currentColor`:
 />
 ```
 
-## Features
-
-- ✅ Smooth zoom-in and zoom-out transitions
-- ✅ Beautiful hollow/outlined text effect
-- ✅ Blur effect during transitions
-- ✅ Customizable colors and stroke width
-- ✅ Adjustable animation timing
-- ✅ Fully responsive
-- ✅ **Dark mode compatible** - uses CSS variables
-- ✅ Theme toggle friendly
-
-## How It Works
-
-The component uses:
-- **Motion/React** for smooth animations
-- **AnimatePresence** for exit animations
-- **WebKit Text Stroke** for hollow text effect
-- **Scale + Blur** for zoom transitions
-- **Custom easing** for professional feel
-- **CSS currentColor** for theme compatibility
-
 ## CSS Customization
 
 The hollow effect is created using webkit text stroke. You can customize it with CSS:
@@ -146,4 +206,18 @@ For dark mode support, use CSS variables:
   -webkit-text-stroke: 2px hsl(var(--foreground));
   -webkit-text-fill-color: transparent;
 }
+
 ```
+
+## Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `words` | `string[]` | Required | Array of words to cycle through |
+| `className` | `string` | `""` | Additional CSS classes |
+| `duration` | `number` | `0.8` | Animation duration in seconds |
+| `interval` | `number` | `2500` | Time between word changes in ms |
+| `strokeWidth` | `number` | `2` | Width of the text outline |
+| `fillColor` | `string` | `"transparent"` | Fill color of the text |
+| `strokeColor` | `string` | `"currentColor"` | Color of the text outline |
+

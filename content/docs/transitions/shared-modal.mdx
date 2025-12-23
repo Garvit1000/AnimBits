@@ -21,59 +21,32 @@ The `SharedModal` uses shared layout animations to morph a trigger element into 
   <SharedModal variant="scale" />
 </Preview>
 
-## Animation Variants
-
-### Slide from Bottom
-Modal slides up from the bottom edge with smooth spring animation.
-
-<Preview
-  code={`import { SharedModal } from "@/components/animations/transitions/shared-modal"
-
-<SharedModal variant="slide-bottom" />`}
->
-  <SharedModal variant="slide-bottom" />
-</Preview>
-
-### Slide from Right
-Modal slides in from the right side, like a side panel.
-
-<Preview
-  code={`import { SharedModal } from "@/components/animations/transitions/shared-modal"
-
-<SharedModal variant="slide-right" />`}
->
-  <SharedModal variant="slide-right" />
-</Preview>
-
-### Fade In
-Gentle fade in with subtle zoom out effect for an elegant entrance.
-
-<Preview
-  code={`import { SharedModal } from "@/components/animations/transitions/shared-modal"
-
-<SharedModal variant="fade-in" />`}
->
-  <SharedModal variant="fade-in" />
-</Preview>
-
-### Scale Up
-Dramatic scale up from small with exaggerated bounce for a playful feel.
-
-<Preview
-  code={`import { SharedModal } from "@/components/animations/transitions/shared-modal"
-
-<SharedModal variant="scale-up" />`}
->
-  <SharedModal variant="scale-up" />
-</Preview>
-
 ## Installation
 
-<Tabs items={['CLI', 'Manual']}>
-  <Tab value="CLI">
-    ```bash
-    npx shadcn add https://animbits.dev/r/transitions-shared-modal.json
-    ```
+<Tabs items={['Terminal', 'Manual']}>
+  <Tab value="Terminal">
+    <Tabs items={['npm', 'pnpm', 'yarn', 'bun']}>
+      <Tab value="npm">
+        ```bash
+        npx shadcn@latest add @animbits/shared-modal
+        ```
+      </Tab>
+      <Tab value="pnpm">
+        ```bash
+        pnpm dlx shadcn@latest add @animbits/shared-modal
+        ```
+      </Tab>
+      <Tab value="yarn">
+        ```bash
+        yarn dlx shadcn@latest add @animbits/shared-modal
+        ```
+      </Tab>
+      <Tab value="bun">
+        ```bash
+        bunx shadcn@latest add @animbits/shared-modal
+        ```
+      </Tab>
+    </Tabs>
   </Tab>
   <Tab value="Manual">
     Copy and paste the following code into your project.
@@ -157,7 +130,12 @@ Dramatic scale up from small with exaggerated bounce for a playful feel.
                 </motion.div>
               </motion.div>
             ) : (
-              <div className="fixed inset-0 grid place-items-center z-[100] px-4 pointer-events-none">
+              <div className={cn(
+                "fixed inset-0 z-[100] px-4 pointer-events-none",
+                (variant === "slide-bottom" || variant === "slide-right") ? "flex" : "grid place-items-center",
+                variant === "slide-bottom" && "items-end justify-center pb-4",
+                variant === "slide-right" && "items-center justify-end pr-4"
+              )}>
                 <motion.div
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
@@ -166,11 +144,12 @@ Dramatic scale up from small with exaggerated bounce for a playful feel.
                   className="absolute inset-0 bg-black/20 backdrop-blur-sm pointer-events-auto"
                 />
                 <motion.div
-                  layoutId={`${id}-modal`}
+                  {...(variant === "scale" ? { layoutId: `${id}-modal` } : {})}
                   className="w-full max-w-sm bg-white dark:bg-zinc-800 rounded-2xl shadow-2xl overflow-hidden z-20 relative pointer-events-auto"
                   transition={getModalTransition()}
                   initial={getModalInitial()}
                   animate={getModalAnimate()}
+                  exit={getModalInitial()}
                   style={{ transformPerspective: 1000 }}
                 >
                   <motion.div layoutId={`${id}-icon`} className="absolute top-4 right-4 z-10">
@@ -215,6 +194,52 @@ Dramatic scale up from small with exaggerated bounce for a playful feel.
     ```
   </Tab>
 </Tabs>
+
+## Animation Variants
+
+### Slide from Bottom
+Modal slides up from the bottom edge with smooth spring animation.
+
+<Preview
+  code={`import { SharedModal } from "@/components/animations/transitions/shared-modal"
+
+<SharedModal variant="slide-bottom" />`}
+>
+  <SharedModal variant="slide-bottom" />
+</Preview>
+
+### Slide from Right
+Modal slides in from the right side, like a side panel.
+
+<Preview
+  code={`import { SharedModal } from "@/components/animations/transitions/shared-modal"
+
+<SharedModal variant="slide-right" />`}
+>
+  <SharedModal variant="slide-right" />
+</Preview>
+
+### Fade In
+Gentle fade in with subtle zoom out effect for an elegant entrance.
+
+<Preview
+  code={`import { SharedModal } from "@/components/animations/transitions/shared-modal"
+
+<SharedModal variant="fade-in" />`}
+>
+  <SharedModal variant="fade-in" />
+</Preview>
+
+### Scale Up
+Dramatic scale up from small with exaggerated bounce for a playful feel.
+
+<Preview
+  code={`import { SharedModal } from "@/components/animations/transitions/shared-modal"
+
+<SharedModal variant="scale-up" />`}
+>
+  <SharedModal variant="scale-up" />
+</Preview>
 
 ## Props
 
