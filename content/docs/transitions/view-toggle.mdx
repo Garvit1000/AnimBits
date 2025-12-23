@@ -1,0 +1,276 @@
+---
+title: View Toggle
+description: Smoothly rearrange items with multiple animation styles when switching views.
+---
+
+import { Tab, Tabs } from 'fumadocs-ui/components/tabs';
+import { Preview } from '@/components/preview';
+import { ListGrid } from '@/registry/new-york/animations/transitions/list-grid';
+
+## Overview
+
+The `ViewToggle` component demonstrates layout animations to smoothly rearrange items when switching between grid and list views. Choose from multiple animation variants to control the transition style.
+
+## Preview
+
+<Preview
+  code={`import { ListGrid } from "@/components/animations/transitions/list-grid"
+
+const items = [
+  { 
+    id: 1, 
+    title: "Sarah Chen", 
+    subtitle: "Product Designer", 
+    status: "Active",
+    avatar: "https://i.pravatar.cc/150?img=1"
+  },
+  // ... more items
+]
+
+<ListGrid items={items} variant="smooth" />`}
+>
+  <ListGrid 
+    variant="smooth"
+    items={[
+      { id: 1, title: "Sarah Chen", subtitle: "Product Designer", status: "Active", avatar: "https://i.pravatar.cc/150?img=1" },
+      { id: 2, title: "Marcus Johnson", subtitle: "Frontend Developer", status: "Active", avatar: "https://i.pravatar.cc/150?img=3" },
+      { id: 3, title: "Elena Rodriguez", subtitle: "UX Researcher", status: "Active", avatar: "https://i.pravatar.cc/150?img=5" },
+      { id: 4, title: "David Kim", subtitle: "Backend Developer", status: "Pending", avatar: "https://i.pravatar.cc/150?img=7" },
+      { id: 5, title: "Aisha Patel", subtitle: "Product Manager", status: "Active", avatar: "https://i.pravatar.cc/150?img=9" },
+      { id: 6, title: "Tom Anderson", subtitle: "DevOps Engineer", status: "Archived", avatar: "https://i.pravatar.cc/150?img=12" },
+    ]} 
+  />
+</Preview>
+
+## Animation Variants
+
+### Stagger Animation
+Items animate in sequence with a cascading effect.
+
+<Preview
+  code={`<ListGrid items={items} variant="stagger" />`}
+>
+  <ListGrid 
+    variant="stagger"
+    items={[
+      { id: "p1", title: "Website Redesign", subtitle: "12 tasks remaining", status: "Active", avatar: "https://i.pravatar.cc/150?img=14" },
+      { id: "p2", title: "Mobile App v2.0", subtitle: "8 tasks remaining", status: "Active", avatar: "https://i.pravatar.cc/150?img=16" },
+      { id: "p3", title: "API Integration", subtitle: "Awaiting approval", status: "Pending", avatar: "https://i.pravatar.cc/150?img=18" },
+      { id: "p4", title: "Database Migration", subtitle: "Completed last month", status: "Archived", avatar: "https://i.pravatar.cc/150?img=20" },
+      { id: "p5", title: "Security Audit", subtitle: "In progress", status: "Active", avatar: "https://i.pravatar.cc/150?img=22" },
+      { id: "p6", title: "Performance Optimization", subtitle: "Planning phase", status: "Pending", avatar: "https://i.pravatar.cc/150?img=24" },
+    ]} 
+  />
+</Preview>
+
+### Scale & Fade
+Items scale down and fade out, then scale up and fade in at new positions.
+
+<Preview
+  code={`<ListGrid items={items} variant="scale-fade" />`}
+>
+  <ListGrid 
+    variant="scale-fade"
+    items={[
+      { id: "f1", title: "Documents", subtitle: "24 files • 156 MB", status: "Active", avatar: "https://i.pravatar.cc/150?img=26" },
+      { id: "f2", title: "Images", subtitle: "89 files • 2.3 GB", status: "Active", avatar: "https://i.pravatar.cc/150?img=28" },
+      { id: "f3", title: "Videos", subtitle: "12 files • 8.7 GB", status: "Active", avatar: "https://i.pravatar.cc/150?img=30" },
+      { id: "f4", title: "Archive", subtitle: "156 files • 892 MB", status: "Archived", avatar: "https://i.pravatar.cc/150?img=32" },
+      { id: "f5", title: "Downloads", subtitle: "43 files • 1.2 GB", status: "Active", avatar: "https://i.pravatar.cc/150?img=34" },
+      { id: "f6", title: "Trash", subtitle: "7 files • 45 MB", status: "Pending", avatar: "https://i.pravatar.cc/150?img=36" },
+    ]} 
+  />
+</Preview>
+
+### Crossfade
+Smooth opacity transition without scale effects.
+
+<Preview
+  code={`<ListGrid items={items} variant="crossfade" />`}
+>
+  <ListGrid 
+    variant="crossfade"
+    items={[
+      { id: "t1", title: "Alex Rivera", subtitle: "Senior Engineer", status: "Active", avatar: "https://i.pravatar.cc/150?img=38" },
+      { id: "t2", title: "Jordan Lee", subtitle: "Design Lead", status: "Active", avatar: "https://i.pravatar.cc/150?img=40" },
+      { id: "t3", title: "Sam Taylor", subtitle: "Data Scientist", status: "Active", avatar: "https://i.pravatar.cc/150?img=42" },
+      { id: "t4", title: "Morgan Blake", subtitle: "QA Engineer", status: "Pending", avatar: "https://i.pravatar.cc/150?img=44" },
+      { id: "t5", title: "Casey Jordan", subtitle: "Tech Writer", status: "Active", avatar: "https://i.pravatar.cc/150?img=46" },
+      { id: "t6", title: "Riley Parker", subtitle: "Support Lead", status: "Archived", avatar: "https://i.pravatar.cc/150?img=48" },
+    ]} 
+  />
+</Preview>
+
+## Installation
+
+<Tabs items={['CLI', 'Manual']}>
+  <Tab value="CLI">
+    ```bash
+    npx shadcn add https://animbits.dev/r/transitions-view-toggle.json
+    ```
+  </Tab>
+  <Tab value="Manual">
+    Copy and paste the following code into your project.
+
+    ```tsx title="components/animations/transitions/list-grid.tsx"
+    "use client";
+
+    import React, { useState, useId } from "react";
+    import { motion, AnimatePresence } from "motion/react";
+    import { cn } from "@/lib/utils";
+    import { Grid, List } from "lucide-react";
+
+    export interface ListGridItem {
+      id: string | number;
+      title: string;
+      subtitle: string;
+      status: string;
+      avatar?: string;
+    }
+
+    interface ListGridProps {
+      items: ListGridItem[];
+      className?: string;
+      views?: Array<"grid" | "list" | "compact" | "card">;
+      variant?: "smooth" | "stagger" | "scale-fade" | "crossfade";
+    }
+
+    export function ListGrid({ items, className, views = ["grid", "list"], variant = "smooth" }: ListGridProps) {
+      const [view, setView] = useState<"grid" | "list" | "compact" | "card">(views[0]);
+      const id = useId();
+
+      const getItemTransition = (index: number) => {
+        switch (variant) {
+          case "smooth":
+            return { type: "spring" as const, bounce: 0.2, duration: 0.6 };
+          case "stagger":
+            return { type: "spring" as const, bounce: 0.2, duration: 0.6, delay: index * 0.05 };
+          case "scale-fade":
+            return { type: "spring" as const, bounce: 0.15, duration: 0.5 };
+          case "crossfade":
+            return { type: "tween" as const, duration: 0.3 };
+          default:
+            return { type: "spring" as const, bounce: 0.2, duration: 0.6 };
+        }
+      };
+
+      const getItemInitial = () => {
+        switch (variant) {
+          case "scale-fade":
+            return { opacity: 0, scale: 0.9 };
+          case "crossfade":
+            return { opacity: 0 };
+          default:
+            return { opacity: 0, scale: 0.9 };
+        }
+      };
+
+      const getItemAnimate = () => {
+        switch (variant) {
+          case "scale-fade":
+            return { opacity: 1, scale: 1 };
+          case "crossfade":
+            return { opacity: 1 };
+          default:
+            return { opacity: 1, scale: 1 };
+        }
+      };
+
+      return (
+        <div className={cn("flex flex-col items-center justify-center p-8 bg-zinc-50 dark:bg-zinc-900 rounded-xl min-h-[400px] w-full", className)}>
+          <div className="w-full max-w-md">
+            <div className="flex justify-between items-center mb-6">
+              <h3 className="text-sm font-semibold text-zinc-500 dark:text-zinc-400 uppercase tracking-wider">
+                Items
+              </h3>
+              <div className="flex gap-2 bg-white dark:bg-zinc-800 p-1 rounded-lg border border-zinc-200 dark:border-zinc-700">
+                {views.map((viewMode) => (
+                  <button
+                    key={viewMode}
+                    onClick={() => setView(viewMode)}
+                    className={cn(
+                      "p-2 rounded-md transition-colors",
+                      view === viewMode
+                        ? "bg-zinc-100 dark:bg-zinc-700 text-zinc-900 dark:text-zinc-100"
+                        : "text-zinc-500 dark:text-zinc-400 hover:text-zinc-700 dark:hover:text-zinc-200"
+                    )}
+                  >
+                    {viewMode === "grid" ? <Grid size={16} /> : <List size={16} />}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            <motion.div
+              layout
+              className={cn(
+                "gap-3",
+                view === "grid" ? "grid-cols-2" : "grid-cols-1"
+              )}
+            >
+              <AnimatePresence>
+                {items.map((item, index) => (
+                  <motion.div
+                    key={item.id}
+                    layout
+                    initial={getItemInitial()}
+                    animate={getItemAnimate()}
+                    exit={getItemInitial()}
+                    transition={getItemTransition(index)}
+                    className={cn(
+                      "bg-white dark:bg-zinc-800 p-4 rounded-xl border border-zinc-200 dark:border-zinc-700 shadow-sm hover:shadow-md transition-shadow cursor-default",
+                      view === "list" && "flex items-center justify-between"
+                    )}
+                  >
+                    <div className="flex items-center gap-3">
+                      {item.avatar ? (
+                        <img 
+                          src={item.avatar} 
+                          alt={item.title}
+                          className="w-10 h-10 rounded-full object-cover"
+                        />
+                      ) : (
+                        <div className="w-10 h-10 rounded-full bg-gradient-to-br from-zinc-100 to-zinc-200 dark:from-zinc-700 dark:to-zinc-800 flex items-center justify-center text-xs font-bold text-zinc-500">
+                          {item.title.substring(0, 2).toUpperCase()}
+                        </div>
+                      )}
+                      <div>
+                        <h4 className="font-semibold text-zinc-900 dark:text-zinc-100 text-sm">
+                          {item.title}
+                        </h4>
+                        <p className="text-xs text-zinc-500 dark:text-zinc-400">
+                          {item.subtitle}
+                        </p>
+                      </div>
+                    </div>
+
+                    {view === "list" && (
+                      <span className={cn(
+                        "text-xs px-2 py-1 rounded-full",
+                        item.status === "Active" && "bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400",
+                        item.status === "Pending" && "bg-yellow-100 dark:bg-yellow-900/30 text-yellow-700 dark:text-yellow-400",
+                        item.status === "Archived" && "bg-zinc-100 dark:bg-zinc-800 text-zinc-500 dark:text-zinc-400"
+                      )}>
+                        {item.status}
+                      </span>
+                    )}
+                  </motion.div>
+                ))}
+              </AnimatePresence>
+            </motion.div>
+          </div>
+        </div>
+      );
+    }
+    ```
+  </Tab>
+</Tabs>
+
+## Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `items` | `ListGridItem[]` | - | Array of items with id, title, subtitle, status, and optional avatar. |
+| `views` | `Array<"grid" \| "list" \| "compact" \| "card">` | `["grid", "list"]` | Available view modes. |
+| `variant` | `"smooth" \| "stagger" \| "scale-fade" \| "crossfade"` | `"smooth"` | Animation style for view transitions. |
+| `className` | `string` | - | Additional CSS classes. |

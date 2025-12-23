@@ -6,6 +6,10 @@
     "theme-toggle-slide-bottom",
     "theme-toggle-slide-left",
     "theme-toggle-slide-right",
-    "zoom-hollow"
+    "zoom-hollow",
+    "expanding-card",
+    "tab-switcher",
+    "view-toggle",
+    "shared-modal"
   ]
 }
