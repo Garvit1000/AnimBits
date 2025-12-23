@@ -86,8 +86,30 @@ export default async function Home() {
                             transition={{ duration: 0.8, delay: 0.2 }}
                         >
                             <div className="flex flex-col items-center">
+                                {/* Mobile version - two lines */}
+                                <div className="block sm:hidden">
+                                    <TextBlurIn
+                                        className="text-[2rem] font-bold leading-tight tracking-tight text-neutral-900 dark:text-white text-center px-4"
+                                        by="character"
+                                        staggerDelay={0.02}
+                                        duration={1.2}
+                                        delay={0.3}
+                                    >
+                                        The Foundation for
+                                    </TextBlurIn>
+                                    <TextBlurIn
+                                        className="text-[2rem] font-bold leading-tight tracking-tight text-neutral-900 dark:text-white text-center px-4"
+                                        by="character"
+                                        staggerDelay={0.02}
+                                        duration={1.2}
+                                        delay={0.5}
+                                    >
+                                        Interactive UI
+                                    </TextBlurIn>
+                                </div>
+                                {/* Desktop version - single line */}
                                 <TextBlurIn
-                                    className="text-4xl font-bold leading-tight tracking-tight text-neutral-900 dark:text-white md:text-5xl lg:text-6xl 2xl:text-7xl text-center"
+                                    className="hidden sm:block text-4xl md:text-5xl lg:text-6xl 2xl:text-7xl font-bold leading-tight tracking-tight text-neutral-900 dark:text-white text-center"
                                     by="character"
                                     staggerDelay={0.02}
                                     duration={1.2}
@@ -95,7 +117,6 @@ export default async function Home() {
                                 >
                                     The Foundation for Interactive UI
                                 </TextBlurIn>
-
                             </div>
                         </motion.div>
 
@@ -113,14 +134,14 @@ export default async function Home() {
 
                         {/* CTA Buttons */}
                         <motion.div
-                            className="mb-16 flex flex-wrap items-center justify-center gap-4"
+                            className="mb-16 flex flex-col sm:flex-row flex-wrap items-center justify-center gap-4"
                             initial={{ opacity: 0, y: 20 }}
                             animate={{ opacity: 1, y: 0 }}
                             transition={{ duration: 0.5, delay: 0.3 }}
                         >
-                            <Link href="/docs/installation">
+                            <Link href="/docs/installation" className="w-full sm:w-auto">
                                 <motion.button
-                                    className="inline-flex h-11 2xl:h-12 items-center gap-2 rounded-lg bg-neutral-900 px-6 2xl:px-8 text-sm 2xl:text-base font-semibold text-white transition-colors hover:bg-neutral-800 dark:bg-white dark:text-neutral-900 dark:hover:bg-neutral-100"
+                                    className="w-full sm:w-auto inline-flex h-11 2xl:h-12 items-center justify-center gap-2 rounded-lg bg-neutral-900 px-6 2xl:px-8 text-sm 2xl:text-base font-semibold text-white transition-colors hover:bg-neutral-800 dark:bg-white dark:text-neutral-900 dark:hover:bg-neutral-100"
                                     whileHover={{ scale: 1.02 }}
                                     whileTap={{ scale: 0.98 }}
                                 >
@@ -128,18 +149,20 @@ export default async function Home() {
                                     <ArrowRight className="h-4 w-4" />
                                 </motion.button>
                             </Link>
-                            <GithubButton
-                                repoUrl="https://github.com/Garvit1000/AnimBits"
-                                label="Star on GitHub"
-                                targetStars={stars}
-                                showGithubIcon={true}
-                                showStarIcon={true}
-                                variant="outline"
-                                size="lg"
-                                autoAnimate={true}
-                                filled={true}
-                                className="h-11 2xl:h-12 rounded-lg px-6 2xl:px-8 text-sm 2xl:text-base font-semibold"
-                            />
+                            <div className="w-full sm:w-auto">
+                                <GithubButton
+                                    repoUrl="https://github.com/Garvit1000/AnimBits"
+                                    label="Star on GitHub"
+                                    targetStars={stars}
+                                    showGithubIcon={true}
+                                    showStarIcon={true}
+                                    variant="outline"
+                                    size="lg"
+                                    autoAnimate={true}
+                                    filled={true}
+                                    className="w-full h-11 2xl:h-12 rounded-lg px-6 2xl:px-8 text-sm 2xl:text-base font-semibold"
+                                />
+                            </div>
                         </motion.div>
 
                         {/* Tech Stack with Devicon Icons */}
