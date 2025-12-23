@@ -1,8 +1,9 @@
 <div align="center">
+# AnimBits
 
 ![AnimBits Hero](./public/hero.png)
 
-# AnimBits
+
 
 ### Production-Ready Animation Components for React
 

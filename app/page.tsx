@@ -797,6 +797,7 @@ export default async function Home() {
                         href: "/docs/installation",
                         variant: "default",
                     }}
+                    stars={stars}
                 />
             </section>
 
