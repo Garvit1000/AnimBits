@@ -16,6 +16,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL("https://animbits.dev"),
   title: "Animbits - The Foundation for Interactive UI",
   description: "A curated suite of animations, hooks, and components. Designed to make your applications feel alive. Copy, paste, and ship premium interfaces.",
   applicationName: "Animbits",
@@ -25,6 +26,7 @@ export const metadata: Metadata = {
     siteName: "Animbits",
     images: ["/animbits.png"],
     type: "website",
+    url: "https://animbits.dev",
   },
   twitter: {
     card: "summary_large_image",
@@ -33,7 +35,10 @@ export const metadata: Metadata = {
     images: ["/animbits.png"],
   },
   icons: {
-    icon: "/favicon.ico",
+    icon: [
+      { url: "/favicon.ico", sizes: "any" },
+      { url: "/favicon.ico", sizes: "32x32", type: "image/x-icon" },
+    ],
     shortcut: "/favicon.ico",
     apple: "/favicon.ico",
   },
