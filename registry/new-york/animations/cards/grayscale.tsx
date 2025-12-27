@@ -34,7 +34,7 @@ export function CardGrayscale({
           style={{ backgroundImage: `url(${image})` }}
         />
       )}
-      <div className="relative z-10">{children}</div>
+      {children}
     </motion.div>
   );
 }

@@ -53,7 +53,7 @@ export default async function Home() {
         <div className="min-h-screen bg-white dark:bg-black overflow-x-hidden">
             <StickyBanner>
                 <span className="flex items-center gap-1 text-xs md:text-sm font-medium">
-                    Now Available: Hooks — structured, reusable motion for your UI.
+                    New: Interactive Playground Unlocking 90+ Production-Ready Animations
                     <ChevronRight className="w-3 h-3 md:w-4 md:h-4" />
                 </span>
             </StickyBanner>
