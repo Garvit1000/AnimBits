@@ -1,0 +1,480 @@
+---
+title: Linear Carousel
+description: A stunning, smooth-scrolling 3D carousel inspired by Linear. Features card expansion with layout animations and keyboard navigation.
+---
+
+import { Tab, Tabs } from 'fumadocs-ui/components/tabs';
+import { Preview } from '@/components/preview';
+import { Carousel, Card } from '@/registry/new-york/animations/specials/linear-carousel';
+import LinearCarouselVisual from '@/registry/new-york/animations/specials/linear-carousel-visual';
+import LinearCarouselText from '@/registry/new-york/animations/specials/linear-carousel-text';
+
+## Overview
+
+The `LinearCarousel` component replicates the premium carousel experience from Linear. It includes an infinite scroll effect, smooth expanding cards using Framer Motion's `layoutId`, full keyboard/touch support, and intuitive drag-to-scroll functionality for desktop.
+
+## Preview
+
+<Preview
+  background="grid"
+  code={`import { Carousel, Card } from "@/components/animations/specials/linear-carousel";
+
+const items = [
+  {
+    src: "https://images.unsplash.com/photo-1535905557558-afc4877a26fc?q=80&w=2787&auto=format&fit=crop",
+    title: "Understanding React",
+    category: "Development",
+    content: <p>React is a library for building user interfaces...</p>
+  },
+  {
+    src: "https://images.unsplash.com/photo-1518717758536-85ae29035b6d?q=80&w=2787&auto=format&fit=crop",
+    title: "The Future of AI",
+    category: "Technology",
+    content: <p>AI is changing the way we live and work...</p>
+  },
+  {
+    src: "https://images.unsplash.com/photo-1542831371-29b0f74f9713?q=80&w=2787&auto=format&fit=crop",
+    title: "Coding Best Practices",
+    category: "Productivity",
+    content: <p>Writing clean code is essential...</p>
+  }
+];
+
+export function CarouselDemo() {
+  const cards = items.map((card, index) => (
+    <Card key={card.src} card={card} index={index} layout={true} />
+  ));
+
+  return (
+    <div className="w-full h-full py-20">
+      <Carousel items={cards} />
+    </div>
+  );
+}`}
+>
+  <div className="relative w-full h-[600px] flex items-center justify-center overflow-hidden">
+    <Carousel items={[
+      <Card key="1" index={0} layout={true} card={{
+        src: "https://images.unsplash.com/photo-1535905557558-afc4877a26fc?q=80&w=2787&auto=format&fit=crop",
+        title: "Understanding React",
+        category: "Development",
+        content: <p className="text-neutral-500">React is a library for building user interfaces. It lets you compose complex UIs from small and isolated pieces of code called “components”.</p>
+      }} />,
+      <Card key="2" index={1} layout={true} card={{
+        src: "https://images.unsplash.com/photo-1518717758536-85ae29035b6d?q=80&w=2787&auto=format&fit=crop",
+        title: "The Future of AI",
+        category: "Technology",
+        content: <p className="text-neutral-500">Artificial intelligence (AI) is intelligence demonstrated by machines, as opposed to the natural intelligence displayed by humans or animals.</p>
+      }} />,
+      <Card key="3" index={2} layout={true} card={{
+        src: "https://images.unsplash.com/photo-1542831371-29b0f74f9713?q=80&w=2787&auto=format&fit=crop",
+        title: "Coding Best Practices",
+        category: "Productivity",
+        content: <p className="text-neutral-500">Code readability, consistency, and testing are pillars of high-quality software development.</p>
+      }} />,
+       <Card key="4" index={3} layout={true} card={{
+        src: "https://images.unsplash.com/photo-1535905557558-afc4877a26fc?q=80&w=2787&auto=format&fit=crop",
+        title: "Design Systems",
+        category: "Design",
+        content: <p className="text-neutral-500">A design system is a set of standards to manage design at scale by reducing redundancy while creating a shared language and visual consistency across different pages and channels.</p>
+      }} />,
+    ]} />
+  </div>
+</Preview>
+
+
+## Examples
+
+### Visual Heavy
+
+A carousel focused on high-quality imagery, perfect for portfolios or photography showcases.
+
+```tsx
+import { Carousel, Card } from "@/registry/new-york/animations/specials/linear-carousel";
+
+const images = [
+  {
+    src: "https://images.unsplash.com/photo-1506744038136-46273834b3fb?q=80&w=3000&auto=format&fit=crop",
+    title: "Mountain Views",
+    category: "Nature",
+    content: <p className="text-neutral-500">Breathtaking mountain landscapes from around the world.</p>
+  },
+  {
+    src: "https://images.unsplash.com/photo-1501785888041-af3ef285b470?q=80&w=3000&auto=format&fit=crop",
+    title: "Ocean Blue",
+    category: "Nature",
+    content: <p className="text-neutral-500">Calm and serene ocean views.</p>
+  },
+   {
+    src: "https://images.unsplash.com/photo-1472214103451-9374bd1c798e?q=80&w=3000&auto=format&fit=crop",
+    title: "Forest Pathways",
+    category: "Nature",
+    content: <p className="text-neutral-500">Mysterious paths through dense forests.</p>
+  },
+  {
+      src: "https://images.unsplash.com/photo-1469474968028-56623f02e42e?q=80&w=3506&auto=format&fit=crop",
+      title: "Solitude",
+      category: "Nature",
+      content: <p className="text-neutral-500">Finding peace in the vastness of nature.</p>
+  }
+];
+
+export function VisualCarousel() {
+  const cards = images.map((card, index) => (
+    <Card key={card.src} card={card} index={index} />
+  ));
+
+  return (
+    <div className="w-full h-full py-20">
+      <Carousel items={cards} />
+    </div>
+  );
+}
+```
+
+<Preview
+  background="grid"
+>
+  <div className="relative w-full h-[700px] flex items-center justify-center overflow-hidden">
+    <LinearCarouselVisual />
+  </div>
+</Preview>
+
+### Text Centered
+
+A carousel designed for testimonials or quotes, where text is the primary focus.
+
+```tsx
+import { Carousel, Card } from "@/registry/new-york/animations/specials/linear-carousel";
+
+const testimonials = [
+  {
+    src: "https://images.unsplash.com/photo-1557683316-973673baf926?q=80&w=2787&auto=format&fit=crop", 
+    title: "Incredible Experience",
+    category: "Testimonial",
+    content: <p className="text-neutral-500">"This product completely changed how we work. The efficiency gains are unmatched."</p>
+  },
+  {
+    src: "https://images.unsplash.com/photo-1460925895917-afdab827c52f?q=80&w=2426&auto=format&fit=crop",
+    title: "Highly Recommend",
+    category: "Testimonial",
+    content: <p className="text-neutral-500">"The support team is amazing and the features are top-notch."</p>
+  },
+    {
+    src: "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?q=80&w=2787&auto=format&fit=crop",
+    title: "A Game Changer",
+    category: "Testimonial",
+    content: <p className="text-neutral-500">"I can't imagine going back to our old workflow. This is simply the best."</p>
+  },
+  {
+      src: "https://images.unsplash.com/photo-1522202176988-66273c2fd55f?q=80&w=2671&auto=format&fit=crop",
+      title: "Team Collaboration",
+      category: "Testimonial",
+      content: <p className="text-neutral-500">"Our team collaboration has improved significantly since we started using this tool."</p>
+  }
+];
+
+export function TestimonialCarousel() {
+  const cards = testimonials.map((card, index) => (
+    <Card key={card.title} card={card} index={index} />
+  ));
+
+  return (
+    <div className="w-full h-full py-20">
+      <Carousel items={cards} />
+    </div>
+  );
+}
+```
+
+<Preview
+  background="grid"
+>
+  <div className="relative w-full h-[500px] flex items-center justify-center overflow-hidden">
+    <LinearCarouselText />
+  </div>
+</Preview>
+
+## Installation
+
+<Tabs items={['Terminal', 'Manual']}>
+  <Tab value="Terminal">
+    <Tabs items={['npm', 'pnpm', 'yarn', 'bun']}>
+      <Tab value="npm">
+        ```bash
+        npx shadcn@latest add @animbits/specials-linear-carousel
+        ```
+      </Tab>
+      <Tab value="pnpm">
+        ```bash
+        pnpm dlx shadcn@latest add @animbits/specials-linear-carousel
+        ```
+      </Tab>
+      <Tab value="yarn">
+        ```bash
+        yarn dlx shadcn@latest add @animbits/specials-linear-carousel
+        ```
+      </Tab>
+      <Tab value="bun">
+        ```bash
+        bunx shadcn@latest add @animbits/specials-linear-carousel
+        ```
+      </Tab>
+    </Tabs>
+  </Tab>
+  <Tab value="Manual">
+    **Step 1: Install dependencies**
+
+    ```bash
+    npm install motion lucide-react clsx tailwind-merge
+    ```
+
+    **Step 2: Copy the component**
+
+    Create `components/animations/specials/linear-carousel.tsx` and copy the following code:
+
+    ```tsx title="components/animations/specials/linear-carousel.tsx"
+    "use client";
+
+    import React, {
+      useEffect,
+      useRef,
+      useState,
+      createContext,
+      useContext,
+    } from "react";
+    import { cn } from "@/lib/utils";
+    import { motion } from "motion/react";
+    import type { ImgHTMLAttributes } from "react";
+    import { ChevronLeft, ChevronRight } from "lucide-react";
+
+    interface CarouselProps {
+      items: React.JSX.Element[];
+      initialScroll?: number;
+    }
+
+    type Card = {
+      src: string;
+      title: string;
+      category?: string;
+      content: React.ReactNode;
+    };
+
+    export const CarouselContext = createContext<{
+      onCardClose: (index: number) => void;
+      currentIndex: number;
+    }>({
+      onCardClose: () => { },
+      currentIndex: 0,
+    });
+
+    export const Carousel = ({
+      items,
+      initialScroll = 0,
+      autoplay = false,
+      autoplaySpeed = 0.5,
+    }: CarouselProps & { autoplay?: boolean; autoplaySpeed?: number }) => {
+      const carouselRef = React.useRef<HTMLDivElement>(null);
+      const [canScrollLeft, setCanScrollLeft] = React.useState(false);
+      const [canScrollRight, setCanScrollRight] = React.useState(true);
+      const [currentIndex, setCurrentIndex] = useState(0);
+      const [isHovered, setIsHovered] = useState(false);
+      const animationRef = useRef<number>(null);
+      // Duplicate items to create infinite effect
+      const loopedItems = [...items, ...items];
+
+      useEffect(() => {
+        if (carouselRef.current) {
+          carouselRef.current.scrollLeft = initialScroll;
+          checkScrollability();
+        }
+      }, [initialScroll]);
+
+      useEffect(() => {
+        if (!autoplay || isHovered) {
+          if (animationRef.current) cancelAnimationFrame(animationRef.current!);
+          return;
+        }
+        const scroll = () => {
+          if (carouselRef.current) {
+            carouselRef.current.scrollLeft += autoplaySpeed;
+            const scrollWidth = carouselRef.current.scrollWidth;
+            if (carouselRef.current.scrollLeft >= scrollWidth / 2) {
+              carouselRef.current.scrollLeft = 0;
+            }
+            checkScrollability();
+            animationRef.current = requestAnimationFrame(scroll);
+          }
+        };
+        animationRef.current = requestAnimationFrame(scroll);
+        return () => {
+          if (animationRef.current) cancelAnimationFrame(animationRef.current);
+        };
+      }, [autoplay, autoplaySpeed, isHovered]);
+
+      const checkScrollability = () => {
+        if (carouselRef.current) {
+          const { scrollLeft, scrollWidth, clientWidth } = carouselRef.current;
+          setCanScrollLeft(scrollLeft > 0);
+          setCanScrollRight(scrollLeft < scrollWidth - clientWidth);
+        }
+      };
+
+      const scrollLeft = () => {
+        if (carouselRef.current) {
+          carouselRef.current.scrollTo({ left: 0, behavior: "smooth" });
+        }
+      };
+
+      const scrollRight = () => {
+        if (carouselRef.current) {
+          const container = carouselRef.current;
+          container.scrollTo({ left: container.scrollWidth, behavior: "smooth" });
+        }
+      };
+
+      const handleCardClose = (index: number) => {
+        if (carouselRef.current) {
+          const cardWidth = isMobile() ? 230 : 320; 
+          const gap = isMobile() ? 4 : 8;
+          const scrollPosition = (cardWidth + gap) * (index + 1);
+          carouselRef.current.scrollTo({
+            left: scrollPosition,
+            behavior: "smooth",
+          });
+          setCurrentIndex(index);
+        }
+      };
+
+      const isMobile = () => {
+        return window && window.innerWidth < 768;
+      };
+
+      return (
+        <CarouselContext.Provider
+          value={{ onCardClose: handleCardClose, currentIndex }}
+        >
+          <div
+            className="relative w-full mx-auto px-4 md:px-8"
+            onTouchStart={() => setIsHovered(true)}
+            onTouchEnd={() => setIsHovered(false)}
+          >
+            <div
+              className="flex w-full overflow-x-scroll overscroll-x-auto scroll-smooth py-10 [scrollbar-width:none] md:py-20"
+              ref={carouselRef}
+              onScroll={checkScrollability}
+            >
+              <div
+                className={cn(
+                  "absolute right-0 z-1000 h-auto w-[5%] overflow-hidden bg-gradient-to-l from-white dark:from-background to-transparent pointer-events-none"
+                )}
+              ></div>
+              <div
+                className={cn("flex flex-row justify-start gap-4")}
+              >
+                {loopedItems.map((item, index) => (
+                  <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{
+                      duration: 0.5,
+                      delay: 0.2 * (index % items.length),
+                      ease: "easeOut",
+                    }}
+                    key={"card" + index}
+                    className="rounded-3xl"
+                    onMouseEnter={() => setIsHovered(true)}
+                    onMouseLeave={() => setIsHovered(false)}
+                  >
+                    {item}
+                  </motion.div>
+                ))}
+              </div>
+            </div>
+            <div className="flex justify-center gap-3 mt-4">
+              <button
+                className="relative z-40 flex h-10 w-10 items-center justify-center rounded-full bg-card border border-border hover:bg-muted disabled:opacity-50 transition-colors"
+                onClick={scrollLeft}
+                disabled={!canScrollLeft}
+                onMouseEnter={() => setIsHovered(true)}
+                onMouseLeave={() => setIsHovered(false)}
+              >
+                <ChevronLeft className="h-6 w-6 text-muted-foreground" />
+              </button>
+              <button
+                className="relative z-40 flex h-10 w-10 items-center justify-center rounded-full bg-card border border-border hover:bg-muted disabled:opacity-50 transition-colors"
+                onClick={scrollRight}
+                disabled={!canScrollRight}
+                onMouseEnter={() => setIsHovered(true)}
+                onMouseLeave={() => setIsHovered(false)}
+              >
+                <ChevronRight className="h-6 w-6 text-muted-foreground" />
+              </button>
+            </div>
+          </div>
+        </CarouselContext.Provider>
+      );
+    };
+
+    export const Card = ({
+      card,
+      index,
+      layout = false,
+    }: {
+      card: Card;
+      index: number;
+      layout?: boolean;
+    }) => {
+      return (
+        <motion.button
+          layoutId={layout ? `card-${card.title}` : undefined}
+          className="relative z-10 flex h-60 w-56 flex-col items-start justify-end overflow-hidden rounded-3xl bg-gray-100 md:h-96 md:w-80 dark:bg-neutral-900"
+        >
+          <div className="pointer-events-none absolute inset-x-0 bottom-0 z-30 h-2/3 bg-gradient-to-t from-black/80 via-black/40 to-transparent" />
+          <div className="relative z-40 p-8 w-full">
+            {card.category && (
+              <motion.p
+                layoutId={layout ? `category-${card.category}` : undefined}
+                className="text-left font-mono text-sm font-medium text-white md:text-base"
+              >
+                {card.category}
+              </motion.p>
+            )}
+            <motion.p
+              layoutId={layout ? `title-${card.title}` : undefined}
+              className="mt-2 max-w-xs text-left font-mono text-xl font-semibold [text-wrap:balance] text-white md:text-3xl"
+            >
+              {card.title}
+            </motion.p>
+          </div>
+          <img
+            src={card.src}
+            alt={card.title}
+            className="absolute inset-0 z-10 w-full h-full object-cover grayscale"
+          />
+        </motion.button>
+      );
+    };
+    ```
+  </Tab>
+</Tabs>
+
+## Props
+
+### Carousel Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `items` | `React.JSX.Element[]` | - | Array of Card components to display |
+| `initialScroll` | `number` | `0` | Initial scroll position of the carousel |
+| `autoplay` | `boolean` | `false` | Whether to auto-scroll the carousel |
+| `autoplaySpeed` | `number` | `0.5` | Speed of the auto-scroll |
+
+### Card Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `card` | `Card` | - | Object containing src, title, category, and content |
+| `index` | `number` | - | Index of the card in the list |
+| `layout` | `boolean` | `false` | Enable layout animations (Shared Element Transition) |
+

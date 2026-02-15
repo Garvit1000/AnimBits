@@ -8,6 +8,7 @@
         "swipeable-stack",
         "magnetic-drawer",
         "spotlight-card",
-        "image-text"
+        "image-text",
+        "linear-carousel"
     ]
 }

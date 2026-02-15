@@ -2259,6 +2259,30 @@
           "type": "registry:component"
         }
       ]
+    },
+    {
+      "name": "specials-linear-carousel",
+      "type": "registry:component",
+      "title": "Linear Carousel",
+      "description": "A stunning, smooth-scrolling 3D carousel inspired by Linear.",
+      "tags": [
+        "specials",
+        "carousel",
+        "animation",
+        "linear"
+      ],
+      "dependencies": [
+        "motion",
+        "lucide-react",
+        "clsx",
+        "tailwind-merge"
+      ],
+      "files": [
+        {
+          "path": "registry/new-york/animations/specials/linear-carousel.tsx",
+          "type": "registry:component"
+        }
+      ]
     }
   ]
 }
