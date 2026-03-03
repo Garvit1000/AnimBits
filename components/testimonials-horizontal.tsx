@@ -38,7 +38,7 @@ export const TestimonialsHorizontal = (props: {
                             <React.Fragment key={index}>
                                 {props.testimonials.map(({ text, image, name, role, username }, i) => (
                                     <div
-                                        className="group relative p-5 rounded-xl border border-neutral-200 dark:border-neutral-800 w-[350px] flex-shrink-0 bg-white dark:bg-black transition-all duration-300 hover:shadow-sm"
+                                        className="group relative p-6 rounded-2xl border border-neutral-200/50 dark:border-white/5 w-[350px] flex-shrink-0 bg-white/50 backdrop-blur-sm dark:bg-white/5 transition-all duration-300 hover:-translate-y-1 hover:shadow-xl hover:bg-white dark:hover:bg-neutral-900/80 dark:hover:border-white/10"
                                         key={i}
                                     >
                                         {/* Header with avatar and name */}

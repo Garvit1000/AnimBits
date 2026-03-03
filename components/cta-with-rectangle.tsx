@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { GithubButton } from "@/components/ui/github-button"
 import { cn } from "@/lib/utils"
-import { ArrowRight } from "lucide-react"
+import { ArrowRight, Sparkles } from "lucide-react"
 
 interface CTAProps {
   badge?: {
@@ -31,58 +31,66 @@ export function CTASection({
   className,
 }: CTAProps) {
   return (
-    <section className={cn("overflow-hidden bg-white dark:bg-black", className)}>
-      <div className="relative mx-auto max-w-[1400px] px-4 py-24 md:py-32">
+    <section className={cn("relative overflow-hidden bg-white dark:bg-black py-24 md:py-32", className)}>
+      {/* Subtle Grid Texture */}
+      <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none">
+        <div className="absolute inset-0 bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:24px_24px] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_0%,#000_70%,transparent_100%)]" />
+      </div>
+
+      <div className="relative mx-auto max-w-[1000px] px-4 z-10">
         {/* Content */}
-        <div className="relative flex flex-col items-center gap-8 text-center z-10">
-          {/* Badge */}
+        <div className="relative flex flex-col items-center gap-8 text-center bg-transparent border-none rounded-none shadow-none">
+          {/* Minimal Enterprise Badge */}
           {badge && (
-            <Badge
-              variant="outline"
-              className="border-neutral-200 dark:border-neutral-800 bg-white/50 dark:bg-neutral-900/50 backdrop-blur-sm"
-            >
-              <span className="text-neutral-700 dark:text-neutral-300 font-medium">{badge.text}</span>
-            </Badge>
+            <div className="inline-flex items-center gap-2 rounded-xl border border-neutral-200 bg-white/50 px-3 py-1 text-xs font-medium uppercase tracking-widest text-neutral-900 transition-colors dark:border-white/10 dark:bg-neutral-900 dark:text-neutral-300">
+              <span className="relative flex h-2 w-2">
+                <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-neutral-400 dark:bg-neutral-500 opacity-75"></span>
+                <span className="relative inline-flex h-2 w-2 rounded-full bg-neutral-500 dark:bg-neutral-400"></span>
+              </span>
+              {badge.text}
+            </div>
           )}
 
           {/* Title */}
-          <h2 className="text-4xl font-bold tracking-tight text-neutral-900 dark:text-white md:text-5xl lg:text-6xl max-w-4xl">
+          <h2 className="text-4xl font-extrabold tracking-tight text-neutral-900 dark:text-white md:text-6xl lg:text-7xl">
             {title}
           </h2>
 
           {/* Description */}
           {description && (
-            <p className="text-lg text-neutral-600 dark:text-neutral-400 max-w-2xl leading-relaxed">
+            <p className="text-lg md:text-xl text-neutral-600 dark:text-neutral-400 max-w-2xl leading-relaxed">
               {description}
             </p>
           )}
 
           {/* Buttons */}
-          <div className="flex flex-col sm:flex-row items-center gap-4 mt-4">
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mt-8 w-full">
             <Button
               variant={action.variant || "default"}
               size="lg"
-              className="h-12 px-8 text-base font-semibold gap-2 min-w-[200px]"
+              className="h-14 px-8 text-base font-semibold gap-2 w-full sm:w-auto min-w-[200px] rounded-xl shadow-[0_4px_14px_0_rgb(0,0,0,0.1)] hover:shadow-[0_6px_20px_rgba(0,0,0,0.15)] dark:bg-white dark:text-black dark:hover:bg-neutral-200 transition-all duration-300"
               asChild
             >
               <a href={action.href}>
                 {action.text}
-                <ArrowRight className="h-4 w-4" />
+                <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
               </a>
             </Button>
 
-            <GithubButton
-              repoUrl="https://github.com/Garvit1000/AnimBits"
-              label="Star on GitHub"
-              targetStars={stars}
-              showGithubIcon={true}
-              showStarIcon={true}
-              variant="outline"
-              size="lg"
-              autoAnimate={true}
-              filled={true}
-              className="h-12 px-8 text-base font-semibold min-w-[200px]"
-            />
+            <div className="w-full sm:w-auto group">
+              <GithubButton
+                repoUrl="https://github.com/Garvit1000/AnimBits"
+                label="Star on GitHub"
+                targetStars={stars}
+                showGithubIcon={true}
+                showStarIcon={true}
+                variant="outline"
+                size="lg"
+                autoAnimate={true}
+                filled={true}
+                className="h-14 px-8 text-base font-semibold w-full min-w-[200px] rounded-xl border-neutral-200 dark:border-white/10 dark:bg-black/50 dark:hover:bg-white/5 backdrop-blur-sm transition-all duration-300"
+              />
+            </div>
           </div>
         </div>
       </div>
