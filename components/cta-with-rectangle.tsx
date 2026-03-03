@@ -1,10 +1,9 @@
 "use client"
 
 import { Button } from "@/components/ui/button"
-import { Badge } from "@/components/ui/badge"
 import { GithubButton } from "@/components/ui/github-button"
 import { cn } from "@/lib/utils"
-import { ArrowRight, Sparkles } from "lucide-react"
+import { ArrowRight } from "lucide-react"
 
 interface CTAProps {
   badge?: {

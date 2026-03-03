@@ -5,7 +5,6 @@ import { BentoGrid, BentoGridItem } from "@/components/ui/bento-grid";
 import { LayoutTextFlip } from "@/components/ui/layout-text-flip";
 import { CanvasText } from "@/components/ui/canvas-text";
 import { ImagesBadge } from "@/components/ui/images-badge";
-import { TextBlurIn } from "@/registry/new-york/animations/text/blur-in";
 
 import { TextShimmer } from "@/registry/new-york/animations/text/shimmer";
 import { RippleButton } from "@/registry/new-york/animations/buttons/ripple";
@@ -18,7 +17,7 @@ import { CTASection } from "@/components/cta-with-rectangle";
 import { StickyBanner } from "@/components/ui/sticky-banner";
 import { ScalesHeroGrid } from "@/components/scales-hero-grid";
 
-import { ArrowRight, Sparkles, Heart, ChevronRight } from "lucide-react";
+import { ArrowRight, Heart, ChevronRight } from "lucide-react";
 import * as motion from "framer-motion/client";
 
 const testimonials = [

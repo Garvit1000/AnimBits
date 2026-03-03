@@ -1,6 +1,6 @@
 import { Scales } from "@/components/ui/scales";
-import { cn } from "@/lib/utils";
 import * as motion from "framer-motion/client";
+import Image from "next/image";
 import Link from "next/link";
 
 function ScalesCard({ image, alt }: { image: string, alt: string }) {
@@ -26,10 +26,11 @@ function ScalesCard({ image, alt }: { image: string, alt: string }) {
                     <Scales size={6} className="rounded-lg" />
                 </div>
                 <div className="relative z-10 h-full w-full overflow-hidden rounded-none bg-white shadow-sm ring-1 shadow-black/10 ring-black/5 dark:bg-neutral-800">
-                    <img
+                    <Image
                         src={image}
                         alt={alt}
-                        className="h-full w-full object-cover transition-all duration-300 group-hover:scale-105"
+                        fill
+                        className="object-cover transition-all duration-300 group-hover:scale-105"
                     />
                     <div className="absolute inset-0 bg-black/40 flex items-end p-4 transition-opacity duration-300 hover:bg-black/20">
                         <span className="text-white font-semibold text-lg drop-shadow-md">

@@ -22,7 +22,7 @@ export const LayoutTextFlip = ({
     }, duration);
 
     return () => clearInterval(interval);
-  }, []);
+  }, [duration, words.length]);
 
   return (
     <div className={cn("flex flex-col sm:flex-row items-center justify-center gap-2 sm:gap-4", className)}>

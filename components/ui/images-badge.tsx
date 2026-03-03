@@ -3,6 +3,7 @@
 import React, { useState } from "react";
 import { motion } from "motion/react";
 import { cn } from "@/lib/utils";
+import Image from "next/image";
 
 interface ImagesBadgeProps {
   text: string;
@@ -137,10 +138,11 @@ export function ImagesBadge({
                 zIndex: 10 + index,
               }}
             >
-              <img
+              <Image
                 src={image}
                 alt={`Preview ${index + 1}`}
-                className="h-full w-full object-cover"
+                fill
+                className="object-cover"
               />
             </motion.div>
           );
