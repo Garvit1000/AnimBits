@@ -25,11 +25,11 @@ export function Footer() {
           {/* Quick Links */}
           <div className="grid grid-cols-2 gap-8 lg:col-span-3 sm:grid-cols-4 lg:gap-8">
             <div>
-              <h3 className="mb-4 text-sm font-semibold text-neutral-900 dark:text-white">Product</h3>
+              <h3 className="mb-4 text-sm font-semibold text-neutral-900 dark:text-white">Products</h3>
               <ul className="space-y-3 text-sm">
-                <li><Link href="/docs/animations" className="transition-colors hover:text-neutral-900 dark:hover:text-white">Animations</Link></li>
-                <li><Link href="/docs/animations/buttons/lift" className="transition-colors hover:text-neutral-900 dark:hover:text-white">Components</Link></li>
-                <li><Link href="/docs/hooks" className="transition-colors hover:text-neutral-900 dark:hover:text-white">Hooks</Link></li>
+                <li><Link href="/docs/animations/buttons/lift" className="transition-colors hover:text-neutral-900 dark:hover:text-white">Animations</Link></li>
+                <li><Link href="/docs/animations/specials/animated-toast" className="transition-colors hover:text-neutral-900 dark:hover:text-white">Components</Link></li>
+                <li><Link href="/docs/hooks/hover-lift" className="transition-colors hover:text-neutral-900 dark:hover:text-white">Hooks</Link></li>
               </ul>
             </div>
 
@@ -37,7 +37,7 @@ export function Footer() {
               <h3 className="mb-4 text-sm font-semibold text-neutral-900 dark:text-white">Resources</h3>
               <ul className="space-y-3 text-sm">
                 <li><Link href="/docs" className="transition-colors hover:text-neutral-900 dark:hover:text-white">Documentation</Link></li>
-                <li><Link href="/showcase" className="transition-colors hover:text-neutral-900 dark:hover:text-white">Showcase</Link></li>
+                {/* <li><Link href="/showcase" className="transition-colors hover:text-neutral-900 dark:hover:text-white">Showcase</Link></li> */}
                 <li><Link href="https://github.com/Garvit1000/AnimBits/issues" className="transition-colors hover:text-neutral-900 dark:hover:text-white">Submit Issue</Link></li>
               </ul>
             </div>
