@@ -20,6 +20,9 @@ export const metadata: Metadata = {
   title: "Animbits - The Foundation for Interactive UI",
   description: "A curated suite of animations, hooks, and components. Designed to make your applications feel alive. Copy, paste, and ship premium interfaces.",
   applicationName: "Animbits",
+  other: {
+    "google-adsense-account": "ca-pub-6635377165285643",
+  },
   openGraph: {
     title: "Animbits - The Foundation for Interactive UI",
     description: "A curated suite of animations, hooks, and components. Designed to make your applications feel alive. Copy, paste, and ship premium interfaces.",
