@@ -48,12 +48,34 @@ export default function PrivacyPolicy() {
                             We use Vercel for hosting and GitHub for code distribution. Please refer to their respective privacy policies for information on how they handle data.
                         </p>
 
-                        <h3>4. Cookies</h3>
+                        <h3>4. Advertising</h3>
                         <p>
-                            Our documentation site may use basic cookies for functionality (like theme preference) and anonymous analytics to understand site usage.
+                            We use Google AdSense, a third-party advertising service provided by Google, to display advertisements on our website.
+                        </p>
+                        <ul>
+                            <li>
+                                Third-party vendors, including Google, use cookies to serve ads based on a user&apos;s prior visits to this website or other websites.
+                            </li>
+                            <li>
+                                Google&apos;s use of advertising cookies enables it and its partners to serve ads to our users based on their visit to our site and/or other sites on the Internet.
+                            </li>
+                            <li>
+                                Users may opt out of personalized advertising by visiting{" "}
+                                <a href="https://www.google.com/settings/ads" target="_blank" rel="noopener noreferrer">Google Ads Settings</a>. Alternatively, users can opt out of a third-party vendor&apos;s use of cookies for personalized advertising by visiting{" "}
+                                <a href="https://www.aboutads.info/choices/" target="_blank" rel="noopener noreferrer">www.aboutads.info</a>.
+                            </li>
+                        </ul>
+                        <p>
+                            For more information on how Google uses data when you use our partners&apos; sites or apps, please review{" "}
+                            <a href="https://policies.google.com/technologies/partner-sites" target="_blank" rel="noopener noreferrer">Google&apos;s Privacy &amp; Terms</a>.
                         </p>
 
-                        <h3>5. Contact Us</h3>
+                        <h3>5. Cookies</h3>
+                        <p>
+                            Our documentation site may use basic cookies for functionality (like theme preference), anonymous analytics to understand site usage, and advertising cookies as described above.
+                        </p>
+
+                        <h3>6. Contact Us</h3>
                         <p>
                             If you have any questions about this Privacy Policy, please contact us via our GitHub repository.
                         </p>

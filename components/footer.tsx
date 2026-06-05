@@ -37,6 +37,7 @@ export function Footer() {
               <h3 className="mb-4 text-sm font-semibold text-neutral-900 dark:text-white">Resources</h3>
               <ul className="space-y-3 text-sm">
                 <li><Link href="/docs" className="transition-colors hover:text-neutral-900 dark:hover:text-white">Documentation</Link></li>
+                <li><Link href="/about" className="transition-colors hover:text-neutral-900 dark:hover:text-white">About</Link></li>
                 {/* <li><Link href="/showcase" className="transition-colors hover:text-neutral-900 dark:hover:text-white">Showcase</Link></li> */}
                 <li><Link href="https://github.com/Garvit1000/AnimBits/issues" className="transition-colors hover:text-neutral-900 dark:hover:text-white">Submit Issue</Link></li>
               </ul>
@@ -76,6 +77,9 @@ export function Footer() {
           </div>
 
           <div className="flex items-center gap-4 text-xs font-medium opacity-70">
+            <Link href="/about" className="transition-colors hover:text-neutral-900 dark:hover:text-white">About</Link>
+            <Link href="/privacy-policy" className="transition-colors hover:text-neutral-900 dark:hover:text-white">Privacy</Link>
+            <Link href="/terms-of-service" className="transition-colors hover:text-neutral-900 dark:hover:text-white">Terms</Link>
             <Link href="https://animbits.dev" className="transition-colors hover:text-neutral-900 dark:hover:text-white">animbits.dev</Link>
           </div>
         </div>
