@@ -580,3 +580,206 @@ Click multiple buttons quickly to see the stacking effect:
 | `duration` | `number` | `3000` | Auto-dismiss duration in milliseconds |
 | `onClose` | `() => void` | - | Callback when toast closes |
 | `className` | `string` | - | Additional CSS classes |
+
+## Use cases
+
+`AnimatedToast` is designed for brief, non-blocking feedback after an action the user just took. The spring slide-in from the right (`x: 400, scale: 0.8` to resting position), the SVG `pathLength` icon draw animation, and the `scaleX` progress bar give the notification a layered sense of arrival without demanding attention.
+
+- **Save confirmations.** After a settings form saves, fire a `success` toast ("Changes saved successfully") so the user knows the request completed without a page reload.
+- **API error feedback.** When a network request fails, display an `error` toast with a short message; keep the form intact so the user can retry.
+- **Background task completion.** Long uploads, exports, or email-sends that finish off-screen are good candidates for an `info` or `success` toast.
+- **Rate limit / quota warnings.** A `warning` toast lets the user know they are approaching a limit without blocking their current task.
+- **Stacked queued messages.** With `ToastProvider` and `maxToasts`, up to 5 concurrent toasts stack in a Sonner-style layer at the top-right, each independently auto-dismissing.
+
+## When to use / when not to use
+
+**Use `AnimatedToast` when:**
+
+- The feedback is purely informational and the user does not need to act on it to continue.
+- The message can be understood in 1 to 2 seconds; `duration` defaults to 3000 ms.
+- You want visual reinforcement of the action type (`success` green, `error` red, `info` blue, `warning` amber) via the per-type color map and icon paths.
+
+**Do not use `AnimatedToast` when:**
+
+- The message requires confirmation before the user continues. Use a dialog or alert instead. Toasts auto-dismiss and the action may be missed.
+- The notification contains critical error details the user must copy or reference. The 3000 ms default makes that impractical; consider an inline error state.
+- You need to show persistent status (a banner for an ongoing outage, for example). Toasts are transient by design.
+- The page already uses a third-party toast library such as Sonner or React Hot Toast. Two toast systems in one app create confusing stacking and z-index conflicts.
+
+## Accessibility notes
+
+- **Live region.** `AnimatedToast` renders a `motion.div` but does not automatically carry a `role="status"` or `aria-live` attribute. Wrap the toast container in a live region so screen readers announce new toasts:
+
+```tsx
+<div role="status" aria-live="polite" aria-atomic="true">
+  {show && <AnimatedToast message="Changes saved" type="success" onClose={() => setShow(false)} />}
+</div>
+```
+
+For `error` type toasts use `aria-live="assertive"` to interrupt the reader immediately.
+
+- **Dismiss button.** The close button inside `AnimatedToast` renders as a `motion.button` with an SVG cross icon but no accessible label. Add an `aria-label` when integrating:
+
+```tsx
+// Inside your wrapper or by passing className and overriding
+<button aria-label="Close notification" onClick={...}>...</button>
+```
+
+- **Keyboard reachability.** The toast renders inside a `pointer-events-none` fixed container; only the top-most toast has `pointer-events: auto`. Ensure the dismiss button is reachable with Tab when the toast is visible.
+- **Do not put the only path to action inside a toast.** "Undo" or "View" links inside a toast that auto-dismisses in 3000 ms are practically unusable for keyboard and screen reader users. If the action matters, use a persistent notification or dialog.
+- **Reduced motion.** The spring entrance (`stiffness: 300`, `damping: 30`) and icon draw animations should be suppressed for users who prefer reduced motion. Add a `useReducedMotion` guard:
+
+```tsx
+"use client"
+import { useReducedMotion } from "motion/react"
+import { AnimatedToast } from "@/components/animations/specials/animated-toast"
+
+function AccessibleToast(props: React.ComponentProps<typeof AnimatedToast>) {
+  const reduced = useReducedMotion()
+  // Pass a very short duration so the spring completes almost instantly
+  return <AnimatedToast {...props} duration={reduced ? 5000 : props.duration} />
+}
+```
+
+## Performance considerations
+
+- **Progress bar polling.** The component runs a `setInterval` every 50 ms to decrement the `progress` state. This causes a re-render every 50 ms for as long as the toast is mounted. With `ToastProvider` and `maxToasts={5}`, up to five intervals fire simultaneously. Unmount toasts promptly via `onClose` rather than hiding them with CSS.
+- **Spring animation budget.** Each `AnimatedToast` mounts three simultaneous spring/animation sequences: the container slide, the icon scale-rotate, and the `pathLength` draw. These are transform and opacity only, so they stay off the main thread, but five stacked toasts multiplies the compositor load.
+- **`AnimatePresence` cost.** `ToastProvider` wraps each toast in a `motion.div` inside `AnimatePresence` to handle mount/unmount transitions. Each `exit` animation (`opacity: 0, scale: 0.9`, 200 ms) runs on unmount. Keep `maxToasts` at 3 to 5 for typical UIs.
+- **Fixed positioning and `z-index`.** The container uses `z-[100]`. If your app uses heavy `backdrop-filter` layers at similar z-levels, compositing cost increases. Test on lower-powered devices.
+
+## Customization examples
+
+### Warning toast with longer display time
+
+```tsx
+import { AnimatedToast } from "@/components/animations/specials/animated-toast"
+
+function StorageLimitWarning({ onClose }: { onClose: () => void }) {
+  return (
+    <AnimatedToast
+      message="Storage limit at 90%"
+      type="warning"
+      duration={6000}
+      onClose={onClose}
+      className="min-w-[300px]"
+    />
+  )
+}
+```
+
+### Programmatic toast via `useToast` hook
+
+```tsx
+"use client"
+import { useToast } from "@/components/animations/specials/toast-trigger"
+
+export function SaveButton() {
+  const { addToast } = useToast()
+
+  async function handleSave() {
+    try {
+      await saveSettings()
+      addToast({ message: "Settings saved", type: "success" })
+    } catch {
+      addToast({ message: "Save failed. Please retry.", type: "error" })
+    }
+  }
+
+  return <button onClick={handleSave}>Save</button>
+}
+```
+
+### Capped stack with provider
+
+```tsx
+import { ToastProvider, ToastTrigger } from "@/components/animations/specials/toast-trigger"
+
+export default function Layout({ children }: { children: React.ReactNode }) {
+  return (
+    <ToastProvider maxToasts={3}>
+      {children}
+    </ToastProvider>
+  )
+}
+```
+
+## Real-world examples
+
+### Form save confirmation
+
+After a settings page saves, give the user a `success` toast and call `onClose` to unmount after auto-dismiss:
+
+```tsx
+"use client"
+import { useState } from "react"
+import { AnimatedToast } from "@/components/animations/specials/animated-toast"
+
+export function SettingsForm() {
+  const [saved, setSaved] = useState(false)
+
+  async function handleSubmit(e: React.FormEvent) {
+    e.preventDefault()
+    await saveUserSettings()
+    setSaved(true)
+  }
+
+  return (
+    <>
+      <form onSubmit={handleSubmit} className="space-y-4">
+        <input name="displayName" className="rounded border px-3 py-2 text-sm w-full" placeholder="Display name" />
+        <button type="submit" className="rounded bg-blue-600 px-4 py-2 text-sm text-white hover:bg-blue-700">
+          Save changes
+        </button>
+      </form>
+
+      {saved && (
+        <div role="status" aria-live="polite" className="pointer-events-none fixed top-4 right-4 z-50">
+          <AnimatedToast
+            message="Profile updated"
+            type="success"
+            duration={3000}
+            onClose={() => setSaved(false)}
+          />
+        </div>
+      )}
+    </>
+  )
+}
+```
+
+### Multi-action feedback with the hook
+
+```tsx
+"use client"
+import { ToastProvider, useToast } from "@/components/animations/specials/toast-trigger"
+
+function ActionPanel() {
+  const { addToast } = useToast()
+
+  return (
+    <div className="flex gap-3">
+      <button
+        onClick={() => addToast({ message: "Copied to clipboard", type: "success" })}
+        className="rounded border px-3 py-1.5 text-sm hover:bg-neutral-100"
+      >
+        Copy link
+      </button>
+      <button
+        onClick={() => addToast({ message: "Export failed", type: "error" })}
+        className="rounded border px-3 py-1.5 text-sm hover:bg-neutral-100"
+      >
+        Export
+      </button>
+    </div>
+  )
+}
+
+export default function Page() {
+  return (
+    <ToastProvider maxToasts={3}>
+      <ActionPanel />
+    </ToastProvider>
+  )
+}
+```

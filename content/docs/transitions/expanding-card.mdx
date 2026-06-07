@@ -440,3 +440,181 @@ Smooth fade-in with subtle scale for a gentle transition.
 | `columns` | `2 \| 3 \| 4` | `3` | Number of columns in grid layout. |
 | `variant` | `"scale-center" \| "slide-up" \| "rotate-scale" \| "elastic" \| "fade-scale"` | `"scale-center"` | Animation style for card expansion. |
 | `className` | `string` | - | Additional CSS classes. |
+
+## Use cases
+
+`ExpandingCard` is built around Framer Motion's shared-layout system: the grid card and the expanded detail view share four `layoutId` values each (`card-{id}`, `image-{id}`, `title-{id}`, `desc-{id}`), so the browser morphs between them rather than cutting or fading. Use it when visual continuity between a thumbnail and its full-size detail view matters:
+
+- **Photo and portfolio galleries.** A grid of cropped thumbnails that each expand into a hero image with a caption. The shared image `layoutId` keeps the photo in place while the card grows.
+- **E-commerce product grids.** A compact product card expands to show a longer description, size options, or specs without navigating away.
+- **Pricing or FAQ accordions.** A collapsed feature card (title + one-liner) expands into a full benefit explanation. `variant="fade-scale"` suits text-heavy content where the tween easing (0.3s easeOut) avoids spring overshoot on text.
+- **Portfolio case studies.** A thumbnail with a project title expands into a full case-study panel. `variant="elastic"` (bounce 0.4) adds energy appropriate for creative work; drop it to `variant="scale-center"` (bounce 0.2) for professional or finance contexts.
+- **Content cards in a CMS dashboard.** Editors click a post card in a grid to expand it and edit metadata inline.
+
+## When to use / when not to use
+
+**Use `ExpandingCard` when:**
+
+- The user needs visual continuity between a compact representation and its detail view. The shared `layoutId` morph communicates "you are looking at the same item, expanded", which a simple modal fade cannot.
+- Your data is already structured as a flat list of `CardItem` objects with a `longDescription` field distinct from `description`. The component renders both in the detail view.
+- You have 3 to 12 cards. Fewer than three makes the grid feel empty; many more means users will be scrolling past unmounted `AnimatePresence` trees.
+
+**Do not use `ExpandingCard` when:**
+
+- You need deep interactivity inside the expanded view (forms with multiple steps, nested navigations). The expanded panel sits inside a `motion.div` with no focus trap or scroll lock, so keyboard and screen-reader users cannot safely interact with it.
+- The primary action is to navigate to a separate page. Reach for a standard `<Link>` card instead; shared-layout morphing feels misleading when the URL changes without continuity.
+- Cards contain wildly different aspect-ratio images. The shared `layoutId` on the image container forces it to scale, which can distort tall portrait images during the tween.
+- You want a plain dialog without the layout-morph effect. The [Shared Modal](/docs/transitions/shared-modal) component gives you the same `AnimatePresence` wrapper without coupling the trigger and dialog via shared `layoutId`.
+
+## Accessibility notes
+
+The current implementation uses plain `motion.div` elements for both the grid card and the overlay. There are several gaps to address before deploying in a production app:
+
+- **Dialog semantics.** The expanded overlay is visually a dialog but carries no `role="dialog"` or `aria-modal="true"`. Add both to the expanded `motion.div` so screen readers announce it as a dialog and suppress background content.
+- **Focus trap.** When the overlay opens, focus should move into the expanded card and be trapped there. Libraries like `focus-trap-react` work alongside Framer Motion without conflict.
+- **Escape to close.** Handle `keydown` for `Escape` to call `setSelectedId(null)`. Without it, keyboard users cannot dismiss the overlay.
+- **Return focus.** When the overlay closes, return focus to the card that triggered the expansion. Store a `ref` to the trigger before opening and call `.focus()` inside the `onAnimationComplete` callback on exit.
+- **Close button label.** The `<X size={20} />` button has no visible text. Add `aria-label="Close"` to it.
+- **Backdrop click.** The backdrop `motion.div` calls `setSelectedId(null)` on click, but it should also be keyboard-reachable (`role="button"` or a hidden button element).
+- **Scroll lock.** Add `overflow: hidden` to `document.body` while the overlay is open so background content does not scroll behind the backdrop.
+
+## Performance considerations
+
+- **Shared layout measurement.** Framer Motion measures and animates layout for every element sharing a `layoutId`. Each card holds four shared elements (`card`, `image`, `title`, `desc`). With twelve cards in the grid, that is 48 layout measurements on each expand or collapse. Keep the grid to a reasonable size and avoid nesting many other `layout`-animated elements inside the same render tree.
+- **`AnimatePresence` and mount cost.** The overlay is conditionally rendered inside `AnimatePresence`. It is fully mounted on open and unmounted on close, so you pay a render cost each time. This is fine for the use case but means heavy content (e.g., `<video>` elements) inside `longDescription` will remount and restart on every open.
+- **Spring settling.** The `elastic` variant uses `bounce: 0.4` with a `duration: 0.8s` spring. Springs do not have a strict end time; with high bounce they can settle over 1 to 1.5 seconds. Use `bounce: 0.2` (the `scale-center` default) if users complain the animation feels slow.
+- **Backdrop `backdrop-blur-sm`.** CSS `backdrop-filter` forces the GPU to composite the blurred layer separately. On mobile devices with many layers, this can cause jank. Test on low-end targets and remove the blur if frame rate drops.
+- **`useId()` prefix.** The component calls `useId()` to namespace all `layoutId` values, preventing collisions if you mount multiple `ExpandingCard` instances on the same page. Do not replace these with static strings.
+
+## Customization examples
+
+### Two-column grid with fade-scale
+
+Clean, tween-based expansion for text-heavy cards:
+
+```tsx
+import { ExpandingCard } from "@/components/animations/transitions/expanding-card"
+
+const articles = [
+  {
+    id: "1",
+    title: "Design Systems at Scale",
+    description: "Building a token-based system for 50+ products",
+    longDescription: "We rebuilt our design system from scratch using style-dictionary, semantic tokens, and a custom Figma plugin that syncs tokens directly to code. Here is what we learned.",
+    image: "https://picsum.photos/seed/article1/800/400",
+  },
+  {
+    id: "2",
+    title: "Micro-interactions That Matter",
+    description: "When animation earns its pixels",
+    longDescription: "Not every state change needs a spring. We surveyed 200 users and found that three specific interaction patterns drove measurable engagement lifts when animated.",
+    image: "https://picsum.photos/seed/article2/800/400",
+  },
+]
+
+export function ArticleGrid() {
+  return <ExpandingCard items={articles} columns={2} variant="fade-scale" />
+}
+```
+
+### Four-column product grid with elastic bounce
+
+For a playful shop or gallery:
+
+```tsx
+import { ExpandingCard } from "@/components/animations/transitions/expanding-card"
+
+export function ShopGrid({ products }) {
+  return (
+    <ExpandingCard
+      items={products}
+      columns={4}
+      variant="elastic"
+      className="bg-white dark:bg-zinc-950"
+    />
+  )
+}
+```
+
+## Real-world examples
+
+### Photography portfolio
+
+Users browse thumbnails in a three-column grid and click to see the full image with a caption. The `layoutId` on the image container makes the photo expand in place rather than pop.
+
+```tsx
+"use client"
+import { ExpandingCard } from "@/components/animations/transitions/expanding-card"
+
+const photos = [
+  {
+    id: "p1",
+    title: "Golden Hour, Atacama",
+    description: "Landscape photography",
+    longDescription: "Shot at f/8, 1/250s, ISO 100 during the last 15 minutes of daylight. The salt flats reflect the sky nearly perfectly at this time of year.",
+    image: "https://picsum.photos/seed/atacama/800/600",
+  },
+  {
+    id: "p2",
+    title: "Street Market, Marrakech",
+    description: "Documentary photography",
+    longDescription: "Handheld at f/2.8, 1/640s. Available light only. The vendor had no idea the photo would end up in a gallery six months later.",
+    image: "https://picsum.photos/seed/marrakech/800/600",
+  },
+  {
+    id: "p3",
+    title: "Ice Cave, Iceland",
+    description: "Nature photography",
+    longDescription: "The cave is only accessible between November and March. We hiked two hours in crampons to reach it. Exposure: 8s on a tripod at ISO 400.",
+    image: "https://picsum.photos/seed/iceland1/800/600",
+  },
+]
+
+export function PortfolioGrid() {
+  return <ExpandingCard items={photos} columns={3} variant="scale-center" />
+}
+```
+
+### Pricing plan expander
+
+Each tier is a compact card; clicking shows the full feature list for that plan. `variant="fade-scale"` keeps the tween smooth without overshoot on text.
+
+```tsx
+"use client"
+import { ExpandingCard } from "@/components/animations/transitions/expanding-card"
+
+const plans = [
+  {
+    id: "starter",
+    title: "Starter",
+    description: "$0 / month",
+    longDescription: "Up to 3 projects, 1 GB storage, community support, export to PNG and SVG, public sharing links, and 7-day revision history.",
+    image: "https://picsum.photos/seed/plan-starter/800/300",
+  },
+  {
+    id: "pro",
+    title: "Pro",
+    description: "$19 / month",
+    longDescription: "Unlimited projects, 100 GB storage, priority email support, all export formats, private sharing with password protection, 90-day revision history, and custom domain.",
+    image: "https://picsum.photos/seed/plan-pro/800/300",
+  },
+  {
+    id: "team",
+    title: "Team",
+    description: "$49 / month per seat",
+    longDescription: "Everything in Pro plus shared team libraries, granular permissions, SSO via SAML, audit logs, SLA, dedicated Slack channel, and volume discounts from 5 seats.",
+    image: "https://picsum.photos/seed/plan-team/800/300",
+  },
+]
+
+export function PricingGrid() {
+  return (
+    <ExpandingCard
+      items={plans}
+      columns={3}
+      variant="fade-scale"
+      className="bg-zinc-50 dark:bg-zinc-900"
+    />
+  )
+}
+```

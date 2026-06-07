@@ -312,6 +312,186 @@ export function GradientShimmer() {
 }
 ```
 
+## Use cases
+
+`useShimmer` returns a `CSSProperties` object, not `MotionProps`. Spread it onto a regular HTML element or a React component that accepts a `style` prop. The returned object sets `backgroundImage`, `backgroundSize: "200% auto"`, `WebkitBackgroundClip: "text"`, `WebkitTextFillColor: "transparent"`, and `animation` with the injected `@keyframes shimmer` definition.
+
+- **Premium tier labels and plan badges.** A "PRO" or "ENTERPRISE" badge with a gold shimmer (`colors: ["transparent", "rgba(255,215,0,0.9)", "transparent"]`) signals exclusivity without an icon.
+- **Hero headings on dark landing pages.** A white shimmer sweep across a dark hero title creates a spotlight-sweeping-across-stage effect that is impossible with static gradients.
+- **Loading placeholder text.** Replace content areas with shimmer-animated placeholder headings while data loads, giving a branded loading skeleton for text content.
+- **Feature announcement ribbons.** A "NEW" tag or "BETA" ribbon with a shimmer communicates recency and draws the eye.
+- **Countdown or launch page headlines.** A slow shimmer (`duration: 4`) on a large countdown heading adds movement to a page that is otherwise static.
+
+## When to use / when not to use
+
+**Use `useShimmer` when:**
+
+- The target is a text element (heading, span, label) where `WebkitBackgroundClip: "text"` applies correctly.
+- You want a CSS-only animation with no Framer Motion dependency. `useShimmer` injects a `@keyframes shimmer` rule into the document `<head>` once and reuses it for all subsequent calls.
+- You need to control the exact shimmer colors via the `colors` tuple.
+
+**Avoid `useShimmer` when:**
+
+- The element is a non-text block (a card background, an image overlay). The hook uses `WebkitTextFillColor: "transparent"`, which only affects text rendering. For shimmer on non-text elements, build a separate CSS animation with a `::before` pseudo-element overlay.
+- The text must be selectable and copyable in a way that matches its visual color. `WebkitTextFillColor: "transparent"` makes the text visually transparent while the background gradient shows through; some browsers may render copied text as empty or invisible in certain clipboard contexts.
+- Server-side rendering with strict hydration. The `useShimmer` hook calls `document.getElementById` and `document.createElement` inside the render path. It guards with `typeof document !== "undefined"`, but the injected `<style>` tag will not exist on the server, causing a hydration mismatch if the style affects layout.
+
+## Accessibility notes
+
+`useShimmer` produces a continuously moving animation (infinite loop). The text content itself is unchanged; only the visual gradient and animation are applied.
+
+- Screen readers read the text content, not the visual gradient, so the text remains fully accessible.
+- Respect `prefers-reduced-motion`. The shimmer sweep moves across the element indefinitely. When the preference is set, return an empty style object so the text renders normally without the gradient:
+
+```tsx
+"use client"
+import { useReducedMotion } from "motion/react"
+import { useShimmer } from "@/lib/use-shimmer"
+
+export function AccessibleShimmer({ children }: { children: React.ReactNode }) {
+  const reduced = useReducedMotion()
+  const shimmerStyle = useShimmer({ duration: 2.5 })
+
+  return (
+    <span style={reduced ? undefined : shimmerStyle} className="text-4xl font-bold">
+      {children}
+    </span>
+  )
+}
+```
+
+- Because `WebkitTextFillColor: "transparent"` makes the text itself invisible (only the background gradient is visible), ensure the gradient colors provide sufficient contrast against the page background for users with color vision deficiencies.
+
+## Performance considerations
+
+- `useShimmer` uses a pure CSS animation via `background-position` changes on a `linear-gradient`. This does not trigger layout or paint on each frame because background-position is composited by the browser's rendering engine in most cases.
+- The `@keyframes shimmer` style block is injected into `document.head` only once per page load (guarded by `document.getElementById("shimmer-keyframes")`). Multiple components using `useShimmer` share the same keyframes.
+- `backgroundSize: "200% auto"` doubles the gradient's virtual width. The animation moves the position from `200% center` to `-200% center`. This is equivalent to a translate of 400% of the element width, which is handled in the browser's compositing layer and does not cause repaints.
+- The hook reconstructs the `CSSProperties` object on every render. Memoize the options if the parent component re-renders frequently.
+
+## Customization examples
+
+### Gold shimmer for a "PRO" plan badge
+
+```tsx
+import { useShimmer } from "@/lib/use-shimmer"
+
+export function ProBadge() {
+  const shimmerStyle = useShimmer({
+    colors: ["rgba(202, 138, 4, 0.6)", "rgba(255, 255, 255, 1)", "rgba(202, 138, 4, 0.6)"],
+    duration: 2,
+  })
+
+  return (
+    <span
+      style={shimmerStyle}
+      className="rounded-full bg-yellow-500 px-3 py-0.5 text-xs font-bold uppercase tracking-wider"
+    >
+      PRO
+    </span>
+  )
+}
+```
+
+### Subtle white shimmer on a dark hero heading
+
+```tsx
+import { useShimmer } from "@/lib/use-shimmer"
+
+export function HeroCopy() {
+  const shimmerStyle = useShimmer({ duration: 3.5 })
+
+  return (
+    <h1
+      style={shimmerStyle}
+      className="text-7xl font-black text-white"
+    >
+      Move at the speed of thought
+    </h1>
+  )
+}
+```
+
+### Colored shimmer matching brand
+
+```tsx
+import { useShimmer } from "@/lib/use-shimmer"
+
+export function BrandHeading({ children }: { children: React.ReactNode }) {
+  const shimmerStyle = useShimmer({
+    colors: [
+      "rgba(99, 102, 241, 0.7)",
+      "rgba(168, 85, 247, 1)",
+      "rgba(99, 102, 241, 0.7)",
+    ],
+    duration: 2.8,
+  })
+
+  return (
+    <h2 style={shimmerStyle} className="text-5xl font-extrabold">
+      {children}
+    </h2>
+  )
+}
+```
+
+## Real-world examples
+
+### Pricing page "Most popular" label
+
+```tsx
+"use client"
+import { useReducedMotion } from "motion/react"
+import { useShimmer } from "@/lib/use-shimmer"
+
+export function PopularLabel() {
+  const reduced = useReducedMotion()
+  const shimmerStyle = useShimmer({
+    colors: ["transparent", "rgba(255,255,255,0.9)", "transparent"],
+    duration: 2,
+  })
+
+  return (
+    <div className="flex justify-center">
+      <span
+        style={reduced ? undefined : shimmerStyle}
+        className="rounded-full bg-indigo-600 px-4 py-1 text-xs font-bold text-white"
+      >
+        Most popular
+      </span>
+    </div>
+  )
+}
+```
+
+### Product launch countdown heading
+
+```tsx
+"use client"
+import { useShimmer } from "@/lib/use-shimmer"
+
+export function LaunchHeading({ days }: { days: number }) {
+  const shimmerStyle = useShimmer({
+    colors: ["transparent", "rgba(255,255,255,0.85)", "transparent"],
+    duration: 4,
+  })
+
+  return (
+    <div className="bg-neutral-950 py-20 text-center">
+      <p className="text-xs font-semibold uppercase tracking-widest text-neutral-500">Launching in</p>
+      <h1
+        style={shimmerStyle}
+        className="mt-4 text-8xl font-black text-white"
+        aria-label={`${days} days`}
+      >
+        {days}
+      </h1>
+      <p className="mt-2 text-sm text-neutral-400">days</p>
+    </div>
+  )
+}
+```
+
 <Callout>
   **Tip:** Works best on bold, large text for maximum visual impact.
 </Callout>

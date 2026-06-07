@@ -195,3 +195,190 @@ export function SpotlightCard({
 | `spotlightColor` | `string` | `"rgba(255, 255, 255, 0.25)"` | Color of the spotlight gradient. |
 | `spotlightSize` | `number` | `350` | Size of the spotlight circle. |
 | `hoverScale` | `number` | `1.05` | Scale factor on hover. |
+
+## Use cases
+
+`SpotlightCard` tracks mouse position within the card using `onMouseMove`, storing `clientX` and `clientY` relative to the card's `getBoundingClientRect` in two `useMotionValue` instances. A `useSpring` (damping 20, stiffness 200, mass 0.5) smooths each value, and `useMotionTemplate` builds a `radial-gradient` string that drives the `background` of an absolutely-positioned overlay. A second overlay uses the same gradient as a `maskImage` to reveal a colored border glow at the spotlight position. The card itself uses `whileHover` with a `spring(stiffness: 300, damping: 20)` for the `hoverScale` lift.
+
+- **Feature cards on marketing pages.** A 2- or 3-column grid of dark-background feature cards with per-card spotlight colors (cyan, violet, amber) creates a visually differentiated feature section.
+- **Pricing plan cards.** The spotlight on a "Pro" or "Enterprise" tier card draws attention as the user scans across tiers without requiring an animated badge.
+- **Team member or contributor profiles.** Staff or open-source contributor cards with a soft spotlight add interactivity to otherwise static content.
+- **Dashboard widget containers.** Wrapping metrics or chart panels in `SpotlightCard` gives a premium look to internal tools and admin UIs.
+- **Onboarding checklist items.** Cards for each setup step get a spotlight to signal interactivity as the user works through a list.
+
+## When to use / when not to use
+
+**Use `SpotlightCard` when:**
+
+- The card is on a dark or neutral background. The default `spotlightColor` is `rgba(255, 255, 255, 0.25)` (white), which is invisible on white backgrounds. Set a contrasting color or use on dark surfaces.
+- The content inside the card is visually important and you want to reward exploration without an explicit hover state change (color swap, underline, etc.).
+- Users are on a pointer device. The spotlight tracks `onMouseMove`; on touch devices there is no visible effect until a tap, and the hover scale does not trigger. The card reads as a static element on mobile.
+
+**Do not use `SpotlightCard` when:**
+
+- The card is inside a dense list or table where `hoverScale={1.05}` causes layout shift. Set `hoverScale={1}` to disable the scale, or use a different component for tabular data.
+- The `spotlightColor` matches the card background. Test every theme (light and dark) separately; what is visible on `neutral-900` may be invisible on `white`.
+- The card must perform well on very low-end hardware. The dual overlay approach (`radial-gradient` background + `maskImage` border glow) requires two compositing layers. On devices with limited GPU memory, multiply this by many cards and profiling is advisable.
+- The card contains text that must remain readable at all times. `hoverScale` on a card adjacent to others can cause the scaled card to overlap its neighbors unless you add `z-index` management.
+
+## Accessibility notes
+
+- **Not a focusable element.** `SpotlightCard` renders a `motion.div` with no interactive role. If the card is a navigation element or a clickable entity, wrap it in an `<a>` or `<button>`, or add `role="button"` and `tabIndex={0}` plus keyboard handlers.
+- **Hover-only effect.** The spotlight and border glow appear only on hover. They convey no information; they are purely decorative. No `aria` attributes are needed for the effect itself.
+- **`hoverScale` and screen magnification.** Users running OS-level screen magnification may find a card scaling 5% on hover disorienting. Consider a lower `hoverScale` (1.02) or disable it via `hoverScale={1}` in accessible contexts.
+- **Reduced motion.** Both the spring spotlight tracking and the `whileHover` scale should be suppressed:
+
+```tsx
+"use client"
+import { useReducedMotion } from "motion/react"
+import { SpotlightCard } from "@/components/animations/specials/spotlight-card"
+
+function AccessibleSpotlightCard(props: React.ComponentProps<typeof SpotlightCard>) {
+  const reduced = useReducedMotion()
+  return (
+    <SpotlightCard
+      {...props}
+      hoverScale={reduced ? 1 : props.hoverScale}
+    />
+  )
+}
+```
+
+To fully disable the `radial-gradient` spotlight in reduced motion, fork the component and guard the `onMouseMove` handler with a check against `window.matchMedia("(prefers-reduced-motion: reduce)").matches`.
+
+- **Focus visibility.** If you wrap the card in a `<button>` or `<a>`, confirm that the `focus-visible` ring is visible over the spotlight overlay. The overlay sits at `z-20`; ensure your focus ring sits above it (`z-30` or via `outline`).
+
+## Performance considerations
+
+- **`onMouseMove` and motion values.** Mouse position is stored in `useMotionValue` and smoothed with `useSpring`. Updates go through the motion value pipeline without triggering React re-renders. The `useMotionTemplate` string is also evaluated outside React. This is as performant as pointer tracking can get in the React ecosystem.
+- **Dual overlay `radial-gradient`.** Two `motion.div` elements sit at `z-20` with `position: absolute`. One has a `background: radial-gradient(...)` and the other uses `maskImage: radial-gradient(...)` for the border glow. Both recompose on every pointer move event. Modern browsers handle this in the GPU compositor, but each card adds two compositor layers.
+- **Noise texture overlay.** A third `div` at `z-0` renders a base64-encoded SVG noise pattern as `backgroundImage`. This texture is static and loaded once; the browser caches the decoded SVG bitmap. Its cost is a single paint on mount.
+- **`whileHover` spring.** The `scale` spring (`stiffness: 300, damping: 20`) runs on the compositor. It does not cause layout shifts during the animation. However, when `scale` settles at the hover value, neighboring cards are not moved. If cards are in a `gap`-based grid, the scaled card overlaps adjacent cards. Add `relative z-10` on hover or use a wrapping container with `overflow: visible`.
+- **Many cards in a grid.** A page with 12 spotlight cards has up to 24 always-mounted compositor layers (2 per card). Combine with noise textures and the scale spring and GPU memory use on mobile can become noticeable. Test on a mid-range mobile device before shipping a large grid.
+
+## Customization examples
+
+### Dark feature card with cyan spotlight
+
+```tsx
+import { SpotlightCard } from "@/components/animations/specials/spotlight-card"
+import { Zap } from "lucide-react"
+
+export function FeatureCard() {
+  return (
+    <SpotlightCard
+      className="w-80 bg-neutral-900 border-neutral-800 p-6"
+      spotlightColor="rgba(34, 211, 238, 0.15)"
+      spotlightSize={300}
+      hoverScale={1.03}
+    >
+      <div className="flex flex-col gap-3">
+        <div className="w-10 h-10 rounded-lg bg-cyan-900/40 flex items-center justify-center">
+          <Zap className="h-5 w-5 text-cyan-400" />
+        </div>
+        <h3 className="text-base font-semibold text-white">Instant deploys</h3>
+        <p className="text-sm text-neutral-400">Push to main. Live in 30 seconds. No config required.</p>
+      </div>
+    </SpotlightCard>
+  )
+}
+```
+
+### Subtle spotlight on a light card
+
+```tsx
+import { SpotlightCard } from "@/components/animations/specials/spotlight-card"
+
+export function LightCard() {
+  return (
+    <SpotlightCard
+      className="w-72 bg-white border-neutral-200 p-5 shadow-sm"
+      spotlightColor="rgba(99, 102, 241, 0.12)"
+      spotlightSize={250}
+      hoverScale={1.02}
+    >
+      <h3 className="font-semibold text-neutral-900">Team analytics</h3>
+      <p className="mt-1 text-sm text-neutral-500">Track velocity, burndown, and cycle time in one view.</p>
+    </SpotlightCard>
+  )
+}
+```
+
+### No scale, spotlight only
+
+```tsx
+import { SpotlightCard } from "@/components/animations/specials/spotlight-card"
+
+export function StaticScaleCard() {
+  return (
+    <SpotlightCard
+      className="w-full max-w-sm bg-neutral-950 border-neutral-800 p-8"
+      spotlightColor="rgba(168, 85, 247, 0.2)"
+      spotlightSize={400}
+      hoverScale={1}
+    >
+      <p className="text-4xl font-black text-white">99.9%</p>
+      <p className="text-sm text-neutral-400 mt-1">Uptime SLA</p>
+    </SpotlightCard>
+  )
+}
+```
+
+## Real-world examples
+
+### Pricing tier cards
+
+```tsx
+import { SpotlightCard } from "@/components/animations/specials/spotlight-card"
+import { Check } from "lucide-react"
+
+const tiers = [
+  {
+    name: "Starter",
+    price: "$9",
+    spotlight: "rgba(99, 102, 241, 0.12)",
+    features: ["5 projects", "10 GB storage", "Community support"],
+  },
+  {
+    name: "Pro",
+    price: "$29",
+    spotlight: "rgba(34, 211, 238, 0.15)",
+    features: ["Unlimited projects", "100 GB storage", "Priority support", "Team collaboration"],
+  },
+  {
+    name: "Enterprise",
+    price: "Custom",
+    spotlight: "rgba(168, 85, 247, 0.15)",
+    features: ["Everything in Pro", "SSO", "SLA guarantee", "Dedicated account manager"],
+  },
+]
+
+export function PricingCards() {
+  return (
+    <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
+      {tiers.map((tier) => (
+        <SpotlightCard
+          key={tier.name}
+          className="bg-neutral-900 border-neutral-800 p-6"
+          spotlightColor={tier.spotlight}
+          hoverScale={1.02}
+        >
+          <p className="text-sm font-medium text-neutral-400">{tier.name}</p>
+          <p className="mt-1 text-4xl font-black text-white">{tier.price}</p>
+          <ul className="mt-4 space-y-2">
+            {tier.features.map((f) => (
+              <li key={f} className="flex items-center gap-2 text-sm text-neutral-300">
+                <Check className="h-4 w-4 text-emerald-400 shrink-0" />
+                {f}
+              </li>
+            ))}
+          </ul>
+          <button className="mt-6 w-full rounded-lg bg-white py-2 text-sm font-semibold text-neutral-900 hover:bg-neutral-200">
+            Get started
+          </button>
+        </SpotlightCard>
+      ))}
+    </div>
+  )
+}
+```

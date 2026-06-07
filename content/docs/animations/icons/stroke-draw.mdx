@@ -269,6 +269,256 @@ export default function Example() {
 | `viewBox` | `string` | `"0 0 24 24"` | SVG viewBox attribute |
 | `className` | `string` | - | Additional CSS classes |
 
+## Use cases
+
+`StrokeDrawIcon` uses the `useStrokeDraw` hook to animate `pathLength` from `0` to `1` alongside `opacity` from `0` to `1`. The `pathLength` animation directly controls how much of the SVG stroke is visible, producing a hand-drawn reveal effect. By default `repeat=false` means it draws once on mount. Setting `repeat=true` loops the draw with a `repeatDelay: 1` pause. Good use cases:
+
+- **Success checkmarks.** A check path drawing itself from left to right is one of the most satisfying completion signals in UI.
+- **Onboarding illustrations.** Icons that draw themselves as the user reads an explanation keep attention on the diagram without looping motion.
+- **Signature or handwriting metaphor.** A heart, star, or logo path drawing in gives a "drawn by hand" quality to a personal or boutique product.
+- **Loading splash screens.** A brand icon drawing itself as a loading sequence before the main UI appears.
+- **Step completion indicators.** A circle then a checkmark drawing in sequence as each step in a wizard completes.
+
+## When to use / when not to use
+
+**Use `StrokeDrawIcon` when:**
+
+- Your icon is a single continuous or near-continuous SVG path. Icons with many disconnected paths will draw each segment separately, which may look choppy.
+- `repeat=false` (default) is correct for entrance animations. The icon draws once and stays.
+- `repeat=true` works for ambient looping illustrations where the draw-and-reset cycle adds life without demanding attention.
+- The icon is medium to large (24 px and above) where the stroke draw is actually perceptible. At 16 px and below, the effect is invisible.
+
+**Do not use it when:**
+
+- The icon uses `fill` instead of `stroke` (e.g., a solid filled shape). `pathLength` only affects stroked paths. Filled paths will remain invisible until the opacity transition completes.
+- You need the icon to appear instantly. The draw takes at least `duration` seconds. For instant icons, use a static element or [FadeInIcon](/docs/animations/icons/fade-in) with `duration={0.15}`.
+- The `pathData` contains many short, disconnected subpaths (like dotted patterns). Each subpath draws simultaneously from 0 to 1, which looks like fading rather than drawing.
+- `repeat=true` is used on a small-text-adjacent icon. A looping draw next to body text is distracting; reserve looping for standalone illustrations.
+
+## Accessibility notes
+
+- `StrokeDrawIcon` renders an `<svg>` with no title or description by default. The element is not interactive and should be treated as decorative in most cases:
+
+```tsx
+<StrokeDrawIcon
+  pathData="M22 11.08V12a10 10 0 1 1-5.93-9.14M22 4L12 14.01l-3-3"
+  viewBox="0 0 24 24"
+  className="w-8 h-8"
+  strokeColor="green"
+  aria-hidden="true"
+/>
+```
+
+- When the drawing effect communicates a meaningful state (e.g., a checkmark that draws in to confirm a completed action), add a live region alongside it:
+
+```tsx
+<div role="status" className="flex items-center gap-2">
+  <StrokeDrawIcon
+    pathData="M5 13l4 4L19 7"
+    viewBox="0 0 24 24"
+    className="w-6 h-6"
+    strokeColor="green"
+    duration={0.6}
+    aria-hidden="true"
+  />
+  <span className="sr-only">Completed</span>
+</div>
+```
+
+- The `pathLength` animation is not a transform; it modifies a path attribute. Users with `prefers-reduced-motion` should ideally see the icon already drawn (final state) rather than animating. To skip the draw for them:
+
+```tsx
+"use client"
+import { useReducedMotion } from "motion/react"
+import { StrokeDrawIcon } from "@/components/animations/icons/stroke-draw"
+
+export function AnimatedCheck() {
+  const reduced = useReducedMotion()
+  return (
+    <StrokeDrawIcon
+      pathData="M5 13l4 4L19 7"
+      viewBox="0 0 24 24"
+      className="w-8 h-8"
+      strokeColor="green"
+      duration={reduced ? 0.01 : 0.8}
+      delay={reduced ? 0 : 0.2}
+      aria-hidden="true"
+    />
+  )
+}
+```
+
+## Performance considerations
+
+- `pathLength` and `opacity` are animated by motion/react. `pathLength` is not a compositor-only property; it causes the browser to recalculate the stroke geometry on each frame. Keep `duration` short (0.5 to 2 s) to limit the number of frames that require path recalculation.
+- `repeat=false` (default) is a one-shot animation. After `duration` seconds the element is static with no ongoing cost.
+- `repeat=true` uses `repeat: Infinity` with `repeatDelay: 1`. This is more expensive than a transform-only infinite animation because of the path recalculation. Use sparingly and prefer mounting in viewport only (with an `IntersectionObserver`) when the icon is not always visible.
+- Very complex paths (hundreds of SVG commands) take more time to interpolate. Test on mid-range hardware if your `pathData` is long.
+- Do not place many `StrokeDrawIcon` components with `repeat=true` on the same screen. Five or more simultaneously drawing paths will produce noticeable CPU usage.
+
+## Customization examples
+
+### Quick checkmark (fast success confirmation)
+
+A short `duration` makes the check snap in almost instantly but still with the draw effect:
+
+```tsx
+import { StrokeDrawIcon } from "@/components/animations/icons/stroke-draw"
+
+<StrokeDrawIcon
+  pathData="M5 13l4 4L19 7"
+  viewBox="0 0 24 24"
+  className="w-6 h-6"
+  strokeColor="green"
+  strokeWidth={2.5}
+  duration={0.4}
+  aria-hidden="true"
+/>
+```
+
+### Slow atmospheric draw for an onboarding illustration
+
+```tsx
+import { StrokeDrawIcon } from "@/components/animations/icons/stroke-draw"
+
+<StrokeDrawIcon
+  pathData="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"
+  viewBox="0 0 24 24"
+  className="w-16 h-16"
+  strokeColor="#ef4444"
+  strokeWidth={1.5}
+  duration={2.5}
+  delay={0.5}
+  aria-hidden="true"
+/>
+```
+
+### Looping draw for an ambient background icon
+
+```tsx
+import { StrokeDrawIcon } from "@/components/animations/icons/stroke-draw"
+
+<StrokeDrawIcon
+  pathData="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"
+  viewBox="0 0 24 24"
+  className="w-12 h-12 text-neutral-300 dark:text-neutral-700"
+  duration={2}
+  repeat={true}
+  aria-hidden="true"
+/>
+```
+
+## Real-world examples
+
+### Form submission success checkmark
+
+The check draws in after a successful form submit, giving satisfying visual confirmation:
+
+```tsx
+"use client"
+import { useState } from "react"
+import { StrokeDrawIcon } from "@/components/animations/icons/stroke-draw"
+
+export function ContactForm() {
+  const [submitted, setSubmitted] = useState(false)
+
+  async function handleSubmit(e: React.FormEvent) {
+    e.preventDefault()
+    await new Promise((r) => setTimeout(r, 1000))
+    setSubmitted(true)
+  }
+
+  if (submitted) {
+    return (
+      <div
+        role="status"
+        className="flex flex-col items-center gap-3 rounded-xl border border-green-200 bg-green-50 px-8 py-6 dark:border-green-900 dark:bg-green-950"
+      >
+        <StrokeDrawIcon
+          pathData="M22 11.08V12a10 10 0 1 1-5.93-9.14M22 4L12 14.01l-3-3"
+          viewBox="0 0 24 24"
+          className="w-12 h-12"
+          strokeColor="#16a34a"
+          strokeWidth={2}
+          duration={1}
+          aria-hidden="true"
+        />
+        <p className="font-semibold text-green-800 dark:text-green-300">Message sent!</p>
+        <span className="sr-only">Your message was sent successfully.</span>
+      </div>
+    )
+  }
+
+  return (
+    <form onSubmit={handleSubmit} className="space-y-3 w-64">
+      <input
+        type="text"
+        placeholder="Name"
+        className="w-full rounded-lg border border-neutral-300 px-3 py-2 text-sm"
+      />
+      <input
+        type="email"
+        placeholder="Email"
+        className="w-full rounded-lg border border-neutral-300 px-3 py-2 text-sm"
+      />
+      <button
+        type="submit"
+        className="w-full rounded-lg bg-blue-600 py-2 text-sm font-semibold text-white hover:bg-blue-700"
+      >
+        Send
+      </button>
+    </form>
+  )
+}
+```
+
+### Onboarding step icon reveal with delay
+
+Each step icon draws in as the user advances through the onboarding wizard:
+
+```tsx
+import { StrokeDrawIcon } from "@/components/animations/icons/stroke-draw"
+
+const steps = [
+  {
+    label: "Create account",
+    path: "M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2M12 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8z",
+  },
+  {
+    label: "Add your team",
+    path: "M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2M9 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75",
+  },
+  {
+    label: "Start building",
+    path: "M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9zM13 2v7h7",
+  },
+]
+
+export function OnboardingSteps({ currentStep }: { currentStep: number }) {
+  return (
+    <div className="flex gap-8">
+      {steps.map(({ label, path }, i) => (
+        <div key={label} className="flex flex-col items-center gap-2 text-center">
+          {i <= currentStep ? (
+            <StrokeDrawIcon
+              pathData={path}
+              viewBox="0 0 24 24"
+              className="w-10 h-10 text-blue-600"
+              duration={0.8}
+              delay={i * 0.2}
+              aria-hidden="true"
+            />
+          ) : (
+            <div className="h-10 w-10 rounded-full border-2 border-dashed border-neutral-300" />
+          )}
+          <span className="text-xs font-medium text-neutral-600">{label}</span>
+        </div>
+      ))}
+    </div>
+  )
+}
+```
+
 ## Using the Hook Directly
 
 This component is built using the `useStrokeDraw()` hook. You can use the hook directly for more control:

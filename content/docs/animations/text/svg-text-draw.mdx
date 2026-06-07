@@ -261,3 +261,154 @@ Use with gradients:
 ```
 
 > **Note:** This component uses SVG path drawing animation. Only lowercase letters (a-z) and spaces are currently supported. The text will be automatically converted to lowercase.
+
+## Use cases
+
+`SvgTextDraw` renders each lowercase letter as a `<motion.path>` inside an `<svg>` with a fixed `letterWidth` of 50 units per character. The `pathLength` of each path is animated from `0` to `1` with a 0.5 s `easeInOut` duration (multiplied by `speed`). Each letter is delayed by `delay + index * 0.15 * speed` seconds, so a 5-letter word at default speed takes about `0 + 4 * 0.15 + 0.5 = 1.1 s` to complete. The SVG contains a `<title>` element with the original string. Reach for it when:
+
+- **Signature or handwriting aesthetic.** A product name or short phrase drawn stroke by stroke mimics handwriting and is well suited to personal brand sites, creative portfolios, or craft-focused products.
+- **Onboarding welcome screen.** "hello" or a user's first name drawn as an animated greeting sets a warm, personal tone.
+- **Logo animation.** A wordmark that draws itself on page load creates a memorable first impression for a short brand name.
+- **Decorative section dividers.** A short decorative word drawn across a section break can replace a static rule or illustration.
+
+The component inherits `stroke="currentColor"` from the SVG, so it adopts the parent text color automatically.
+
+## When to use / when not to use
+
+**Use svg-text-draw when:**
+
+- The text is short: 3 to 8 characters at a reasonable speed complete in 1 to 2 seconds. Longer strings take proportionally longer to draw and can feel like an indefinite wait.
+- The drawn, outline aesthetic is intentional. This is not a replacement for normal text; it is a decorative or brand-driven effect.
+- You are working exclusively with lowercase `a-z` characters and spaces. Numbers, uppercase, punctuation, and most diacritics are not in the `letterPaths` dictionary and will be silently dropped.
+
+**Reach for something else when:**
+
+- **The text contains uppercase, numbers, or punctuation.** The component will skip unknown characters silently. If you need animated text with mixed character sets, use [Slide Up](/docs/animations/text/slide-up), [Blur In](/docs/animations/text/blur-in), or [Fade In](/docs/animations/text/fade-in) on a normal `<p>` or heading.
+- **Long strings or full sentences.** A 10-word sentence produces 50+ paths. The total draw time at default speed is about `4.5 * 0.15 + 0.5 = well over 5 s` for a 30-character string. This is too slow for most user-facing text.
+- **Body copy or any text that must be immediately readable.** The stroke-draw effect is invisible during animation; users cannot read partially drawn letters. Functional text must be readable on arrival.
+- **You need responsive text sizing via `font-size`.** This component outputs an SVG scaled by its height class, not by font-size. Use the `h-*` utility to control size and ensure the SVG scales with the viewport.
+
+## Accessibility notes
+
+The SVG contains a `<title>` element that holds the original `children` string. Most screen readers will announce the `<title>` of an SVG if it is the first child, but support varies. Reinforce accessibility with `aria-label` on the `<svg>` and `role="img"`:
+
+```tsx
+<SvgTextDraw
+  aria-label="hello world"
+  role="img"
+  className="h-12"
+>
+  hello world
+</SvgTextDraw>
+```
+
+The `<motion.svg>` component forwards arbitrary props, so `aria-label` and `role` pass through to the DOM element.
+
+**Reduced motion.** The component animates `pathLength` from 0 to 1 for each letter. For users who prefer reduced motion, skip the draw and render the final stroke immediately:
+
+```tsx
+"use client"
+import { useReducedMotion } from "motion/react"
+import { SvgTextDraw } from "@/components/animations/text/svg-text-draw"
+
+function AccessibleSvgDraw({ children, ...props }: { children: string; [key: string]: unknown }) {
+  const reduced = useReducedMotion()
+  // When motion is reduced, pass speed=999 so transitions are near-instant
+  return <SvgTextDraw speed={reduced ? 0.01 : 1} {...props}>{children}</SvgTextDraw>
+}
+```
+
+**Color contrast.** The SVG uses `stroke="currentColor"` with `fill="none"`, so the strokes must have sufficient contrast against the background. Outlined strokes at `strokeWidth={3}` (the default) on a white background with a black stroke pass contrast comfortably. If you use low-contrast colors (e.g., light gray stroke on white), check WCAG 1.4.3.
+
+## Performance considerations
+
+- **One `<motion.path>` per character.** A 10-character string creates 10 independently animating paths. Each path animates `pathLength` and `opacity`, both handled by motion. `pathLength` maps to `stroke-dasharray`/`stroke-dashoffset`, which is a paint operation and cannot be fully composited. This is acceptable for short strings but expensive for long ones.
+- **Fixed `letterWidth = 50`.** The SVG `viewBox` is `0 0 (text.length * 50) 60`. Long strings produce wide SVGs that browsers must paint at full width. Use `overflow: hidden` or a wrapping container with `max-w-*` if needed.
+- **Single-shot.** Each path animates once on mount via its own `transition.delay`. After completion there is no ongoing cost.
+- **`speed` multiplier.** `speed` scales all durations: `calc(0.5)` produces path duration `0.5 * speed`. Setting `speed={2}` halves both duration and per-character delay, completing the draw twice as fast but with shorter strokes per frame.
+
+## Customization examples
+
+### Colored stroke
+
+```tsx
+import { SvgTextDraw } from "@/components/animations/text/svg-text-draw"
+
+<SvgTextDraw className="h-16 text-violet-500">
+  design
+</SvgTextDraw>
+```
+
+### Larger, slower signature
+
+```tsx
+import { SvgTextDraw } from "@/components/animations/text/svg-text-draw"
+
+<SvgTextDraw className="h-24" speed={0.6} delay={0.5}>
+  welcome
+</SvgTextDraw>
+```
+
+### Stacked words with staggered start delays
+
+```tsx
+import { SvgTextDraw } from "@/components/animations/text/svg-text-draw"
+
+export function SignatureStack() {
+  return (
+    <div className="space-y-4">
+      <SvgTextDraw className="h-12 text-neutral-800" delay={0}>hello</SvgTextDraw>
+      <SvgTextDraw className="h-12 text-neutral-500" delay={1}>world</SvgTextDraw>
+    </div>
+  )
+}
+```
+
+## Real-world examples
+
+### Portfolio hero greeting
+
+```tsx
+import { SvgTextDraw } from "@/components/animations/text/svg-text-draw"
+
+export function PortfolioHero() {
+  return (
+    <section className="flex flex-col items-start gap-6 py-24 px-8">
+      <SvgTextDraw
+        aria-label="hello"
+        role="img"
+        className="h-16 text-neutral-900 dark:text-neutral-100"
+        delay={0}
+        speed={1}
+      >
+        hello
+      </SvgTextDraw>
+      <p className="text-xl text-neutral-500">
+        I'm a designer and developer based in San Francisco.
+      </p>
+    </section>
+  )
+}
+```
+
+### Animated brand logo on a splash screen
+
+```tsx
+import { SvgTextDraw } from "@/components/animations/text/svg-text-draw"
+
+export function LogoSplash() {
+  return (
+    <div className="fixed inset-0 flex items-center justify-center bg-white">
+      <SvgTextDraw
+        aria-label="animbits"
+        role="img"
+        className="h-20 text-neutral-900"
+        speed={0.8}
+        delay={0.2}
+      >
+        animbits
+      </SvgTextDraw>
+    </div>
+  )
+}
+```

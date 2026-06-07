@@ -116,3 +116,176 @@ import { CardFadeIn } from "@/components/animations/cards/fade-in"
 | `duration` | `number` | `0.5` | Animation duration in seconds |
 | `delay` | `number` | `0` | Delay before animation starts |
 | `className` | `string` | `undefined` | Additional CSS classes |
+
+## Use cases
+
+`CardFadeIn` runs a one-shot entrance animation: `opacity` goes from `0` to `1` over `duration` seconds (default `0.5`), optionally after a `delay`. The animation fires when the component mounts, not when it scrolls into view. That distinction matters for placement decisions.
+
+Reach for it when:
+
+- **Cards rendered on page load.** Team member grids, pricing tiers, or dashboard widgets that are already in the DOM when the user first arrives benefit from a staggered fade-in that eases the visual load.
+- **Route transitions.** Fade in a card-based content panel after navigation so the new content appears smoothly without position shifts.
+- **Modal or drawer content.** Items inside a panel that opens can fade in right after the panel itself opens, thanks to the `delay` prop.
+- **Skeleton-to-content handoff.** Replace a skeleton placeholder with a `CardFadeIn`-wrapped card so the swap dissolves in rather than snapping.
+
+## When to use / when not to use
+
+**Use `CardFadeIn` when:**
+
+- The card is present in the DOM at render time and you want a simple entrance that does not depend on scroll position.
+- You are staggering multiple cards with incremental `delay` values (e.g., `0`, `0.1`, `0.2`) to create a cascade effect.
+
+**Reach for a different component when:**
+
+- You need the animation to trigger when the card scrolls into view. `CardFadeIn` uses `animate`, not `whileInView`, so it fires immediately on mount regardless of viewport. Use [CardSlideIn](/docs/animations/cards/slide-in) or [CardScaleIn](/docs/animations/cards/scale-in) instead; both use `whileInView` via their underlying hooks.
+- You want hover feedback. `CardFadeIn` only controls the mount transition. Combine it with [CardHoverLift](/docs/animations/cards/hover-lift) or [CardHoverGlow](/docs/animations/cards/hover-glow) if you need both entrance and interaction states.
+- The card contains time-sensitive content where a 0.5-second delay before content appears could frustrate users, such as a real-time alert feed.
+
+## Accessibility notes
+
+- **Content is invisible until the animation completes.** Screen readers announce content as soon as the DOM is populated, regardless of opacity. This is the correct behavior: do not gate screen-reader access behind animation state.
+- **Respect `prefers-reduced-motion`.** A fade from `opacity: 0` is generally mild, but even subtle fades can feel disorienting to some users. Honor the OS setting by skipping the fade:
+
+```tsx
+"use client"
+import { useReducedMotion } from "motion/react"
+import { CardFadeIn } from "@/components/animations/cards/fade-in"
+
+function AccessibleCard({ children }: { children: React.ReactNode }) {
+  const reduced = useReducedMotion()
+  // Skip the fade entirely by setting duration to 0 when reduced motion is preferred.
+  return (
+    <CardFadeIn duration={reduced ? 0 : 0.5} className="rounded-xl border border-neutral-200 dark:border-neutral-800 p-6">
+      {children}
+    </CardFadeIn>
+  )
+}
+```
+
+- **Staggered grids and keyboard navigation.** If cards are interactive (links, buttons), users can tab to them before they fully appear visually. Ensure `outline` / `:focus-visible` styles are present so keyboard users can locate focus even at low opacity mid-animation.
+- **Do not animate critical error or success messages with `CardFadeIn`.** A fade-in delay on an alert means the user has to wait to read important feedback. Use instant rendering for status messages.
+
+## Performance considerations
+
+- **Only `opacity` animates.** The component transitions `opacity` from `0` to `1`. Opacity changes run on the GPU compositor and do not trigger layout or paint, so the cost is negligible even for large cards with images.
+- **Fires once and stops.** Unlike hover-based animations, `CardFadeIn` does not register any event listeners. After the transition completes the component is effectively static, with zero ongoing animation cost.
+- **Stagger cautiously at scale.** Staggering 20+ cards with 100ms increments means the last card does not appear until 2 seconds after mount. Keep the total stagger window under about 0.8 seconds for grids larger than 6 items.
+- **Combining with image loading.** If a card contains a heavy image that loads slowly, the fade may complete while the image is still blank. Consider pairing with an `onLoad` pattern to start the fade only after the image resolves.
+
+## Customization examples
+
+### Staggered card grid
+
+Use incremental `delay` values to create a cascade across multiple cards:
+
+```tsx
+import { CardFadeIn } from "@/components/animations/cards/fade-in"
+
+const items = ["Design", "Engineering", "Marketing", "Sales"]
+
+export function TeamGrid() {
+  return (
+    <div className="grid grid-cols-2 gap-4">
+      {items.map((role, i) => (
+        <CardFadeIn
+          key={role}
+          delay={i * 0.1}
+          duration={0.4}
+          className="rounded-xl border border-neutral-200 dark:border-neutral-800 p-6 bg-white dark:bg-neutral-900"
+        >
+          <p className="font-semibold">{role}</p>
+        </CardFadeIn>
+      ))}
+    </div>
+  )
+}
+```
+
+### Slower, more dramatic entrance
+
+For a hero-area card where you want the content to feel cinematic:
+
+```tsx
+<CardFadeIn duration={1.2} delay={0.3} className="rounded-2xl bg-neutral-950 p-10 text-white">
+  <h2 className="text-4xl font-bold">Welcome back</h2>
+  <p className="text-neutral-400 mt-2">Your dashboard is ready.</p>
+</CardFadeIn>
+```
+
+## Real-world examples
+
+### Pricing card that fades in after route transition
+
+```tsx
+import { CardFadeIn } from "@/components/animations/cards/fade-in"
+
+interface PricingCardProps {
+  plan: string
+  price: string
+  features: string[]
+  highlighted?: boolean
+  delay?: number
+}
+
+export function PricingCard({ plan, price, features, highlighted = false, delay = 0 }: PricingCardProps) {
+  return (
+    <CardFadeIn
+      delay={delay}
+      duration={0.5}
+      className={[
+        "rounded-2xl border p-8 flex flex-col",
+        highlighted
+          ? "border-neutral-900 dark:border-white bg-neutral-900 dark:bg-white text-white dark:text-neutral-900"
+          : "border-neutral-200 dark:border-neutral-800 bg-white dark:bg-neutral-900",
+      ].join(" ")}
+    >
+      <p className="text-sm font-semibold uppercase tracking-wider opacity-60">{plan}</p>
+      <p className="text-4xl font-bold mt-2">{price}</p>
+      <ul className="mt-6 space-y-3 flex-1">
+        {features.map((f) => (
+          <li key={f} className="text-sm flex items-center gap-2">
+            <span className="text-green-500">+</span> {f}
+          </li>
+        ))}
+      </ul>
+      <button className="mt-8 rounded-lg py-3 text-sm font-semibold bg-neutral-100 dark:bg-neutral-800 hover:bg-neutral-200 dark:hover:bg-neutral-700 transition-colors">
+        Get started
+      </button>
+    </CardFadeIn>
+  )
+}
+```
+
+### Dashboard widget that fades in after data loads
+
+```tsx
+"use client"
+import { useState, useEffect } from "react"
+import { CardFadeIn } from "@/components/animations/cards/fade-in"
+
+export function RevenueWidget() {
+  const [loaded, setLoaded] = useState(false)
+  const [value, setValue] = useState<string | null>(null)
+
+  useEffect(() => {
+    fetchRevenue().then((v) => {
+      setValue(v)
+      setLoaded(true)
+    })
+  }, [])
+
+  if (!loaded) {
+    return <div className="h-32 animate-pulse rounded-xl bg-neutral-100 dark:bg-neutral-800" />
+  }
+
+  return (
+    <CardFadeIn
+      duration={0.4}
+      className="rounded-xl border border-neutral-200 dark:border-neutral-800 bg-white dark:bg-neutral-900 p-6"
+    >
+      <p className="text-sm text-neutral-500 dark:text-neutral-400">Revenue this month</p>
+      <p className="text-3xl font-bold mt-1">{value}</p>
+    </CardFadeIn>
+  )
+}
+```

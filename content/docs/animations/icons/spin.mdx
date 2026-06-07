@@ -175,3 +175,222 @@ export default function Example() {
 | `children` | `ReactNode` | - | The icon element to animate |
 | `duration` | `number` | `1` | Duration of one rotation in seconds |
 | `direction` | `"clockwise"` \| `"counterclockwise"` | `"clockwise"` | Direction of rotation |
+
+## Use cases
+
+`SpinIcon` animates `rotate` at `ease: "linear"` with `repeat: Infinity`. The continuous linear spin is the universal signal for "a process is running." Unlike [RotateIcon](/docs/animations/icons/rotate), which fires once and stops, `SpinIcon` keeps rotating until it is unmounted. Good fits:
+
+- **Inline loading states.** A `Loader` or `Loader2` icon spinning inside a button or next to a section title communicates an in-progress fetch.
+- **Refresh-in-progress states.** A spinning `RefreshCw` inside a sync button while a sync is running, stopped as soon as the response arrives.
+- **Background task indicators.** A small spinning icon in a status bar or corner badge signals that a background process is running.
+- **Upload or processing progress.** A spinning `Upload` or `Cog` icon while a file is being processed.
+
+Note: for a full-featured indeterminate spinner as a standalone loader, the [LoaderSpinner](/docs/animations/loaders/spinner) component may be a better fit as it is purpose-built with a styled ring.
+
+## When to use / when not to use
+
+**Use `SpinIcon` when:**
+
+- A process is actively running and you want the icon itself to carry the "in progress" signal without a separate spinner component.
+- The icon's meaning (refresh, sync, load) is semantically aligned with circular rotation.
+- You need directional control: `direction="counterclockwise"` for undo or rewind contexts.
+
+**Do not use it when:**
+
+- The process has ended and you forgot to unmount it. `repeat: Infinity` keeps the compositor awake indefinitely. Always tie unmounting to the resolved state.
+- Multiple icons are spinning simultaneously in a list or feed. Each `SpinIcon` instance schedules its own infinite animation frame. For repeated rows, use a single section-level spinner instead.
+- You want the rotation to stop on user interaction. Use [RotateIcon](/docs/animations/icons/rotate) for a one-shot rotation that fires on hover or tap and then rests.
+- The spinning communicates something other than "process running." A spinning `Heart` or `Star` is semantically confusing.
+
+## Accessibility notes
+
+- A spinning icon on its own is invisible to screen readers. Add a visible or hidden label alongside it:
+
+```tsx
+<div role="status" className="flex items-center gap-2">
+  <SpinIcon duration={1}>
+    <Loader2 className="w-5 h-5 text-blue-500" aria-hidden="true" />
+  </SpinIcon>
+  <span className="sr-only">Loading...</span>
+</div>
+```
+
+- When the spinner appears inside a button while an action is in flight, disable the button to prevent double submission and update its accessible name:
+
+```tsx
+<button disabled aria-label="Saving, please wait" className="...">
+  <SpinIcon duration={1}>
+    <Loader2 className="w-4 h-4" aria-hidden="true" />
+  </SpinIcon>
+  Saving...
+</button>
+```
+
+- Continuous rotation can affect users with vestibular sensitivities. Honor `prefers-reduced-motion` by slowing or stopping the spin:
+
+```tsx
+"use client"
+import { useReducedMotion } from "motion/react"
+import { SpinIcon } from "@/components/animations/icons/spin"
+import { Loader2 } from "lucide-react"
+
+export function LoadingIcon() {
+  const reduced = useReducedMotion()
+  return (
+    <div role="status">
+      <SpinIcon duration={reduced ? 4 : 1}>
+        <Loader2 className="w-5 h-5 text-blue-500" aria-hidden="true" />
+      </SpinIcon>
+      <span className="sr-only">Loading...</span>
+    </div>
+  )
+}
+```
+
+## Performance considerations
+
+- `rotate` is a transform. The animation runs on the compositor thread with no layout or repaint cost.
+- `repeat: Infinity` with `ease: "linear"` keeps the compositor awake for as long as the component is mounted. Always conditionally render rather than hiding with CSS:
+
+```tsx
+{loading && (
+  <SpinIcon duration={1}>
+    <Loader2 className="w-5 h-5 text-blue-500" aria-hidden="true" />
+  </SpinIcon>
+)}
+```
+
+- Avoid mounting many `SpinIcon` instances at the same time. Even though each is compositor-friendly, 20 simultaneous infinite rotations in a list multiply the compositor's scheduling work.
+- `ease: "linear"` is intentional. Any easing other than linear creates visible jerk at the repeat boundary. Do not change the transition ease unless you understand the visual consequence at the loop point.
+
+## Customization examples
+
+### Fast spin for an urgent process
+
+```tsx
+import { SpinIcon } from "@/components/animations/icons/spin"
+import { Loader } from "lucide-react"
+
+<SpinIcon duration={0.5}>
+  <Loader className="w-5 h-5 text-blue-500" aria-hidden="true" />
+</SpinIcon>
+```
+
+### Slow spin for a background ambient sync
+
+```tsx
+import { SpinIcon } from "@/components/animations/icons/spin"
+import { RefreshCw } from "lucide-react"
+
+<SpinIcon duration={3}>
+  <RefreshCw className="w-4 h-4 text-neutral-400" aria-hidden="true" />
+</SpinIcon>
+```
+
+### Counterclockwise spin for a rewind action
+
+```tsx
+import { SpinIcon } from "@/components/animations/icons/spin"
+import { RotateCcw } from "lucide-react"
+
+<SpinIcon duration={1.5} direction="counterclockwise">
+  <RotateCcw className="w-5 h-5 text-purple-500" aria-hidden="true" />
+</SpinIcon>
+```
+
+## Real-world examples
+
+### Submit button with spinning icon while saving
+
+```tsx
+"use client"
+import { useState } from "react"
+import { SpinIcon } from "@/components/animations/icons/spin"
+import { Loader2, Save } from "lucide-react"
+
+export function SaveButton() {
+  const [saving, setSaving] = useState(false)
+
+  async function handleSave() {
+    setSaving(true)
+    try {
+      await new Promise((r) => setTimeout(r, 1500))
+    } finally {
+      setSaving(false)
+    }
+  }
+
+  return (
+    <button
+      onClick={handleSave}
+      disabled={saving}
+      aria-label={saving ? "Saving, please wait" : "Save changes"}
+      className="inline-flex h-10 items-center gap-2 rounded-lg bg-blue-600 px-5 text-sm font-semibold text-white disabled:opacity-70 hover:bg-blue-700"
+    >
+      {saving ? (
+        <>
+          <div role="status">
+            <SpinIcon duration={0.8}>
+              <Loader2 className="w-4 h-4" aria-hidden="true" />
+            </SpinIcon>
+            <span className="sr-only">Saving...</span>
+          </div>
+          Saving
+        </>
+      ) : (
+        <>
+          <Save className="w-4 h-4" aria-hidden="true" />
+          Save changes
+        </>
+      )}
+    </button>
+  )
+}
+```
+
+### Sync status in a toolbar
+
+Spins while syncing, shows a check when done, and stops cleanly on unmount:
+
+```tsx
+"use client"
+import { useState } from "react"
+import { SpinIcon } from "@/components/animations/icons/spin"
+import { RefreshCw, CheckCircle } from "lucide-react"
+
+export function SyncButton() {
+  const [syncing, setSyncing] = useState(false)
+  const [done, setDone] = useState(false)
+
+  async function handleSync() {
+    setSyncing(true)
+    setDone(false)
+    await new Promise((r) => setTimeout(r, 2000))
+    setSyncing(false)
+    setDone(true)
+  }
+
+  return (
+    <button
+      onClick={handleSync}
+      disabled={syncing}
+      aria-label={syncing ? "Syncing..." : "Sync data"}
+      className="flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-sm font-medium text-neutral-600 hover:bg-neutral-100 disabled:opacity-60 dark:text-neutral-400 dark:hover:bg-neutral-800"
+    >
+      {syncing ? (
+        <div role="status">
+          <SpinIcon duration={1}>
+            <RefreshCw className="w-4 h-4 text-blue-500" aria-hidden="true" />
+          </SpinIcon>
+          <span className="sr-only">Syncing...</span>
+        </div>
+      ) : done ? (
+        <CheckCircle className="w-4 h-4 text-green-500" aria-hidden="true" />
+      ) : (
+        <RefreshCw className="w-4 h-4" aria-hidden="true" />
+      )}
+      {syncing ? "Syncing" : done ? "Synced" : "Sync"}
+    </button>
+  )
+}
+```

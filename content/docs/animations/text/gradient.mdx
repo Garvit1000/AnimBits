@@ -158,3 +158,159 @@ import { TextGradient } from "@/components/animations/text/gradient"
 | `gradient` | `string` | `"linear-gradient(90deg, #3b82f6, #8b5cf6, #ec4899)"` | CSS gradient |
 | `animate` | `boolean` | `true` | Animate the gradient |
 | `duration` | `number` | `3` | Animation duration (seconds) |
+
+## Use cases
+
+`TextGradient` applies a CSS gradient to a text element via `background-clip: text` and `WebkitTextFillColor: transparent`. When `animate={true}` (the default), it shifts `backgroundPosition` from `"0% center"` to `"200% center"` on a `repeat: Infinity` loop with `ease: "linear"`, creating a continuous flow across the text. When `animate={false}`, the gradient is static. Reach for it when:
+
+- **Brand headlines.** A vibrant gradient across a 1 to 4 word product name or tagline creates visual identity without a full image or illustration.
+- **Pricing or tier names.** A gradient on "Pro" or "Enterprise" draws the eye to a premium tier without overloading the card with decoration.
+- **CTA labels.** A gradient inside a button or link text signals an interactive element in design systems that use color as affordance.
+- **Decorative display text.** Section numerals, large statistics, or short testimonial pull-quotes where color emphasis is appropriate.
+
+The `gradient` prop accepts any valid CSS `<image>` value, so radial gradients and multi-stop linear gradients work out of the box.
+
+## When to use / when not to use
+
+**Use gradient text when:**
+
+- The string is short (1 to 6 words). Gradient text has lower contrast than a solid color. On long strings the per-letter contrast variation makes reading difficult.
+- You are using it on display text at `text-3xl` or larger, where even slightly lower contrast remains legible.
+
+**Reach for something else when:**
+
+- **Body copy or paragraph text.** Gradient text reliably fails WCAG contrast requirements at body sizes. Use solid color text for anything users must read continuously.
+- **Small text below `text-xl`.** `WebkitTextFillColor: transparent` with a gradient background makes anti-aliasing artifacts more visible at small sizes, reducing legibility.
+- **You need the animated shimmer look.** The `backgroundPosition` loop in this component sweeps the whole gradient across the text. For a narrow highlight sweep, use [Shimmer](/docs/animations/text/shimmer) instead, which moves a bright band across a base text color rather than replacing the entire color.
+- **Dark backgrounds with light text.** The default gradient (`#3b82f6, #8b5cf6, #ec4899`) is designed for light backgrounds. On a dark background these mid-range colors may have adequate contrast, but test explicitly.
+
+## Accessibility notes
+
+Gradient text uses `WebkitTextFillColor: transparent` with a background image behind the text. This means:
+
+- **The text is still real DOM text** and is readable by screen readers, selectable, and searchable. The gradient is purely visual.
+- **Contrast concerns are real.** The gradient may pass contrast at its darkest stop and fail at its lightest. WCAG 1.4.3 requires 4.5:1 for normal text and 3:1 for large text. Check each stop against your background color. Provide a fallback solid color via `color` CSS:
+
+```tsx
+// The text inherits color as a fallback if background-clip is unsupported.
+// Set a solid color on the parent that passes contrast on its own.
+<TextGradient
+  className="text-4xl font-bold text-blue-600"
+  gradient="linear-gradient(90deg, #3b82f6, #8b5cf6)"
+>
+  Gradient Heading
+</TextGradient>
+```
+
+- **Do not use gradient text alone to convey meaning.** If color is your only signal (e.g., "green = good, pink = warning"), users with color blindness will miss it. Pair with text or icons.
+- **Reduced motion.** The continuous `backgroundPosition` loop runs regardless of user preference. Use `animate={false}` for users who have opted out of motion, or check `prefers-reduced-motion`:
+
+```tsx
+"use client"
+import { useReducedMotion } from "motion/react"
+import { TextGradient } from "@/components/animations/text/gradient"
+
+function AccessibleGradient({ children, ...props }: { children: string; [key: string]: unknown }) {
+  const reduced = useReducedMotion()
+  return <TextGradient animate={!reduced} {...props}>{children}</TextGradient>
+}
+```
+
+## Performance considerations
+
+- **Continuous animation.** When `animate={true}`, `backgroundPosition` loops forever. This animation is GPU-composited on most browsers because only a property affecting paint (not layout) changes. However, it does require the browser to repaint the text layer on each frame. For a single hero headline this is unnoticeable; for many simultaneous animated gradient texts it accumulates.
+- **Use `animate={false}` where motion is not needed.** Static gradient text (sidebar labels, card titles) should set `animate={false}` to eliminate the indefinite loop.
+- **`backgroundSize: "200% auto"`.** When animated, the gradient is sized at 200% to allow the sweep. This means the first and last stops in your gradient are rendered off-screen at any given moment. If you only see one color, check that your gradient has enough stops to cover the visible range mid-sweep.
+
+## Customization examples
+
+### Gold gradient for a premium label
+
+```tsx
+import { TextGradient } from "@/components/animations/text/gradient"
+
+<TextGradient
+  gradient="linear-gradient(90deg, #b45309, #f59e0b, #b45309)"
+  duration={4}
+  className="text-sm font-bold tracking-widest uppercase"
+>
+  Pro
+</TextGradient>
+```
+
+### Static gradient for a section title
+
+```tsx
+import { TextGradient } from "@/components/animations/text/gradient"
+
+<TextGradient
+  animate={false}
+  gradient="linear-gradient(135deg, #1e40af, #7c3aed)"
+  className="text-4xl font-black"
+>
+  Built for scale
+</TextGradient>
+```
+
+### Fast sweep for an energetic hero
+
+```tsx
+import { TextGradient } from "@/components/animations/text/gradient"
+
+<TextGradient
+  gradient="linear-gradient(90deg, #ef4444, #f97316, #eab308, #22c55e, #3b82f6, #8b5cf6)"
+  duration={2}
+  className="text-6xl font-black"
+>
+  All the colors
+</TextGradient>
+```
+
+## Real-world examples
+
+### Hero brand name with animated gradient
+
+```tsx
+import { TextGradient } from "@/components/animations/text/gradient"
+
+export function BrandHero() {
+  return (
+    <section className="py-24 text-center">
+      <TextGradient
+        className="text-7xl font-black leading-none tracking-tighter text-blue-600"
+        gradient="linear-gradient(90deg, #3b82f6, #8b5cf6, #ec4899, #3b82f6)"
+        duration={4}
+      >
+        AnimBits
+      </TextGradient>
+      <p className="mt-4 text-lg text-neutral-500">
+        Motion components for the modern web
+      </p>
+    </section>
+  )
+}
+```
+
+### Pricing tier badge
+
+```tsx
+import { TextGradient } from "@/components/animations/text/gradient"
+
+export function PricingCard({ tier }: { tier: "starter" | "pro" | "enterprise" }) {
+  return (
+    <div className="rounded-2xl border border-neutral-200 p-8">
+      {tier === "pro" ? (
+        <TextGradient
+          gradient="linear-gradient(90deg, #7c3aed, #2563eb)"
+          animate={false}
+          className="text-2xl font-bold text-violet-600"
+        >
+          Pro
+        </TextGradient>
+      ) : (
+        <span className="text-2xl font-bold capitalize">{tier}</span>
+      )}
+    </div>
+  )
+}
+```

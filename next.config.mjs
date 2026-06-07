@@ -3,7 +3,12 @@ import { createMDX } from 'fumadocs-mdx/next';
 /** @type {import('next').NextConfig} */
 const config = {
   reactStrictMode: true,
+  // Produce a fully static site (out/) so it can be hosted on any static host
+  // (Vercel static, Cloudflare Pages, GitHub Pages) with no serverless functions.
+  output: 'export',
   images: {
+    // The Next image optimizer is a server feature; static export serves images as-is.
+    unoptimized: true,
     remotePatterns: [
       {
         protocol: 'https',

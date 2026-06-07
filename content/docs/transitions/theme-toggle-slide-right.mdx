@@ -191,6 +191,152 @@ export function ThemeToggle() {
 | `blur` | `number` | `0` | Blur amount in pixels |
 | `className` | `string` | - | Additional CSS classes |
 
+## Use cases
+
+`ThemeToggleSlideRight` adds `theme-slide-right` to `<html>` and drives `slide-out-right` (`translateX(100%)` exit) and `slide-in-right` (`translateX(100%)` enter) via the View Transitions API. The current theme slides out to the right and the new theme arrives from the right, creating a right-to-left page-flip that reads as "going back" or "returning."
+
+Use it when:
+
+- Your toggle is in a right sidebar, a right-anchored panel, or a right-aligned element. The rightward departure and arrival creates continuity with that side of the screen.
+- Your app supports RTL (right-to-left) languages and "forward" navigation slides from right to left. The slide-right matches the RTL forward direction.
+- You want to create an asymmetric pair: use [Slide Left](/docs/transitions/theme-toggle-slide-left) for "enabling dark mode" (going forward) and `slide-right` for "disabling dark mode" (going back). You would need a custom implementation to swap variants based on direction, but the visual metaphor is coherent.
+
+## When to use / when not to use
+
+**Use slide-right when:**
+
+- The toggle lives in a right sidebar or a right-aligned control bar. The rightward slide feels connected to the control's position.
+- Your app uses RTL layout conventions and a right-to-left slide is the "forward" direction.
+
+**Consider a different variant when:**
+
+- The toggle is in a left sidebar. [Slide Left](/docs/transitions/theme-toggle-slide-left) is more spatially coherent.
+- The toggle is in a top or bottom bar. [Slide Top](/docs/transitions/theme-toggle-slide-top) or [Slide Bottom](/docs/transitions/theme-toggle-slide-bottom) match those positions.
+- You want the ripple to follow the cursor. [Circular](/docs/transitions/theme-toggle-circular) is better for that.
+
+## Accessibility notes
+
+- **Button semantics.** The `children` must include a keyboard-accessible `<button>`. The wrapper `<div>` receives the click handler but is not focusable. Screen readers and keyboard users need the inner button.
+- **State.** Use `aria-pressed={isDark}` or `role="switch" aria-checked={isDark}` on the button so screen readers report the current theme. An icon-only button is ambiguous without this.
+- **`aria-label`.** Provide a descriptive label: `aria-label="Toggle theme"` or `aria-label="Enable dark mode"` depending on which state the button toggles to.
+- **Reduced motion.** The CSS `@media (prefers-reduced-motion: reduce)` block sets `animation: none !important` on all `::view-transition-*` pseudo-elements when `.theme-slide-right` is present. No additional JavaScript is needed.
+- **Transition lock duration.** `speed` defaults to 0.5s. During this window `pointerEvents: none` is set. Keep `speed` short to avoid frustrating users who toggle themes in rapid succession.
+
+## Performance considerations
+
+- **Transform-only animation.** `slide-out-right` and `slide-in-right` animate only `translateX(100%)`. This runs on the compositor without layout or paint.
+- **No click-coordinate reads.** The handler is a parameter-less async function; there are no synchronous DOM reads on click.
+- **Class lifecycle.** `theme-slide-right` is added before `startViewTransition` and removed in `finally`. Interrupted transitions cannot leave stale class state on `<html>`.
+- **`cubic-bezier(0.4, 0, 0.2, 1)` at short durations.** Below 0.25s, this easing's ease-in portion compresses to near-linearity. If you set `speed=0.2`, consider overriding to a simpler `ease-out` in CSS.
+- **Full-screen `filter: blur()`.** Non-zero `blur` values apply to the full-viewport View Transition snapshots. Keep at or below 8px and test on mobile hardware before shipping.
+
+## Customization examples
+
+### RTL-aware theme toggle
+
+In a right-to-left interface, slide-right is the "forward" direction:
+
+```tsx
+<ThemeToggleSlideRight speed={0.4} onToggle={toggleTheme}>
+  <button dir="rtl" aria-label="تبديل السمة" aria-pressed={isDark}
+    className="flex items-center gap-2 px-3 py-2 rounded-lg text-sm">
+    <Sun className="h-4 w-4 dark:hidden" />
+    <Moon className="h-4 w-4 hidden dark:block" />
+    <span>السمة الداكنة</span>
+  </button>
+</ThemeToggleSlideRight>
+```
+
+### Asymmetric easing
+
+Ease-out on the incoming snapshot makes arrival feel crisper:
+
+```css
+.theme-slide-right::view-transition-old(root) {
+  animation: slide-out-right var(--transition-speed) ease-in;
+}
+.theme-slide-right::view-transition-new(root) {
+  animation: slide-in-right var(--transition-speed) ease-out;
+}
+```
+
+## Real-world examples
+
+### Right-side settings panel toggle
+
+A dark-mode toggle at the bottom of a right sidebar. The rightward slide reinforces that the change originates from the panel.
+
+```tsx
+"use client"
+import { useTheme } from "next-themes"
+import { ThemeToggleSlideRight } from "@/components/animations/transitions/theme-toggle-slide-right"
+import { Moon, Sun } from "lucide-react"
+
+export function RightPanelToggle() {
+  const { theme, setTheme } = useTheme()
+
+  const toggleTheme = () => {
+    const isDark = document.documentElement.classList.contains("dark")
+    document.documentElement.classList.toggle("dark", !isDark)
+    setTheme(isDark ? "light" : "dark")
+  }
+
+  return (
+    <aside className="fixed right-0 top-0 w-64 h-full border-l border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950 flex flex-col p-4">
+      <h2 className="text-sm font-semibold text-zinc-500 dark:text-zinc-400 mb-4">Settings</h2>
+      <div className="flex-1" />
+      <ThemeToggleSlideRight speed={0.4} onToggle={toggleTheme}>
+        <button
+          aria-pressed={theme === "dark"}
+          aria-label="Toggle theme"
+          className="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium text-zinc-600 dark:text-zinc-400 hover:bg-zinc-50 dark:hover:bg-zinc-800"
+        >
+          <Sun className="h-4 w-4 dark:hidden" />
+          <Moon className="h-4 w-4 hidden dark:block" />
+          <span>Dark mode</span>
+        </button>
+      </ThemeToggleSlideRight>
+    </aside>
+  )
+}
+```
+
+### Command palette theme shortcut
+
+A keyboard-triggered theme toggle where the rightward slide feels like "cycling" to the next option:
+
+```tsx
+"use client"
+import { useEffect } from "react"
+import { useTheme } from "next-themes"
+import { ThemeToggleSlideRight } from "@/components/animations/transitions/theme-toggle-slide-right"
+
+export function KeyboardThemeToggle() {
+  const { theme, setTheme } = useTheme()
+
+  const toggleTheme = () => {
+    const isDark = document.documentElement.classList.contains("dark")
+    document.documentElement.classList.toggle("dark", !isDark)
+    setTheme(isDark ? "light" : "dark")
+  }
+
+  return (
+    <ThemeToggleSlideRight speed={0.35} onToggle={toggleTheme}>
+      <button
+        aria-pressed={theme === "dark"}
+        aria-label="Toggle theme (T)"
+        className="flex items-center gap-2 px-3 py-2 rounded-lg text-sm text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-800"
+      >
+        <Sun className="h-4 w-4 dark:hidden" />
+        <Moon className="h-4 w-4 hidden dark:block" />
+        <span>Theme</span>
+        <kbd className="ml-auto text-xs text-zinc-400 border border-zinc-200 dark:border-zinc-700 rounded px-1">T</kbd>
+      </button>
+    </ThemeToggleSlideRight>
+  )
+}
+```
+
 ## Examples
 
 ### Fast Transition

@@ -150,3 +150,168 @@ import { TextFadeIn } from "@/components/animations/text/fade-in"
 | `delay` | `number` | `0` | Initial delay |
 | `by` | `"word" \| "character"` | `"word"` | Animation unit |
 | `staggerDelay` | `number` | `0.03` | Delay between units |
+
+## Use cases
+
+`TextFadeIn` animates each word (or character) from `opacity: 0` to `opacity: 1` in staggered sequence. With a default `duration` of 0.5 s and `staggerDelay` of 0.03 s, a 10-word sentence completes in about 0.77 s total. Reach for it when:
+
+- **Section titles and subheadings.** A word-by-word fade on a short heading establishes rhythm without distracting from what comes after.
+- **Feature descriptions.** Triggered by scroll, the fade draws the eye through bullet points or card titles as they enter the viewport.
+- **Onboarding copy.** Introductory sentences that appear step-by-step as the user progresses through a flow.
+- **Captions and labels.** A quiet reveal for secondary text that complements a bolder animated headline.
+
+Because `TextFadeIn` only animates opacity, it is the least visually aggressive of the staggered text components. It is a reliable default when you want motion without commitment to a strong directional statement.
+
+## When to use / when not to use
+
+**Use fade-in when:**
+
+- You need a low-key reveal that does not compete with other animations on the same page.
+- The text is short enough that the stagger resolves before the user reads it: roughly 20 words at the default 0.03 s delay finishes in under 1.1 s.
+- You want a calmer alternative to [Blur In](/docs/animations/text/blur-in) or [Slide Up](/docs/animations/text/slide-up) for body-adjacent copy.
+
+**Reach for something else when:**
+
+- **Long paragraphs or body copy.** A 60-word paragraph at 0.03 s stagger takes nearly 2 seconds to fully fade in. Users will read the fully faded words before the end of the paragraph appears. Either animate the whole block at once (no stagger) or skip animation entirely.
+- **Frequently updated text.** Each `children` change resets the component state. If you feed it live data that updates every few seconds, the repeat fades become noise.
+- **Per-character on long strings.** A 50-character string with `by="character"` creates 50 spans running in parallel. Prefer `by="word"` for strings over 20 characters, or use [Blur In](/docs/animations/text/blur-in) which handles per-character gracefully for short strings.
+
+## Accessibility notes
+
+The component splits text into per-word or per-character `<motion.span>` elements inside a `<motion.p>`. Screen readers may announce each span individually depending on the browser/AT combination, breaking the natural sentence rhythm.
+
+Add `aria-label` on the `<p>` with the full string so assistive technology reads it as a single phrase:
+
+```tsx
+<TextFadeIn
+  aria-label="Your ideas, brought to life"
+  className="text-2xl font-bold"
+>
+  Your ideas, brought to life
+</TextFadeIn>
+```
+
+**Reduced motion.** The component does not check `prefers-reduced-motion` internally. Wrap it to skip the animation for users who prefer reduced motion:
+
+```tsx
+"use client"
+import { useReducedMotion } from "motion/react"
+import { TextFadeIn } from "@/components/animations/text/fade-in"
+
+function AccessibleFadeIn({ children, ...props }: { children: string; [key: string]: unknown }) {
+  const reduced = useReducedMotion()
+  if (reduced) return <p {...props}>{children}</p>
+  return <TextFadeIn {...props}>{children}</TextFadeIn>
+}
+```
+
+The initial `opacity: 0` state means text is invisible until the animation fires. If JavaScript is disabled or the component fails to hydrate, the text remains invisible. For critical content, consider starting visible and animating to a highlighted state instead.
+
+## Performance considerations
+
+- **Opacity-only animation.** `TextFadeIn` only animates `opacity`, which runs on the compositor thread with no layout or paint cost. It is the most performant of the staggered text components.
+- **DOM node count.** Each unit produces one `<motion.span>`. A 20-word sentence with `by="word"` creates 20 spans; the same string with `by="character"` creates up to 100+ spans. Keep `by="character"` mode for strings under ~25 characters.
+- **Single run.** The animation fires once on mount and does not loop. After it completes there is no ongoing compositor work.
+- **Stagger math.** Total animation time equals `delay + (units.length - 1) * staggerDelay + duration`. For 15 words: `0 + 14 * 0.03 + 0.5 = 0.92 s`. Keep this sum under 1.2 s for a comfortable page-load experience.
+
+## Customization examples
+
+### Gentle subheading reveal
+
+```tsx
+import { TextFadeIn } from "@/components/animations/text/fade-in"
+
+<TextFadeIn
+  className="text-xl text-neutral-500"
+  delay={0.3}
+  duration={0.4}
+  staggerDelay={0.04}
+>
+  Automate your workflow in minutes
+</TextFadeIn>
+```
+
+### Rapid character reveal on a short word
+
+```tsx
+import { TextFadeIn } from "@/components/animations/text/fade-in"
+
+<TextFadeIn
+  by="character"
+  staggerDelay={0.05}
+  duration={0.3}
+  className="text-4xl font-black tracking-widest"
+>
+  LAUNCH
+</TextFadeIn>
+```
+
+### Delayed body copy after a hero animation
+
+```tsx
+import { TextFadeIn } from "@/components/animations/text/fade-in"
+
+export function HeroStack() {
+  return (
+    <div className="flex flex-col gap-4">
+      <TextFadeIn className="text-5xl font-bold" staggerDelay={0.04}>
+        Build the future
+      </TextFadeIn>
+      <TextFadeIn
+        className="text-base text-neutral-400"
+        delay={0.8}
+        duration={0.4}
+        staggerDelay={0.02}
+      >
+        One component at a time
+      </TextFadeIn>
+    </div>
+  )
+}
+```
+
+## Real-world examples
+
+### Scroll-triggered feature section title
+
+```tsx
+"use client"
+import { useInView } from "motion/react"
+import { useRef } from "react"
+import { TextFadeIn } from "@/components/animations/text/fade-in"
+
+export function FeatureHeading({ text }: { text: string }) {
+  const ref = useRef(null)
+  const inView = useInView(ref, { once: true, margin: "-60px" })
+  return (
+    <div ref={ref}>
+      {inView && (
+        <TextFadeIn
+          aria-label={text}
+          className="text-3xl font-semibold"
+          staggerDelay={0.04}
+        >
+          {text}
+        </TextFadeIn>
+      )}
+    </div>
+  )
+}
+```
+
+### Animated stats label
+
+```tsx
+import { TextFadeIn } from "@/components/animations/text/fade-in"
+
+export function StatCard({ value, label }: { value: string; label: string }) {
+  return (
+    <div className="flex flex-col gap-1">
+      <span className="text-5xl font-black">{value}</span>
+      <TextFadeIn className="text-sm text-neutral-500" delay={0.2} duration={0.4}>
+        {label}
+      </TextFadeIn>
+    </div>
+  )
+}
+```

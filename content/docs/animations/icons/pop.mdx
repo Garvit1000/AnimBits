@@ -368,3 +368,197 @@ export default function Example() {
 |------|------|---------|-------------|
 | `children` | `ReactNode` | - | The icon element to animate |
 | `trigger` | `"hover"` \| `"tap"` \| `"mount"` | `"mount"` | When to trigger the pop animation |
+
+## Use cases
+
+`PopIcon` runs the sequence `scale: [0, 1.2, 1]` with `opacity: [0, 1, 1]` over 0.4 s using a custom cubic-bezier easing `[0.68, -0.55, 0.265, 1.55]` that produces a noticeable overshoot before settling. This makes the arrival feel physical, like a bubble popping into existence. Good spots:
+
+- **Success checkmarks.** Mounting a checkmark with `trigger="mount"` after a form submit or file upload makes the positive outcome satisfying and hard to miss.
+- **Badge or notification dot appearance.** A notification count badge popping into view draws attention without a banner.
+- **Confirmation dialogs.** An icon in a modal header (warning triangle, sparkle, check) that pops on mount focuses the user on the intent of the dialog.
+- **Reward moments.** A trophy, confetti star, or coin icon that pops when the user completes a task in a gamified flow.
+- **Hover emphasis on interactive icons.** `trigger="hover"` on an emoji or reaction icon shows the hover state with physical energy.
+
+## When to use / when not to use
+
+**Use `PopIcon` when:**
+
+- You want the icon's appearance to feel like an event, not a passive fade-in. The overshoot makes it celebratory.
+- `trigger="mount"` suits icons that appear conditionally after an action (success, error, empty-state resolved).
+- `trigger="hover"` on reaction or emoji icons is a natural match for that context.
+
+**Do not use it when:**
+
+- The icon is always visible and never conditionally mounted. A pop animation on an icon that is present from the first render and never unmounts will only play once at page load, which can feel arbitrary.
+- You need a gentler entrance. `scale: [0, 1.2, 1]` starts from zero, so the icon is invisible before the animation. For icons that should be visible immediately but reveal softly, use [FadeInIcon](/docs/animations/icons/fade-in) or [ScaleInIcon](/docs/animations/icons/scale-in) with a `from` value close to 1.
+- Multiple icons pop simultaneously in a grid. Simultaneous pops in a row read as system noise rather than individual feedback.
+- `trigger="tap"` is used inside a list where rapid re-tapping is likely. Each tap increments the internal `key`, which remounts the element; very rapid tapping in a slow CPU environment can cause a stutter.
+
+## Accessibility notes
+
+- `PopIcon` starts at `opacity: 0` and `scale: 0`. Before the animation fires, the icon is invisible. Ensure surrounding text communicates the meaning immediately so users who miss the animation or who have animations disabled still understand the state.
+- When the pop signals a state change (success, error), wrap it in a live region:
+
+```tsx
+<div role="status">
+  <PopIcon trigger="mount">
+    <CheckCircle className="w-6 h-6 text-green-500" aria-hidden="true" />
+  </PopIcon>
+  <span className="sr-only">Upload complete</span>
+</div>
+```
+
+- For `trigger="hover"`, the icon starts invisible and only becomes visible on hover, which breaks for keyboard users and screen readers. Reserve hover-trigger pops for icons that are also readable in their non-animated sibling state, or use it only on decorative additions (like a floating reaction picker).
+- Reduce the overshoot for users who prefer reduced motion:
+
+```tsx
+"use client"
+import { useReducedMotion } from "motion/react"
+import { PopIcon } from "@/components/animations/icons/pop"
+import { CheckCircle } from "lucide-react"
+
+export function SuccessIcon() {
+  const reduced = useReducedMotion()
+  if (reduced) return <CheckCircle className="w-6 h-6 text-green-500" aria-hidden="true" />
+  return (
+    <PopIcon trigger="mount">
+      <CheckCircle className="w-6 h-6 text-green-500" aria-hidden="true" />
+    </PopIcon>
+  )
+}
+```
+
+## Performance considerations
+
+- The animation uses `scale` and `opacity`, both compositor-only properties. No layout or repaint is involved.
+- The custom bezier `[0.68, -0.55, 0.265, 1.55]` (a back-out easing) is computed entirely by the browser's animation engine. It has no runtime overhead beyond a standard ease.
+- `PopIcon` is a one-shot animation (no `repeat`). The compositor releases it after 0.4 s, leaving no ongoing cost.
+- The `key` increment on `tap` remounts the `motion.div`. For a single icon this is trivial. Avoid placing `trigger="tap"` inside a long virtualized list where remounts are more expensive.
+- For `trigger="hover"`, the element starts at `opacity: 0, scale: 0` (the `initial` state) between hover events. If the icon must remain visible between hovers, `trigger="mount"` is the correct choice.
+
+## Customization examples
+
+### Success checkmark on form submit
+
+```tsx
+import { PopIcon } from "@/components/animations/icons/pop"
+import { CheckCircle } from "lucide-react"
+
+<PopIcon trigger="mount">
+  <CheckCircle className="w-10 h-10 text-green-500" aria-hidden="true" />
+</PopIcon>
+```
+
+### Tap-to-react emoji button
+
+The icon pops each time it is tapped, giving a physical reward for each press:
+
+```tsx
+import { PopIcon } from "@/components/animations/icons/pop"
+import { ThumbsUp } from "lucide-react"
+
+<button aria-label="Like" className="rounded p-1.5 hover:bg-neutral-100">
+  <PopIcon trigger="tap">
+    <ThumbsUp className="w-5 h-5 text-blue-500" aria-hidden="true" />
+  </PopIcon>
+</button>
+```
+
+### Notification badge popping into view
+
+```tsx
+import { PopIcon } from "@/components/animations/icons/pop"
+import { Bell } from "lucide-react"
+
+export function NotificationBell({ count }: { count: number }) {
+  return (
+    <div className="relative">
+      <Bell className="w-6 h-6" />
+      {count > 0 && (
+        <PopIcon trigger="mount">
+          <span
+            className="absolute -right-1 -top-1 flex h-4 w-4 items-center justify-center rounded-full bg-red-500 text-[10px] font-bold text-white"
+            aria-label={`${count} notifications`}
+          >
+            {count}
+          </span>
+        </PopIcon>
+      )}
+    </div>
+  )
+}
+```
+
+## Real-world examples
+
+### Upload success state
+
+File upload completes and the status icon switches to a popping checkmark:
+
+```tsx
+"use client"
+import { useState } from "react"
+import { PopIcon } from "@/components/animations/icons/pop"
+import { CheckCircle, Upload } from "lucide-react"
+
+export function UploadButton() {
+  const [status, setStatus] = useState<"idle" | "uploading" | "done">("idle")
+
+  async function handleUpload() {
+    setStatus("uploading")
+    await new Promise((r) => setTimeout(r, 1500))
+    setStatus("done")
+  }
+
+  return (
+    <button
+      onClick={handleUpload}
+      disabled={status === "uploading"}
+      className="flex items-center gap-2 rounded-lg border border-neutral-200 px-4 py-2 text-sm font-medium hover:bg-neutral-50 disabled:opacity-60 dark:border-neutral-700"
+    >
+      {status === "done" ? (
+        <div role="status" className="flex items-center gap-2 text-green-600">
+          <PopIcon trigger="mount">
+            <CheckCircle className="w-5 h-5" aria-hidden="true" />
+          </PopIcon>
+          <span>Uploaded</span>
+        </div>
+      ) : (
+        <>
+          <Upload className="w-5 h-5" aria-hidden="true" />
+          {status === "uploading" ? "Uploading..." : "Upload file"}
+        </>
+      )}
+    </button>
+  )
+}
+```
+
+### Gamification reward badge
+
+A trophy icon pops when a milestone is reached:
+
+```tsx
+"use client"
+import { useState } from "react"
+import { PopIcon } from "@/components/animations/icons/pop"
+import { Trophy } from "lucide-react"
+
+export function MilestoneBadge({ completed }: { completed: boolean }) {
+  return (
+    <div className="flex flex-col items-center gap-1">
+      {completed ? (
+        <div role="status">
+          <PopIcon trigger="mount">
+            <Trophy className="w-10 h-10 text-yellow-500" aria-hidden="true" />
+          </PopIcon>
+          <span className="sr-only">Milestone reached</span>
+        </div>
+      ) : (
+        <Trophy className="w-10 h-10 text-neutral-300" aria-hidden="true" />
+      )}
+      <span className="text-xs font-medium text-neutral-600">100 tasks</span>
+    </div>
+  )
+}
+```

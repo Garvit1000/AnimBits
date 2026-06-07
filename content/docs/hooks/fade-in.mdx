@@ -404,12 +404,213 @@ const combined = {
 <motion.div {...combined}>Fade + Slide</motion.div>
 ```
 
-## Accessibility
+## Use cases
 
-- Fade-in is one of the most accessible animations
-- Generally well-tolerated by users with motion sensitivity
-- Still consider respecting `prefers-reduced-motion`
-- Avoid very slow fades (>2s) that delay content visibility
+`useFadeIn` returns `MotionProps` with `initial`, `whileInView`, `viewport`, and `transition` fields. Spread them on any `motion.*` element and the element fades in as it enters the viewport.
+
+- **Hero sections and above-the-fold headings.** A `motion.section` or `motion.h1` with `useFadeIn({ duration: 0.8 })` announces content without jarring the user on page load.
+- **Image galleries.** Each `motion.img` can receive `useFadeIn({ delay: index * 0.08 })` to stagger the reveal as the user scrolls down a grid.
+- **Feature sections in a landing page.** Apply the hook to alternating `motion.article` or `motion.div` columns with `direction`-specific stagger delays.
+- **Modal overlays.** Mount a `motion.div` backdrop with `useFadeIn({ duration: 0.2, viewport: "always" })` so the overlay fades in every time the modal opens, not just the first time.
+- **Lazy-loaded content panels.** Sections that fetch data on scroll can fade in their content once it resolves, hiding the empty skeleton state transition.
+
+## When to use / when not to use
+
+**Use `useFadeIn` directly when:**
+
+- The element you want to animate is not a standard prebuilt component, for example a `motion.aside` sidebar or a custom `motion.figure`.
+- You want to combine the fade with another hook such as [useSlideIn](/docs/hooks/slide-in): merge the two `MotionProps` objects by spreading `initial` and `whileInView` from both.
+- You need `viewport: "always"` so the element fades in every time it enters the viewport, not just the first.
+
+**Avoid `useFadeIn` when:**
+
+- The wait would be over 2 seconds. A slow fade delays content visibility and can frustrate users on slow connections.
+- You are fading in text that is part of the primary content hierarchy. Screen readers render all text regardless of opacity, but sighted users may be confused if important text is invisible for a perceptible moment.
+- You need a combined entrance with translation. Use [useSlideIn](/docs/hooks/slide-in) instead, which handles both opacity and translate together, or compose both hooks manually.
+
+## Accessibility notes
+
+`useFadeIn` uses `whileInView` and animates only `opacity`. The element exists in the DOM from mount and is accessible to screen readers even while invisible. However, there are still considerations:
+
+Honor the user's reduced-motion preference by returning plain props with no animation:
+
+```tsx
+"use client"
+import { motion } from "motion/react"
+import { useReducedMotion } from "motion/react"
+import { useFadeIn } from "@/lib/use-fade-in"
+
+export function FeatureCard({ title, body }: { title: string; body: string }) {
+  const reduced = useReducedMotion()
+  const fadeProps = useFadeIn({ duration: 0.6 })
+
+  return (
+    <motion.div
+      {...(reduced ? {} : fadeProps)}
+      className="rounded-xl border border-neutral-200 p-6 dark:border-neutral-800"
+    >
+      <h3 className="font-semibold">{title}</h3>
+      <p className="mt-2 text-sm text-neutral-500">{body}</p>
+    </motion.div>
+  )
+}
+```
+
+Additional guidance:
+
+- Do not fade in interactive elements such as buttons or links unless they become fully opaque before the user can reach them via keyboard Tab navigation. If they can be focused while still semi-transparent, add `pointer-events: none` during the animation.
+- The default `from: 0` means the element starts fully transparent. Any content inside is still in the DOM, so `Ctrl+F` in-browser search and screen readers can still find it.
+- Avoid `viewport: "always"` on sections that contain forms or other interactive controls. Reflowing the opacity on every scroll can momentarily hide UI state.
+
+## Performance considerations
+
+- `useFadeIn` animates only `opacity`, which is a compositor property. No layout or paint is triggered, and the animation runs off the main thread.
+- The hook uses `whileInView`, which relies on an `IntersectionObserver` under the hood in Framer Motion. This is far cheaper than a scroll event listener and does not block the main thread.
+- With `viewport: "once"` (the default), the observer disconnects after the first intersection, eliminating any ongoing cost.
+- Stagger patterns calling `useFadeIn` inside a `.map()` create one `IntersectionObserver` per element. For very large lists (50 or more items) consider batching with Framer Motion's `staggerChildren` inside a `variants` object instead.
+- `opacity` transitions do not affect `will-change`. You do not need to add `will-change: opacity` manually; Framer Motion handles compositing hints internally.
+
+## Customization examples
+
+### Staggered feature list with varying delays
+
+```tsx
+import { motion } from "motion/react"
+import { useFadeIn } from "@/lib/use-fade-in"
+
+const features = ["Type-safe API", "Tree-shakeable", "Zero config", "SSR ready"]
+
+export function FeatureList() {
+  return (
+    <ul className="space-y-3">
+      {features.map((feature, i) => {
+        const fadeProps = useFadeIn({ delay: i * 0.1, duration: 0.5 })
+        return (
+          <motion.li key={feature} {...fadeProps} className="flex items-center gap-2 text-sm">
+            <span className="h-1.5 w-1.5 rounded-full bg-blue-500" />
+            {feature}
+          </motion.li>
+        )
+      })}
+    </ul>
+  )
+}
+```
+
+### Fade in combined with slide (manual composition)
+
+```tsx
+import { motion } from "motion/react"
+import { useFadeIn } from "@/lib/use-fade-in"
+import { useSlideIn } from "@/lib/use-slide-in"
+
+export function SlideAndFadeCard() {
+  const fade = useFadeIn({ duration: 0.5 })
+  const slide = useSlideIn({ direction: "up", distance: 24, duration: 0.5 })
+
+  const combined = {
+    initial: { ...fade.initial, ...slide.initial },
+    whileInView: { ...fade.whileInView, ...slide.whileInView },
+    viewport: fade.viewport,
+    transition: fade.transition,
+  }
+
+  return (
+    <motion.div {...combined} className="rounded-xl border border-neutral-200 p-6">
+      Slides up and fades in simultaneously
+    </motion.div>
+  )
+}
+```
+
+### Fade that replays on every scroll into view
+
+```tsx
+import { motion } from "motion/react"
+import { useFadeIn } from "@/lib/use-fade-in"
+
+export function ReplaySection() {
+  const fadeProps = useFadeIn({ viewport: "always", duration: 0.6 })
+
+  return (
+    <motion.section {...fadeProps} className="py-16">
+      <h2 className="text-2xl font-bold">This section fades in every time</h2>
+    </motion.section>
+  )
+}
+```
+
+## Real-world examples
+
+### Landing page with staggered hero text
+
+```tsx
+"use client"
+import { motion } from "motion/react"
+import { useFadeIn } from "@/lib/use-fade-in"
+
+export function HeroSection() {
+  const eyebrow = useFadeIn({ delay: 0, duration: 0.4 })
+  const heading = useFadeIn({ delay: 0.15, duration: 0.5 })
+  const body = useFadeIn({ delay: 0.3, duration: 0.5 })
+  const cta = useFadeIn({ delay: 0.45, duration: 0.4 })
+
+  return (
+    <section className="mx-auto max-w-3xl px-4 py-24 text-center">
+      <motion.p {...eyebrow} className="text-xs font-semibold uppercase tracking-widest text-blue-600">
+        New in 2025
+      </motion.p>
+      <motion.h1 {...heading} className="mt-4 text-5xl font-black">
+        Build animated UIs faster
+      </motion.h1>
+      <motion.p {...body} className="mt-6 text-lg text-neutral-500">
+        A library of composable animation hooks and components for React.
+      </motion.p>
+      <motion.a
+        href="/docs"
+        {...cta}
+        className="mt-8 inline-flex h-12 items-center rounded-xl bg-blue-600 px-8 text-sm font-semibold text-white"
+      >
+        Read the docs
+      </motion.a>
+    </section>
+  )
+}
+```
+
+### Image grid that reveals on scroll
+
+```tsx
+"use client"
+import { motion } from "motion/react"
+import { useFadeIn } from "@/lib/use-fade-in"
+
+const images = [
+  { src: "/photos/1.jpg", alt: "Sunset" },
+  { src: "/photos/2.jpg", alt: "Mountains" },
+  { src: "/photos/3.jpg", alt: "Ocean" },
+  { src: "/photos/4.jpg", alt: "Forest" },
+]
+
+export function PhotoGrid() {
+  return (
+    <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
+      {images.map((img, i) => {
+        const fadeProps = useFadeIn({ delay: i * 0.08, duration: 0.5 })
+        return (
+          <motion.img
+            key={img.src}
+            {...fadeProps}
+            src={img.src}
+            alt={img.alt}
+            className="aspect-square w-full rounded-lg object-cover"
+          />
+        )
+      })}
+    </div>
+  )
+}
+```
 
 ## Browser Support
 

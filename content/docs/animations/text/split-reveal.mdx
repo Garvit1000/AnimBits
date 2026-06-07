@@ -158,3 +158,153 @@ import { TextSplitReveal } from "@/components/animations/text/split-reveal"
 | `duration` | `number` | `0.6` | Animation duration (seconds) |
 | `delay` | `number` | `0` | Initial delay |
 | `staggerDelay` | `number` | `0.1` | Delay between halves |
+
+## Use cases
+
+`TextSplitReveal` splits the string at `Math.ceil(children.length / 2)` and animates each half independently. The left half enters from the left using `clipPath: "inset(0 100% 0 0)"` (fully clipped on the right) to `clipPath: "inset(0 0% 0 0)"`, while the right half mirrors this from the right. Both halves also fade in (`opacity: 0 to 1`) and slide up (`y: 20 to 0`). The right half is delayed by `staggerDelay` (default `0.1 s`). Reach for it when:
+
+- **Short, bold hero headlines.** "SPLIT REVEAL" or "SHIP FASTER" benefit from the theatrical two-part entry, which gives the impression of the text assembling itself.
+- **Full-screen splash screens.** The clean left-right split suits product name reveals in dark or full-bleed landing sections.
+- **Section dividers with a single strong word.** A numbered section title like "01. DESIGN" can split dramatically to open the section.
+- **Call-to-action phrases.** A punchy 2 to 4 word CTA label entering as two assembling halves draws attention without competing with the button it sits above.
+
+Because only two spans are ever created (not one per character), `TextSplitReveal` is the cheapest of the character-level reveal effects in terms of DOM node count.
+
+## When to use / when not to use
+
+**Use split-reveal when:**
+
+- The string length is even or odd: the `Math.ceil` split handles both gracefully, though the two halves may differ by one character.
+- The text is a single short phrase (2 to 6 words). The effect reads as one unified reveal. Longer text produces longer halves that clip slowly and feel unfinished.
+- You want maximum impact with minimum DOM overhead.
+
+**Reach for something else when:**
+
+- **Sentences longer than 5 or 6 words.** At that length the two-half split becomes arbitrary and the clip animation takes too long to complete gracefully.
+- **Text that wraps to multiple lines.** The split is calculated on the raw character string, not the visual rendering. A long headline that wraps may split mid-word across lines, producing a misaligned visual result.
+- **You need word-by-word stagger.** This component always produces exactly two animated spans. For per-word timing, use [Slide Up](/docs/animations/text/slide-up) or [Fade In](/docs/animations/text/fade-in) with `by="word"`.
+- **Lowercase or mixed-case editorial text.** The split-reveal aesthetic reads best on uppercase or title-case display text. On sentence-case body copy the two halves look like a rendering artifact rather than an intentional effect.
+
+## Accessibility notes
+
+The text is split into two `<motion.span>` elements rendered inside a `<motion.p>`. The split is at the character level of the raw string. Screen readers will read both spans in order, and the result is usually correct, but add `aria-label` on the `<p>` to guarantee the full string is announced as a single unit:
+
+```tsx
+<TextSplitReveal
+  aria-label="HERO TITLE"
+  className="text-5xl font-black"
+>
+  HERO TITLE
+</TextSplitReveal>
+```
+
+**Reduced motion.** The animation combines `clipPath`, `opacity`, and `y`. The `clipPath` change is a paint operation and may not be appropriate for users with vestibular sensitivity. Wrap to skip it:
+
+```tsx
+"use client"
+import { useReducedMotion } from "motion/react"
+import { TextSplitReveal } from "@/components/animations/text/split-reveal"
+
+function AccessibleSplitReveal({ children, ...props }: { children: string; [key: string]: unknown }) {
+  const reduced = useReducedMotion()
+  if (reduced) return <p {...props}>{children}</p>
+  return <TextSplitReveal {...props}>{children}</TextSplitReveal>
+}
+```
+
+**`overflow-hidden` on the parent.** The `<motion.p>` has `overflow-hidden` applied by default (via `cn("overflow-hidden", className)`). This clips the translating halves during entry. If you apply the component inside a container that also clips, verify that the clipping does not truncate the final state.
+
+## Performance considerations
+
+- **Two spans total.** Unlike per-word or per-character components, `TextSplitReveal` creates exactly two `<motion.span>` elements regardless of text length. This is the lowest DOM overhead of any staggered text component.
+- **`clipPath` animation cost.** `clipPath: "inset()"` transitions require a paint on each frame because the browser must re-clip the text layer. This is more expensive than a pure transform/opacity change. On a single hero element the cost is imperceptible. Do not use on many simultaneously animating instances.
+- **Combined `opacity + y + clipPath`.** All three properties change at once. The `y` translation is GPU-composited, but the `clipPath` forces a paint. This is acceptable for a one-shot entry animation.
+- **Single-shot.** Like all the staggered text components, the animation fires once on mount and does not loop.
+
+## Customization examples
+
+### Fast assembly for an energetic product launch
+
+```tsx
+import { TextSplitReveal } from "@/components/animations/text/split-reveal"
+
+<TextSplitReveal
+  duration={0.4}
+  staggerDelay={0.06}
+  className="text-6xl font-black tracking-tighter"
+>
+  LAUNCH DAY
+</TextSplitReveal>
+```
+
+### Slow cinematic reveal for a full-screen splash
+
+```tsx
+import { TextSplitReveal } from "@/components/animations/text/split-reveal"
+
+<TextSplitReveal
+  duration={1}
+  staggerDelay={0.2}
+  delay={0.5}
+  className="text-8xl font-black text-white"
+>
+  COMING SOON
+</TextSplitReveal>
+```
+
+### Delayed reveal after a short intro animation
+
+```tsx
+import { TextSplitReveal } from "@/components/animations/text/split-reveal"
+
+export function SectionOpener() {
+  return (
+    <div className="flex flex-col items-center gap-2">
+      <span className="text-sm uppercase tracking-widest text-neutral-400">01</span>
+      <TextSplitReveal delay={0.2} className="text-4xl font-bold">
+        DESIGN SYSTEM
+      </TextSplitReveal>
+    </div>
+  )
+}
+```
+
+## Real-world examples
+
+### Full-bleed hero product name
+
+```tsx
+import { TextSplitReveal } from "@/components/animations/text/split-reveal"
+
+export function SplashScreen() {
+  return (
+    <div className="fixed inset-0 flex items-center justify-center bg-neutral-950">
+      <TextSplitReveal
+        aria-label="ANIMBITS"
+        className="text-9xl font-black text-white"
+        duration={0.7}
+        staggerDelay={0.15}
+      >
+        ANIMBITS
+      </TextSplitReveal>
+    </div>
+  )
+}
+```
+
+### Conference-style event title
+
+```tsx
+import { TextSplitReveal } from "@/components/animations/text/split-reveal"
+
+export function EventHero() {
+  return (
+    <section className="py-32 text-center">
+      <TextSplitReveal className="text-7xl font-black" duration={0.6} delay={0.3}>
+        SHIP WEEK
+      </TextSplitReveal>
+      <p className="mt-6 text-lg text-neutral-500">June 2026, San Francisco</p>
+    </section>
+  )
+}
+```

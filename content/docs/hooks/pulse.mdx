@@ -337,21 +337,193 @@ const pulseProps = usePulse({
 })
 ```
 
-## Accessibility
+## Use cases
 
-<Callout type="warn">
-  **Motion sensitivity:** Continuous animations can be distracting or cause discomfort for some users. Consider respecting `prefers-reduced-motion`:
-  
-  ```tsx
-  const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
-  const pulseProps = prefersReducedMotion ? {} : usePulse()
-  ```
-</Callout>
+`usePulse` returns `MotionProps` with an `animate` object that cycles `scale` through `[scaleFrom, scaleTo, scaleFrom]` (defaults: `[1, 1.05, 1]`) and a `transition` with `repeat: Infinity`. Spread the props onto any `motion.*` element.
 
-- Use pulse animations sparingly
-- Avoid pulsing large elements
-- Provide alternative indicators for important information
-- Consider adding a pause/stop option for continuous animations
+- **Notification badges and unread counters.** A small `motion.span` badge that pulses at `scaleTo: 1.12` and `duration: 1` draws the eye to new activity without flashing or changing color.
+- **Online / live status dots.** A green dot with `scaleTo: 1.3` and `duration: 1.2` communicates "active now" the same way a blinking cursor communicates typing.
+- **CTA buttons awaiting user action.** A hero button that has not been clicked can pulse gently at `scaleTo: 1.03` and `duration: 2` to invite interaction without being aggressive.
+- **Alert and warning icons.** A warning icon that pulses at `scaleTo: 1.15` during an error state amplifies urgency beyond static color alone.
+- **Recording or live broadcast indicators.** A red circle with a slow `duration: 0.8` pulse communicates "currently recording" in video or audio interfaces.
+
+## When to use / when not to use
+
+**Use `usePulse` directly when:**
+
+- You need the pulse effect on a custom element that is not a standard badge or button.
+- You want `repeat: N` for a finite pulse (for example, three pulses after a successful action) rather than an infinite loop.
+- You want to `delay` the pulse to start after another animation completes (for example, a `useFadeIn` entrance followed by a pulse).
+
+**Avoid `usePulse` when:**
+
+- More than two or three elements on the same view pulse simultaneously. Multiple concurrent pulses compete for attention and diminish the effect of all of them.
+- The element is large, such as a full-width banner or hero section. A scale change on a large element causes significant layout reflow for nearby content unless the element is positioned absolutely.
+- The information communicated by the pulse is critical. A pulse is easy to miss. Pair it with text ("3 unread"), color, or ARIA live regions to ensure the information reaches all users.
+
+## Accessibility notes
+
+`usePulse` animates `scale` via `animate` with `repeat: Infinity`. The animation starts immediately on mount and runs until the element unmounts.
+
+- Continuous scale animation is among the motion patterns most likely to be distracting or to cause symptoms for users with vestibular or attention disorders. Honor `prefers-reduced-motion` by returning no animation props:
+
+```tsx
+"use client"
+import { motion } from "motion/react"
+import { useReducedMotion } from "motion/react"
+import { usePulse } from "@/lib/use-pulse"
+
+export function LiveDot() {
+  const reduced = useReducedMotion()
+  const pulseProps = usePulse({ scaleTo: 1.3, duration: 1 })
+
+  return (
+    <motion.span
+      {...(reduced ? {} : pulseProps)}
+      className="inline-block h-2.5 w-2.5 rounded-full bg-green-500"
+      aria-label="Online"
+    />
+  )
+}
+```
+
+- Do not convey meaning through the pulse animation alone. Pair it with text, a color, or an accessible label so screen reader users and reduced-motion users receive the same information.
+- If you mount the element conditionally based on a state change (for example, only when unread count > 0), the `animate` loop starts fresh on mount. Unmounting the component when the state clears is cleaner than setting `repeat: 0` after mount.
+
+## Performance considerations
+
+- `usePulse` animates only `scale`, which is a transform. The animation runs on the compositor thread with no layout or paint cost.
+- `repeat: Infinity` keeps the compositor busy indefinitely. Conditionally mount the element (e.g., `{unread > 0 && <motion.span {...pulseProps}>...}`) so the compositor is freed when the state clears, rather than hiding it with `opacity: 0` while the animation continues.
+- `scaleFrom` and `scaleTo` are close to `1` by default (`1` and `1.05`). This keeps the composited layer small. Larger `scaleTo` values (above `1.2`) expand the composited layer's bounding box and may clip neighboring elements if the container has `overflow: hidden`.
+- For staggered badge pulses, use the `delay` option rather than mounting multiple instances of the hook to avoid all badges scaling in lockstep.
+
+## Customization examples
+
+### Subtle breathing button
+
+```tsx
+import { motion } from "motion/react"
+import { usePulse } from "@/lib/use-pulse"
+
+export function BreathingCTA() {
+  const pulseProps = usePulse({ scaleFrom: 1, scaleTo: 1.025, duration: 2.5, ease: "easeInOut" })
+
+  return (
+    <motion.button
+      {...pulseProps}
+      className="rounded-xl bg-blue-600 px-8 py-3 text-sm font-semibold text-white shadow-md shadow-blue-200"
+    >
+      Try it free
+    </motion.button>
+  )
+}
+```
+
+### Recording indicator dot
+
+```tsx
+import { motion } from "motion/react"
+import { usePulse } from "@/lib/use-pulse"
+
+export function RecordingBadge() {
+  const pulseProps = usePulse({ scaleFrom: 0.9, scaleTo: 1.25, duration: 0.7, ease: "easeInOut" })
+
+  return (
+    <div className="flex items-center gap-1.5">
+      <motion.span
+        {...pulseProps}
+        className="h-2 w-2 rounded-full bg-red-500"
+        aria-hidden="true"
+      />
+      <span className="text-xs font-semibold uppercase tracking-wide text-red-500">Live</span>
+    </div>
+  )
+}
+```
+
+### Finite success pulse
+
+```tsx
+import { motion } from "motion/react"
+import { usePulse } from "@/lib/use-pulse"
+
+export function SuccessPulse() {
+  const pulseProps = usePulse({ scaleTo: 1.15, duration: 0.5, repeat: 2 })
+
+  return (
+    <motion.div
+      {...pulseProps}
+      className="flex h-12 w-12 items-center justify-center rounded-full bg-green-100 text-green-600"
+      aria-label="Success"
+    >
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+        <path d="M20 6L9 17l-5-5" strokeLinecap="round" strokeLinejoin="round" />
+      </svg>
+    </motion.div>
+  )
+}
+```
+
+## Real-world examples
+
+### Nav bar icon with unread badge
+
+```tsx
+"use client"
+import { motion } from "motion/react"
+import { useReducedMotion } from "motion/react"
+import { usePulse } from "@/lib/use-pulse"
+
+export function InboxIcon({ unread }: { unread: number }) {
+  const reduced = useReducedMotion()
+  const pulseProps = usePulse({ scaleTo: 1.2, duration: 0.9 })
+
+  return (
+    <button className="relative p-2" aria-label={`Inbox, ${unread} unread`}>
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+        <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" />
+        <polyline points="22,6 12,13 2,6" />
+      </svg>
+      {unread > 0 && (
+        <motion.span
+          {...(reduced ? {} : pulseProps)}
+          className="absolute right-0.5 top-0.5 flex h-4 w-4 items-center justify-center rounded-full bg-red-500 text-[9px] font-bold text-white"
+        >
+          {unread}
+        </motion.span>
+      )}
+    </button>
+  )
+}
+```
+
+### Dashboard metric card with pulsing active state
+
+```tsx
+"use client"
+import { motion } from "motion/react"
+import { usePulse } from "@/lib/use-pulse"
+
+export function ActiveSessionsCard({ count, isActive }: { count: number; isActive: boolean }) {
+  const pulseProps = usePulse({ scaleTo: 1.08, duration: 1.5 })
+
+  return (
+    <div className="rounded-xl border border-neutral-200 p-5 dark:border-neutral-800">
+      <div className="flex items-center justify-between">
+        <p className="text-xs font-medium uppercase tracking-wide text-neutral-400">Active sessions</p>
+        {isActive && (
+          <motion.span
+            {...pulseProps}
+            className="h-2 w-2 rounded-full bg-green-500"
+            aria-label="Active"
+          />
+        )}
+      </div>
+      <p className="mt-2 text-3xl font-bold">{count}</p>
+    </div>
+  )
+}
+```
 
 ## Browser Support
 

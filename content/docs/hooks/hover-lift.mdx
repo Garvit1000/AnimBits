@@ -366,13 +366,214 @@ export function FancyCard() {
 }
 ```
 
-## Accessibility
+## Use cases
 
-The lift effect is purely visual and doesn't affect accessibility. However, ensure:
+`useHoverLift` returns `MotionProps` with `initial`, `whileHover`, and `transition` fields. The `initial` state sets `y: 0` and a faint base shadow. On hover, the element moves up by `liftDistance` pixels (default `8`) and the shadow deepens proportionally: `shadowBlur` is `liftDistance * 2` and `shadowSpread` is `Math.round(liftDistance / 4)`.
 
-- Interactive elements remain keyboard accessible
-- Focus states are clearly visible
-- Hover effects don't convey critical information
+- **Content cards and article teasers.** A card grid where each card lifts slightly on hover communicates "this is clickable" without adding a separate hover color change that may conflict with the card's background.
+- **Product tiles in a shop.** Combine `liftDistance: 12` and `scale: 1.02` on a `motion.article` wrapping a product image and price to give a tactile "pick it up" feel.
+- **Nav bar links with pill backgrounds.** A link inside a pill-shaped `motion.a` with `liftDistance: 4` and `addShadow: false` creates a subtle floating cue without a distracting shadow.
+- **Gallery images.** Use `liftDistance: 16` and `scale: 1.04` on `motion.img` in an image grid for a lightbox-preview affordance.
+- **Dashboard stat cards.** A minimal lift (`liftDistance: 4`, `shadowIntensity: 0.15`) keeps the dashboard calm while still making each card feel interactive.
+
+## When to use / when not to use
+
+**Use `useHoverLift` directly when:**
+
+- You need the lift effect on a custom element, such as a `motion.article`, `motion.a`, or a third-party card component wrapped in `motion()`.
+- You want to compose lift with another hook, for example merging the `whileHover` from `useHoverLift` and [useHoverGlow](/docs/hooks/hover-glow) to achieve both lift and a colored shadow in a single `motion.*` element.
+- You need `addShadow: false` because the element already has a box-shadow from CSS that you want to keep.
+
+**Reach for a prebuilt component when:**
+
+- You are building a standard button and do not need to customize the host element. The [HoverLift button](/docs/animations/buttons/lift) wraps `useHoverLift` with sensible defaults and a ready-to-use markup structure.
+- You are building a standard hoverable card. The [HoverLift card](/docs/animations/cards/hover-lift) component is pre-styled.
+
+**Avoid `useHoverLift` when:**
+
+- The element is inside a container with `overflow: hidden` and the shadow would be clipped. Either set `addShadow: false` or ensure the container has enough padding.
+- The element is very large (full-width or full-height). A `liftDistance` of 8px on a 100vw element creates a jarring shift; reduce `liftDistance` to 2 to 4px or disable the effect entirely for large viewports.
+
+## Accessibility notes
+
+`useHoverLift` uses `whileHover`, which is pointer-driven. Keyboard users who focus the element but do not hover it will not see the lift. This is acceptable as long as the element has a visible `:focus-visible` outline that provides equivalent feedback.
+
+Respect `prefers-reduced-motion` by returning empty props when the OS preference is set. The `y` translation is the part most likely to cause discomfort:
+
+```tsx
+"use client"
+import { motion } from "motion/react"
+import { useReducedMotion } from "motion/react"
+import { useHoverLift } from "@/lib/use-hover-lift"
+
+export function ProjectCard({ title, description }: { title: string; description: string }) {
+  const reduced = useReducedMotion()
+  const liftProps = useHoverLift({ liftDistance: 8, shadowIntensity: 0.25 })
+
+  return (
+    <motion.div
+      {...(reduced ? {} : liftProps)}
+      className="cursor-pointer rounded-xl border border-neutral-200 p-6 focus-visible:outline focus-visible:outline-2 focus-visible:outline-blue-500 dark:border-neutral-800"
+    >
+      <h3 className="font-semibold">{title}</h3>
+      <p className="mt-2 text-sm text-neutral-500">{description}</p>
+    </motion.div>
+  )
+}
+```
+
+Additional guidance:
+
+- Ensure that interactive elements inside the card (links, buttons) remain focusable in their natural tab order. `useHoverLift` does not alter `tabIndex` or ARIA properties.
+- Do not use the lift alone to indicate that an element is clickable. Pair it with an appropriate ARIA role or a semantic element (`<button>`, `<a>`).
+
+## Performance considerations
+
+- `useHoverLift` animates `y` (a transform) and `scale` (a transform). Both run on the compositor. No layout is triggered.
+- The `boxShadow` animation in `whileHover` causes a repaint on each frame. For most card-sized elements, this cost is negligible. Avoid using `addShadow: true` on full-width or very large elements.
+- The `duration` default is `0.2s`. Short transitions minimize the total number of repaint frames for `boxShadow`.
+- The hook returns a new object reference on every render. If the parent component re-renders frequently (for example, it subscribes to a real-time data stream), memoize the options object passed to `useHoverLift` with `useMemo` to avoid unnecessary recalculation.
+
+## Customization examples
+
+### Card with lift and extra scale
+
+```tsx
+import { motion } from "motion/react"
+import { useHoverLift } from "@/lib/use-hover-lift"
+
+export function TeamMemberCard({ name, role, avatar }: { name: string; role: string; avatar: string }) {
+  const liftProps = useHoverLift({
+    liftDistance: 12,
+    scale: 1.02,
+    shadowIntensity: 0.2,
+    duration: 0.25,
+  })
+
+  return (
+    <motion.div {...liftProps} className="flex items-center gap-4 rounded-xl border border-neutral-100 bg-white p-4">
+      <img src={avatar} alt={name} className="h-10 w-10 rounded-full object-cover" />
+      <div>
+        <p className="font-semibold text-sm">{name}</p>
+        <p className="text-xs text-neutral-400">{role}</p>
+      </div>
+    </motion.div>
+  )
+}
+```
+
+### Nav link without shadow (tight spacing)
+
+```tsx
+import { motion } from "motion/react"
+import { useHoverLift } from "@/lib/use-hover-lift"
+
+export function NavLink({ href, label }: { href: string; label: string }) {
+  const liftProps = useHoverLift({ liftDistance: 3, addShadow: false, duration: 0.15 })
+
+  return (
+    <motion.a href={href} {...liftProps} className="rounded-md px-3 py-1.5 text-sm text-neutral-600 hover:text-neutral-900">
+      {label}
+    </motion.a>
+  )
+}
+```
+
+### Composed lift and glow on a pricing card
+
+```tsx
+import { motion } from "motion/react"
+import { useHoverLift } from "@/lib/use-hover-lift"
+import { useHoverGlow } from "@/lib/use-hover-glow"
+
+export function PricingCard({ plan, price }: { plan: string; price: string }) {
+  const lift = useHoverLift({ liftDistance: 10, addShadow: false })
+  const glow = useHoverGlow({ glowColor: "rgba(99, 102, 241, 0.4)", glowBlur: 24 })
+
+  const combined = {
+    ...lift,
+    initial: { ...lift.initial, ...glow.initial },
+    whileHover: { ...lift.whileHover, ...glow.whileHover },
+  }
+
+  return (
+    <motion.div {...combined} className="rounded-2xl border border-neutral-200 p-8">
+      <h3 className="text-lg font-bold">{plan}</h3>
+      <p className="mt-2 text-3xl font-black">{price}</p>
+    </motion.div>
+  )
+}
+```
+
+## Real-world examples
+
+### Product grid with lift on hover
+
+```tsx
+"use client"
+import { motion } from "motion/react"
+import { useHoverLift } from "@/lib/use-hover-lift"
+
+interface Product {
+  id: string
+  name: string
+  price: number
+  image: string
+  tag?: string
+}
+
+export function ProductCard({ product }: { product: Product }) {
+  const liftProps = useHoverLift({
+    liftDistance: 10,
+    scale: 1.015,
+    shadowIntensity: 0.2,
+    duration: 0.2,
+  })
+
+  return (
+    <motion.article
+      {...liftProps}
+      className="cursor-pointer overflow-hidden rounded-xl border border-neutral-200 bg-white"
+    >
+      <div className="relative">
+        <img src={product.image} alt={product.name} className="aspect-[4/3] w-full object-cover" />
+        {product.tag && (
+          <span className="absolute left-3 top-3 rounded-full bg-blue-600 px-2.5 py-0.5 text-xs font-semibold text-white">
+            {product.tag}
+          </span>
+        )}
+      </div>
+      <div className="p-4">
+        <p className="font-semibold">{product.name}</p>
+        <p className="mt-1 text-sm text-neutral-400">${product.price.toFixed(2)}</p>
+      </div>
+    </motion.article>
+  )
+}
+```
+
+### Dashboard stat card
+
+```tsx
+"use client"
+import { motion } from "motion/react"
+import { useHoverLift } from "@/lib/use-hover-lift"
+
+export function StatCard({ label, value, delta }: { label: string; value: string; delta: string }) {
+  const liftProps = useHoverLift({ liftDistance: 4, shadowIntensity: 0.12, duration: 0.15 })
+
+  return (
+    <motion.div
+      {...liftProps}
+      className="rounded-xl border border-neutral-200 bg-white p-5 dark:border-neutral-800 dark:bg-neutral-900"
+    >
+      <p className="text-xs font-medium uppercase tracking-wide text-neutral-400">{label}</p>
+      <p className="mt-2 text-3xl font-bold">{value}</p>
+      <p className="mt-1 text-xs text-green-500">{delta} this month</p>
+    </motion.div>
+  )
+}
+```
 
 ## Browser Support
 
@@ -380,7 +581,3 @@ Works in all modern browsers that support CSS transforms and Framer Motion:
 - Chrome/Edge 90+
 - Firefox 88+
 - Safari 14+
-
-<Callout type="warn">
-  Reduced motion: Consider respecting `prefers-reduced-motion` for accessibility.
-</Callout>

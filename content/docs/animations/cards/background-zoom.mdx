@@ -178,3 +178,196 @@ import { CardBackgroundZoom } from "@/components/animations/cards/background-zoo
 | `scale` | `number` | `1.1` | Zoom scale factor |
 | `duration` | `number` | `0.6` | Animation duration in seconds |
 | `className` | `string` | `undefined` | Additional CSS classes |
+
+## Use cases
+
+`CardBackgroundZoom` is the right pick when the card itself IS a photograph and text lives on top of it. The outer `motion.div` stays perfectly still while an absolutely-positioned inner `div` carrying the `backgroundImage` scales from `1` to the `scale` value (default `1.1`) on hover. Because the outer container has `overflow-hidden`, the zoom is clipped and the layout never shifts.
+
+Common scenarios:
+
+- **Travel and destination cards.** A mountain photo zooms in subtly while a title overlay stays anchored, drawing the eye without moving surrounding content.
+- **Blog article hero images.** Tease depth on a featured post without resizing the card container.
+- **Portfolio case-study cards.** Zoom into a screenshot or render while the project title remains readable.
+- **Real-estate listings.** Property photography benefits from the zoomed-in sense of detail on hover.
+- **Editorial magazine layouts.** Sections that pair a full-bleed image with a short headline.
+
+## When to use / when not to use
+
+**Use `CardBackgroundZoom` when:**
+
+- The image is the primary content of the card and text is overlaid (typically with a gradient scrim or semi-transparent backdrop).
+- You want a contained, layout-stable hover feedback. The transform stays inside `overflow-hidden` so nothing jumps.
+
+**Reach for a different component when:**
+
+- The card contains structured text alongside the image (not overlaid). Use [CardHoverLift](/docs/animations/cards/hover-lift) for a whole-card lift effect instead.
+- You need the card itself to physically move on hover. `CardBackgroundZoom` only zooms the background layer; the card's bounding box does not move.
+- The zoom feels distracting in a dense grid. At `scale={1.05}` or below the effect becomes almost invisible; consider just using a CSS hover border instead.
+- Accessibility is a strong priority and you cannot provide sufficient color contrast on the text overlay. A zooming image behind low-contrast text fails WCAG 1.4.3 at any scale.
+
+## Accessibility notes
+
+- **Text contrast over images.** The zoom does not change the overlay color or text position, but a photograph background never guarantees consistent contrast. Always add a gradient scrim or semi-transparent backdrop behind text:
+
+```tsx
+<CardBackgroundZoom
+  backgroundImage="/landscape.jpg"
+  className="relative h-64 rounded-xl flex items-end"
+>
+  <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent" />
+  <div className="relative z-20 p-6">
+    <h3 className="text-white text-xl font-bold">Destination Title</h3>
+  </div>
+</CardBackgroundZoom>
+```
+
+- **Respect `prefers-reduced-motion`.** The zoom is a `whileHover` transform; with reduced motion enabled, stop it from scaling at all:
+
+```tsx
+"use client"
+import { useReducedMotion } from "motion/react"
+import { CardBackgroundZoom } from "@/components/animations/cards/background-zoom"
+
+function AccessibleHeroCard() {
+  const reduced = useReducedMotion()
+  return (
+    <CardBackgroundZoom
+      backgroundImage="/landscape.jpg"
+      scale={reduced ? 1 : 1.1}
+      className="h-64 rounded-xl flex items-end p-6"
+    >
+      <h3 className="text-white text-xl font-bold">Featured Story</h3>
+    </CardBackgroundZoom>
+  )
+}
+```
+
+- **Decorative images.** If the background image is purely decorative and the card's meaning is in the text overlay, no `alt` text is needed because the image is a CSS `backgroundImage`, not an `<img>` element. Ensure the text content is sufficient on its own.
+- **Keyboard users.** The component responds to `whileHover` which does not fire on keyboard focus. If the card is a link or button, add a matching `:focus-visible` ring so keyboard users can identify it.
+
+## Performance considerations
+
+- **Compositor-only transform.** The inner background `div` animates only `scale`, which is a transform. No layout, no paint. The animation runs on the GPU compositor and does not block the main thread.
+- **`overflow-hidden` clips without triggering layout.** The outer container uses `overflow: hidden` to clip the scaled background. This does trigger a stacking context but not a layout recalculation on each frame.
+- **Large, unoptimized images dominate cost.** The `backgroundImage` prop accepts any URL. Serving a 4 MB full-resolution photo kills perceived performance regardless of how cheap the animation is. Use a CDN that resizes and serves WebP at the card's rendered dimensions (e.g., `?w=600&h=400&fit=crop`).
+- **Avoid stacking many zooming cards above the fold.** Each card creates a composited layer. Ten cards on the initial viewport means ten GPU layers. Keep the number reasonable or use `content-visibility: auto` on off-screen rows.
+
+## Customization examples
+
+### Stronger zoom for drama
+
+Default `scale={1.1}` is subtle. Push it to `1.2` for a more cinematic feel:
+
+```tsx
+import { CardBackgroundZoom } from "@/components/animations/cards/background-zoom"
+
+<CardBackgroundZoom
+  backgroundImage="/mountain.jpg"
+  scale={1.2}
+  duration={0.8}
+  className="h-72 rounded-2xl flex items-end p-8"
+>
+  <div className="relative z-10">
+    <h3 className="text-white text-2xl font-bold">Alpine Trek</h3>
+    <p className="text-white/80 text-sm mt-1">View itinerary</p>
+  </div>
+</CardBackgroundZoom>
+```
+
+### Quick snap with a short duration
+
+A faster `duration` reads as snappy and responsive instead of cinematic:
+
+```tsx
+<CardBackgroundZoom
+  backgroundImage="/product.jpg"
+  scale={1.08}
+  duration={0.3}
+  className="h-56 rounded-lg flex items-end p-6"
+>
+  <span className="text-white font-semibold">Shop Now</span>
+</CardBackgroundZoom>
+```
+
+### Gradient scrim for readable text
+
+```tsx
+<CardBackgroundZoom
+  backgroundImage="/city.jpg"
+  className="relative h-80 rounded-2xl overflow-hidden flex items-end"
+>
+  <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent" />
+  <div className="relative z-10 p-8">
+    <p className="text-white/70 text-xs uppercase tracking-widest mb-1">Architecture</p>
+    <h3 className="text-white text-3xl font-bold leading-tight">Urban Stories</h3>
+  </div>
+</CardBackgroundZoom>
+```
+
+## Real-world examples
+
+### Travel destination grid card
+
+```tsx
+import { CardBackgroundZoom } from "@/components/animations/cards/background-zoom"
+
+interface DestinationCardProps {
+  image: string
+  country: string
+  city: string
+  nights: number
+}
+
+export function DestinationCard({ image, country, city, nights }: DestinationCardProps) {
+  return (
+    <CardBackgroundZoom
+      backgroundImage={image}
+      scale={1.12}
+      duration={0.7}
+      className="relative h-72 rounded-2xl overflow-hidden flex flex-col justify-end cursor-pointer"
+    >
+      <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent" />
+      <div className="relative z-10 p-6">
+        <p className="text-white/70 text-xs uppercase tracking-wider mb-1">{country}</p>
+        <h3 className="text-white text-xl font-bold">{city}</h3>
+        <p className="text-white/80 text-sm mt-1">{nights} nights from $899</p>
+      </div>
+    </CardBackgroundZoom>
+  )
+}
+```
+
+### Blog article hero card
+
+```tsx
+import { CardBackgroundZoom } from "@/components/animations/cards/background-zoom"
+
+interface ArticleHeroProps {
+  coverImage: string
+  category: string
+  title: string
+  readTime: number
+}
+
+export function ArticleHeroCard({ coverImage, category, title, readTime }: ArticleHeroProps) {
+  return (
+    <a href="#" className="block rounded-2xl overflow-hidden focus-visible:ring-2 focus-visible:ring-neutral-900 dark:focus-visible:ring-white">
+      <CardBackgroundZoom
+        backgroundImage={coverImage}
+        scale={1.1}
+        duration={0.6}
+        className="h-96 flex flex-col justify-end"
+      >
+        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent" />
+        <div className="relative z-10 p-8">
+          <span className="inline-block rounded-full bg-white/20 px-3 py-1 text-xs font-medium text-white backdrop-blur-sm mb-3">
+            {category}
+          </span>
+          <h2 className="text-white text-2xl font-bold leading-snug">{title}</h2>
+          <p className="text-white/60 text-sm mt-2">{readTime} min read</p>
+        </div>
+      </CardBackgroundZoom>
+    </a>
+  )
+}
+```

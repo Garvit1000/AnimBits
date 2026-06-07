@@ -289,3 +289,195 @@ import { CardHoverGlow } from "@/components/animations/cards/hover-glow"
 | `duration` | `number` | `0.3` | Animation duration in seconds |
 | `className` | `string` | `undefined` | Additional CSS classes |
 
+## Use cases
+
+`CardHoverGlow` delegates to the `useHoverGlow` hook, which computes `boxShadow` strings for initial and hover states and also scales the card to `1.02` by default. At rest the card shows `0 2px 8px rgba(0,0,0,0.1)`. On hover it adds `0 0 ${glowSpread}px ${glowSpread/4}px ${glowColor}` on top. The `glowSpread` prop (default `20`) maps to the hook's `glowBlur` parameter.
+
+Use it when:
+
+- **Pricing tiers.** Highlight the recommended plan with a brand-colored glow while the other tiers use no glow or a neutral shadow.
+- **Feature cards on a dark background.** A colored glow on a dark surface reads immediately as interactive and premium.
+- **Call-to-action cards.** Single-card CTAs that need to stand out from surrounding content.
+- **Integration or plugin galleries.** Each tile glows in a color that matches the integration's brand color.
+- **Dashboard widgets.** A subtle blue glow on the active or selected stat card.
+
+## When to use / when not to use
+
+**Use `CardHoverGlow` when:**
+
+- The page background is dark or neutral so the glow reads clearly. On a white background, `rgba(59, 130, 246, 0.5)` at `20px` spread can be almost invisible.
+- You want both a glow AND a slight scale (`1.02` by default from `useHoverGlow`). If you want glow without any scale, you will need to customize the hook directly.
+
+**Reach for a different component when:**
+
+- You want a lift (vertical translation) rather than a glow. Use [CardHoverLift](/docs/animations/cards/hover-lift) instead.
+- The card is small (under 80px wide) and a 20px spread glow will dominate the element visually. Reduce `glowSpread` to `8` or `10`.
+- You need the inner glow variant. The `useHoverGlow` hook supports `innerGlow: true` but `CardHoverGlow` does not expose that prop; use the hook directly.
+- Dense grids where simultaneous glows on neighboring cards compete visually. Consider [CardHoverLift](/docs/animations/cards/hover-lift) for grids and reserve glow for isolated or hero cards.
+
+## Accessibility notes
+
+- **`boxShadow` is purely decorative.** Shadow changes are invisible to assistive technology. The glow does not convey state or meaning that must be communicated another way.
+- **Scale of `1.02` is small but still motion.** Respect `prefers-reduced-motion` by disabling the scale and reducing the glow transition to instant:
+
+```tsx
+"use client"
+import { useReducedMotion } from "motion/react"
+import { CardHoverGlow } from "@/components/animations/cards/hover-glow"
+
+function AccessibleGlowCard({ children }: { children: React.ReactNode }) {
+  const reduced = useReducedMotion()
+  return (
+    <CardHoverGlow
+      duration={reduced ? 0 : 0.3}
+      glowColor="rgba(59, 130, 246, 0.5)"
+      glowSpread={reduced ? 0 : 20}
+      className="rounded-xl border border-neutral-200 dark:border-neutral-800 bg-white dark:bg-neutral-900 p-6"
+    >
+      {children}
+    </CardHoverGlow>
+  )
+}
+```
+
+- **Do not use glow color to indicate required or error state.** A red glow on hover is a nice effect but fails as an error indicator because it only appears on hover. Error states must be persistently visible and perceivable without color alone.
+- **Focus visibility.** `CardHoverGlow` adds `cursor-pointer`. Ensure the card has proper `:focus-visible` styling, especially if it wraps an anchor or button, since `whileHover` does not fire on keyboard focus.
+
+## Performance considerations
+
+- **`boxShadow` animates off the main thread in modern browsers.** Chrome and Firefox can composite box-shadow changes without layout or paint when the element is already composited. However, complex multi-layer shadows (the hook combines a base shadow and a glow shadow) can be slower to composite on low-end devices.
+- **Scale of `1.02` adds a composited layer.** The `whileHover: { scale }` triggers compositing. This is appropriate for isolated cards but expensive for large grids. In a 30-card grid, every `CardHoverGlow` creates its own composited layer even when not hovered, because motion reserves the layer during initial render.
+- **`duration: 0.3` is fast by default.** This reads as snappy. Increasing it to `0.6` or more makes the glow feel sluggish and can cause the glow to still be fading out when the user moves to the next card.
+- **Avoid `glowSpread` values above `60`.** Very large spreads produce wide blurs that force the browser to composite a larger area, increasing GPU memory use.
+
+## Customization examples
+
+### Brand-matched glow per card
+
+```tsx
+import { CardHoverGlow } from "@/components/animations/cards/hover-glow"
+
+const integrations = [
+  { name: "Stripe", color: "rgba(99, 91, 255, 0.5)", logo: "/logos/stripe.svg" },
+  { name: "Slack", color: "rgba(74, 21, 75, 0.5)", logo: "/logos/slack.svg" },
+  { name: "GitHub", color: "rgba(36, 41, 47, 0.5)", logo: "/logos/github.svg" },
+]
+
+export function IntegrationGrid() {
+  return (
+    <div className="grid grid-cols-3 gap-4">
+      {integrations.map((i) => (
+        <CardHoverGlow
+          key={i.name}
+          glowColor={i.color}
+          glowSpread={16}
+          duration={0.25}
+          className="rounded-xl border border-neutral-200 dark:border-neutral-800 bg-white dark:bg-neutral-900 p-6 flex flex-col items-center gap-3"
+        >
+          <img src={i.logo} alt={i.name} className="h-8 w-auto" />
+          <p className="text-sm font-medium">{i.name}</p>
+        </CardHoverGlow>
+      ))}
+    </div>
+  )
+}
+```
+
+### Highlighted pricing tier
+
+```tsx
+<CardHoverGlow
+  glowColor="rgba(16, 185, 129, 0.6)"
+  glowSpread={30}
+  duration={0.3}
+  className="rounded-2xl border-2 border-emerald-500 bg-white dark:bg-neutral-900 p-8"
+>
+  <span className="text-xs font-bold uppercase tracking-wider text-emerald-500">Most popular</span>
+  <p className="text-3xl font-bold mt-2">$49/mo</p>
+</CardHoverGlow>
+```
+
+### Subtle neutral glow for a light background
+
+On light backgrounds, drop opacity to avoid the glow looking garish:
+
+```tsx
+<CardHoverGlow
+  glowColor="rgba(0, 0, 0, 0.12)"
+  glowSpread={12}
+  duration={0.2}
+  className="rounded-xl border border-neutral-100 bg-white p-6 shadow-sm"
+>
+  <h3 className="font-semibold">Dashboard Report</h3>
+  <p className="text-sm text-neutral-500 mt-1">Weekly summary</p>
+</CardHoverGlow>
+```
+
+## Real-world examples
+
+### Feature card grid for a SaaS landing page
+
+```tsx
+import { CardHoverGlow } from "@/components/animations/cards/hover-glow"
+
+interface FeatureCardProps {
+  icon: React.ReactNode
+  title: string
+  description: string
+  glowColor?: string
+}
+
+export function FeatureCard({ icon, title, description, glowColor = "rgba(59, 130, 246, 0.4)" }: FeatureCardProps) {
+  return (
+    <CardHoverGlow
+      glowColor={glowColor}
+      glowSpread={18}
+      duration={0.25}
+      className="rounded-2xl border border-neutral-200 dark:border-neutral-800 bg-white dark:bg-neutral-900 p-6 flex flex-col gap-4"
+    >
+      <div className="h-10 w-10 rounded-lg bg-neutral-100 dark:bg-neutral-800 flex items-center justify-center text-neutral-700 dark:text-neutral-300">
+        {icon}
+      </div>
+      <div>
+        <h3 className="font-semibold">{title}</h3>
+        <p className="text-sm text-neutral-500 dark:text-neutral-400 mt-1 leading-relaxed">{description}</p>
+      </div>
+    </CardHoverGlow>
+  )
+}
+```
+
+### Blog post card with reading-time indicator
+
+```tsx
+import { CardHoverGlow } from "@/components/animations/cards/hover-glow"
+
+export function BlogCard({
+  image,
+  category,
+  title,
+  readTime,
+}: {
+  image: string
+  category: string
+  title: string
+  readTime: number
+}) {
+  return (
+    <CardHoverGlow
+      glowColor="rgba(168, 85, 247, 0.4)"
+      glowSpread={20}
+      duration={0.3}
+      className="rounded-2xl overflow-hidden border border-neutral-200 dark:border-neutral-800 bg-white dark:bg-neutral-900 flex flex-col"
+    >
+      <img src={image} alt={title} className="w-full h-44 object-cover" />
+      <div className="p-5 flex flex-col gap-2 flex-1">
+        <span className="text-xs font-semibold uppercase tracking-wider text-purple-500">{category}</span>
+        <h3 className="font-bold leading-snug">{title}</h3>
+        <p className="text-xs text-neutral-400 mt-auto">{readTime} min read</p>
+      </div>
+    </CardHoverGlow>
+  )
+}
+```
+

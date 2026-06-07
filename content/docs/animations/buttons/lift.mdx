@@ -293,19 +293,151 @@ export function LiftAndGlow() {
 }
 ```
 
-## Accessibility
+## Use cases
 
-- Maintains full keyboard accessibility
-- Works with screen readers
-- Preserves focus states
-- Animation is purely visual enhancement
+`LiftButton` delegates to `useHoverLift`, which animates `y` (translateY) and `boxShadow` on `whileHover`. The default `liftHeight` is 8 pixels (maps to `liftDistance` in the hook), the shadow blur is `liftDistance * 2` (16px), and `shadowIntensity` defaults to 0.3. The transition uses `duration: 0.2` with `easeOut`. Reach for it when:
 
-## Performance
+- **Primary action buttons in card grids.** Cards that reveal an action button on hover benefit from the lift reinforcing the hover state without changing color or layout.
+- **Navigation link buttons.** A pill-shaped nav item that lifts slightly on hover communicates interactivity more clearly than a color change alone.
+- **Icon action buttons.** A bookmark, share, or favorite button using `liftHeight={6}` responds to hover with a tight, contained lift that doesn't disturb neighboring elements.
+- **Secondary CTAs.** After a primary CTA, a "Learn more" or "See pricing" button can use `liftHeight={4}` for a softer lift that avoids competing with the primary.
 
-- Uses CSS transforms (GPU-accelerated)
-- No layout reflows
-- Smooth 60fps animation
-- Minimal performance impact
+The `shadow` prop defaults to `true`, so the lift always comes with a growing shadow that reinforces the vertical displacement. Set `shadow={false}` if your button already has a strong visual background and the shadow would be redundant.
+
+## When to use / when not to use
+
+**Use `LiftButton` when:**
+
+- You want a hover effect that feels physical and grounded (the shadow makes the lift read as real depth).
+- The button is on a surface with a solid or near-solid background so the shadow is visible.
+- You need a hover interaction without any ongoing animation overhead (lift only fires on hover, not continuously).
+
+**Reach for a different button when:**
+
+- You want a colored glow rather than a neutral shadow on hover. Use [Glow Button](/docs/animations/buttons/glow), which animates `boxShadow` with a colored spread.
+- The button is inside a flex row where a `translateY` shift would push adjacent elements. The lift moves only the button itself (not its layout box), so siblings don't shift, but the button may visually overlap them. Reduce `liftHeight` or use [Press Button](/docs/animations/buttons/press) instead for click-based feedback.
+- You need both hover lift and click feedback. `LiftButton` only responds to `whileHover`. Combine with `whileTap={{ scale: 0.97 }}` passed as a prop, or use [Press Button](/docs/animations/buttons/press) alongside it.
+- The button sits on a patterned or textured background where a neutral gray shadow won't read. Use a border or color change instead.
+
+## Accessibility notes
+
+`LiftButton` renders a `motion.button`, so it carries full native button semantics and participates in tab order.
+
+- **The lift is purely visual.** Moving the button 8px upward via `translateY` does not reorder the DOM or change the element's accessible position. Screen readers are not affected.
+- **Focus visibility.** The `whileHover` animation is mouse-triggered. Keyboard focus does not activate the lift, so ensure your CSS defines a `:focus-visible` ring (e.g., `focus-visible:ring-2 focus-visible:ring-blue-500`) to give keyboard users an equivalent indicator.
+- **Don't use lift as a state signal.** If the lift is supposed to indicate "this button is selected" or "this action is dangerous," it won't be perceived by screen reader users. Use an `aria-pressed` or `aria-current` attribute and a text label.
+- **Reduced motion.** The `y` transform and `boxShadow` changes are brief (0.2 seconds) and happen only during hover, not continuously. To eliminate the motion entirely:
+
+```tsx
+"use client"
+import { useReducedMotion } from "motion/react"
+import { LiftButton } from "@/components/animations/buttons/lift"
+
+function AccessibleLift({ children }: { children: React.ReactNode }) {
+  const reduced = useReducedMotion()
+  return (
+    <LiftButton
+      liftHeight={reduced ? 0 : 8}
+      shadow={!reduced}
+      className="inline-flex h-11 items-center rounded-lg bg-blue-600 px-6 text-sm font-semibold text-white focus-visible:ring-2 focus-visible:ring-blue-400"
+    >
+      {children}
+    </LiftButton>
+  )
+}
+```
+
+## Performance considerations
+
+- **`translateY` is compositor-safe.** The lift animates the `y` motion value, which maps to a CSS `transform: translateY(...)`. This runs on the compositor thread with no layout recalculation.
+- **`boxShadow` triggers repaint.** When `shadow={true}` (the default), the shadow transitions on hover entry and exit, which requires a repaint each time. This is a single repaint per hover event, not a continuous one. It is negligible for one or a few buttons, but if you render many `LiftButton` components in a dense list and all are hovered simultaneously (e.g., in a card grid), consider `shadow={false}` and using a CSS `box-shadow` transition instead.
+- **No ongoing animation.** Unlike [Border Gradient Button](/docs/animations/buttons/border-gradient), which loops indefinitely, `LiftButton` only schedules animation frames during the hover transition. When the user moves the mouse away, the animation completes and stops.
+- **`useHoverLift` returns a static props object.** The hook computes shadow strings on each render but has no subscriptions or timers. Memoizing the parent component eliminates redundant calls.
+
+## Customization examples
+
+### Gentle lift for a ghost button
+
+A small lift with no shadow suits a borderless secondary action:
+
+```tsx
+<LiftButton
+  liftHeight={4}
+  shadow={false}
+  className="inline-flex h-11 items-center rounded-lg px-6 text-sm font-semibold text-neutral-700 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-800"
+>
+  Learn more
+</LiftButton>
+```
+
+### Dramatic lift for a hero CTA
+
+A 16px lift creates a strong floating effect on a prominent action:
+
+```tsx
+<LiftButton
+  liftHeight={16}
+  className="inline-flex h-12 items-center rounded-xl bg-gradient-to-r from-blue-600 to-purple-600 px-8 text-sm font-bold text-white"
+>
+  Start building free
+</LiftButton>
+```
+
+### Icon button with contained lift
+
+A tight lift on a small icon button avoids disturbing surrounding text:
+
+```tsx
+<LiftButton
+  liftHeight={5}
+  className="inline-flex h-9 w-9 items-center justify-center rounded-lg bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 shadow-sm"
+  aria-label="Bookmark"
+>
+  <svg className="h-4 w-4 text-neutral-600 dark:text-neutral-300" viewBox="0 0 20 20" fill="currentColor">
+    <path d="M5 4a2 2 0 012-2h6a2 2 0 012 2v14l-5-2.5L5 18V4z" />
+  </svg>
+</LiftButton>
+```
+
+## Real-world examples
+
+### Feature comparison table row action
+
+Each plan row has a "Choose plan" button; the lift makes each row feel interactive individually:
+
+```tsx
+<tr className="border-t border-neutral-200 dark:border-neutral-800">
+  <td className="py-4 text-sm font-medium text-neutral-900 dark:text-white">Starter</td>
+  <td className="py-4 text-sm text-neutral-500">$0 / mo</td>
+  <td className="py-4">
+    <LiftButton
+      liftHeight={6}
+      className="inline-flex h-9 items-center rounded-lg border border-neutral-200 dark:border-neutral-700 px-4 text-sm font-medium text-neutral-700 dark:text-neutral-300"
+    >
+      Choose
+    </LiftButton>
+  </td>
+</tr>
+```
+
+### Card grid with hover lift on the action
+
+The lift reinforces which card the user is hovering without requiring a background color change on the whole card:
+
+```tsx
+<div className="rounded-xl border border-neutral-200 dark:border-neutral-800 bg-white dark:bg-neutral-900 p-6">
+  <p className="text-sm font-semibold text-neutral-900 dark:text-white">Analytics dashboard</p>
+  <p className="mt-1 text-sm text-neutral-500">Real-time metrics for your app.</p>
+  <div className="mt-4">
+    <LiftButton
+      liftHeight={8}
+      className="inline-flex h-9 items-center rounded-lg bg-blue-600 px-4 text-sm font-semibold text-white"
+    >
+      Open dashboard
+    </LiftButton>
+  </div>
+</div>
+```
 
 <Callout>
   **Tip:** The lift effect works great for primary actions, cards, and any interactive element that needs emphasis.

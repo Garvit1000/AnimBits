@@ -347,6 +347,201 @@ Add a cursor effect:
 </div>
 ```
 
+## Use cases
+
+`useScramble` returns a `string` (the current animated text). It does not return `MotionProps`; there is no `motion.*` element involved. Instead, render the returned string inside any element. The hook runs a `setInterval` internally, firing approximately 60 times per second for `duration * 60` iterations, replacing un-decoded characters with random ones from `scrambleChars`.
+
+- **Hero headlines on a tech or developer-focused site.** A heading like "Build faster" that scrambles before resolving on page load establishes a code-like aesthetic immediately.
+- **Loading state labels in terminal-style UIs.** Showing `"CONNECTING..."` scrambled while a WebSocket connects, then resolving to `"CONNECTED"`, communicates progress without a traditional spinner.
+- **Hover-activated text reveals on portfolio items.** Trigger a new `text` value on hover to re-run the scramble effect over a project title or role label.
+- **Staggered intro sequences.** Call the hook three times with increasing `delay` values to reveal a tagline word by word in a terminal boot sequence style.
+- **Interactive command palette labels.** A label that scrambles briefly before showing the matched command adds a sci-fi character to a keyboard-first interface.
+
+## When to use / when not to use
+
+**Use `useScramble` when:**
+
+- You want a pure-React text animation with no `motion.*` element required.
+- The aesthetic is explicitly technical, terminal, cyberpunk, or matrix-themed.
+- The text is short (under 40 characters). Longer text scrambles slowly and can look noisy.
+
+**Avoid `useScramble` when:**
+
+- The content is user-generated text that the user typed themselves. Scrambling their own input would be confusing.
+- The text is inside a form or an interactive input. Screen readers re-read text nodes when their content changes, so a 60fps interval firing `setDisplayText` will cause screen readers to read dozens of random characters.
+- The text changes frequently based on external data. Each change of the `text` option restarts the animation. Rapid re-renders with changing `text` props can cause the animation to never fully resolve.
+
+## Accessibility notes
+
+`useScramble` updates a string state at ~60fps for the duration of the animation. During scrambling, the displayed string is meaningless to screen readers.
+
+- Wrap the animated element in an `aria-label` or `aria-live="off"` to suppress screen reader announcements during the scramble, and use `aria-label` to provide the final text upfront:
+
+```tsx
+"use client"
+import { useScramble } from "@/lib/use-scramble"
+
+export function AccessibleScramble({ finalText }: { finalText: string }) {
+  const displayText = useScramble({ text: finalText, duration: 0.8 })
+
+  return (
+    <h1 aria-label={finalText} className="font-mono text-4xl font-bold">
+      {displayText}
+    </h1>
+  )
+}
+```
+
+- Respect `prefers-reduced-motion` by returning the final text immediately instead of scrambling it:
+
+```tsx
+"use client"
+import { useReducedMotion } from "motion/react"
+import { useScramble } from "@/lib/use-scramble"
+
+export function ReducedScramble({ text }: { text: string }) {
+  const reduced = useReducedMotion()
+  const displayText = useScramble({ text, duration: reduced ? 0 : 0.8 })
+
+  return (
+    <span className="font-mono" aria-label={text}>
+      {displayText}
+    </span>
+  )
+}
+```
+
+Setting `duration: 0` makes `iterations = 0`, so `setDisplayText(text)` is called on the first interval tick and the scramble resolves immediately.
+
+## Performance considerations
+
+- `useScramble` uses `setInterval` at a rate of `(duration * 1000) / (duration * 60)` ms per tick, which equals approximately 16.7ms (60fps). This is a JavaScript-main-thread interval that calls `setDisplayText` and triggers one React state update per frame.
+- Each state update schedules a React render and a DOM text node update. For a single element this is negligible, but avoid running multiple `useScramble` instances simultaneously on a page if the interval is rapid (duration under 0.5s).
+- The `setTimeout` wrapper respects the `delay` option and does not start the interval until after the delay elapses. The timeout is cleaned up in the effect's return function, preventing memory leaks on unmount.
+- The interval fires for exactly `Math.floor(duration * 60)` iterations and then clears itself. There is no ongoing cost after the animation completes unless `text` changes, which restarts the effect.
+- Prefer monospace fonts (`font-mono`) to prevent text-width jitter during scrambling. Variable-width fonts cause the layout to shift on every character change.
+
+## Customization examples
+
+### Cyberpunk heading with cursor blink
+
+```tsx
+import { useScramble } from "@/lib/use-scramble"
+
+export function CyberHeading({ text }: { text: string }) {
+  const display = useScramble({ text, duration: 1.2, scrambleChars: "01!@#$%<>" })
+
+  return (
+    <h1 aria-label={text} className="font-mono text-4xl font-bold text-cyan-400">
+      {display}
+      <span className="ml-0.5 animate-pulse text-cyan-300">_</span>
+    </h1>
+  )
+}
+```
+
+### Staggered terminal boot sequence
+
+```tsx
+import { useScramble } from "@/lib/use-scramble"
+
+export function BootSequence() {
+  const line1 = useScramble({ text: "Initializing system...", duration: 0.7, delay: 0 })
+  const line2 = useScramble({ text: "Loading modules...", duration: 0.6, delay: 0.9 })
+  const line3 = useScramble({ text: "Ready.", duration: 0.4, delay: 1.7 })
+
+  return (
+    <div className="space-y-1 font-mono text-sm text-green-400" aria-label="System ready">
+      <div>{line1}</div>
+      <div>{line2}</div>
+      <div>{line3}</div>
+    </div>
+  )
+}
+```
+
+### Hover-triggered scramble reveal
+
+```tsx
+"use client"
+import { useState } from "react"
+import { useScramble } from "@/lib/use-scramble"
+
+export function HoverReveal({ secret }: { secret: string }) {
+  const [active, setActive] = useState(false)
+  const display = useScramble({ text: active ? secret : "???", duration: 0.6 })
+
+  return (
+    <button
+      onMouseEnter={() => setActive(true)}
+      onMouseLeave={() => setActive(false)}
+      aria-label={`Reveal: ${secret}`}
+      className="font-mono text-lg text-neutral-400 hover:text-neutral-900"
+    >
+      {display}
+    </button>
+  )
+}
+```
+
+## Real-world examples
+
+### Tech agency hero with scramble headline
+
+```tsx
+"use client"
+import { useScramble } from "@/lib/use-scramble"
+import { useReducedMotion } from "motion/react"
+
+export function AgencyHero() {
+  const reduced = useReducedMotion()
+  const headline = useScramble({
+    text: "We build digital products",
+    duration: reduced ? 0 : 1.0,
+    delay: 0.3,
+    scrambleChars: "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz",
+  })
+
+  return (
+    <section className="mx-auto max-w-4xl px-6 py-32 text-center">
+      <h1
+        aria-label="We build digital products"
+        className="font-mono text-6xl font-black tracking-tight"
+      >
+        {headline}
+      </h1>
+      <p className="mt-6 text-lg text-neutral-500">
+        Strategy, design, and engineering under one roof.
+      </p>
+    </section>
+  )
+}
+```
+
+### Loading state that scrambles then resolves
+
+```tsx
+"use client"
+import { useScramble } from "@/lib/use-scramble"
+
+export function StatusLabel({ loading, label }: { loading: boolean; label: string }) {
+  const text = useScramble({
+    text: loading ? "LOADING" : label,
+    duration: 0.5,
+    scrambleChars: "0123456789#@!",
+  })
+
+  return (
+    <span
+      aria-label={loading ? "Loading" : label}
+      className={`font-mono text-xs font-bold uppercase tracking-widest ${loading ? "text-neutral-400" : "text-green-500"}`}
+    >
+      {text}
+    </span>
+  )
+}
+```
+
 <Callout type="warn">
   **Accessibility:** Scrambled text may be difficult for screen readers. Consider providing alternative text or ARIA labels.
 </Callout>

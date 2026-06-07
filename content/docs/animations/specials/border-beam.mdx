@@ -303,3 +303,174 @@ export function BorderBeam({
 | `delay` | `number` | `0` | The delay before the animation starts. |
 | `radius` | `number` | `0` | The border radius of the path. Set this to match the container's border radius. |
 | `className` | `string` | - | Additional CSS classes. |
+
+## Use cases
+
+`BorderBeam` uses CSS `offset-path: rect(...)` with `offset-anchor` and a conic/linear gradient pseudo-element to travel a beam of light around any container's border. Because it is purely declarative CSS animation driven by the `animate-border-beam` keyframe, it consumes no JavaScript at runtime after mount. Good fits include:
+
+- **Feature or pricing cards.** A slow beam (`duration={12}` to `duration={20}`) on a card that already has a border draws the eye during the initial page scan without becoming distracting.
+- **Active or selected input fields.** A fast beam (`duration={4}` to `duration={6}`, `size={80}`) signals focus on a search or email input without replacing the browser's native `:focus` ring.
+- **CTAs and pill buttons.** A tight radius (`radius={9999}`) traces the full circumference of a rounded button, adding a premium gradient shimmer.
+- **Avatar rings.** The same `radius={9999}` approach works for `rounded-full` avatar containers to indicate an "active" or "live" user.
+- **Asymmetric decorative frames.** Match `radius` to your container's least aggressive corner (e.g., `radius={24}` for a `rounded-tl-3xl rounded-br-3xl` card) so the beam rounds corners correctly.
+
+## When to use / when not to use
+
+**Use `BorderBeam` when:**
+
+- You need a passive ambient animation that requires no user interaction.
+- The host element already has a visible border; the mask technique relies on `border: calc(var(--border-width)*1px) solid transparent` over the existing border.
+- You want to differentiate one element from siblings without changing its layout (the component is `position: absolute; inset: 0`, so it never pushes content).
+
+**Do not use `BorderBeam` when:**
+
+- You need to highlight states that change frequently (active tab, selected list item). A continuously running CSS animation on every row in a list wastes compositor resources.
+- The container has `overflow: hidden` without explicit knowledge of it: the pseudo-element travels outside the border box briefly during the `offset-path` traversal, and `overflow: hidden` can clip it. Confirm visually.
+- The user is on a battery-constrained device and the animation serves no functional purpose. Consider respecting `prefers-reduced-motion` by removing the component entirely when motion is reduced.
+- The container has no border (`border-transparent` parent): the mask composite trick requires at least a 1 px border on the host element's CSS.
+
+## Accessibility notes
+
+- `BorderBeam` is purely decorative. The component renders a `div` with `pointer-events-none` and no text or interactive content, so it is invisible to screen readers by default. No `aria-hidden` is needed because there is no role to suppress.
+- The continuous animation can cause discomfort for users with vestibular or photosensitive conditions. Respect `prefers-reduced-motion`:
+
+```tsx
+"use client"
+import { useReducedMotion } from "motion/react"
+import { BorderBeam } from "@/components/animations/specials/border-beam"
+
+function AccessibleBorderBeam(props: React.ComponentProps<typeof BorderBeam>) {
+  const reduced = useReducedMotion()
+  if (reduced) return null
+  return <BorderBeam {...props} />
+}
+```
+
+- Do not rely on the beam alone to communicate state changes (e.g., "this card is selected"). Users who disable animations or use high-contrast mode will not perceive it. Pair it with a visible border color or text change.
+
+## Performance considerations
+
+- **Pure CSS animation.** The `animate-border-beam` keyframe only animates `offset-distance` from `0%` to `100%`. This is a paint-free, layout-free operation handled entirely by the compositor. One instance has negligible overhead.
+- **Multiple instances.** Placing `BorderBeam` on every card in a 20-card grid means 20 concurrent CSS animations. Each is compositor-friendly, but the cumulative texture-upload cost of the gradient pseudo-elements adds up on lower-end GPUs. Use sparingly in dense lists.
+- **`will-change` is unnecessary.** `offset-distance` animations are already composited, so adding `will-change: offset-distance` merely consumes memory.
+- **No motion/react runtime.** Unlike most components in this library, `BorderBeam` imports `motion` only for the TypeScript reference. The actual animation uses a Tailwind keyframe, so there is zero JavaScript animation loop at runtime.
+- **Avoid on `backdrop-filter` parents.** If the host card uses `backdrop-blur-sm`, the browser must paint a separate compositing layer for the blur and another for the animated pseudo-element. On mobile Safari this can cause frame drops.
+
+## Customization examples
+
+### Brand-matched gradient on a card
+
+```tsx
+import { BorderBeam } from "@/components/animations/specials/border-beam"
+
+export function BrandCard() {
+  return (
+    <div className="relative flex h-48 w-80 flex-col justify-center overflow-hidden rounded-xl border bg-background p-6 shadow-md">
+      <h3 className="text-lg font-semibold">Pro plan</h3>
+      <p className="text-sm text-muted-foreground">Everything you need to ship faster.</p>
+      <BorderBeam
+        size={200}
+        duration={10}
+        radius={12}
+        colorFrom="#6366f1"
+        colorTo="#ec4899"
+      />
+    </div>
+  )
+}
+```
+
+### Focused input with delayed start
+
+Stagger beams on multiple inputs so they do not all start in sync:
+
+```tsx
+import { BorderBeam } from "@/components/animations/specials/border-beam"
+
+export function FocusedInputs() {
+  return (
+    <div className="space-y-3">
+      <div className="relative rounded-md border bg-background">
+        <input className="w-full bg-transparent px-3 py-2 text-sm outline-none" placeholder="Email" />
+        <BorderBeam size={80} duration={5} delay={0} radius={6} borderWidth={1.5} />
+      </div>
+      <div className="relative rounded-md border bg-background">
+        <input className="w-full bg-transparent px-3 py-2 text-sm outline-none" placeholder="Password" type="password" />
+        <BorderBeam size={80} duration={5} delay={2.5} radius={6} borderWidth={1.5} />
+      </div>
+    </div>
+  )
+}
+```
+
+### Slow ambient beam on a dark hero section
+
+```tsx
+import { BorderBeam } from "@/components/animations/specials/border-beam"
+
+export function HeroCard() {
+  return (
+    <div className="relative overflow-hidden rounded-2xl border border-neutral-800 bg-neutral-950 p-10">
+      <h1 className="text-4xl font-bold text-white">Ship faster.</h1>
+      <BorderBeam
+        size={350}
+        duration={20}
+        radius={16}
+        colorFrom="#38bdf8"
+        colorTo="#818cf8"
+        borderWidth={1}
+      />
+    </div>
+  )
+}
+```
+
+## Real-world examples
+
+### Pricing card with highlighted tier
+
+Highlight the recommended plan with a beam while leaving the others static:
+
+```tsx
+import { BorderBeam } from "@/components/animations/specials/border-beam"
+
+const tiers = [
+  { name: "Starter", price: "$9", highlight: false },
+  { name: "Pro", price: "$29", highlight: true },
+  { name: "Enterprise", price: "Custom", highlight: false },
+]
+
+export function PricingGrid() {
+  return (
+    <div className="grid grid-cols-3 gap-6">
+      {tiers.map((tier) => (
+        <div
+          key={tier.name}
+          className="relative flex flex-col gap-3 overflow-hidden rounded-xl border bg-background p-6 shadow-sm"
+        >
+          <p className="text-lg font-semibold">{tier.name}</p>
+          <p className="text-3xl font-bold">{tier.price}</p>
+          {tier.highlight && (
+            <BorderBeam size={200} duration={12} radius={12} colorFrom="#6366f1" colorTo="#a855f7" />
+          )}
+        </div>
+      ))}
+    </div>
+  )
+}
+```
+
+### Active nav item indicator
+
+```tsx
+import { BorderBeam } from "@/components/animations/specials/border-beam"
+
+export function NavItem({ label, active }: { label: string; active: boolean }) {
+  return (
+    <div className="relative overflow-hidden rounded-md border px-4 py-2 text-sm font-medium">
+      {label}
+      {active && <BorderBeam size={60} duration={4} radius={6} borderWidth={1} />}
+    </div>
+  )
+}
+```

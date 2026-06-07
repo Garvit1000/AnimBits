@@ -261,3 +261,175 @@ export default function Example() {
 | `from` | `number` | `0` | Initial opacity value |
 | `as` | `keyof JSX.IntrinsicElements` | `"div"` | Container element type |
 | `className` | `string` | - | Additional CSS classes |
+
+## Use cases
+
+`StaggerFadeList` animates each child from `opacity: from` (default `0`) to `opacity: 1`, with each item delayed by `index * staggerDelay` seconds. There is no translation, so the list does not shift or slide; items simply materialize in place. The `from` prop lets you start from a partially visible state (e.g., `from={0.3}`) for a less abrupt entry. Reach for it when:
+
+- **Content-rich grids or card arrays.** A grid of six product cards fading in sequentially feels orchestrated rather than all-at-once.
+- **Subtler page entry than slide-in.** When a directional cue would feel too aggressive (marketing pages, editorial layouts, dashboard overviews), a fade is gentler.
+- **Data tables with rows that arrive all at once.** When a query returns and you replace a skeleton with real rows, a staggered fade prevents the jarring snap of a full table appearing instantly.
+- **Menus and dropdown lists.** A popover with four to six items fading in adds polish without adding perceived latency.
+
+## When to use / when not to use
+
+**Use stagger fade when:**
+
+- You want sequential reveal with no directional motion.
+- The list has between 3 and ~20 items. The same stagger-delay accumulation applies: 20 items at `staggerDelay={0.1}` means the last item starts at 1.9 s.
+- You want to apply a `from` opacity greater than 0 to soften the entry.
+
+**Reach for [Slide In](/docs/animations/lists/slide-in) instead when:**
+
+- The context calls for a spatial metaphor: items entering from a drawer, a sidebar opening, or content arriving from off-screen.
+
+**Avoid both when:**
+
+- **The list updates frequently.** Each state change that causes a re-render replays the fade-in for all items (since animations are keyed by index). This looks like a flicker. Use CSS transitions on individual items or an exit/enter animation library instead.
+- **The list has 50+ items.** The last item's delay becomes impractically long. Either reduce `staggerDelay` to 0.02 to 0.03 or skip the stagger entirely.
+
+## Accessibility notes
+
+`StaggerFadeList` wraps each child in a `motion.div`. The semantic meaning comes from the `as` prop and children.
+
+- **Use `as="ul"` with `<li>` children** so screen readers announce the correct list structure and item count:
+
+```tsx
+<StaggerFadeList as="ul" staggerDelay={0.08} className="space-y-2">
+  {items.map((item, i) => (
+    <li key={i} className="rounded-lg border p-3 text-sm">{item}</li>
+  ))}
+</StaggerFadeList>
+```
+
+- **Respect reduced motion.** Opacity fade is low-risk for vestibular sensitivities, but stopping it entirely is safest:
+
+```tsx
+"use client"
+import { useReducedMotion } from "motion/react"
+import { StaggerFadeList } from "@/components/animations/lists/stagger-fade"
+
+function AccessibleFadeList({ items }: { items: string[] }) {
+  const reduced = useReducedMotion()
+  return (
+    <StaggerFadeList
+      staggerDelay={reduced ? 0 : 0.1}
+      from={reduced ? 1 : 0}
+    >
+      {items.map((item, i) => (
+        <div key={i} className="p-3 border rounded-lg">{item}</div>
+      ))}
+    </StaggerFadeList>
+  )
+}
+```
+
+Setting `from={1}` makes every item start fully visible, so no animation runs.
+
+## Performance considerations
+
+- **Opacity is compositor-only.** The fade animation has zero layout or paint cost, making `StaggerFadeList` one of the least expensive list animations available.
+- **No translate.** Unlike [Slide In](/docs/animations/lists/slide-in), there is no x/y transform, so there is no possibility of layout-adjacent clipping issues.
+- **Each child gets a `motion.div` wrapper.** The startup cost is proportional to the number of children. For a 10-item list this is negligible.
+- **Animations run once on mount.** There is no `repeat`, so there is no ongoing compositor cost after all items have faded in.
+
+## Customization examples
+
+### Partial opacity start
+
+Start items at 30% visible for a softer entry:
+
+```tsx
+<StaggerFadeList from={0.3} staggerDelay={0.08} duration={0.3}>
+  {items.map((item, i) => <div key={i}>{item}</div>)}
+</StaggerFadeList>
+```
+
+### Very fast stagger for a long list
+
+Keep the total entrance time under 0.5 s for 10+ items:
+
+```tsx
+<StaggerFadeList staggerDelay={0.04} duration={0.2}>
+  {items.map((item, i) => <div key={i}>{item}</div>)}
+</StaggerFadeList>
+```
+
+### Slow and cinematic
+
+For editorial pages where you want the user to absorb each item:
+
+```tsx
+<StaggerFadeList staggerDelay={0.25} duration={0.7}>
+  {items.map((item, i) => <div key={i}>{item}</div>)}
+</StaggerFadeList>
+```
+
+## Real-world examples
+
+### Search results on query return
+
+When results arrive from the server, fade them in sequentially rather than snapping them in:
+
+```tsx
+"use client"
+import { StaggerFadeList } from "@/components/animations/lists/stagger-fade"
+
+type Result = { id: string; title: string; description: string }
+
+export function SearchResults({ results }: { results: Result[] }) {
+  if (results.length === 0) return null
+
+  return (
+    <StaggerFadeList
+      as="ul"
+      staggerDelay={0.06}
+      duration={0.25}
+      className="flex flex-col gap-2"
+    >
+      {results.map((r) => (
+        <li
+          key={r.id}
+          className="rounded-xl border border-neutral-200 p-4 hover:border-blue-300 dark:border-neutral-800 dark:hover:border-blue-700"
+        >
+          <p className="text-sm font-semibold">{r.title}</p>
+          <p className="text-sm text-neutral-500 mt-1">{r.description}</p>
+        </li>
+      ))}
+    </StaggerFadeList>
+  )
+}
+```
+
+### Dashboard stats grid
+
+Four metric cards fading in after data loads:
+
+```tsx
+"use client"
+import { StaggerFadeList } from "@/components/animations/lists/stagger-fade"
+
+type Metric = { label: string; value: string; delta: string }
+
+export function StatsGrid({ metrics }: { metrics: Metric[] }) {
+  return (
+    <StaggerFadeList
+      as="div"
+      staggerDelay={0.08}
+      duration={0.35}
+      className="grid grid-cols-2 gap-4 lg:grid-cols-4"
+    >
+      {metrics.map((m) => (
+        <div
+          key={m.label}
+          className="rounded-xl border border-neutral-200 p-5 dark:border-neutral-800"
+        >
+          <p className="text-xs text-neutral-500">{m.label}</p>
+          <p className="mt-1 text-2xl font-bold tabular-nums">{m.value}</p>
+          <p className="text-xs text-green-600 mt-1">{m.delta}</p>
+        </div>
+      ))}
+    </StaggerFadeList>
+  )
+}
+```

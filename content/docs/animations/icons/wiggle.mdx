@@ -405,3 +405,225 @@ export default function Example() {
 | `children` | `ReactNode` | - | The icon element to animate |
 | `trigger` | `"hover"` \| `"tap"` \| `"mount"` | `"hover"` | When to trigger the wiggle animation |
 | `intensity` | `number` | `10` | Wiggle intensity (rotation angle in degrees) |
+
+## Use cases
+
+`WiggleIcon` animates `rotate` through `[0, -intensity, intensity, -intensity, intensity, 0]` over 0.5 s with `easeInOut`. It is a one-shot rotation wiggle that fires and rests. The left-right shake pattern is recognizable as a bell ring, a phone vibration, or a playful "hey, look at this" gesture. Good fits:
+
+- **Notification bells.** A bell icon that wiggles on hover or on mount when unread notifications arrive is the most natural use.
+- **Phone / contact icons.** A wiggling phone conveys "ring ring" more expressively than a static icon.
+- **Warning or attention icons.** A gentler alternative to [ShakeIcon](/docs/animations/icons/shake) for icons that need to draw attention without implying "wrong."
+- **Waving hand or greeting icons.** A wave or hand emoji icon wiggling on mount communicates a warm welcome.
+- **Interactive toolbar icons.** A light wiggle on hover for icons that perform a rotational-metaphor action (e.g., a key icon wiggling to suggest "unlock this").
+
+The key distinction from [ShakeIcon](/docs/animations/icons/shake): shake translates horizontally (x-axis, `[0, -10, 10, ...]`) while wiggle rotates around the z-axis (`rotate: [0, -10, 10, ...]`). Shake feels "wrong/error"; wiggle feels "playful/attention."
+
+## When to use / when not to use
+
+**Use `WiggleIcon` when:**
+
+- The icon represents a ringing, waving, or vibrating object where rotational oscillation is physically accurate.
+- You want a one-shot playful interaction that fires on hover or tap without persisting.
+- The icon is isolated and not one of many simultaneously animated elements.
+
+**Do not use it when:**
+
+- You want a continuous wiggle. `WiggleIcon` fires once and stops. Continuous wiggling (`repeat: Infinity`) is not built into this component by design, because a permanently wiggling icon in a nav bar would be extremely distracting. If you genuinely need persistent motion, consider [PulseIcon](/docs/animations/icons/pulse) or [HeartbeatIcon](/docs/animations/icons/heartbeat) for a subtler always-on effect.
+- The icon conveys an error. The rotational wiggle reads as playful, not alarming. Use [ShakeIcon](/docs/animations/icons/shake) for error states.
+- Multiple icons in a navigation bar all wiggle on hover simultaneously. A wiggling nav bar is disorienting. Apply hover-wiggle only on the single bell or notification icon in the nav.
+- `intensity` above 20 degrees on a small icon: high rotation on a small element can cause visual overlap with adjacent content.
+
+## Accessibility notes
+
+- The wiggle is purely visual. Icons alongside labels should carry `aria-hidden="true"`. Icons used as standalone interactive elements need an accessible name on the parent button:
+
+```tsx
+<button aria-label="Notifications (3 unread)" className="relative rounded p-2 hover:bg-neutral-100">
+  <WiggleIcon trigger="hover">
+    <Bell className="w-5 h-5" aria-hidden="true" />
+  </WiggleIcon>
+</button>
+```
+
+- For `trigger="mount"` on a notification bell, the wiggle fires once but does not announce itself to screen readers. Pair with a live region or badge count if the notification count is new information:
+
+```tsx
+<div role="status" aria-label="3 new notifications">
+  <WiggleIcon trigger="mount">
+    <Bell className="w-6 h-6 text-yellow-500" aria-hidden="true" />
+  </WiggleIcon>
+  <span className="sr-only">3 new notifications</span>
+</div>
+```
+
+- A 0.5 s rotation wiggle is brief and unlikely to cause vestibular discomfort, but for completeness honor `prefers-reduced-motion`:
+
+```tsx
+"use client"
+import { useReducedMotion } from "motion/react"
+import { WiggleIcon } from "@/components/animations/icons/wiggle"
+import { Bell } from "lucide-react"
+
+export function NotificationBell() {
+  const reduced = useReducedMotion()
+  if (reduced) return <Bell className="w-6 h-6 text-yellow-500" aria-hidden="true" />
+  return (
+    <WiggleIcon trigger="mount" intensity={8}>
+      <Bell className="w-6 h-6 text-yellow-500" aria-hidden="true" />
+    </WiggleIcon>
+  )
+}
+```
+
+## Performance considerations
+
+- `rotate` is a transform. The animation runs on the compositor thread with no layout recalculation or repaint.
+- One-shot animation (no `repeat`). The compositor releases it after 0.5 s. No ongoing cost.
+- The `key` increment on `tap` remounts the `motion.div` cleanly to allow re-animation on each tap. This is a trivial DOM operation for a single element.
+- `trigger="hover"` uses `whileHover`. Between hover events the element returns to `rotate: 0` instantly because the wiggle has already completed by the time the user exits the hover. No reverse transition artifacts.
+
+## Customization examples
+
+### Subtle bell hover for a nav item
+
+Low `intensity` (6 degrees) and hover trigger: noticeable but not distracting in a navigation context:
+
+```tsx
+import { WiggleIcon } from "@/components/animations/icons/wiggle"
+import { Bell } from "lucide-react"
+
+<button aria-label="Notifications" className="rounded-full p-2 hover:bg-neutral-100">
+  <WiggleIcon trigger="hover" intensity={6}>
+    <Bell className="w-5 h-5" aria-hidden="true" />
+  </WiggleIcon>
+</button>
+```
+
+### Energetic phone ring on mount
+
+Higher `intensity` (15 degrees) for a phone icon that really sells the ring metaphor:
+
+```tsx
+import { WiggleIcon } from "@/components/animations/icons/wiggle"
+import { Phone } from "lucide-react"
+
+<WiggleIcon trigger="mount" intensity={15}>
+  <Phone className="w-8 h-8 text-green-500" aria-hidden="true" />
+</WiggleIcon>
+```
+
+### Tap-to-ring notification bell
+
+Re-wiggles on every tap thanks to the internal key reset:
+
+```tsx
+import { WiggleIcon } from "@/components/animations/icons/wiggle"
+import { BellRing } from "lucide-react"
+
+<button aria-label="Ring bell" className="rounded p-2 hover:bg-neutral-100">
+  <WiggleIcon trigger="tap" intensity={12}>
+    <BellRing className="w-6 h-6 text-blue-500" aria-hidden="true" />
+  </WiggleIcon>
+</button>
+```
+
+## Real-world examples
+
+### Notification bell badge in a nav bar
+
+Wiggles once on mount when new notifications arrive, with a badge count and reduced-motion fallback:
+
+```tsx
+"use client"
+import { useEffect, useState } from "react"
+import { WiggleIcon } from "@/components/animations/icons/wiggle"
+import { useReducedMotion } from "motion/react"
+import { Bell } from "lucide-react"
+
+export function NavNotificationBell({ count }: { count: number }) {
+  const reduced = useReducedMotion()
+  const [wiggleKey, setWiggleKey] = useState(0)
+
+  useEffect(() => {
+    if (count > 0) setWiggleKey((k) => k + 1)
+  }, [count])
+
+  const icon = (
+    <div className="relative">
+      {reduced ? (
+        <Bell className="w-5 h-5" aria-hidden="true" />
+      ) : (
+        <WiggleIcon key={wiggleKey} trigger="mount" intensity={10}>
+          <Bell className="w-5 h-5" aria-hidden="true" />
+        </WiggleIcon>
+      )}
+      {count > 0 && (
+        <span
+          className="absolute -right-1 -top-1 flex h-4 w-4 items-center justify-center rounded-full bg-red-500 text-[10px] font-bold text-white"
+          aria-hidden="true"
+        >
+          {count > 9 ? "9+" : count}
+        </span>
+      )}
+    </div>
+  )
+
+  return (
+    <button
+      aria-label={count > 0 ? `${count} unread notifications` : "Notifications"}
+      className="rounded-full p-2 hover:bg-neutral-100 dark:hover:bg-neutral-800"
+    >
+      {icon}
+    </button>
+  )
+}
+```
+
+### Incoming call button
+
+A phone icon wiggles on mount to simulate a ringing incoming call:
+
+```tsx
+"use client"
+import { useState } from "react"
+import { WiggleIcon } from "@/components/animations/icons/wiggle"
+import { Phone, PhoneOff } from "lucide-react"
+
+export function IncomingCall({ caller }: { caller: string }) {
+  const [answered, setAnswered] = useState<boolean | null>(null)
+
+  if (answered !== null) {
+    return (
+      <p className="text-sm font-medium text-neutral-600">
+        {answered ? `Connected to ${caller}` : "Call declined"}
+      </p>
+    )
+  }
+
+  return (
+    <div className="flex flex-col items-center gap-4 rounded-2xl border border-neutral-200 p-6 shadow-sm dark:border-neutral-800">
+      <WiggleIcon trigger="mount" intensity={14}>
+        <Phone className="w-10 h-10 text-green-500" aria-hidden="true" />
+      </WiggleIcon>
+      <p className="font-semibold">{caller}</p>
+      <p className="text-sm text-neutral-500">Incoming call</p>
+      <div className="flex gap-4">
+        <button
+          onClick={() => setAnswered(true)}
+          aria-label="Answer call"
+          className="flex h-12 w-12 items-center justify-center rounded-full bg-green-500 text-white hover:bg-green-600"
+        >
+          <Phone className="w-5 h-5" aria-hidden="true" />
+        </button>
+        <button
+          onClick={() => setAnswered(false)}
+          aria-label="Decline call"
+          className="flex h-12 w-12 items-center justify-center rounded-full bg-red-500 text-white hover:bg-red-600"
+        >
+          <PhoneOff className="w-5 h-5" aria-hidden="true" />
+        </button>
+      </div>
+    </div>
+  )
+}
+```

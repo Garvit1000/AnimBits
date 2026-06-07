@@ -399,3 +399,163 @@ const strokeProps = useStrokeDraw({
 <Callout type="warn">
   **SVG Required:** This hook only works with SVG path elements. For other animations, use different hooks.
 </Callout>
+
+## Use cases
+
+The hook animates the SVG `pathLength` property from 0 to 1, so a stroke appears to draw itself. Framer Motion normalizes `pathLength` to a 0 to 1 range, which means you never have to measure the path or compute `strokeDasharray` by hand. Reach for it when:
+
+- **Logo and wordmark reveals** that draw in on first paint.
+- **Success and status marks**, like a checkmark stroking in after a form submits.
+- **Signature effects** for contracts, certificates, or playful hero art.
+- **Decorative accents**, such as an underline or divider that draws under a heading.
+- **Line-art icons** that reveal their outline on mount, hover, or scroll into view.
+
+## When to use / when not to use
+
+**Use this hook when:**
+
+- You have real vector line art (`<path>`, `<circle>`, `<line>`, `<polyline>`) and want a one-shot draw-on reveal.
+- The stroke itself is the visual, so `fill="none"` with a visible `stroke` and `strokeWidth`.
+
+**Reach for something else when:**
+
+- **Your shape is filled, not stroked.** `pathLength` only animates the outline. A solid icon with no stroke will appear to animate nothing. Give it `fill="none"` and a `stroke`, or animate `opacity`/`scale` instead.
+- **You need an indeterminate loading spinner.** Setting `repeat: true` here loops the draw, but a continuous draw reads slower than a real spinner. Use the [Spinner](/docs/animations/loaders/spinner) or [Spin icon](/docs/animations/icons/spin).
+- **You are revealing text or block content.** Use [useFadeIn](/docs/hooks/fade-in) or [useSlideIn](/docs/hooks/slide-in) for that.
+
+## Accessibility notes
+
+An SVG carries no meaning to assistive tech unless you give it some, and a drawing animation can be a problem for motion-sensitive users.
+
+- **Label or hide the graphic.** If the SVG conveys meaning, add `role="img"` plus a `<title>` (or `aria-label`). If it is purely decorative, mark it `aria-hidden="true"` so screen readers skip it.
+- **Never put state only in the motion.** A checkmark that draws in to signal success must also be backed by text such as "Saved" so users who do not see the animation still get the result.
+- **Respect reduced motion.** Render the finished path immediately for users who ask for less motion:
+
+```tsx
+"use client"
+import { motion, useReducedMotion } from "motion/react"
+import { useStrokeDraw } from "@/lib/hooks/use-stroke-draw"
+
+function AccessibleCheck() {
+  const reduced = useReducedMotion()
+  const strokeProps = useStrokeDraw({ duration: 0.5 })
+  // Skip the draw and show the final stroke instantly.
+  const props = reduced ? { initial: { pathLength: 1, opacity: 1 } } : strokeProps
+
+  return (
+    <svg width="100" height="100" viewBox="0 0 100 100" role="img" aria-label="Success">
+      <motion.path
+        d="M 20 50 L 40 70 L 80 30"
+        stroke="#10b981"
+        strokeWidth="6"
+        strokeLinecap="round"
+        fill="none"
+        {...props}
+      />
+    </svg>
+  )
+}
+```
+
+- **Avoid `repeat: true` for anything informational.** A looping draw is continuous motion; gate it behind the reduced-motion check above.
+
+## Performance considerations
+
+- **This is a paint animation, not a compositor transform.** Animating `pathLength` repaints the stroke each frame, unlike `transform`/`opacity` which run on the GPU. For a handful of small paths this is smooth, but cost grows with path complexity.
+- **Keep `d` data simple.** A very long, highly detailed path string costs more to repaint every frame. Simplify curves where you can.
+- **Stagger instead of firing everything at once.** Animating many paths simultaneously multiplies the per-frame paint. Use the `delay` option to spread them out.
+- **Unmount looping draws.** `repeat: true` runs forever. Conditionally render the SVG (`{visible && <Logo />}`) so the animation stops when it leaves the screen.
+
+## Customization examples
+
+### Dashed stroke
+
+Combine with `strokeDasharray` for a dashed line that still draws on:
+
+```tsx
+<motion.path {...strokeProps} strokeDasharray="6 6" stroke="currentColor" fill="none" />
+```
+
+### Custom easing
+
+```tsx
+const strokeProps = useStrokeDraw({
+  duration: 2,
+  ease: [0.6, 0.01, 0.05, 0.95], // hand-drawn feel
+})
+```
+
+### Sequential multi-path draw
+
+Use `delay` to draw shapes one after another:
+
+```tsx
+const first = useStrokeDraw({ duration: 0.8, delay: 0 })
+const second = useStrokeDraw({ duration: 0.8, delay: 0.8 })
+```
+
+## Real-world examples
+
+### Checkmark after a successful action
+
+```tsx
+"use client"
+import { useState } from "react"
+import { motion } from "motion/react"
+import { useStrokeDraw } from "@/lib/hooks/use-stroke-draw"
+
+export function SaveConfirmation() {
+  const [saved, setSaved] = useState(false)
+  const strokeProps = useStrokeDraw({ duration: 0.4, ease: "easeOut" })
+
+  return (
+    <button
+      onClick={() => setSaved(true)}
+      className="inline-flex h-11 items-center gap-2 rounded-lg bg-emerald-600 px-6 text-sm font-semibold text-white"
+    >
+      {saved ? (
+        <svg width="20" height="20" viewBox="0 0 100 100" role="img" aria-label="Saved">
+          <motion.path
+            d="M 20 50 L 40 70 L 80 30"
+            stroke="white"
+            strokeWidth="10"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            fill="none"
+            {...strokeProps}
+          />
+        </svg>
+      ) : null}
+      {saved ? "Saved" : "Save"}
+    </button>
+  )
+}
+```
+
+### Heading underline that draws in
+
+```tsx
+"use client"
+import { motion } from "motion/react"
+import { useStrokeDraw } from "@/lib/hooks/use-stroke-draw"
+
+export function UnderlinedHeading() {
+  const strokeProps = useStrokeDraw({ duration: 1, delay: 0.2 })
+
+  return (
+    <div className="inline-block">
+      <h2 className="text-3xl font-bold text-neutral-900 dark:text-white">Our mission</h2>
+      <svg width="100%" height="12" viewBox="0 0 200 12" preserveAspectRatio="none" aria-hidden="true">
+        <motion.path
+          d="M 2 8 Q 60 2 120 7 T 198 6"
+          stroke="#3b82f6"
+          strokeWidth="3"
+          strokeLinecap="round"
+          fill="none"
+          {...strokeProps}
+        />
+      </svg>
+    </div>
+  )
+}
+```

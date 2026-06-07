@@ -202,3 +202,190 @@ const combined = {
 
 <motion.div {...combined}>Lift + Glow!</motion.div>
 ```
+
+## Use cases
+
+`useHoverGlow` returns `MotionProps` with `initial`, `whileHover`, and `transition` fields. On idle, it sets a faint base shadow (`0 2px 8px rgba(0,0,0,0.1)`) and `scale: 1`. On hover, it transitions to the colored glow shadow and `scale` (default `1.02`).
+
+- **CTA buttons.** A blue glow around a primary action button gives it a "lit" quality that draws the eye without relying solely on color. Pass `glowColor: "rgba(59, 130, 246, 0.6)"` to match a blue brand.
+- **Product cards in an e-commerce grid.** A subtle glow on a card signals interactivity when the card itself has no obvious click affordance beyond the image.
+- **Dark-mode dashboards and analytics widgets.** A colored glow reads particularly well against dark backgrounds, where box-shadows on light themes would be invisible.
+- **Feature highlight tiles.** Each tile can receive a different `glowColor` corresponding to its category color, creating visual grouping through hover state.
+- **Icon buttons in toolbars.** Keep `glowBlur: 10` and `glowSpread: 2` small for tight toolbar buttons so the glow stays contained within the button's hit area.
+
+## When to use / when not to use
+
+**Use `useHoverGlow` directly when:**
+
+- The element is a custom component that does not have a prebuilt AnimBits wrapper.
+- You want to compose the glow with [useHoverLift](/docs/hooks/hover-lift) or [usePress](/docs/hooks/press) by merging their `whileHover` objects.
+- You need `innerGlow: true` for a UI where the element should appear to glow from within (useful for neon-style dark UI).
+
+**Avoid `useHoverGlow` when:**
+
+- The element is purely text without a visible bounding box. A glow on an inline `<span>` without padding or border-radius looks broken because the box-shadow follows the text line.
+- The background is already heavily colored. A blue glow on a blue card is invisible; adjust `glowColor` or switch to [useHoverLift](/docs/hooks/hover-lift) to rely on shadow depth instead.
+- The user's pointer never hovers the element, such as on a touch-only device. The glow only triggers via `whileHover`, so touch users see no feedback at all. Pair with [usePress](/docs/hooks/press) for the tap state.
+
+## Accessibility notes
+
+`useHoverGlow` animates `scale` and `boxShadow`. Neither affects the element's position in the DOM or ARIA properties. However:
+
+- The glow is purely visual and must not be the sole indicator of hover state for users who cannot perceive color or shadow. Ensure the element also has a CSS `:focus-visible` outline.
+- Respect `prefers-reduced-motion`. The scale change in `whileHover` (default `1.02`) is minor but still motion. Return empty props when the preference is set:
+
+```tsx
+"use client"
+import { motion } from "motion/react"
+import { useReducedMotion } from "motion/react"
+import { useHoverGlow } from "@/lib/use-hover-glow"
+
+export function GlowCard({ children }: { children: React.ReactNode }) {
+  const reduced = useReducedMotion()
+  const glowProps = useHoverGlow({ glowColor: "rgba(168, 85, 247, 0.5)" })
+
+  return (
+    <motion.div
+      {...(reduced ? {} : glowProps)}
+      className="rounded-xl border border-neutral-200 p-6 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-purple-500"
+    >
+      {children}
+    </motion.div>
+  )
+}
+```
+
+- When `innerGlow: true` is set, the hook adds an inset box-shadow. Confirm that the inner glow does not obscure text or interactive controls inside the element.
+
+## Performance considerations
+
+- `useHoverGlow` animates `scale` and `boxShadow`. Scale is a transform and runs on the compositor. `boxShadow`, however, is not a transform: animating it triggers a repaint on each frame. For most elements this is imperceptible, but avoid animating `boxShadow` on elements that repaint a large area (full-width banners, hero images).
+- The `duration` default is `0.3s` with `"easeOut"`. This is short enough that any repaint cost from `boxShadow` is limited to a few frames at most.
+- The `initial` state sets a base `boxShadow`. This means the element always has a shadow in the DOM, which may affect layout in some flex/grid containers if `overflow: hidden` is not set. Check that the base shadow does not cause unexpected clipping.
+- Memoize the returned props if the parent component re-renders often, because `useHoverGlow` reconstructs its return object on every call.
+
+## Customization examples
+
+### Warm amber glow for a feature card
+
+```tsx
+import { motion } from "motion/react"
+import { useHoverGlow } from "@/lib/use-hover-glow"
+
+export function FeatureCard({ icon, title }: { icon: React.ReactNode; title: string }) {
+  const glowProps = useHoverGlow({
+    glowColor: "rgba(251, 146, 60, 0.5)",
+    glowBlur: 24,
+    glowSpread: 4,
+    scale: 1.01,
+    duration: 0.25,
+  })
+
+  return (
+    <motion.div {...glowProps} className="rounded-2xl border border-neutral-100 bg-white p-6 dark:border-neutral-800 dark:bg-neutral-900">
+      <div className="mb-3 text-orange-400">{icon}</div>
+      <h3 className="font-semibold">{title}</h3>
+    </motion.div>
+  )
+}
+```
+
+### Neon inner glow for a dark-mode button
+
+```tsx
+import { motion } from "motion/react"
+import { useHoverGlow } from "@/lib/use-hover-glow"
+
+export function NeonButton({ label }: { label: string }) {
+  const glowProps = useHoverGlow({
+    glowColor: "rgba(34, 211, 238, 0.6)",
+    glowBlur: 16,
+    glowSpread: 2,
+    innerGlow: true,
+    scale: 1,
+    duration: 0.2,
+  })
+
+  return (
+    <motion.button
+      {...glowProps}
+      className="rounded-lg border border-cyan-500 bg-neutral-900 px-6 py-2.5 text-sm font-semibold text-cyan-400"
+    >
+      {label}
+    </motion.button>
+  )
+}
+```
+
+## Real-world examples
+
+### Product card in an e-commerce grid
+
+```tsx
+"use client"
+import { motion } from "motion/react"
+import { useHoverGlow } from "@/lib/use-hover-glow"
+
+interface Product {
+  id: string
+  name: string
+  price: number
+  image: string
+}
+
+export function ProductCard({ product }: { product: Product }) {
+  const glowProps = useHoverGlow({
+    glowColor: "rgba(59, 130, 246, 0.35)",
+    glowBlur: 20,
+    glowSpread: 3,
+    scale: 1.02,
+    duration: 0.25,
+  })
+
+  return (
+    <motion.article
+      {...glowProps}
+      className="cursor-pointer overflow-hidden rounded-xl border border-neutral-200 bg-white dark:border-neutral-800 dark:bg-neutral-900"
+    >
+      <img src={product.image} alt={product.name} className="aspect-[4/3] w-full object-cover" />
+      <div className="p-4">
+        <h3 className="font-semibold">{product.name}</h3>
+        <p className="mt-1 text-sm text-neutral-500">${product.price.toFixed(2)}</p>
+      </div>
+    </motion.article>
+  )
+}
+```
+
+### Navigation links with color-coded glow
+
+```tsx
+"use client"
+import { motion } from "motion/react"
+import { useHoverGlow } from "@/lib/use-hover-glow"
+
+const navItems = [
+  { href: "/docs", label: "Docs", color: "rgba(59, 130, 246, 0.5)" },
+  { href: "/examples", label: "Examples", color: "rgba(168, 85, 247, 0.5)" },
+  { href: "/blog", label: "Blog", color: "rgba(34, 197, 94, 0.5)" },
+]
+
+export function GlowNav() {
+  return (
+    <nav className="flex gap-2">
+      {navItems.map((item) => {
+        const glowProps = useHoverGlow({ glowColor: item.color, glowBlur: 14, glowSpread: 2, scale: 1 })
+        return (
+          <motion.a
+            key={item.href}
+            href={item.href}
+            {...glowProps}
+            className="rounded-lg px-4 py-2 text-sm font-medium text-neutral-700 dark:text-neutral-300"
+          >
+            {item.label}
+          </motion.a>
+        )
+      })}
+    </nav>
+  )
+}

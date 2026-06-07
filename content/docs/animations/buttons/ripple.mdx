@@ -267,3 +267,183 @@ import { RippleButton } from "@/components/animations/buttons/ripple"
 <Callout>
   **Note:** Requires `overflow-hidden` on the button for the ripple to be clipped properly.
 </Callout>
+
+## Use cases
+
+`RippleButton` spawns a `motion.span` at the exact `clientX / clientY` position relative to the button's bounding rect on each click. The span expands from `width: 0, height: 0` to `width: 500, height: 500` while translating by `x: -250, y: -250` to stay centered on the origin point, and fades from `opacity: 1` to `opacity: 0`. The default `duration` is 0.6 seconds with `easeOut`, and the default `rippleColor` is `rgba(255, 255, 255, 0.6)`. Each ripple is removed from state after `duration * 1000` milliseconds. Reach for it when:
+
+- **Material Design-aligned interfaces.** The ripple is the canonical Material 2 and Material 3 button feedback. If your app follows that design language, `RippleButton` delivers the expected behavior.
+- **Dark-background buttons.** White ripples (`rgba(255, 255, 255, 0.6)`) are most visible on colored or dark fills (`bg-blue-600`, `bg-neutral-900`).
+- **Touch-first mobile layouts.** Ripples provide spatial feedback that tells the user exactly where their finger landed, which matters when buttons are close together.
+- **Media player controls.** Play, pause, skip buttons in a dark player UI use ripples to confirm taps without hover states.
+- **Long lists of action buttons.** Each row's delete or archive button benefits from a per-click ripple because it confirms which row was targeted.
+
+Because the component automatically applies `relative overflow-hidden` to the button, you don't need to manage the clip container yourself.
+
+## When to use / when not to use
+
+**Use `RippleButton` when:**
+
+- The button has a solid background that contrasts with the `rippleColor`. A white ripple on a white button is invisible; match `rippleColor` to contrast with the fill.
+- Click-position feedback matters: you want to show users exactly where their tap registered.
+
+**Reach for a different button when:**
+
+- You want hover feedback rather than click feedback. `RippleButton` has no hover state; use [Glow Button](/docs/animations/buttons/glow) or [Lift Button](/docs/animations/buttons/lift) if hover interactivity is the goal.
+- You want a uniform scale-down on press rather than a spatial ripple. [Press Button](/docs/animations/buttons/press) is simpler and has no DOM mutation on click.
+- The button has `border-radius: 50%` or a very small size. A `width: 500, height: 500` circle expanding from a 32px icon button may leak outside the clipping region if `overflow-hidden` is removed. The component forces `overflow-hidden`, so small buttons will clip the ripple heavily. Test visually to confirm the result is acceptable.
+- Rapid repeated clicking is expected (counters, game buttons). Each click pushes a new ripple into the `ripples` state array. Many rapid clicks accumulate multiple ripple spans simultaneously; this is usually acceptable but worth verifying under load.
+
+## Accessibility notes
+
+`RippleButton` wraps a `motion.button`, so it carries full native button semantics.
+
+- **The ripple is decorative.** The `motion.span` elements are `pointer-events-none` and have no text, no role, and no accessible name. Screen readers ignore them entirely.
+- **Click handler forwarding.** `RippleButton` intercepts the native `onClick` to spawn the ripple, then calls the original `onClick?.(e)` prop. Your click handler receives the same event as if no ripple wrapper were present.
+- **Keyboard activation.** `whileTap` is not used here; the ripple is spawned in the `handleClick` handler. When a user presses `Enter` or `Space` on the focused button, `handleClick` fires and a ripple appears centered on the button (`e.clientX` and `e.clientY` reflect the button's center for keyboard events in most browsers). This may result in a centered ripple rather than a cursor-positioned one, which is the correct fallback.
+- **Reduced motion.** The ripple expands over 0.6 seconds and fades out, which is motion-intensive relative to a simple press scale. To skip the ripple for users who prefer less motion:
+
+```tsx
+"use client"
+import { useReducedMotion } from "motion/react"
+import { RippleButton } from "@/components/animations/buttons/ripple"
+import { PressButton } from "@/components/animations/buttons/press"
+
+function AccessibleActionButton({ children, onClick }: { children: React.ReactNode; onClick: () => void }) {
+  const reduced = useReducedMotion()
+  // Fall back to a simple press animation when reduced motion is requested.
+  if (reduced) {
+    return (
+      <PressButton
+        scale={0.97}
+        onClick={onClick}
+        className="inline-flex h-11 items-center rounded-lg bg-blue-600 px-6 text-sm font-semibold text-white"
+      >
+        {children}
+      </PressButton>
+    )
+  }
+  return (
+    <RippleButton
+      onClick={onClick}
+      className="inline-flex h-11 items-center rounded-lg bg-blue-600 px-6 text-sm font-semibold text-white"
+    >
+      {children}
+    </RippleButton>
+  )
+}
+```
+
+## Performance considerations
+
+- **Ripple geometry uses `width`/`height` animation.** Expanding from `0` to `500` pixels by animating `width` and `height` triggers layout recalculation and repaint on each frame. This is not compositor-safe. For one or two buttons in a typical UI, the cost is negligible, but avoid using `RippleButton` in virtualized lists with thousands of rows where many ripples could fire simultaneously.
+- **The `opacity` and `x/y` changes are compositor-safe.** Motion batches these with the dimension changes, but the layout cost of `width`/`height` dominates.
+- **State mutation on click.** Each click calls `setRipples(prev => [...prev, newRipple])`, which triggers a React re-render of the `RippleButton`. The re-render is fast (the component is small), but in a list of 100 buttons, a rapid series of clicks will produce a series of state updates. This is usually imperceptible.
+- **Cleanup via `setTimeout`.** Ripples are removed from state after `duration * 1000` ms using a `setTimeout`. Unmounting `RippleButton` while a ripple is animating will cause a state-update-on-unmounted-component warning in development. Wrap with a stable parent or cancel pending timeouts in a `useEffect` cleanup if strict mode warnings are a concern.
+- **`overflow-hidden` is required.** The component enforces `relative overflow-hidden` via class concatenation. Do not override this with `overflow-visible` unless you want ripples to escape the button boundary.
+
+## Customization examples
+
+### Dark ripple on a light button
+
+Lower opacity on a dark color avoids overwhelming a light background:
+
+```tsx
+<RippleButton
+  rippleColor="rgba(0, 0, 0, 0.15)"
+  duration={0.5}
+  className="inline-flex h-11 items-center rounded-lg bg-neutral-100 dark:bg-neutral-800 px-6 text-sm font-semibold text-neutral-900 dark:text-white border border-neutral-200 dark:border-neutral-700"
+>
+  Secondary action
+</RippleButton>
+```
+
+### Fast, subtle ripple for compact buttons
+
+A shorter `duration` and lower opacity ripple suits dense toolbars:
+
+```tsx
+<RippleButton
+  rippleColor="rgba(255, 255, 255, 0.25)"
+  duration={0.35}
+  className="inline-flex h-9 items-center rounded-lg bg-zinc-700 px-4 text-sm font-medium text-white"
+>
+  Apply
+</RippleButton>
+```
+
+### Colored ripple matching the button
+
+A ripple that blends with the button's own color creates a subtle pulse effect:
+
+```tsx
+<RippleButton
+  rippleColor="rgba(139, 92, 246, 0.4)"
+  duration={0.7}
+  className="inline-flex h-11 items-center rounded-lg bg-violet-600 px-6 text-sm font-semibold text-white"
+>
+  Subscribe
+</RippleButton>
+```
+
+## Real-world examples
+
+### Media player transport controls
+
+Each transport button provides position-accurate ripple feedback:
+
+```tsx
+<div className="flex items-center gap-2 rounded-xl bg-neutral-900 p-4">
+  <RippleButton
+    rippleColor="rgba(255, 255, 255, 0.2)"
+    duration={0.5}
+    aria-label="Skip back"
+    className="inline-flex h-10 w-10 items-center justify-center rounded-full text-white"
+  >
+    <svg className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+      <path d="M8.445 14.832A1 1 0 0010 14v-2.798l5.445 3.63A1 1 0 0017 14V6a1 1 0 00-1.555-.832L10 8.798V6a1 1 0 00-1.555-.832l-6 4a1 1 0 000 1.664l6 4z" />
+    </svg>
+  </RippleButton>
+  <RippleButton
+    rippleColor="rgba(255, 255, 255, 0.3)"
+    duration={0.5}
+    aria-label="Play"
+    className="inline-flex h-12 w-12 items-center justify-center rounded-full bg-white text-neutral-900"
+  >
+    <svg className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+      <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clipRule="evenodd" />
+    </svg>
+  </RippleButton>
+  <RippleButton
+    rippleColor="rgba(255, 255, 255, 0.2)"
+    duration={0.5}
+    aria-label="Skip forward"
+    className="inline-flex h-10 w-10 items-center justify-center rounded-full text-white"
+  >
+    <svg className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+      <path d="M4.555 5.168A1 1 0 003 6v8a1 1 0 001.555.832L10 11.202V14a1 1 0 001.555.832l6-4a1 1 0 000-1.664l-6-4A1 1 0 0010 6v2.798L4.555 5.168z" />
+    </svg>
+  </RippleButton>
+</div>
+```
+
+### Settings page action row
+
+Consistent ripple feedback on every row action in a settings list:
+
+```tsx
+<div className="divide-y divide-neutral-200 dark:divide-neutral-800 rounded-xl border border-neutral-200 dark:border-neutral-800">
+  {["Change password", "Two-factor auth", "Connected accounts"].map((label) => (
+    <div key={label} className="flex items-center justify-between px-6 py-4">
+      <span className="text-sm font-medium text-neutral-900 dark:text-white">{label}</span>
+      <RippleButton
+        rippleColor="rgba(59, 130, 246, 0.3)"
+        duration={0.5}
+        className="inline-flex h-9 items-center rounded-lg bg-blue-50 dark:bg-blue-900/20 px-4 text-sm font-semibold text-blue-600 dark:text-blue-400"
+      >
+        Manage
+      </RippleButton>
+    </div>
+  ))}
+</div>
+```

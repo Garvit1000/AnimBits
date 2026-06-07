@@ -191,6 +191,157 @@ export function ThemeToggle() {
 | `blur` | `number` | `0` | Blur amount in pixels |
 | `className` | `string` | - | Additional CSS classes |
 
+## Use cases
+
+`ThemeToggleSlideBottom` adds the class `theme-slide-bottom` to `<html>` before calling `document.startViewTransition`, then removes it in the `finally` block. The CSS pairs `slide-out-bottom` (`translateY(100%)` exit) and `slide-in-bottom` (`translateY(100%)` enter) on the `::view-transition-old` and `::view-transition-new` layers respectively, both using `cubic-bezier(0.4, 0, 0.2, 1)`. The current page slides down and off, and the new theme slides up from the bottom to replace it.
+
+Use it when:
+
+- Your theme toggle is in a bottom navigation bar, a footer, or a mobile bottom sheet. The upward direction of the reveal reinforces the idea that the change is "coming from" the area near the control.
+- You are designing a mobile-first app where upward swipes and bottom sheets are familiar interaction patterns. The slide-up aligns with that vocabulary.
+- You want the simplest directional slide with a single, clear axis. `slide-bottom` is the most "uplifting" feeling of the four slide variants and reads positively for switching to a lighter theme.
+
+## When to use / when not to use
+
+**Use slide-bottom when:**
+
+- The toggle button lives near the bottom of the viewport (mobile nav, floating footer button). The upward reveal originates from the same region as the control, creating spatial coherence.
+- Your app has a bottom tab bar and switching themes feels like "refreshing from the ground up."
+
+**Consider a different variant when:**
+
+- The toggle is in a top navigation bar. [Slide Top](/docs/transitions/theme-toggle-slide-top) (new theme cascades down from the top) or [Circular](/docs/transitions/theme-toggle-circular) (ripple from the exact click point) better matches a top-bar button.
+- Your layout is horizontal (side-by-side panels) and you want the transition to respect that axis. [Slide Left](/docs/transitions/theme-toggle-slide-left) or [Slide Right](/docs/transitions/theme-toggle-slide-right) are more appropriate.
+- You want the origin point to follow the cursor. [Circular](/docs/transitions/theme-toggle-circular) does this and is more spatially expressive.
+
+**Do not use any theme toggle when:**
+
+- The browser does not support `document.startViewTransition`. All five variants fall back to an instant theme change, which is correct behavior.
+
+## Accessibility notes
+
+- **Trigger must be a real button.** `ThemeToggleSlideBottom` wraps `children` in a `<div onClick={...}>`. Your `children` must include a semantic `<button>` or `<input type="checkbox">` so the toggle is keyboard-focusable and announced correctly by screen readers.
+- **`aria-pressed` or `role="switch"`.** Add `aria-pressed={isDark}` to the button child, or use a `<Switch>` component with `aria-checked`. Without a pressed/checked state, screen reader users cannot tell the current theme.
+- **Accessible name.** Provide `aria-label="Toggle theme"` (or similar) on the inner button, especially if the visible content is an icon only.
+- **`prefers-reduced-motion`.** The CSS already handles this: `@media (prefers-reduced-motion: reduce)` sets `animation: none !important` on all `::view-transition-*` pseudo-elements when the `.theme-slide-bottom` class is present. Users who prefer reduced motion get an instant theme swap.
+- **Animation duration.** Keep `speed` between 0.3 and 0.8 seconds. Longer durations block user input (`pointerEvents: none` is set during the transition) and may frustrate users who toggle themes frequently.
+
+## Performance considerations
+
+- **Transform-only animation.** `slide-out-bottom` and `slide-in-bottom` animate only `translateY`, which runs on the compositor with no layout or paint. The animation is as cheap as a CSS transition on `transform`.
+- **No click-coordinate tracking.** Unlike [Circular](/docs/transitions/theme-toggle-circular), this variant does not read `clientX`/`clientY`. There is no synchronous DOM read on click, making the handler slightly lighter.
+- **`cubic-bezier(0.4, 0, 0.2, 1)`.** This is Material Design's standard easing (`ease-in-out` family). It has a gentle ease-in and a soft ease-out, which looks polished at `speed=0.5`. At `speed=0.2` it can look abrupt because there is not enough duration for the curve to register; keep `speed` at or above 0.3 for this easing.
+- **`blur` prop.** `filter: blur()` on the `::view-transition-old` and `::view-transition-new` layers is applied to the full-viewport snapshot. On mobile GPUs, full-screen blur is expensive. Only use `blur` on desktop-class hardware, and keep values at or below 8px.
+- **One active transition at a time.** The `isTransitioning` flag prevents overlapping `startViewTransition` calls. The `theme-slide-bottom` class is cleaned up in `finally`, so it is always removed even if the transition is interrupted.
+
+## Customization examples
+
+### Snappier slide with ease-out
+
+Override the easing in your globals.css to emphasize the arrival rather than the departure:
+
+```css
+.theme-slide-bottom::view-transition-old(root) {
+  animation: slide-out-bottom var(--transition-speed) ease-in;
+}
+.theme-slide-bottom::view-transition-new(root) {
+  animation: slide-in-bottom var(--transition-speed) ease-out;
+}
+```
+
+### Faster bottom toggle for mobile
+
+The default 0.5s can feel long on mobile where users expect snappy feedback:
+
+```tsx
+<ThemeToggleSlideBottom speed={0.3} onToggle={toggleTheme}>
+  <button aria-label="Toggle theme" className="p-3 rounded-full bg-zinc-100 dark:bg-zinc-800">
+    <Sun className="h-5 w-5 dark:hidden" />
+    <Moon className="h-5 w-5 hidden dark:block" />
+  </button>
+</ThemeToggleSlideBottom>
+```
+
+## Real-world examples
+
+### Mobile bottom navigation bar toggle
+
+A theme button anchored in the bottom nav bar. The upward reveal connects visually to the button's position.
+
+```tsx
+"use client"
+import { useTheme } from "next-themes"
+import { ThemeToggleSlideBottom } from "@/components/animations/transitions/theme-toggle-slide-bottom"
+import { Sun, Moon } from "lucide-react"
+
+export function BottomNav() {
+  const { theme, setTheme } = useTheme()
+
+  const toggleTheme = () => {
+    const isDark = document.documentElement.classList.contains("dark")
+    document.documentElement.classList.toggle("dark", !isDark)
+    setTheme(isDark ? "light" : "dark")
+  }
+
+  return (
+    <nav className="fixed bottom-0 inset-x-0 flex items-center justify-around border-t border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950 pb-safe py-2">
+      <button className="flex flex-col items-center gap-1 text-xs text-zinc-500">
+        <span className="text-lg">Home</span>
+      </button>
+      <ThemeToggleSlideBottom speed={0.4} onToggle={toggleTheme}>
+        <button
+          aria-label="Toggle theme"
+          aria-pressed={theme === "dark"}
+          className="flex flex-col items-center gap-1 text-xs text-zinc-500"
+        >
+          <Sun className="h-5 w-5 dark:hidden" />
+          <Moon className="h-5 w-5 hidden dark:block" />
+          <span>Theme</span>
+        </button>
+      </ThemeToggleSlideBottom>
+    </nav>
+  )
+}
+```
+
+### Footer settings toggle
+
+A theme switch row at the bottom of a settings section, where the upward wipe feels like turning a page:
+
+```tsx
+"use client"
+import { useTheme } from "next-themes"
+import { ThemeToggleSlideBottom } from "@/components/animations/transitions/theme-toggle-slide-bottom"
+
+export function AppearanceSection() {
+  const { theme, setTheme } = useTheme()
+
+  const toggleTheme = () => {
+    const isDark = document.documentElement.classList.contains("dark")
+    document.documentElement.classList.toggle("dark", !isDark)
+    setTheme(isDark ? "light" : "dark")
+  }
+
+  return (
+    <section className="space-y-4">
+      <h2 className="text-sm font-semibold text-zinc-500 dark:text-zinc-400 uppercase tracking-wide">Appearance</h2>
+      <div className="flex items-center justify-between rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 px-4 py-3">
+        <span className="text-sm font-medium text-zinc-900 dark:text-zinc-100">Dark mode</span>
+        <ThemeToggleSlideBottom speed={0.5} onToggle={toggleTheme}>
+          <button
+            aria-pressed={theme === "dark"}
+            aria-label="Toggle dark mode"
+            className="h-6 w-11 rounded-full bg-zinc-200 dark:bg-zinc-700 relative transition-colors"
+          >
+            <span className="sr-only">Toggle dark mode</span>
+          </button>
+        </ThemeToggleSlideBottom>
+      </div>
+    </section>
+  )
+}
+```
+
 ## Examples
 
 ### Fast Transition

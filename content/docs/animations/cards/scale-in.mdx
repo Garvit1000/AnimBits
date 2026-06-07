@@ -167,3 +167,182 @@ import { CardScaleIn } from "@/components/animations/cards/scale-in"
 | `delay` | `number` | `0` | Delay before animation starts |
 | `initialScale` | `number` | `0.8` | Initial scale value (0 to 1) |
 | `className` | `string` | `undefined` | Additional CSS classes |
+
+## Use cases
+
+`CardScaleIn` uses `whileInView` to animate the card from `{ scale: initialScale, opacity: 0 }` to `{ scale: 1, opacity: 1 }` when the element enters the viewport. The `viewport: { once: true }` default means the animation fires once and does not repeat on scroll-back. The hook's `viewport` option can be set to `"always"` to replay on each re-entry.
+
+Use it when:
+
+- **Below-the-fold content sections.** Cards on the second or third scroll position benefit from a scale-in that makes them feel freshly revealed.
+- **Services or pricing sections.** Three or four cards laid out in a row, each scaling in as the section enters the viewport.
+- **Gallery or portfolio entries.** Image cards that pop into focus as the user scrolls through.
+- **Testimonial grids.** Cards that materialize as the user reads down the page.
+- **Feature highlight rows.** Each card grows from a thumbnail to full size as it enters view.
+
+## When to use / when not to use
+
+**Use `CardScaleIn` when:**
+
+- The card is below the fold and you want a viewport-triggered entrance rather than a mount-time entrance.
+- You want both opacity and scale to animate together. If you only need opacity, use [CardFadeIn](/docs/animations/cards/fade-in) instead, which is simpler and avoids the slight layout shift that a scaling element can cause in some containers.
+
+**Reach for a different component when:**
+
+- The card is above the fold (in the initial viewport). `whileInView` still fires immediately on mount if the element is visible, but `CardFadeIn` is the more semantically correct choice for cards that are always visible at page load.
+- You want the card to slide in from a direction rather than grow from the center. Use [CardSlideIn](/docs/animations/cards/slide-in) with `direction="up"` or `direction="left"` for a directional entrance.
+- The `initialScale={0.8}` value feels too large a jump for your context. Values below `0.9` can create a noticeable "pop" that some designs read as jittery. Adjust `initialScale` to `0.95` for a subtler effect.
+
+## Accessibility notes
+
+- **`whileInView` fires based on intersection, not time.** Users who jump directly to an anchor link mid-page may see the scale-in fire unexpectedly. Ensure the card's content is readable even if the user catches it mid-animation.
+- **`scale` from `0.8` is a size change.** Some users with motion sensitivity find scaling more tolerable than translation, but it is still motion. Respect `prefers-reduced-motion`:
+
+```tsx
+"use client"
+import { useReducedMotion } from "motion/react"
+import { CardScaleIn } from "@/components/animations/cards/scale-in"
+
+function AccessibleScaleCard({ children }: { children: React.ReactNode }) {
+  const reduced = useReducedMotion()
+  return (
+    <CardScaleIn
+      initialScale={reduced ? 1 : 0.8}
+      duration={reduced ? 0 : 0.5}
+      className="rounded-xl border border-neutral-200 dark:border-neutral-800 bg-white dark:bg-neutral-900 p-6"
+    >
+      {children}
+    </CardScaleIn>
+  )
+}
+```
+
+- **Content is in the DOM before it is visible.** Screen readers can navigate to and announce the card before it scales in, which is the correct behavior. Do not use `aria-hidden` on the pre-animated state.
+- **`opacity: 0` at initial state.** The card starts invisible. Ensure that assistive technology or print stylesheets render the card at full opacity regardless of animation state.
+
+## Performance considerations
+
+- **`scale` and `opacity` are both GPU-composited.** Neither triggers layout or paint. The animation runs off the main thread.
+- **`whileInView` uses `IntersectionObserver` under the hood.** This is a browser-native, efficient mechanism. Motion attaches one observer per `whileInView` component, which is cheap for a handful of cards. Avoid hundreds of `CardScaleIn` instances on a single page without virtualization.
+- **`viewport: { once: true }` (default).** After the animation completes, the observer disconnects and the card incurs no further animation cost.
+- **Stagger with `delay`.** Use incremental `delay` values to spread GPU work across frames when multiple cards enter the viewport at the same time:
+
+```tsx
+{cards.map((card, i) => (
+  <CardScaleIn key={card.id} delay={i * 0.08} initialScale={0.9}>
+    {/* card content */}
+  </CardScaleIn>
+))}
+```
+
+## Customization examples
+
+### Subtle scale for a tight grid
+
+A smaller `initialScale` delta and a faster `duration` look less dramatic in dense layouts:
+
+```tsx
+import { CardScaleIn } from "@/components/animations/cards/scale-in"
+
+<CardScaleIn
+  initialScale={0.93}
+  duration={0.35}
+  className="rounded-xl border border-neutral-200 dark:border-neutral-800 bg-white dark:bg-neutral-900 p-5"
+>
+  <p className="font-semibold">Tight grid item</p>
+</CardScaleIn>
+```
+
+### Staggered service cards
+
+```tsx
+const services = ["Design", "Development", "Strategy", "Analytics"]
+
+export function ServiceGrid() {
+  return (
+    <div className="grid grid-cols-2 gap-6">
+      {services.map((s, i) => (
+        <CardScaleIn
+          key={s}
+          initialScale={0.85}
+          delay={i * 0.1}
+          duration={0.45}
+          className="rounded-2xl border border-neutral-200 dark:border-neutral-800 bg-white dark:bg-neutral-900 p-8"
+        >
+          <h3 className="font-bold text-lg">{s}</h3>
+          <p className="text-sm text-neutral-500 dark:text-neutral-400 mt-2">Short description</p>
+        </CardScaleIn>
+      ))}
+    </div>
+  )
+}
+```
+
+## Real-world examples
+
+### Testimonial cards that pop in as the user scrolls
+
+```tsx
+import { CardScaleIn } from "@/components/animations/cards/scale-in"
+
+interface TestimonialProps {
+  quote: string
+  author: string
+  role: string
+  avatar: string
+  index: number
+}
+
+export function TestimonialCard({ quote, author, role, avatar, index }: TestimonialProps) {
+  return (
+    <CardScaleIn
+      initialScale={0.88}
+      delay={index * 0.1}
+      duration={0.5}
+      className="rounded-2xl border border-neutral-200 dark:border-neutral-800 bg-white dark:bg-neutral-900 p-6 flex flex-col gap-4"
+    >
+      <p className="text-sm text-neutral-600 dark:text-neutral-300 leading-relaxed">"{quote}"</p>
+      <div className="flex items-center gap-3 mt-auto">
+        <img src={avatar} alt={author} className="h-9 w-9 rounded-full object-cover" />
+        <div>
+          <p className="text-sm font-semibold">{author}</p>
+          <p className="text-xs text-neutral-400">{role}</p>
+        </div>
+      </div>
+    </CardScaleIn>
+  )
+}
+```
+
+### Consulting services section
+
+```tsx
+import { CardScaleIn } from "@/components/animations/cards/scale-in"
+
+const offerings = [
+  { title: "Brand Strategy", desc: "Clarify positioning and messaging across all channels.", icon: "+" },
+  { title: "Product Design", desc: "Research-driven UX from concept through delivery.", icon: "+" },
+  { title: "Engineering", desc: "Frontend and full-stack development at scale.", icon: "+" },
+  { title: "Analytics", desc: "Data pipelines and dashboards that drive decisions.", icon: "+" },
+]
+
+export function ServicesSection() {
+  return (
+    <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 max-w-2xl mx-auto">
+      {offerings.map((o, i) => (
+        <CardScaleIn
+          key={o.title}
+          initialScale={0.9}
+          delay={i * 0.08}
+          duration={0.4}
+          className="rounded-2xl border border-neutral-200 dark:border-neutral-800 bg-white dark:bg-neutral-900 p-6"
+        >
+          <span className="text-xl font-bold text-neutral-300 dark:text-neutral-600">{o.icon}</span>
+          <h3 className="font-bold mt-3">{o.title}</h3>
+          <p className="text-sm text-neutral-500 dark:text-neutral-400 mt-1 leading-relaxed">{o.desc}</p>
+        </CardScaleIn>
+      ))}
+    </div>
+  )
+}
+```

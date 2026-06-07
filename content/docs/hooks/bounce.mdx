@@ -225,12 +225,199 @@ const bounceProps = useBounce({
 </motion.div>
 ```
 
-## Accessibility
+## Use cases
 
-- Continuous bounce animations can be distracting
-- Consider using `onHover: true` for better UX
-- Respect `prefers-reduced-motion` for accessibility
-- Use sparingly for important elements only
+`useBounce` is component-agnostic: the returned `MotionProps` can be spread onto any `motion.*` element.
+
+- **Notification badges and counters.** A small badge that bounces continuously draws the eye to new unread items without requiring the user to hunt for them.
+- **Scroll-down indicators.** Spread the props onto a `motion.div` wrapping an arrow icon. Use `bounceHeight: 10` (positive, so it moves downward) to point the user toward more content.
+- **Hover-activated icon buttons.** Pass `onHover: true` to a `motion.button` wrapping a social icon or action button. The bounce starts only on pointer entry, keeping the idle state clean.
+- **Success or completion feedback.** After a form submits, mount a checkmark inside a `motion.div` with `repeat: 3` so it bounces three times and stops, signaling completion without looping forever.
+- **Playful empty states.** A bouncing illustration in an empty-state screen adds personality without being permanently distracting.
+
+## When to use / when not to use
+
+**Use `useBounce` when:**
+
+- You need the effect on a custom element that is not covered by a prebuilt component, such as a `motion.span` inside a heading or a `motion.li` in a custom list.
+- You want to compose bouncing with another hook, for example combining it with `usePress` so an icon button bounces on hover and shrinks on click.
+- You need fine control over `bounceHeight`, `repeat`, or `ease` that the prebuilt component does not expose.
+
+**Reach for the prebuilt component when:**
+
+- You just need a standard button or badge with a bounce and do not need to customize the host element or compose effects.
+
+**Avoid `useBounce` when:**
+
+- The element is large (a card or a section). A full-card bounce is disorienting; prefer [useHoverLift](/docs/hooks/hover-lift) for card-level hover feedback.
+- Multiple elements bounce simultaneously. Stagger the `delay` option or switch to a one-time `repeat: 1` to avoid overwhelming the user.
+- The bounce carries critical information by itself, such as "there are new items." Always pair it with a text label or badge count so non-animated experiences remain informative.
+
+## Accessibility notes
+
+The bounce animation animates the `y` transform, which is composited and does not affect the DOM structure or ARIA tree. However, perpetual motion can be distracting or cause vestibular discomfort.
+
+Respect the user's reduced-motion preference by returning empty props when the OS setting is active:
+
+```tsx
+"use client"
+import { motion } from "motion/react"
+import { useReducedMotion } from "motion/react"
+import { useBounce } from "@/lib/use-bounce"
+
+export function NotificationBadge({ count }: { count: number }) {
+  const reduced = useReducedMotion()
+  const bounceProps = useBounce({ bounceHeight: -12, duration: 0.5 })
+
+  return (
+    <motion.span
+      {...(reduced ? {} : bounceProps)}
+      className="inline-flex h-5 w-5 items-center justify-center rounded-full bg-red-500 text-xs font-bold text-white"
+    >
+      {count}
+    </motion.span>
+  )
+}
+```
+
+Additional guidance:
+
+- When `onHover: true` is used on a `motion.button`, the bounce is triggered only by pointer interaction and does not run continuously, which is friendlier for motion-sensitive users.
+- Do not rely on the bounce animation alone to convey meaning. Pair it with visible text or an icon so keyboard-only and screen reader users receive the same information.
+- If the element wraps interactive content, ensure focus styles remain visible. Framer Motion's `whileHover` and `animate` do not remove focus outlines, but verify your CSS does not suppress them.
+
+## Performance considerations
+
+- `useBounce` animates only the `y` transform via the `animate` or `whileHover` props. Transforms run on the compositor thread and do not trigger layout or paint, so the animation stays at 60fps even on modest hardware.
+- With the default `repeat: Infinity`, the animation keeps the compositor awake indefinitely. Conditionally render the element when the bounce is no longer needed, or use `repeat: 3` for a finite number of bounces, so the compositor thread is freed after the last cycle.
+- When dozens of elements on a single page use `repeat: Infinity`, each schedules its own frame. Limit continuous bouncing to one or two focal elements per view.
+- The custom cubic-bezier easing `[0.68, -0.55, 0.265, 1.55]` produces the overshoot that makes the bounce feel springy. It is evaluated in JavaScript by Framer Motion but has negligible CPU cost.
+
+## Customization examples
+
+### Subtle, slow bounce for a scroll indicator
+
+```tsx
+import { motion } from "motion/react"
+import { useBounce } from "@/lib/use-bounce"
+
+export function ScrollHint() {
+  const bounceProps = useBounce({ bounceHeight: 8, duration: 1.2 })
+
+  return (
+    <motion.div {...bounceProps} className="flex flex-col items-center text-neutral-400">
+      <span className="text-xs">Scroll</span>
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none" className="mt-1">
+        <path d="M8 3v10M4 9l4 4 4-4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+      </svg>
+    </motion.div>
+  )
+}
+```
+
+### Hover-only bounce on an icon link
+
+```tsx
+import { motion } from "motion/react"
+import { useBounce } from "@/lib/use-bounce"
+
+export function TwitterLink() {
+  const bounceProps = useBounce({ onHover: true, bounceHeight: -16, duration: 0.5 })
+
+  return (
+    <motion.a
+      href="https://twitter.com"
+      {...bounceProps}
+      className="inline-block text-neutral-500 hover:text-sky-500"
+      aria-label="Twitter"
+    >
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+        <path d="M22.46 6c-.77.35-1.6.58-2.46.69..." />
+      </svg>
+    </motion.a>
+  )
+}
+```
+
+### Finite celebration bounce
+
+```tsx
+import { motion } from "motion/react"
+import { useBounce } from "@/lib/use-bounce"
+
+export function SuccessIcon() {
+  const bounceProps = useBounce({ bounceHeight: -24, duration: 0.5, repeat: 2, delay: 0.1 })
+
+  return (
+    <motion.div
+      {...bounceProps}
+      className="flex h-12 w-12 items-center justify-center rounded-full bg-green-100 text-green-600"
+    >
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+        <path d="M20 6L9 17l-5-5" strokeLinecap="round" strokeLinejoin="round" />
+      </svg>
+    </motion.div>
+  )
+}
+```
+
+## Real-world examples
+
+### Unread notification badge in a nav bar
+
+```tsx
+"use client"
+import { motion } from "motion/react"
+import { useReducedMotion } from "motion/react"
+import { useBounce } from "@/lib/use-bounce"
+
+export function NavBell({ unread }: { unread: number }) {
+  const reduced = useReducedMotion()
+  const bounceProps = useBounce({ bounceHeight: -10, duration: 0.5 })
+
+  return (
+    <button className="relative p-2 text-neutral-600 hover:text-neutral-900" aria-label="Notifications">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+        <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" />
+        <path d="M13.73 21a2 2 0 0 1-3.46 0" />
+      </svg>
+      {unread > 0 && (
+        <motion.span
+          {...(reduced ? {} : bounceProps)}
+          className="absolute right-1 top-1 inline-flex h-4 w-4 items-center justify-center rounded-full bg-red-500 text-[10px] font-bold text-white"
+        >
+          {unread}
+        </motion.span>
+      )}
+    </button>
+  )
+}
+```
+
+### CTA button that bounces on hover to invite interaction
+
+```tsx
+"use client"
+import { motion } from "motion/react"
+import { useBounce } from "@/lib/use-bounce"
+
+export function GetStartedButton() {
+  const bounceProps = useBounce({ onHover: true, bounceHeight: -8, duration: 0.45 })
+
+  return (
+    <motion.a
+      href="/signup"
+      {...bounceProps}
+      className="inline-flex h-12 items-center gap-2 rounded-xl bg-blue-600 px-8 text-sm font-semibold text-white shadow-md shadow-blue-200"
+    >
+      Get started free
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="2">
+        <path d="M3 8h10M9 4l4 4-4 4" strokeLinecap="round" />
+      </svg>
+    </motion.a>
+  )
+}
+```
 
 ## Browser Support
 

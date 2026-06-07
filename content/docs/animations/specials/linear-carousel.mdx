@@ -478,3 +478,176 @@ export function TestimonialCarousel() {
 | `index` | `number` | - | Index of the card in the list |
 | `layout` | `boolean` | `false` | Enable layout animations (Shared Element Transition) |
 
+## Use cases
+
+The `Carousel` component renders a horizontally scrollable strip (`overflow-x-scroll`, `[scrollbar-width:none]`) with each card staggered in on mount (`opacity: 0, y: 20` to resting state, `delay: 0.2 * index`). Items are duplicated to create an infinite loop effect. The optional `autoplay` prop drives scroll via `requestAnimationFrame` and pauses on hover or touch. `Card` uses `motion/react` `layoutId` for shared element transitions between the card thumbnail and an expanded view when `layout={true}`.
+
+- **Product feature showcases.** Cards with a screenshot `src`, short `title`, and `category` badge make a polished horizontal browsing surface for feature marketing.
+- **Testimonial strips.** Pass testimonial quotes as `content` with customer name as `title` and company as `category` for a scrollable social proof section.
+- **Media galleries.** Photography portfolios or lookbook pages where the staggered card entrance and grayscale image treatment (`grayscale` class on `img`) create a cohesive aesthetic.
+- **Blog or article previews.** Each card's `content` can include a teaser paragraph alongside the image cover, suitable for editorial or documentation landing pages.
+- **Onboarding step decks.** Use the carousel for step-by-step feature highlights with the `layout` shared transition to expand a step into full detail.
+
+## When to use / when not to use
+
+**Use `LinearCarousel` when:**
+
+- You have 3 to 10 items that do not fit inline but are best browsed one after another.
+- Visual imagery is a primary part of each item's identity; the `Card` renders an absolutely-positioned `img` with `object-cover` that fills the 256 x 240 px (mobile) or 320 x 384 px (desktop) card.
+- You want keyboard and mouse accessibility with the built-in prev/next `ChevronLeft`/`ChevronRight` buttons.
+
+**Do not use `LinearCarousel` when:**
+
+- You need a full-screen immersive lightbox. The card opens inline via `layoutId`; it does not render a modal overlay. Use a dedicated lightbox component for that.
+- The items are primarily text (data tables, settings options). The card format is optimized for visual media.
+- You need a paginated view where the user knows exactly how many items there are. The infinite loop duplication hides the true count. Use a paginated grid or a [Swipeable Stack](/docs/animations/specials/swipeable-stack) with visible progress indicators instead.
+- Auto-advancing without pause control is required for accessibility compliance. The `autoplay` prop does pause on hover, but there is no user-visible pause button. Adding one before shipping is essential.
+
+## Accessibility notes
+
+- **Carousel role.** Wrap the `Carousel` in a `section` or `div` with `aria-roledescription="carousel"` and a descriptive `aria-label` to communicate its purpose to screen readers:
+
+```tsx
+<section aria-roledescription="carousel" aria-label="Feature highlights">
+  <Carousel items={cards} />
+</section>
+```
+
+- **Prev/next buttons.** The `ChevronLeft` and `ChevronRight` icon buttons lack accessible labels in the source. Add `aria-label` props:
+
+```tsx
+// When copying the component manually, update the button markup:
+<button aria-label="Scroll left" onClick={scrollLeft} disabled={!canScrollLeft} ...>
+  <ChevronLeft ... />
+</button>
+<button aria-label="Scroll right" onClick={scrollRight} disabled={!canScrollRight} ...>
+  <ChevronRight ... />
+</button>
+```
+
+- **Card buttons.** `Card` renders as a `motion.button`. Ensure the `card.title` value is meaningful as a button label. If title alone is insufficient, add an `aria-label` to the `Card` props.
+- **Images.** The `img` inside `Card` uses `alt={card.title}`, which is a reasonable default. For images that are purely decorative, pass `alt=""`. For images that convey information beyond the title, provide a more descriptive alt string.
+- **Autoplay.** If `autoplay={true}` is used, the carousel scrolls without user input. Provide a visible pause control. Users who need more time to read or interact should be able to stop motion. See WCAG 2.2 criterion 2.2.2 (Pause, Stop, Hide).
+- **Keyboard navigation.** The built-in prev/next buttons are reachable via Tab and activate on Enter/Space. The scroll container itself (`overflow-x-scroll`) is not keyboard-scrollable by default. Add `tabIndex={0}` and `onKeyDown` handlers for Arrow Left/Right to the scroll container for full keyboard support.
+- **Reduced motion.** The staggered `opacity/y` entrance animation and `autoplay` scroll should be suppressed:
+
+```tsx
+"use client"
+import { useReducedMotion } from "motion/react"
+
+function CarouselWrapper({ items }: { items: React.JSX.Element[] }) {
+  const reduced = useReducedMotion()
+  return <Carousel items={items} autoplay={reduced ? false : true} />
+}
+```
+
+## Performance considerations
+
+- **Item duplication.** `Carousel` internally doubles the `items` array (`loopedItems = [...items, ...items]`) for the infinite loop. With `layout={true}`, each `Card` assigns a `layoutId`. Duplicate `layoutId` values across the two copies will conflict with `motion/react` layout animations. Either use `layout={false}` when enabling autoplay, or deduplicate keys carefully.
+- **`requestAnimationFrame` autoplay.** When `autoplay={true}` and the carousel is not hovered, `scrollLeft` is incremented every animation frame. This runs on the main thread. Keep `autoplaySpeed` at the default `0.5` to avoid forcing the browser to repaint at high scroll speeds.
+- **Scroll event listener.** The `onScroll` handler on the scroll container calls `checkScrollability` on every scroll event. This is synchronous React state (`setCanScrollLeft`/`setCanScrollRight`), which causes a re-render. Throttling this with `requestAnimationFrame` reduces jank when the user drags fast.
+- **Staggered entrance animations.** With `delay: 0.2 * (index % items.length)`, 8 cards take up to 1.6 seconds before the last card fades in. On low-end devices this can feel sluggish. Cap the maximum delay or reduce it for production.
+- **`motion.div` wrapper per card.** Each card in `loopedItems` is wrapped in a `motion.div` with entrance animation. For 10 unique items the loop creates 20 `motion.div` elements. This is acceptable but avoid exceeding 20 unique items.
+
+## Customization examples
+
+### Autoplay with pause on interaction
+
+```tsx
+import { Carousel, Card } from "@/components/animations/specials/linear-carousel"
+
+const items = [
+  { src: "https://images.unsplash.com/photo-1506744038136-46273834b3fb?q=80&w=3000&auto=format&fit=crop", title: "Mountain Views", category: "Nature", content: <p className="text-neutral-500">Alpine landscapes from the Swiss Alps.</p> },
+  { src: "https://images.unsplash.com/photo-1501785888041-af3ef285b470?q=80&w=3000&auto=format&fit=crop", title: "Ocean Calm", category: "Nature", content: <p className="text-neutral-500">Pacific coastline at golden hour.</p> },
+]
+
+export function AutoplayCarousel() {
+  const cards = items.map((card, index) => (
+    <Card key={card.src} card={card} index={index} layout={false} />
+  ))
+  return (
+    <div className="w-full py-12">
+      <Carousel items={cards} autoplay={true} autoplaySpeed={0.4} />
+    </div>
+  )
+}
+```
+
+### Testimonials with initial scroll offset
+
+```tsx
+import { Carousel, Card } from "@/components/animations/specials/linear-carousel"
+
+const testimonials = [
+  { src: "https://images.unsplash.com/photo-1557683316-973673baf926?q=80&w=2787&auto=format&fit=crop", title: "Game Changer", category: "Testimonial", content: <p className="text-neutral-500">"Shipped our redesign in half the usual time."</p> },
+  { src: "https://images.unsplash.com/photo-1460925895917-afdab827c52f?q=80&w=2426&auto=format&fit=crop", title: "Loved By Devs", category: "Testimonial", content: <p className="text-neutral-500">"The animation quality is unmatched in any free library."</p> },
+]
+
+export function TestimonialCarouselDemo() {
+  const cards = testimonials.map((card, index) => (
+    <Card key={card.title} card={card} index={index} />
+  ))
+  return (
+    <section aria-roledescription="carousel" aria-label="Customer testimonials" className="w-full py-16">
+      <h2 className="mb-8 text-center text-3xl font-bold">What teams say</h2>
+      <Carousel items={cards} initialScroll={0} />
+    </section>
+  )
+}
+```
+
+## Real-world examples
+
+### Feature highlights on a SaaS landing page
+
+```tsx
+import { Carousel, Card } from "@/components/animations/specials/linear-carousel"
+
+const features = [
+  {
+    src: "https://images.unsplash.com/photo-1535905557558-afc4877a26fc?q=80&w=2787&auto=format&fit=crop",
+    title: "Instant deploys",
+    category: "Infrastructure",
+    content: (
+      <p className="text-neutral-500">
+        Push to main and your site is live in under 30 seconds. Zero config.
+      </p>
+    ),
+  },
+  {
+    src: "https://images.unsplash.com/photo-1542831371-29b0f74f9713?q=80&w=2787&auto=format&fit=crop",
+    title: "Type-safe APIs",
+    category: "Developer Experience",
+    content: (
+      <p className="text-neutral-500">
+        End-to-end TypeScript from database schema to client component.
+      </p>
+    ),
+  },
+  {
+    src: "https://images.unsplash.com/photo-1518717758536-85ae29035b6d?q=80&w=2787&auto=format&fit=crop",
+    title: "AI-assisted reviews",
+    category: "Productivity",
+    content: (
+      <p className="text-neutral-500">
+        Automated PR summaries and inline suggestions before human review.
+      </p>
+    ),
+  },
+]
+
+export function FeatureCarousel() {
+  const cards = features.map((card, index) => (
+    <Card key={card.title} card={card} index={index} layout={true} />
+  ))
+
+  return (
+    <section aria-roledescription="carousel" aria-label="Product features" className="py-20">
+      <h2 className="mb-4 text-center text-4xl font-bold">Built for modern teams</h2>
+      <p className="mb-12 text-center text-neutral-500">Scroll to explore what ships with every plan.</p>
+      <Carousel items={cards} />
+    </section>
+  )
+}
+```
+

@@ -405,3 +405,207 @@ export default function Example() {
 | `children` | `ReactNode` | - | The icon element to animate |
 | `trigger` | `"hover"` \| `"tap"` \| `"mount"` | `"hover"` | When to trigger the shake animation |
 | `intensity` | `number` | `10` | Shake intensity (distance in pixels) |
+
+## Use cases
+
+`ShakeIcon` translates the element along the x-axis: `x: [0, -intensity, intensity, -intensity, intensity, 0]` over 0.4 s with `easeInOut`. The horizontal back-and-forth directly mimics the real-world "no" gesture and the familiar "wrong password" shake used in iOS and macOS. Good fits:
+
+- **Form validation errors.** A shaking warning or X icon on a field that fails validation immediately communicates what went wrong and where.
+- **Destructive action confirmation.** Hovering over a delete icon with a shake on hover signals danger without a tooltip.
+- **Locked or unauthorized states.** A `Lock` icon shaking when the user tries to access a restricted area conveys "access denied."
+- **Attention on critical alerts.** An `AlertTriangle` that shakes on mount when a destructive confirmation modal opens pulls focus before the user reads the text.
+- **Rate-limit or quota errors.** A `CircleSlash` or `Ban` icon that shakes when the user hits a limit provides immediate non-verbal feedback.
+
+## When to use / when not to use
+
+**Use `ShakeIcon` when:**
+
+- The shake communicates "wrong," "denied," or "error" semantically. The horizontal shake is a near-universal rejection gesture.
+- `trigger="mount"` fires once when an error state appears, which is the most accessible pattern (the error is new information that needs to be noticed).
+- `trigger="hover"` on a destructive action like delete or disconnect forewarns the user before they commit.
+
+**Do not use it when:**
+
+- The icon represents something neutral or positive. Shaking a "send" or "save" icon reads as wrong.
+- You need a continuous alert signal. A shaking icon that loops would be highly distracting and cause accessibility issues. Use [PulseIcon](/docs/animations/icons/pulse) for ongoing status.
+- The shake is triggered by every keystroke in a text field. A shake on every input event is far too noisy; reserve it for discrete validation moments (on blur or on submit).
+- `intensity` above 20 px: values that high can shift surrounding layout if the container does not clip overflow. Test for layout shift at high intensity values.
+
+## Accessibility notes
+
+- A shaking icon alone does not convey the error message to screen readers. The shake is a visual reinforcement only. Always pair it with visible error text and, if the error is dynamic, a live region:
+
+```tsx
+<div role="alert" className="flex items-center gap-2 text-red-600">
+  <ShakeIcon trigger="mount" intensity={10}>
+    <AlertCircle className="w-5 h-5" aria-hidden="true" />
+  </ShakeIcon>
+  <span className="text-sm font-medium">Incorrect password. Try again.</span>
+</div>
+```
+
+- For `trigger="hover"` on a destructive icon, keyboard users will never see the shake (there is no keyboard hover equivalent). The button must have an accessible label describing the destructive action independently of the animation.
+- The 0.4 s horizontal shake is brief enough to avoid vestibular concerns for most users, but for completeness you can skip it for `prefers-reduced-motion`:
+
+```tsx
+"use client"
+import { useReducedMotion } from "motion/react"
+import { ShakeIcon } from "@/components/animations/icons/shake"
+import { AlertTriangle } from "lucide-react"
+
+export function ErrorIcon() {
+  const reduced = useReducedMotion()
+  if (reduced) return <AlertTriangle className="w-5 h-5 text-red-500" aria-hidden="true" />
+  return (
+    <ShakeIcon trigger="mount" intensity={8}>
+      <AlertTriangle className="w-5 h-5 text-red-500" aria-hidden="true" />
+    </ShakeIcon>
+  )
+}
+```
+
+## Performance considerations
+
+- The animation only changes `translateX`, a transform. It runs on the compositor with no layout recalculation.
+- One-shot animation (no `repeat`). The compositor releases it after 0.4 s.
+- The `key` increment on `tap` remounts the element. For a single icon this is negligible. Avoid placing `trigger="tap"` inside virtualized lists where each row would add its own key-reset remount.
+- High `intensity` values (above 15 px) can cause the icon to visually overlap adjacent elements if the container does not have `overflow: hidden`. Add `overflow-hidden` to the wrapper when in doubt.
+
+## Customization examples
+
+### Subtle shake for a form field inline error
+
+Low intensity (5 px) is enough to draw the eye without appearing dramatic:
+
+```tsx
+import { ShakeIcon } from "@/components/animations/icons/shake"
+import { AlertCircle } from "lucide-react"
+
+<ShakeIcon trigger="mount" intensity={5}>
+  <AlertCircle className="w-4 h-4 text-red-500" aria-hidden="true" />
+</ShakeIcon>
+```
+
+### Strong shake on a destructive hover
+
+Higher intensity (15 px) makes the danger unmistakable on a delete button:
+
+```tsx
+import { ShakeIcon } from "@/components/animations/icons/shake"
+import { Trash2 } from "lucide-react"
+
+<button
+  aria-label="Delete item"
+  className="rounded p-1.5 text-neutral-500 hover:text-red-600"
+>
+  <ShakeIcon trigger="hover" intensity={15}>
+    <Trash2 className="w-5 h-5" aria-hidden="true" />
+  </ShakeIcon>
+</button>
+```
+
+### Mount shake for a locked feature
+
+```tsx
+import { ShakeIcon } from "@/components/animations/icons/shake"
+import { Lock } from "lucide-react"
+
+export function LockedBadge() {
+  return (
+    <div className="flex items-center gap-1.5 text-neutral-400">
+      <ShakeIcon trigger="mount" intensity={8}>
+        <Lock className="w-4 h-4" aria-hidden="true" />
+      </ShakeIcon>
+      <span className="text-xs">Upgrade to access</span>
+    </div>
+  )
+}
+```
+
+## Real-world examples
+
+### Login form with wrong password shake
+
+The shake fires each time a failed submit response arrives:
+
+```tsx
+"use client"
+import { useState } from "react"
+import { ShakeIcon } from "@/components/animations/icons/shake"
+import { useReducedMotion } from "motion/react"
+import { AlertCircle } from "lucide-react"
+
+export function LoginForm() {
+  const [errorKey, setErrorKey] = useState(0)
+  const [errorMsg, setErrorMsg] = useState("")
+  const reduced = useReducedMotion()
+
+  async function handleSubmit(e: React.FormEvent) {
+    e.preventDefault()
+    // Simulate a failed auth attempt.
+    const ok = false
+    if (!ok) {
+      setErrorMsg("Incorrect email or password.")
+      setErrorKey((k) => k + 1)
+    }
+  }
+
+  return (
+    <form onSubmit={handleSubmit} className="space-y-4 w-72">
+      <input
+        type="email"
+        placeholder="Email"
+        className="w-full rounded-lg border border-neutral-300 px-3 py-2 text-sm"
+      />
+      <input
+        type="password"
+        placeholder="Password"
+        className="w-full rounded-lg border border-neutral-300 px-3 py-2 text-sm"
+      />
+      {errorMsg && (
+        <div role="alert" className="flex items-center gap-2 text-sm text-red-600">
+          {reduced ? (
+            <AlertCircle className="w-4 h-4" aria-hidden="true" />
+          ) : (
+            <ShakeIcon key={errorKey} trigger="mount" intensity={8}>
+              <AlertCircle className="w-4 h-4" aria-hidden="true" />
+            </ShakeIcon>
+          )}
+          {errorMsg}
+        </div>
+      )}
+      <button
+        type="submit"
+        className="w-full rounded-lg bg-blue-600 py-2 text-sm font-semibold text-white hover:bg-blue-700"
+      >
+        Sign in
+      </button>
+    </form>
+  )
+}
+```
+
+### Delete confirmation with shake on hover
+
+The trash icon shakes on hover to signal the destructive nature of the action before the user clicks:
+
+```tsx
+"use client"
+import { ShakeIcon } from "@/components/animations/icons/shake"
+import { Trash2 } from "lucide-react"
+
+export function DeleteButton({ onDelete }: { onDelete: () => void }) {
+  return (
+    <button
+      onClick={onDelete}
+      aria-label="Delete this item permanently"
+      className="flex items-center gap-1.5 rounded-lg border border-red-200 px-3 py-1.5 text-sm font-medium text-red-600 hover:bg-red-50 dark:border-red-900 dark:hover:bg-red-950"
+    >
+      <ShakeIcon trigger="hover" intensity={10}>
+        <Trash2 className="w-4 h-4" aria-hidden="true" />
+      </ShakeIcon>
+      Delete
+    </button>
+  )
+}
+```

@@ -209,3 +209,182 @@ export function ReactionDockDemo() {
 | :--- | :--- | :--- | :--- |
 | `items` | `Array<{ icon: ReactNode, label: string, onClick?: () => void }>` | - | Array of items to display in the dock. |
 | `className` | `string` | - | Additional CSS classes. |
+
+## Use cases
+
+`ReactionDock` uses a shared `useMotionValue(Infinity)` for mouse X position. Each `DockItem` computes its distance from the cursor with `useTransform` and maps `[-150, 0, 150]` to `[40, 80, 40]` px width. A `useSpring` with `{ mass: 0.1, stiffness: 150, damping: 12 }` smooths the resize, producing the characteristic magnetic macOS Dock spring. The tooltip above each item uses a CSS `opacity` transition on `:group-hover`.
+
+- **Social reactions on posts or comments.** A row of emoji-style reactions (ThumbsUp, Heart, Laugh, PartyPopper, Frown, Angry) maps directly to Facebook or Slack reaction sets.
+- **Media player controls.** Play, pause, skip, volume, and like actions in a bottom bar with the magnification drawing the eye to the hovered control.
+- **Floating action palettes.** A fixed-position dock at the bottom of a canvas editor or image viewer for tool selection.
+- **Inline message emoji picker.** A small dock anchored to a message bubble for quick emoji replies in a chat interface.
+
+For a single binary toggle reaction, see [Reaction Button](/docs/animations/specials/reaction-button).
+
+## When to use / when not to use
+
+**Use `ReactionDock` when:**
+
+- Your users are on a pointer device (mouse or trackpad). The magnification effect is driven by `e.pageX` from `onMouseMove`; it does nothing on touch screens.
+- You have 4 to 8 items. Fewer than 4 does not benefit from the magnification spread; more than 8 items become hard to distinguish at the default 40 px resting size.
+- The dock is a secondary or supplemental action bar, not the primary navigation. The hidden-until-hover tooltip pattern (`opacity-0 group-hover:opacity-100`) is not suitable for critical, always-visible actions.
+
+**Do not use `ReactionDock` when:**
+
+- Touch is the primary input. On touch devices `onMouseMove` never fires, all items stay at 40 px, and the tooltip labels are inaccessible. Consider a flat emoji grid or a [Swipeable Stack](/docs/animations/specials/swipeable-stack) for touch-first interactions.
+- You need persistent, labeled actions that are always visible. The labels appear only on hover. For always-visible labeled buttons, use a standard toolbar.
+- The dock must work inside a `pointer-events-none` parent. The `onMouseMove` listener is on the dock container; if a parent blocks pointer events the magnification will not update.
+
+## Accessibility notes
+
+- **Tooltip visibility.** Item labels are shown only on `:hover` via a CSS `opacity` transition. They are not exposed to screen readers at all in the current implementation. Add `aria-label` to each `DockItem` button so screen readers announce the label:
+
+```tsx
+// When building the items array, include aria-label on the rendered button
+items={[
+  {
+    icon: <ThumbsUp className="h-5 w-5" />,
+    label: "Like",
+    onClick: () => handleReaction("like"),
+  }
+]}
+// In the DockItem, pass aria-label={item.label} to the motion.div or wrap with <button>
+```
+
+- **Button role.** `DockItem` renders as a `motion.div` with an `onClick`. This lacks `role="button"`, keyboard focus, and Enter/Space activation. Wrap each item in a `<button>` for full keyboard support:
+
+```tsx
+// Replace the motion.div in DockItem with:
+<motion.button
+  ref={ref}
+  style={{ width }}
+  onClick={onClick}
+  aria-label={label}
+  className="aspect-square cursor-pointer rounded-full bg-zinc-200 dark:bg-zinc-800 flex items-center justify-center hover:bg-zinc-300 dark:hover:bg-zinc-700"
+>
+  {children}
+</motion.button>
+```
+
+- **Focus indicator.** Keyboard-focused items need a visible ring. Add `focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:outline-none` to the button class.
+- **Tooltip for keyboard users.** The CSS hover tooltip is invisible to keyboard users. Use a `title` attribute or a proper tooltip component that also activates on focus.
+- **Reduced motion.** The `useSpring` magnification animation should not run for users who prefer reduced motion. Set a static width when `prefers-reduced-motion` is active:
+
+```tsx
+"use client"
+import { useReducedMotion } from "motion/react"
+
+function AccessibleDockItem({ mouseX, children, onClick }: DockItemProps) {
+  const reduced = useReducedMotion()
+  const width = reduced ? 40 : useSpringWidth(mouseX) // skip spring
+  ...
+}
+```
+
+## Performance considerations
+
+- **`onMouseMove` frequency.** The `onMouseMove` handler on the dock container calls `mouseX.set(e.pageX)` on every pointer move event. This fires at the display refresh rate (typically 60 to 120 times per second). Because `mouseX` is a `MotionValue`, updates flow through the `useTransform` and `useSpring` pipeline without triggering React re-renders. This is the correct pattern and performs well.
+- **`useTransform` per item.** Each `DockItem` derives `distance` and `widthSync` from `mouseX`. With 6 items, that is 12 `useTransform` subscriptions and 6 `useSpring` instances. All evaluate in the motion value pipeline. Cost is negligible for typical dock sizes.
+- **`getBoundingClientRect()` in transform.** The `distance` transform reads `ref.current?.getBoundingClientRect()` on every motion value update. `getBoundingClientRect` forces a layout flush if the DOM has pending style changes. Avoid mutating the DOM layout inside the transform function; read sizes in a `useEffect` and cache them in a ref if performance profiling shows jank.
+- **Static `40 px` resting width.** When `mouseX` is `Infinity` (mouse not over dock), all items calculate a distance of `Infinity`, which maps to `40` in the `[-150, 0, 150]` range (the `clamp` edge). Ensure the spring settles to exactly 40 px so the dock does not visually jitter when the mouse leaves.
+- **No `will-change`.** The `width` spring animation is a layout change (changing `width` causes relayout). For 6 items this is acceptable, but avoid adding `will-change: width` as it does not help layout-animating properties.
+
+## Customization examples
+
+### Compact dock (smaller resting size)
+
+Override the `DockItem` width range and dock height in a fork:
+
+```tsx
+import { ReactionDock } from "@/components/animations/specials/reaction-dock"
+import { Heart, Star, Smile } from "lucide-react"
+
+export function CompactDock() {
+  const items = [
+    { icon: <Heart className="h-4 w-4 text-red-500" />, label: "Love", onClick: () => {} },
+    { icon: <Star className="h-4 w-4 text-yellow-500" />, label: "Star", onClick: () => {} },
+    { icon: <Smile className="h-4 w-4 text-amber-500" />, label: "Smile", onClick: () => {} },
+  ]
+  return <ReactionDock items={items} className="h-12 gap-2 px-3 pb-2" />
+}
+```
+
+### Custom brand colors
+
+```tsx
+import { ReactionDock } from "@/components/animations/specials/reaction-dock"
+import { ThumbsUp, ThumbsDown, MessageCircle, Share2 } from "lucide-react"
+
+export function ArticleDock() {
+  const items = [
+    { icon: <ThumbsUp className="h-5 w-5 text-indigo-500" />, label: "Helpful", onClick: () => {} },
+    { icon: <ThumbsDown className="h-5 w-5 text-neutral-400" />, label: "Not helpful", onClick: () => {} },
+    { icon: <MessageCircle className="h-5 w-5 text-sky-500" />, label: "Comment", onClick: () => {} },
+    { icon: <Share2 className="h-5 w-5 text-emerald-500" />, label: "Share", onClick: () => {} },
+  ]
+  return (
+    <ReactionDock
+      items={items}
+      className="bg-white shadow-md dark:bg-neutral-900"
+    />
+  )
+}
+```
+
+## Real-world examples
+
+### Post reactions on a social feed
+
+```tsx
+"use client"
+import { useState } from "react"
+import { ReactionDock } from "@/components/animations/specials/reaction-dock"
+import { Heart, ThumbsUp, Laugh, Frown, PartyPopper } from "lucide-react"
+
+export function SocialPost({ content }: { content: string }) {
+  const [reacted, setReacted] = useState<string | null>(null)
+
+  const reactions = [
+    { icon: <ThumbsUp className="h-5 w-5 text-blue-500" />, label: "Like", onClick: () => setReacted("like") },
+    { icon: <Heart className="h-5 w-5 text-red-500" />, label: "Love", onClick: () => setReacted("love") },
+    { icon: <Laugh className="h-5 w-5 text-amber-500" />, label: "Haha", onClick: () => setReacted("haha") },
+    { icon: <Frown className="h-5 w-5 text-neutral-500" />, label: "Sad", onClick: () => setReacted("sad") },
+    { icon: <PartyPopper className="h-5 w-5 text-violet-500" />, label: "Celebrate", onClick: () => setReacted("celebrate") },
+  ]
+
+  return (
+    <div className="rounded-xl border border-neutral-200 bg-white p-5 dark:border-neutral-800 dark:bg-neutral-900">
+      <p className="mb-4 text-sm text-neutral-700 dark:text-neutral-300">{content}</p>
+      <div className="flex items-center gap-3">
+        {reacted && (
+          <span className="text-xs text-neutral-500 capitalize">You reacted: {reacted}</span>
+        )}
+        <ReactionDock items={reactions} />
+      </div>
+    </div>
+  )
+}
+```
+
+### Fixed bottom toolbar
+
+```tsx
+import { ReactionDock } from "@/components/animations/specials/reaction-dock"
+import { Pen, Eraser, Move, ZoomIn, ZoomOut } from "lucide-react"
+
+export function CanvasToolbar() {
+  const tools = [
+    { icon: <Pen className="h-5 w-5 text-neutral-600 dark:text-neutral-300" />, label: "Draw", onClick: () => {} },
+    { icon: <Eraser className="h-5 w-5 text-neutral-600 dark:text-neutral-300" />, label: "Erase", onClick: () => {} },
+    { icon: <Move className="h-5 w-5 text-neutral-600 dark:text-neutral-300" />, label: "Pan", onClick: () => {} },
+    { icon: <ZoomIn className="h-5 w-5 text-neutral-600 dark:text-neutral-300" />, label: "Zoom in", onClick: () => {} },
+    { icon: <ZoomOut className="h-5 w-5 text-neutral-600 dark:text-neutral-300" />, label: "Zoom out", onClick: () => {} },
+  ]
+
+  return (
+    <div className="fixed bottom-6 left-1/2 -translate-x-1/2">
+      <ReactionDock items={tools} />
+    </div>
+  )
+}
+```

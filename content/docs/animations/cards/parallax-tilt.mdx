@@ -216,4 +216,204 @@ import { CardParallaxTilt } from "@/components/animations/cards/parallax-tilt"
 | `maxTilt` | `number` | `15` | Maximum tilt angle in degrees |
 | `shadowIntensity` | `number` | `0.3` | Shadow intensity (0 to 1) |
 | `duration` | `number` | `0.3` | Animation duration in seconds |
+| `stiffness` | `number` | `300` | Spring stiffness for tilt smoothing |
+| `damping` | `number` | `30` | Spring damping for tilt smoothing |
 | `className` | `string` | `undefined` | Additional CSS classes |
+
+## Use cases
+
+`CardParallaxTilt` is the most mechanically complex card in this library. The `useParallaxTilt` hook computes normalized cursor position (`xPct`, `yPct` in the range -0.5 to 0.5) on every `mousemove` event, feeds those values into `useMotionValue` instances, smooths them with `useSpring` (stiffness `300`, damping `30` by default), and pipes the spring output through `useTransform` to produce `rotateX` and `rotateY` (bounded by `maxTilt`, default `15 degrees`). A separate `boxShadow` is also derived from the cursor position via `useTransform`, creating a directional shadow that makes the card look physically lit from the cursor direction.
+
+Use it when:
+
+- **Premium plan or product cards.** The directional shadow and 3D tilt signal quality and invite interaction.
+- **Hero feature showcases.** A single large card (320px or wider) that you want users to engage with before clicking.
+- **Game or entertainment UI.** Character cards, pack reveals, achievement cards.
+- **Portfolio project showcases.** Large image tiles where depth adds perceived craft.
+- **Onboarding or tutorial cards.** Inviting the user to explore the card before proceeding.
+
+## When to use / when not to use
+
+**Use `CardParallaxTilt` when:**
+
+- The card is a focal point, not one of twenty items in a grid. This effect is best reserved for cards that deserve individual attention.
+- You are targeting a desktop audience. The effect requires `mousemove` and does not work on touch surfaces.
+
+**Reach for a different component when:**
+
+- You need a tilt effect but want simpler implementation without spring physics. Use [CardTilt](/docs/animations/cards/tilt) which uses direct `animate` calls rather than motion values and springs.
+- The card is in a tight grid where 15-degree tilts will overlap neighbors or clip inside containers. Reduce `maxTilt` to `5` or use [CardHoverLift](/docs/animations/cards/hover-lift) for grids.
+- Touch is the primary interaction model. Neither tilt component works on touch. Provide a non-interactive version as the mobile fallback.
+- Vestibular sensitivity is a concern in your audience. A card tilting to 15 degrees as the user moves their mouse continuously is one of the most motion-intensive effects in this library. See the accessibility section.
+
+## Accessibility notes
+
+**`CardParallaxTilt` produces continuous 3D motion tied to mouse position.** This is the most likely component in this library to cause vestibular discomfort. Take the following precautions seriously.
+
+- **Users with vestibular disorders, migraines, or motion sensitivity can be harmed by continuous parallax motion.** Always respect `prefers-reduced-motion` and eliminate the tilt entirely when it is enabled:
+
+```tsx
+"use client"
+import { useReducedMotion } from "motion/react"
+import { CardParallaxTilt } from "@/components/animations/cards/parallax-tilt"
+import { CardHoverLift } from "@/components/animations/cards/hover-lift"
+
+function AccessibleParallaxCard({ children }: { children: React.ReactNode }) {
+  const reduced = useReducedMotion()
+
+  // Replace the parallax tilt with a simple lift when reduced motion is preferred.
+  if (reduced) {
+    return (
+      <CardHoverLift className="rounded-2xl border border-neutral-200 dark:border-neutral-800 bg-white dark:bg-neutral-900 p-6">
+        {children}
+      </CardHoverLift>
+    )
+  }
+
+  return (
+    <CardParallaxTilt maxTilt={15} className="rounded-2xl border border-neutral-200 dark:border-neutral-800 bg-white dark:bg-neutral-900 p-6">
+      {children}
+    </CardParallaxTilt>
+  )
+}
+```
+
+- **`transformStyle: preserve-3d` and `backface-visibility`.** Nested content rotates with the card in 3D space. Text inside the card tilts, which may be harder to read for some users. Keep card content concise.
+- **Keyboard focus.** The tilt is entirely mouse-driven. Keyboard users receive no tilt; ensure the card has a visible `:focus-visible` ring so it remains discoverable.
+- **Screen readers.** The rotation and shadow changes are purely visual and do not affect the accessibility tree.
+
+## Performance considerations
+
+- **`mousemove` fires on every frame during cursor movement.** The hook updates two `MotionValue` instances (`x` and `y`) on each event. Motion values update without re-rendering the React component, but the handler itself runs on the main thread. On slow devices, dense mouse movement can create measurable CPU cost.
+- **Spring physics run as a subscription to motion values.** `useSpring` attaches an animation loop that evaluates spring state on every animation frame until the spring settles. This is off the main thread in modern browsers but still consumes GPU time.
+- **`useTransform` for `boxShadow`.** Shadow transforms involve string interpolation (`${x}px ${y}px 30px ...`), which runs on the main thread unlike pure numeric transforms. For very high frame rates, consider simplifying the shadow or disabling it with `shadowIntensity={0}`.
+- **Limit to a few cards per page.** One or two `CardParallaxTilt` instances are fine. Twelve simultaneous tilt cards each with active spring animations and shadow transforms will visibly strain less powerful hardware.
+- **`stiffness` and `damping` tuning.** Defaults of `300`/`30` produce a fast, snappy spring. Lower stiffness (e.g., `150`) and higher damping (e.g., `20`) give a looser, slower return, which is less demanding on the animation loop.
+
+## Customization examples
+
+### Tighter tilt for a card in a grid
+
+Reduce `maxTilt` to prevent neighboring cards from overlapping:
+
+```tsx
+import { CardParallaxTilt } from "@/components/animations/cards/parallax-tilt"
+
+<CardParallaxTilt
+  maxTilt={8}
+  shadowIntensity={0.15}
+  className="rounded-xl border border-neutral-200 dark:border-neutral-800 bg-white dark:bg-neutral-900 p-6"
+>
+  <h3 className="font-semibold">Feature</h3>
+  <p className="text-sm text-neutral-500 dark:text-neutral-400 mt-1">Description</p>
+</CardParallaxTilt>
+```
+
+### Looser, more cinematic spring
+
+```tsx
+<CardParallaxTilt
+  maxTilt={12}
+  stiffness={120}
+  damping={15}
+  shadowIntensity={0.25}
+  className="rounded-2xl overflow-hidden border border-neutral-200 dark:border-neutral-800 bg-white dark:bg-neutral-900"
+>
+  <img src="/hero.jpg" alt="Hero" className="w-full h-56 object-cover" />
+  <div className="p-6">
+    <h3 className="font-bold text-lg">Premium Feature</h3>
+  </div>
+</CardParallaxTilt>
+```
+
+### No shadow variant
+
+```tsx
+<CardParallaxTilt
+  maxTilt={10}
+  shadowIntensity={0}
+  className="rounded-xl border border-neutral-200 dark:border-neutral-800 bg-white dark:bg-neutral-900 p-8"
+>
+  <p className="font-semibold">No directional shadow</p>
+</CardParallaxTilt>
+```
+
+## Real-world examples
+
+### Pricing plan card (desktop hero)
+
+```tsx
+import { CardParallaxTilt } from "@/components/animations/cards/parallax-tilt"
+
+interface PlanCardProps {
+  name: string
+  price: string
+  features: string[]
+}
+
+export function PremiumPlanCard({ name, price, features }: PlanCardProps) {
+  return (
+    <CardParallaxTilt
+      maxTilt={12}
+      shadowIntensity={0.2}
+      stiffness={250}
+      damping={25}
+      className="rounded-3xl border border-neutral-200 dark:border-neutral-800 bg-white dark:bg-neutral-900 p-8 w-72 flex flex-col gap-6"
+    >
+      <div>
+        <p className="text-xs font-bold uppercase tracking-wider text-neutral-400">{name}</p>
+        <p className="text-4xl font-extrabold mt-2">{price}</p>
+        <p className="text-sm text-neutral-500 dark:text-neutral-400">per month</p>
+      </div>
+      <ul className="space-y-2">
+        {features.map((f) => (
+          <li key={f} className="text-sm flex items-center gap-2">
+            <span className="text-emerald-500 font-bold">+</span>
+            {f}
+          </li>
+        ))}
+      </ul>
+      <button className="mt-auto w-full rounded-xl bg-neutral-900 dark:bg-white py-3 text-sm font-bold text-white dark:text-neutral-900 hover:bg-neutral-700 dark:hover:bg-neutral-100 transition-colors">
+        Get started
+      </button>
+    </CardParallaxTilt>
+  )
+}
+```
+
+### Game achievement card
+
+```tsx
+import { CardParallaxTilt } from "@/components/animations/cards/parallax-tilt"
+
+export function AchievementCard({
+  icon,
+  title,
+  description,
+  rarity,
+}: {
+  icon: string
+  title: string
+  description: string
+  rarity: "common" | "rare" | "legendary"
+}) {
+  const rarityColors = {
+    common: "border-neutral-300 dark:border-neutral-700",
+    rare: "border-blue-400",
+    legendary: "border-yellow-400",
+  }
+
+  return (
+    <CardParallaxTilt
+      maxTilt={15}
+      shadowIntensity={0.35}
+      className={`rounded-2xl border-2 ${rarityColors[rarity]} bg-neutral-950 p-6 w-56 flex flex-col items-center gap-3 text-center`}
+    >
+      <span className="text-5xl">{icon}</span>
+      <p className="font-bold text-white">{title}</p>
+      <p className="text-xs text-neutral-400 leading-relaxed">{description}</p>
+      <span className="text-xs font-semibold uppercase tracking-wider text-neutral-500">{rarity}</span>
+    </CardParallaxTilt>
+  )
+}
+```

@@ -206,3 +206,143 @@ const glowProps = useHoverGlow({ glowColor: "rgba(236, 72, 153, 0.6)" })
 <Callout>
   **Tip:** Match the glow color to your button's background for a cohesive look.
 </Callout>
+
+## Use cases
+
+`GlowButton` delegates to `useHoverGlow`, which animates `boxShadow` and optionally `scale` on `whileHover`. The default glow shadow is built as `0 0 20px 5px rgba(59, 130, 246, 0.5)` (controlled by `intensity` which maps to `glowBlur`, and `glowSpread` which defaults to 5 in the hook). The `scale` default is 1.02, so the button barely grows while the glow expands. Reach for it when:
+
+- **Primary CTAs on dark backgrounds.** The drop-shadow glow is most legible against dark surfaces; a `glowColor` that matches the button background (`rgba(59, 130, 246, 0.5)` for a blue button) creates a clean halo.
+- **Feature card buttons.** A "Try it" or "Open" button inside a dark product card benefits from a color-matched glow that reinforces the card's accent color.
+- **Pricing plan highlights.** The featured plan's CTA can use a stronger `intensity={30}` to distinguish it from surrounding secondary buttons.
+- **Icon-only action buttons.** Small round icon buttons in toolbars or floating action bars can use a lower `intensity={12}` for a subtle focus indicator that goes beyond the default browser ring.
+
+Because the initial state includes a baseline shadow (`0 2px 8px rgba(0, 0, 0, 0.1)`), the button always looks slightly elevated and the hover glow is an additive enhancement rather than a jump from flat.
+
+## When to use / when not to use
+
+**Use `GlowButton` when:**
+
+- The button sits against a dark or neutral background where a glow shadow renders cleanly.
+- You want a hover effect that reinforces the button's own color rather than introducing motion across the page.
+- One or two glowing buttons per view are sufficient (primary CTA plus one secondary at most).
+
+**Reach for a different button when:**
+
+- The background is light or busy. A box-shadow glow disappears on white and blurs into multi-color backgrounds. Use [Lift Button](/docs/animations/buttons/lift) instead, which uses `translateY` and shadow depth rather than colored spread.
+- You need click feedback. `GlowButton` only activates on `whileHover` and has no `whileTap` behavior. Pair with [Press Button](/docs/animations/buttons/press) or add `whileTap={{ scale: 0.97 }}` via `...props` if tap confirmation matters.
+- The button is disabled. A glowing disabled button misleads users into thinking it is active. Suppress the glow with `pointer-events-none opacity-50` and do not render the glow variant.
+- You need a continuous ambient glow that doesn't depend on hover. `GlowButton` is hover-only; consider using a CSS `box-shadow` directly on your button for a static glow.
+
+## Accessibility notes
+
+`GlowButton` renders a `motion.button`, so button semantics, tab order, and keyboard activation are preserved without additional work.
+
+- **Focus visibility.** The `boxShadow` glow only fires on `whileHover`. Keyboard focus does not trigger `whileHover` in Motion, so keyboard users won't see the glow as a focus indicator. Make sure a CSS `:focus-visible` ring is present on your button class (e.g., `focus-visible:ring-2 focus-visible:ring-blue-400`).
+- **Don't rely on glow color to convey state.** If the glow is used to signal "this plan is selected" or "this action is primary," back it up with a text label or `aria-current`.
+- **Reduced motion.** The glow transition is 0.3 seconds with `easeOut`, so it is brief and unlikely to cause discomfort. Still, the `scale: 1.02` micro-growth can be disorienting for some users. To disable the scale:
+
+```tsx
+"use client"
+import { useReducedMotion } from "motion/react"
+import { GlowButton } from "@/components/animations/buttons/glow"
+
+function AccessibleGlow({ children }: { children: React.ReactNode }) {
+  const reduced = useReducedMotion()
+  return (
+    <GlowButton
+      // Pass intensity=0 to collapse the glow, and override scale via motion props.
+      intensity={reduced ? 0 : 20}
+      className="inline-flex h-11 items-center rounded-lg bg-blue-600 px-6 text-sm font-semibold text-white focus-visible:ring-2 focus-visible:ring-blue-400"
+    >
+      {children}
+    </GlowButton>
+  )
+}
+```
+
+## Performance considerations
+
+- **`boxShadow` is not a compositor-only property.** Unlike `transform` and `opacity`, animating `boxShadow` triggers a repaint on most browsers because the shadow must be re-rasterized. The 0.3-second hover transition means this repaint happens once on enter and once on leave, not continuously. For a single button, this cost is negligible.
+- **`scale: 1.02` is compositor-safe.** The micro-scale applied on hover runs as a compositor transform and does not cause layout.
+- **Avoid glow on frequently re-rendered components.** If the parent component re-renders at high frequency (e.g., inside a real-time data feed), the `motion.button` will re-reconcile on every render. Memoize the parent or extract the button to a stable subtree.
+- **`useHoverGlow` hook overhead.** The hook constructs shadow strings and returns a static `MotionProps` object on every render. It contains no subscriptions or side effects, so re-renders are cheap. The result is not memoized inside the hook, but the strings are simple string concatenations.
+
+## Customization examples
+
+### Warm amber glow for a premium upgrade button
+
+```tsx
+<GlowButton
+  glowColor="rgba(245, 158, 11, 0.6)"
+  intensity={25}
+  className="inline-flex h-11 items-center rounded-lg bg-gradient-to-r from-amber-400 to-orange-500 px-6 text-sm font-semibold text-white"
+>
+  Upgrade to Pro
+</GlowButton>
+```
+
+### Subtle glow on a secondary dark button
+
+A lower `intensity` keeps the effect understated without eliminating it:
+
+```tsx
+<GlowButton
+  glowColor="rgba(139, 92, 246, 0.4)"
+  intensity={12}
+  className="inline-flex h-11 items-center rounded-lg bg-neutral-800 px-6 text-sm font-semibold text-white border border-neutral-700"
+>
+  View source
+</GlowButton>
+```
+
+### Matched glow color on a green success button
+
+```tsx
+<GlowButton
+  glowColor="rgba(34, 197, 94, 0.5)"
+  intensity={22}
+  className="inline-flex h-11 items-center rounded-lg bg-green-600 px-6 text-sm font-semibold text-white"
+>
+  Confirm
+</GlowButton>
+```
+
+## Real-world examples
+
+### Pricing card featured plan CTA
+
+The highlighted plan button uses a stronger glow to draw the eye compared to sibling plan buttons:
+
+```tsx
+<div className="rounded-xl border-2 border-blue-500 bg-white dark:bg-neutral-900 p-8">
+  <p className="text-xs font-semibold uppercase tracking-widest text-blue-600">Most popular</p>
+  <p className="mt-2 text-4xl font-bold text-neutral-900 dark:text-white">$49 / mo</p>
+  <GlowButton
+    glowColor="rgba(59, 130, 246, 0.5)"
+    intensity={28}
+    className="mt-6 inline-flex w-full items-center justify-center rounded-lg bg-blue-600 h-11 text-sm font-semibold text-white focus-visible:ring-2 focus-visible:ring-blue-400"
+  >
+    Get Pro access
+  </GlowButton>
+</div>
+```
+
+### Dark navbar action button
+
+A glow-on-hover effect in a dark header makes the CTA feel interactive without occupying more space:
+
+```tsx
+<nav className="flex h-16 items-center justify-between bg-neutral-950 px-6">
+  <span className="text-sm font-semibold text-white">Acme</span>
+  <div className="flex items-center gap-4">
+    <a href="/docs" className="text-sm text-neutral-400 hover:text-white">Docs</a>
+    <GlowButton
+      glowColor="rgba(99, 102, 241, 0.55)"
+      intensity={18}
+      className="inline-flex h-9 items-center rounded-lg bg-indigo-600 px-4 text-sm font-semibold text-white"
+    >
+      Sign up
+    </GlowButton>
+  </div>
+</nav>
+```

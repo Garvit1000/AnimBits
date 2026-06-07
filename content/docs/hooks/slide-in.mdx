@@ -339,3 +339,169 @@ const slideProps = useSlideIn({
   Feature card
 </motion.div>
 ```
+
+## Use cases
+
+`useSlideIn` returns `MotionProps` with `initial` (containing the starting x or y offset plus `opacity: initialOpacity`), `whileInView` (setting `x: 0`, `y: 0`, `opacity: 1`), `viewport`, and `transition`. Spread the props onto any `motion.*` element.
+
+- **Section-level text blocks.** A `motion.div` containing a headline and body copy with `direction: "left"` and `distance: 60` gives each section a clean lateral entrance as the user scrolls.
+- **Alternating two-column layouts.** Left column with `direction: "left"`, right column with `direction: "right"`, staggered by `delay: 0.1` creates a symmetrical pincer entrance.
+- **Sidebars and drawer panels.** A `motion.aside` with `direction: "left"` and `distance: 300` slides in from off-screen when toggled. Pair with `AnimatePresence` for the exit.
+- **Toast and notification banners.** A `motion.div` with `direction: "down"` and `distance: 80` drops in from the top of the viewport. A bounce ease (`[0.68, -0.55, 0.265, 1.55]`) makes it feel lively.
+- **Staggered feature lists.** Each list item slides in from the left with a `delay: index * 0.07` to produce a cascading reveal as the section enters the viewport.
+
+## When to use / when not to use
+
+**Use `useSlideIn` directly when:**
+
+- You need the slide effect on a custom element, such as a `motion.section`, `motion.article`, or a custom sidebar component.
+- You want to compose `useSlideIn` with [useFadeIn](/docs/hooks/fade-in) to produce a slide-plus-fade by merging their `initial` and `whileInView` objects.
+- You need `direction: "up"` or `direction: "down"` (vertical slides), which is specific to `useSlideIn`.
+
+**Avoid `useSlideIn` when:**
+
+- The element is very large (full-viewport width or height). A large `distance` on a full-screen element creates a dramatic layout jump. Use `distance: 20` to 30 for section-level elements.
+- The slide direction conflicts with the page's reading flow. A right-to-left slide on a left-to-right reading layout can feel counter-intuitive. Match the direction to the user's expected reading path.
+- You need a one-shot entrance on a modal or dialog. Modals are not in the viewport scroll flow, so `whileInView` may not fire as expected. Use `animate` directly or `AnimatePresence` with `useScaleIn` instead.
+
+## Accessibility notes
+
+`useSlideIn` uses `whileInView` and sets `initial.opacity: 0`. The element exists in the DOM from mount but is hidden.
+
+Respect `prefers-reduced-motion` by returning only the fade (opacity) change, dropping the translate:
+
+```tsx
+"use client"
+import { motion } from "motion/react"
+import { useReducedMotion } from "motion/react"
+import { useSlideIn } from "@/lib/use-slide-in"
+import { useFadeIn } from "@/lib/use-fade-in"
+
+export function SectionBlock({ children }: { children: React.ReactNode }) {
+  const reduced = useReducedMotion()
+  const slideProps = useSlideIn({ direction: "left", distance: 50, duration: 0.5 })
+  const fadeProps = useFadeIn({ duration: 0.5 })
+
+  return (
+    <motion.section
+      {...(reduced ? fadeProps : slideProps)}
+      className="py-16"
+    >
+      {children}
+    </motion.section>
+  )
+}
+```
+
+Additional guidance:
+
+- Content that starts off-screen (`x: -distance`) is technically in the DOM but painted outside the viewport. Screen readers access it normally. Ensure that `initialOpacity: 0` does not cause content to be skipped by assistive technology that tests visibility by opacity.
+- For drawer-style slides that conditionally render (mount/unmount), use `AnimatePresence` so the exit animation plays before the element is removed from the DOM and keyboard focus is not lost abruptly.
+
+## Performance considerations
+
+- `useSlideIn` animates `x` or `y` (transforms) and `opacity`. Both are compositor properties. No layout or paint is triggered.
+- `whileInView` uses an `IntersectionObserver`. With `viewport: "once"` (default), the observer disconnects after the first intersection.
+- For large scroll pages with dozens of slide-in elements, each element has its own `IntersectionObserver` instance. Framer Motion batches intersection callbacks efficiently, but for very long pages (100 or more elements), consider using the Framer Motion `variants` system with `staggerChildren` on a parent, which uses a single observer for the whole list.
+- The `distance` option determines the initial translated position. Large `distance` values (above 200) on many elements mean more content is rendered off-screen. This does not affect performance directly but can affect how scroll restoration behaves on page reload.
+
+## Customization examples
+
+### Feature section with left-right alternating slides
+
+```tsx
+import { motion } from "motion/react"
+import { useSlideIn } from "@/lib/use-slide-in"
+
+interface Feature {
+  title: string
+  description: string
+  image: string
+}
+
+export function AlternatingFeature({ feature, index }: { feature: Feature; index: number }) {
+  const isEven = index % 2 === 0
+  const textSlide = useSlideIn({ direction: isEven ? "left" : "right", distance: 60, duration: 0.55 })
+  const imageSlide = useSlideIn({ direction: isEven ? "right" : "left", distance: 60, duration: 0.55, delay: 0.1 })
+
+  return (
+    <div className={`flex gap-12 items-center ${isEven ? "" : "flex-row-reverse"}`}>
+      <motion.div {...textSlide} className="flex-1">
+        <h3 className="text-2xl font-bold">{feature.title}</h3>
+        <p className="mt-3 text-neutral-500">{feature.description}</p>
+      </motion.div>
+      <motion.img {...imageSlide} src={feature.image} alt={feature.title} className="flex-1 rounded-2xl object-cover" />
+    </div>
+  )
+}
+```
+
+### Toast notification that slides down
+
+```tsx
+"use client"
+import { motion, AnimatePresence } from "motion/react"
+import { useSlideIn } from "@/lib/use-slide-in"
+
+export function Toast({ message, visible }: { message: string; visible: boolean }) {
+  const slideProps = useSlideIn({
+    direction: "down",
+    distance: 80,
+    duration: 0.4,
+    ease: [0.68, -0.55, 0.265, 1.55],
+  })
+
+  return (
+    <AnimatePresence>
+      {visible && (
+        <motion.div
+          {...slideProps}
+          role="status"
+          className="fixed right-4 top-4 z-50 rounded-xl bg-neutral-900 px-5 py-3 text-sm text-white shadow-lg"
+        >
+          {message}
+        </motion.div>
+      )}
+    </AnimatePresence>
+  )
+}
+```
+
+## Real-world examples
+
+### Landing page features section with staggered slides
+
+```tsx
+"use client"
+import { motion } from "motion/react"
+import { useSlideIn } from "@/lib/use-slide-in"
+
+const features = [
+  { icon: "A", title: "Accessible", description: "Reduced motion support built in." },
+  { icon: "P", title: "Performant", description: "Compositor-only animations." },
+  { icon: "C", title: "Composable", description: "Hooks that work on any element." },
+]
+
+export function FeaturesSection() {
+  return (
+    <section className="mx-auto max-w-5xl px-6 py-24">
+      <motion.h2 {...useSlideIn({ direction: "up", distance: 40, duration: 0.5 })} className="text-center text-4xl font-black">
+        Why use AnimBits hooks?
+      </motion.h2>
+      <div className="mt-16 grid grid-cols-1 gap-8 md:grid-cols-3">
+        {features.map((f, i) => {
+          const slideProps = useSlideIn({ direction: "up", distance: 40, duration: 0.5, delay: i * 0.1 })
+          return (
+            <motion.div key={f.title} {...slideProps} className="rounded-2xl border border-neutral-200 p-6">
+              <div className="mb-4 flex h-10 w-10 items-center justify-center rounded-xl bg-blue-100 text-blue-600 font-bold">
+                {f.icon}
+              </div>
+              <h3 className="font-semibold">{f.title}</h3>
+              <p className="mt-2 text-sm text-neutral-400">{f.description}</p>
+            </motion.div>
+          )
+        })}
+      </div>
+    </section>
+  )
+}

@@ -253,4 +253,188 @@ import { CardHoverLift } from "@/components/animations/cards/hover-lift"
 | `addShadow` | `boolean` | `true` | Whether to add shadow on lift |
 | `className` | `string` | `undefined` | Additional CSS classes |
 
+## Use cases
+
+`CardHoverLift` delegates to `useHoverLift`, which translates the card `y: -liftDistance` (default `8px`) on hover and deepens the `boxShadow` proportionally (shadow blur = `liftDistance * 2`, spread = `liftDistance / 4`). The `scale` prop in the hook defaults to `1`, so no scale is applied unless you call the hook directly. The animation runs over `0.2s easeOut`, which feels immediate but not jarring.
+
+Use it when:
+
+- **E-commerce product grids.** Every card in a grid lifts independently on hover, making it feel clickable without a disruptive animation.
+- **Blog post listings.** Horizontal or vertical card stacks where you want hover feedback without color change or glow.
+- **Service or feature tiles.** A row of tiles on a landing page where each one lifts to draw attention.
+- **Dashboard panels.** Clickable stat cards or recent-activity rows that need to signal interactivity.
+- **App navigation cards.** Large tap-target cards linking to sub-sections.
+
+## When to use / when not to use
+
+**Use `CardHoverLift` when:**
+
+- Cards are interactive (links, buttons, navigable items) and you want a physical "pick up" affordance.
+- The layout is stable and you can afford an `8px` upward shift without overlapping adjacent content. `z-index` management may be required in tight grids.
+
+**Reach for a different component when:**
+
+- You want a glow or color effect rather than a physical movement. Use [CardHoverGlow](/docs/animations/cards/hover-glow) instead.
+- Cards are very small (under 60px tall) and an 8px lift is proportionally too dramatic. Reduce `liftDistance` to `4` or use `addShadow={false}` with only a shadow change.
+- The cards are inside a container with `overflow: hidden` at a height that clips the lifted card. Lift clipping looks broken; switch to [CardHoverGlow](/docs/animations/cards/hover-glow) or remove the clip.
+- The card is purely informational (non-interactive). Applying a hover lift implies clickability, which is misleading for non-interactive content.
+
+## Accessibility notes
+
+- **`y` translation is a transform.** It does not affect the accessibility tree, tab order, or focus outline position. The browser moves the painted card but the hit area and focus ring may remain at the original position in some browsers. Test with keyboard navigation.
+- **Cursor set to `pointer`.** The component applies `cursor-pointer`. This is correct when the card is interactive; remove it with `className="cursor-default"` if the lift is purely cosmetic.
+- **Respect `prefers-reduced-motion`.** The 8px upward translate is a positional shift. Some users find positional motion uncomfortable even at small distances:
+
+```tsx
+"use client"
+import { useReducedMotion } from "motion/react"
+import { CardHoverLift } from "@/components/animations/cards/hover-lift"
+
+function AccessibleLiftCard({ children }: { children: React.ReactNode }) {
+  const reduced = useReducedMotion()
+  return (
+    <CardHoverLift
+      liftDistance={reduced ? 0 : 8}
+      duration={reduced ? 0 : 0.2}
+      addShadow={!reduced}
+      className="rounded-xl border border-neutral-200 dark:border-neutral-800 bg-white dark:bg-neutral-900 p-6"
+    >
+      {children}
+    </CardHoverLift>
+  )
+}
+```
+
+- **Do not rely on the lift to signal the only interactive affordance.** Combine it with a visible focus ring and underline or color change on the card's text link so keyboard users get the same signal without hover.
+
+## Performance considerations
+
+- **`y` translation and `boxShadow` are both GPU-composited.** The `y` translate runs as a transform; `boxShadow` changes can also be composited in Chrome and Firefox. Neither triggers layout.
+- **`duration: 0.2` is intentionally fast.** A card that lifts in 200ms and returns equally quickly produces no noticeable lag when moving through a grid. Increasing duration to `0.4+` makes the return animation feel slow and sticky.
+- **Shadow recalculation happens once per hover enter/leave.** The shadow is computed inside `useHoverLift` at hook call time, not on each frame, so there is no per-frame JavaScript cost.
+- **`z-index` for overlapping neighbors.** When a card in a tight grid lifts 8px, it may render underneath a neighbor's shadow if stacking context is not managed. Add `className="relative z-10"` inside a `hover:z-20` group if you see layering issues.
+
+## Customization examples
+
+### Gentle lift for a dense grid
+
+A smaller `liftDistance` and no scale change prevents crowding:
+
+```tsx
+import { CardHoverLift } from "@/components/animations/cards/hover-lift"
+
+<CardHoverLift
+  liftDistance={4}
+  duration={0.15}
+  className="rounded-lg border border-neutral-200 dark:border-neutral-800 bg-white dark:bg-neutral-900 p-4"
+>
+  <p className="font-medium text-sm">Quick metric</p>
+  <p className="text-2xl font-bold mt-1">1,284</p>
+</CardHoverLift>
+```
+
+### Dramatic lift for a hero card
+
+A larger `liftDistance` for a single featured card:
+
+```tsx
+<CardHoverLift
+  liftDistance={16}
+  duration={0.25}
+  className="rounded-2xl overflow-hidden border border-neutral-200 dark:border-neutral-800 bg-white dark:bg-neutral-900"
+>
+  <img src="/featured.jpg" alt="Featured post" className="w-full h-56 object-cover" />
+  <div className="p-6">
+    <h3 className="text-xl font-bold">Featured Article</h3>
+    <p className="text-neutral-500 dark:text-neutral-400 text-sm mt-2">10 min read</p>
+  </div>
+</CardHoverLift>
+```
+
+### Lift without shadow (flat design)
+
+```tsx
+<CardHoverLift
+  addShadow={false}
+  liftDistance={6}
+  className="rounded-xl border border-neutral-200 dark:border-neutral-800 bg-white dark:bg-neutral-900 p-6"
+>
+  <p className="font-semibold">Flat card, no shadow</p>
+</CardHoverLift>
+```
+
+## Real-world examples
+
+### E-commerce product grid
+
+```tsx
+import { CardHoverLift } from "@/components/animations/cards/hover-lift"
+
+interface ProductCardProps {
+  image: string
+  name: string
+  price: string
+  badge?: string
+}
+
+export function ProductCard({ image, name, price, badge }: ProductCardProps) {
+  return (
+    <CardHoverLift
+      liftDistance={8}
+      duration={0.2}
+      className="rounded-2xl overflow-hidden border border-neutral-200 dark:border-neutral-800 bg-white dark:bg-neutral-900 flex flex-col"
+    >
+      <div className="relative">
+        <img src={image} alt={name} className="w-full h-52 object-cover" />
+        {badge && (
+          <span className="absolute top-3 left-3 rounded-full bg-neutral-900 dark:bg-white px-2.5 py-0.5 text-xs font-semibold text-white dark:text-neutral-900">
+            {badge}
+          </span>
+        )}
+      </div>
+      <div className="p-4 flex flex-col gap-1 flex-1">
+        <p className="font-semibold text-sm">{name}</p>
+        <p className="text-lg font-bold mt-auto">{price}</p>
+        <button className="mt-3 w-full rounded-lg bg-neutral-900 dark:bg-white py-2 text-xs font-semibold text-white dark:text-neutral-900 hover:bg-neutral-700 dark:hover:bg-neutral-100 transition-colors">
+          Add to cart
+        </button>
+      </div>
+    </CardHoverLift>
+  )
+}
+```
+
+### Blog post listing
+
+```tsx
+import { CardHoverLift } from "@/components/animations/cards/hover-lift"
+
+export function BlogPostCard({
+  slug,
+  title,
+  excerpt,
+  date,
+  readTime,
+}: {
+  slug: string
+  title: string
+  excerpt: string
+  date: string
+  readTime: number
+}) {
+  return (
+    <a href={`/blog/${slug}`} className="block focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-neutral-900 dark:focus-visible:ring-white rounded-2xl">
+      <CardHoverLift
+        liftDistance={6}
+        duration={0.18}
+        className="rounded-2xl border border-neutral-200 dark:border-neutral-800 bg-white dark:bg-neutral-900 p-6"
+      >
+        <p className="text-xs text-neutral-400">{date} &middot; {readTime} min read</p>
+        <h3 className="font-bold text-lg mt-2 leading-snug">{title}</h3>
+        <p className="text-sm text-neutral-500 dark:text-neutral-400 mt-2 line-clamp-2">{excerpt}</p>
+      </CardHoverLift>
+    </a>
+  )
+}
+```
 

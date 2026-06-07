@@ -136,3 +136,159 @@ export default function Example() {
 | `size` | `number` | `40` | Size of the loader in pixels |
 | `color` | `string` | `"currentColor"` | Color of the loader |
 | `duration` | `number` | `2` | Animation duration in seconds |
+
+## Use cases
+
+`LoaderMorphing` is an **indeterminate** loader. A single solid `<div>` simultaneously transitions its `borderRadius` through `["20%", "50%", "20%", "50%", "20%"]`, its `rotate` through `[0, 90, 180, 270, 360]`, and its `scale` through `[1, 1.2, 1, 1.2, 1]` in lockstep over `duration` seconds. The shape appears to breathe and spin, cycling from a soft rectangle to a circle and back. Reach for it when:
+
+- **Hero or splash loading screens.** A single prominent morphing shape holds visual attention during an initial page or resource load.
+- **Creative or artistic products.** The shape-shifting aesthetic suits design tools, generative art apps, or marketing microsites.
+- **Full-page or modal overlays.** Large at `size={80}` or bigger, it becomes a statement piece for a blocking transition.
+- **Branded wait states.** Pair a brand color with a slow `duration={3}` for a meditative, on-brand loading experience.
+
+## When to use / when not to use
+
+**Use morphing when:**
+
+- The loading area is generous (40 px or more) and you want a more expressive, sculptural loader.
+- The product tone is creative, playful, or experimental.
+
+**Reach for something else when:**
+
+- **You know the progress percentage.** Use [Liquid Progress](/docs/animations/loaders/liquid-progress).
+- **The context is compact.** Below about 24 px the morphing shape loses legibility and looks like a blinking blob. Use a [Spinner](/docs/animations/loaders/spinner) at small sizes.
+- **The UI is formal or dense.** A shape that simultaneously scales, rotates, and changes `borderRadius` is visually aggressive in a data table or admin panel. Choose [Spinner](/docs/animations/loaders/spinner) or [Bars](/docs/animations/loaders/bars).
+- **You are loading structured content.** Use a [Skeleton](/docs/animations/loaders/skeleton).
+
+## Accessibility notes
+
+`LoaderMorphing` is a single styled `<div>`. Screen readers see nothing without additional markup.
+
+- **Wrap in a live region:**
+
+```tsx
+<div role="status">
+  <LoaderMorphing />
+  <span className="sr-only">Loading...</span>
+</div>
+```
+
+- **Respect reduced motion.** The loader combines three simultaneous continuous animations. All three should be slowed or stopped for users who prefer less motion:
+
+```tsx
+"use client"
+import { useReducedMotion } from "motion/react"
+import { LoaderMorphing } from "@/components/animations/loaders/morphing"
+
+function AccessibleMorphing() {
+  const reduced = useReducedMotion()
+  return (
+    <div role="status">
+      <LoaderMorphing duration={reduced ? 12 : 2} />
+      <span className="sr-only">Loading...</span>
+    </div>
+  )
+}
+```
+
+- **Do not rely on motion alone.** The `sr-only` label is the only signal for assistive tech or users who disable animation.
+
+## Performance considerations
+
+- **All three animated properties are transforms or visual-only.** `rotate` and `scale` are compositor-friendly transforms. `borderRadius` changes the paint layer but does not trigger layout. Together they are significantly cheaper than animating `width`, `height`, or `margin`.
+- **Unmount when done.** `repeat: Infinity` keeps the animation loop alive. Use `{loading && <LoaderMorphing />}` rather than toggling visibility.
+- **One instance at a time.** Three simultaneous properties on one element is efficient. Mounting many `LoaderMorphing` instances together multiplies the compositor work. For repeated rows, use a [Skeleton](/docs/animations/loaders/skeleton).
+
+## Customization examples
+
+### Compact and understated
+
+Smaller size with a muted color:
+
+```tsx
+<LoaderMorphing size={28} color="#94a3b8" duration={2.5} />
+```
+
+### Bold hero loader
+
+Large, prominent, and slow for a cinematic effect:
+
+```tsx
+<LoaderMorphing size={80} color="#6366f1" duration={3} />
+```
+
+### Fast and energetic
+
+A shorter duration reads as urgency or system activity:
+
+```tsx
+<LoaderMorphing size={40} color="#f97316" duration={1} />
+```
+
+## Real-world examples
+
+### Full-page blocking overlay
+
+```tsx
+"use client"
+import { LoaderMorphing } from "@/components/animations/loaders/morphing"
+
+export function AppLoadingOverlay({ loading }: { loading: boolean }) {
+  if (!loading) return null
+
+  return (
+    <div
+      role="status"
+      className="fixed inset-0 z-50 flex flex-col items-center justify-center gap-5 bg-white/90 backdrop-blur-sm dark:bg-neutral-950/90"
+    >
+      <LoaderMorphing size={64} color="#6366f1" duration={2.5} />
+      <p className="text-sm font-medium text-neutral-500">Preparing your workspace...</p>
+      <span className="sr-only">Loading application...</span>
+    </div>
+  )
+}
+```
+
+### Modal with data fetch
+
+```tsx
+"use client"
+import { useState, useEffect } from "react"
+import { LoaderMorphing } from "@/components/animations/loaders/morphing"
+
+export function ReportModal({ open, reportId }: { open: boolean; reportId: string }) {
+  const [loading, setLoading] = useState(true)
+  const [data, setData] = useState<string | null>(null)
+
+  useEffect(() => {
+    if (!open) return
+    setLoading(true)
+    fetchReport(reportId).then((d) => {
+      setData(d)
+      setLoading(false)
+    })
+  }, [open, reportId])
+
+  if (!open) return null
+
+  return (
+    <div className="fixed inset-0 z-40 flex items-center justify-center bg-black/50">
+      <div className="w-full max-w-lg rounded-2xl bg-white p-8 dark:bg-neutral-900">
+        {loading ? (
+          <div role="status" className="flex flex-col items-center gap-4 py-8">
+            <LoaderMorphing size={48} color="#3b82f6" duration={2} />
+            <span className="text-sm text-neutral-500">Generating report...</span>
+            <span className="sr-only">Loading report...</span>
+          </div>
+        ) : (
+          <p className="text-sm">{data}</p>
+        )}
+      </div>
+    </div>
+  )
+}
+
+async function fetchReport(_id: string): Promise<string> {
+  return "Report data here"
+}
+```

@@ -266,3 +266,158 @@ import { MagneticButton } from "@/components/animations/buttons/magnetic"
 <Callout type="warn">
   **Mobile:** Consider disabling on touch devices where hover doesn't apply.
 </Callout>
+
+## Use cases
+
+`MagneticButton` uses `useMagnetic` to track `mousemove` events relative to the button's bounding rect, then drives two `useSpring` values (`springX`, `springY`) that translate the button toward the cursor. The default `strength` is 30, meaning the cursor's distance from center is multiplied by `30 / 100 = 0.3` to get the translation in pixels. Spring defaults are `stiffness: 150` and `damping: 15`, which produce a slightly elastic follow-through. Reach for it when:
+
+- **Hero landing page CTAs.** A single large "Get started" or "Request demo" button in a sparse hero section is the canonical use case. The magnetic pull invites cursor exploration.
+- **Portfolio or creative site navigation.** Large pill-shaped nav links that attract the cursor reinforce a playful, crafted identity.
+- **Floating action buttons.** A fixed-position FAB in the corner of the screen can use a higher `strength` (40 to 50) since it is isolated and the user is deliberately targeting it.
+- **Empty-state call to action.** When there is nothing else on the screen to interact with, a magnetic CTA keeps the interaction feeling alive.
+
+Because the translation uses spring physics, the button overshoots slightly and snaps back when the cursor leaves, which is more engaging than a linear follow.
+
+## When to use / when not to use
+
+**Use `MagneticButton` when:**
+
+- The button is large and isolated enough that the displacement doesn't overlap adjacent content.
+- The interaction is mouse-driven (desktop-first layouts). On touch devices, `onMouseMove` never fires, so the component renders as a standard button.
+- You want to signal "this is the primary action" without a color or size change.
+
+**Reach for a different button when:**
+
+- You have multiple buttons close together. When two or three magnetic buttons are adjacent, moving the cursor between them causes jittery simultaneous displacements. Use [Lift Button](/docs/animations/buttons/lift) or [Glow Button](/docs/animations/buttons/glow) for tightly grouped actions instead.
+- The button is inside a scrollable container. `getBoundingClientRect` returns viewport-relative coordinates, so the magnet works correctly, but `translateX`/`translateY` offsets during fast scroll can cause the button to appear to drift. Test carefully.
+- You're building for touch-first audiences. The hook has no touch fallback; on mobile the button is visually identical to an unstyled `motion.button`.
+- The button is inside a form where precise targeting matters. A button that moves away from the cursor as the user aims at it can cause misclicks; stick to [Press Button](/docs/animations/buttons/press) for form submissions.
+
+## Accessibility notes
+
+- **The magnetic movement is purely visual.** The button's DOM position and accessible name are unaffected by `springX`/`springY`. Screen readers announce it as a normal button.
+- **Keyboard activation is unaffected.** `Enter` and `Space` trigger `click` on the `motion.button` regardless of where the spring values have translated it.
+- **Focus ring visibility.** The spring transform may shift the button slightly so its focus ring clips against a container boundary. Ensure `overflow: visible` on the button's parent, or add a generous `ring-offset`.
+- **Reduced motion.** The spring physics produce a fluid, oscillating translation. This is more motion-intensive than a simple opacity fade. Disable the magnetic effect entirely for users who prefer reduced motion:
+
+```tsx
+"use client"
+import { useReducedMotion } from "motion/react"
+import { MagneticButton } from "@/components/animations/buttons/magnetic"
+
+function AccessibleMagnetic({ children }: { children: React.ReactNode }) {
+  const reduced = useReducedMotion()
+  // strength=0 means x.set(0) and y.set(0) on every mousemove, so there is no displacement.
+  return (
+    <MagneticButton
+      strength={reduced ? 0 : 30}
+      className="inline-flex h-11 items-center rounded-lg bg-blue-600 px-6 text-sm font-semibold text-white focus-visible:ring-2 focus-visible:ring-blue-400"
+    >
+      {children}
+    </MagneticButton>
+  )
+}
+```
+
+- **Touch devices.** The hook only binds `onMouseMove` and `onMouseLeave`. On touch devices the button renders normally with no displacement, which is the correct fallback.
+
+## Performance considerations
+
+- **`useSpring` values are motion values, not React state.** The spring animation updates `springX` and `springY` on every animation frame without triggering a React re-render. The button's DOM node is updated directly by Motion's reconciler. This is the most efficient path for per-frame updates.
+- **`transform: translateX/Y` is compositor-safe.** The translation runs on the compositor thread with no layout recalculation.
+- **`mousemove` fires at pointer rate.** On a 120Hz display, `handleMouseMove` runs up to 120 times per second. The handler only calls `x.set(...)` and `y.set(...)`, which are synchronous calls to Motion's internal store; they do not schedule React renders.
+- **One `useMagnetic` instance per button.** Each instance holds two `MotionValue` and two `useSpring` subscriptions. Keep the number of active `MagneticButton` components low (1 to 3 per viewport) to avoid accumulating spring subscriptions.
+- **Spring continues briefly after `mouseleave`.** `x.set(0)` and `y.set(0)` on mouse leave trigger a spring return animation. The spring naturally comes to rest in about 0.5 to 1 second depending on `damping`. The button stays mounted throughout.
+
+## Customization examples
+
+### Snappy, high-stiffness spring for a toolbar icon
+
+Lower displacement, higher spring stiffness, and higher damping for a contained effect:
+
+```tsx
+<MagneticButton
+  strength={18}
+  stiffness={300}
+  damping={25}
+  className="inline-flex h-10 w-10 items-center justify-center rounded-lg bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700"
+  aria-label="Settings"
+>
+  <svg className="h-4 w-4 text-neutral-600 dark:text-neutral-300" viewBox="0 0 20 20" fill="currentColor">
+    <path fillRule="evenodd" d="M11.49 3.17c-.38-1.56-2.6-1.56-2.98 0a1.532..." clipRule="evenodd" />
+  </svg>
+</MagneticButton>
+```
+
+### Slow, elastic pull for a hero CTA
+
+Low stiffness and low damping create a dreamy, elastic follow-through:
+
+```tsx
+<MagneticButton
+  strength={45}
+  stiffness={60}
+  damping={10}
+  className="inline-flex h-14 items-center rounded-full bg-gradient-to-r from-purple-600 to-pink-600 px-10 text-base font-bold text-white"
+>
+  Join the waitlist
+</MagneticButton>
+```
+
+### Subtle magnetic effect for a secondary link
+
+A very low `strength` reads as a gentle nudge rather than a full attraction:
+
+```tsx
+<MagneticButton
+  strength={12}
+  stiffness={200}
+  damping={20}
+  className="inline-flex h-9 items-center rounded-lg border border-neutral-200 dark:border-neutral-700 px-4 text-sm font-medium text-neutral-700 dark:text-neutral-300"
+>
+  Read docs
+</MagneticButton>
+```
+
+## Real-world examples
+
+### Portfolio hero with a single magnetic CTA
+
+Isolated on a clean background, the full default strength feels deliberate:
+
+```tsx
+<section className="flex min-h-screen flex-col items-center justify-center gap-8 bg-white dark:bg-neutral-950">
+  <h1 className="text-6xl font-bold tracking-tight text-neutral-900 dark:text-white">
+    Design engineer.
+  </h1>
+  <p className="max-w-sm text-center text-lg text-neutral-500">
+    I build interfaces that feel good to use.
+  </p>
+  <MagneticButton
+    strength={35}
+    stiffness={150}
+    damping={15}
+    className="inline-flex h-12 items-center rounded-full bg-neutral-900 dark:bg-white px-8 text-sm font-semibold text-white dark:text-neutral-900"
+  >
+    View my work
+  </MagneticButton>
+</section>
+```
+
+### SaaS product page with a magnetic primary and a plain secondary
+
+Using magnetic for only the primary action keeps the hierarchy clear:
+
+```tsx
+<div className="flex items-center gap-4">
+  <MagneticButton
+    strength={28}
+    className="inline-flex h-11 items-center rounded-lg bg-blue-600 px-6 text-sm font-semibold text-white"
+  >
+    Start free trial
+  </MagneticButton>
+  <button className="inline-flex h-11 items-center rounded-lg border border-neutral-200 dark:border-neutral-700 px-6 text-sm font-semibold text-neutral-700 dark:text-neutral-300">
+    Watch demo
+  </button>
+</div>
+```

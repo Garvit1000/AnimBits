@@ -159,3 +159,153 @@ export default function Example() {
 | `size` | `number` | `20` | Size of each blob in pixels |
 | `color` | `string` | `"currentColor"` | Color of the blobs |
 | `duration` | `number` | `1.5` | Animation duration in seconds |
+
+## Use cases
+
+`LoaderGooeyBlobs` is an **indeterminate** loader that uses an SVG `feGaussianBlur` plus `feColorMatrix` filter to create the liquid merging effect. Three circles translate on `x` and scale, and where their blurred edges overlap the color-matrix threshold kicks in, making them appear to fuse. Reach for it when:
+
+- **Creative or design-forward products.** The organic, fluid look is a deliberate style choice. It works well in portfolio sites, design tools, or marketing pages where visual distinctiveness matters.
+- **Splash or full-page loading screens.** At `size={30}` or larger, the merging blobs become a strong visual centerpiece during an initial app load.
+- **Brand moments.** If your brand color is in `color`, a single large `LoaderGooeyBlobs` on a loading screen communicates brand identity while users wait.
+
+## When to use / when not to use
+
+**Use gooey blobs when:**
+
+- The aesthetic is deliberately playful, organic, or creative.
+- The loading area has enough space for the blobs to breathe (they translate by 15 px in each direction, so tight layouts will clip them).
+
+**Reach for something else when:**
+
+- **The product is formal or data-focused.** A financial dashboard, admin panel, or healthcare tool should use a [Spinner](/docs/animations/loaders/spinner) or [Bars](/docs/animations/loaders/bars) instead.
+- **You know the progress percentage.** Use [Liquid Progress](/docs/animations/loaders/liquid-progress).
+- **You are loading structured content.** Use a [Skeleton](/docs/animations/loaders/skeleton) to preserve layout.
+- **Multiple loaders appear on screen at once.** The SVG filter is applied per-instance. Several gooey loaders simultaneously both look chaotic and carry a small filter-rendering cost.
+- **The container clips overflow.** The blobs translate outside their natural bounding box. Make sure the parent does not have `overflow-hidden` unless you have accounted for the travel distance.
+
+## Accessibility notes
+
+The SVG filter element and the blob `<div>` nodes are all presentational. Screen readers receive nothing meaningful without extra markup.
+
+- **Wrap in a live region:**
+
+```tsx
+<div role="status">
+  <LoaderGooeyBlobs />
+  <span className="sr-only">Loading...</span>
+</div>
+```
+
+- **Respect reduced motion.** The merging effect relies on continuous oscillation, which may be uncomfortable for some users:
+
+```tsx
+"use client"
+import { useReducedMotion } from "motion/react"
+import { LoaderGooeyBlobs } from "@/components/animations/loaders/gooey-blobs"
+
+function AccessibleGooey() {
+  const reduced = useReducedMotion()
+  return (
+    <div role="status">
+      <LoaderGooeyBlobs duration={reduced ? 10 : 1.5} />
+      <span className="sr-only">Loading...</span>
+    </div>
+  )
+}
+```
+
+- **Do not rely on the animation to convey state.** The `sr-only` text is the only signal for screen-reader users or those who disable animations.
+
+## Performance considerations
+
+- **SVG filter cost.** The `feGaussianBlur` + `feColorMatrix` pipeline runs on the GPU via compositing, but the blur rasterization is heavier than a pure-transform animation. One instance is fast; rendering four or more simultaneously can cause frame drops on lower-end mobile devices.
+- **Transform-only motion, but filtered.** The `x` and `scale` animations are transform operations. The performance bottleneck is the GPU filter pass, not JavaScript.
+- **One instance per loading context.** Never mount multiple `LoaderGooeyBlobs` side by side. For repeated row-level loading, use a [Skeleton](/docs/animations/loaders/skeleton) or [Spinner](/docs/animations/loaders/spinner).
+- **Unmount when done.** `repeat: Infinity` keeps the animation and filter pipeline active. Use `{loading && <LoaderGooeyBlobs />}` to stop both.
+
+## Customization examples
+
+### Splash screen blob
+
+Large, centered, brand-colored for a full-page loading screen:
+
+```tsx
+<div role="status" className="flex flex-col items-center gap-4">
+  <LoaderGooeyBlobs size={40} color="#6366f1" duration={2} />
+  <span className="sr-only">Loading...</span>
+</div>
+```
+
+### Small inline version
+
+Tighter blobs for compact spaces:
+
+```tsx
+<LoaderGooeyBlobs size={12} color="currentColor" duration={1.2} />
+```
+
+### Slow and dreamy
+
+A longer duration makes the merging effect more hypnotic:
+
+```tsx
+<LoaderGooeyBlobs size={28} color="#a78bfa" duration={3} />
+```
+
+## Real-world examples
+
+### Portfolio page splash screen
+
+```tsx
+"use client"
+import { useState, useEffect } from "react"
+import { LoaderGooeyBlobs } from "@/components/animations/loaders/gooey-blobs"
+
+export function SplashScreen({ onReady }: { onReady: () => void }) {
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    // Simulate asset loading
+    const timer = setTimeout(() => {
+      setLoading(false)
+      onReady()
+    }, 2500)
+    return () => clearTimeout(timer)
+  }, [onReady])
+
+  if (!loading) return null
+
+  return (
+    <div
+      role="status"
+      className="fixed inset-0 z-50 flex flex-col items-center justify-center gap-6 bg-white dark:bg-neutral-950"
+    >
+      <LoaderGooeyBlobs size={36} color="#6366f1" duration={2} />
+      <span className="text-sm font-medium text-neutral-400">Loading experience...</span>
+      <span className="sr-only">Loading, please wait...</span>
+    </div>
+  )
+}
+```
+
+### Design tool processing state
+
+```tsx
+"use client"
+import { LoaderGooeyBlobs } from "@/components/animations/loaders/gooey-blobs"
+
+export function ProcessingBanner({ processing }: { processing: boolean }) {
+  if (!processing) return null
+
+  return (
+    <div
+      role="status"
+      className="flex items-center gap-3 rounded-full border border-violet-200 bg-violet-50 px-5 py-2 text-violet-700 dark:border-violet-800 dark:bg-violet-950/50 dark:text-violet-300"
+    >
+      <LoaderGooeyBlobs size={16} color="#7c3aed" duration={1.4} />
+      <span className="text-sm font-medium">Rendering...</span>
+      <span className="sr-only">Rendering in progress...</span>
+    </div>
+  )
+}
+```

@@ -168,3 +168,144 @@ import { TextTypewriter } from "@/components/animations/text/typewriter"
 | `speed` | `number` | `30` | Typing speed (characters per second) |
 | `cursor` | `boolean` | `true` | Show blinking cursor |
 | `cursorChar` | `string` | `"\|"` | Cursor character |
+
+## Use cases
+
+`TextTypewriter` types one character every `1000 / speed` milliseconds (default `speed=30` gives one character every ~33 ms). It uses `setDisplayedText` to progressively slice `children.slice(0, currentIndex)`, incrementing `currentIndex` via nested `setTimeout` calls. A blinking cursor (`opacity: [1, 0]` on a 0.5 s `reverse` repeat) is shown while incomplete and hidden when `isComplete` is true. Reach for it when:
+
+- **Terminal or CLI aesthetic.** A command-line style interface where output "types out" is the most natural fit.
+- **Chat or AI response simulation.** A message that appears to be written in real time creates engagement in chat UI demos and AI-powered interfaces.
+- **Onboarding prompts.** A question or instruction that types out step-by-step draws the user's attention and implies interactivity.
+- **Animated placeholder text.** A short "What do you want to build?" inside a search or prompt input that types itself as a hint.
+
+The blinking cursor closely mimics a real terminal cursor, making the effect credible in developer-tool and CLI contexts.
+
+## When to use / when not to use
+
+**Use typewriter when:**
+
+- The content is short (under 60 characters) and the reveal time is acceptable. At `speed=30`, a 50-character string completes in about 1.7 s.
+- The user is expected to wait for the text to finish before acting, or the text is decorative.
+
+**Reach for something else when:**
+
+- **Essential information.** The typewriter effect actively delays reading. Error messages, status alerts, confirmations, and labels that users need to act on should be fully visible immediately. Use [Fade In](/docs/animations/text/fade-in) or static text.
+- **Long text.** A 200-character paragraph at `speed=30` takes nearly 7 seconds to complete. Users will not wait. Increase `speed` significantly or skip the animation.
+- **Frequently changing text.** Each `children` change resets `displayedText` and `currentIndex` to 0, replaying the full animation. If text updates on a short interval, the typewriter restarts every time and never settles.
+- **You need the text to remain accessible during animation.** The partially typed text is the only thing in the DOM during the effect; incomplete characters are absent. For SEO or screen reader completeness, see the accessibility notes below.
+- **Pages with multiple typewriters.** More than one simultaneously typing element is hard to follow. Sequence them with `delay` or pick only the most important one.
+
+## Accessibility notes
+
+The component renders only the typed characters so far in the DOM. Screen readers will either read partial text as the component types (if in a live region) or announce nothing until they encounter the element (which may read partial content). Both outcomes are suboptimal.
+
+**Recommended pattern:** Add `aria-label` with the full final text so assistive technology announces the complete string immediately, regardless of animation state:
+
+```tsx
+<TextTypewriter
+  aria-label="Hello, I'm a typewriter effect!"
+  className="text-2xl font-bold"
+>
+  Hello, I'm a typewriter effect!
+</TextTypewriter>
+```
+
+**Avoid `aria-live` around a typewriter.** An `aria-live="polite"` or `aria-live="assertive"` region will announce every character addition as a separate update, creating extremely chatty screen reader output. Use `aria-label` on the element itself and keep it outside live regions.
+
+**Cursor accessibility.** The blinking cursor `<motion.span>` is a decorative character (`|`). It has no semantic role. Ensure it does not interfere with text selection or copying.
+
+**Reduced motion.** The typewriter types characters over time, which is a sustained animation. For users who prefer reduced motion, skip straight to the final state:
+
+```tsx
+"use client"
+import { useReducedMotion } from "motion/react"
+import { TextTypewriter } from "@/components/animations/text/typewriter"
+
+function AccessibleTypewriter({ children, ...props }: { children: string; [key: string]: unknown }) {
+  const reduced = useReducedMotion()
+  if (reduced) return <p {...props}>{children}</p>
+  return <TextTypewriter {...props}>{children}</TextTypewriter>
+}
+```
+
+## Performance considerations
+
+- **Chained `setTimeout` calls.** The component drives itself via `useEffect` + `setTimeout`, incrementing one character per call at `1000 / speed` ms. This is one timer at a time, not a `setInterval`, so cleanup is clean and no timers pile up. However, each timer fires a React state update and re-render.
+- **Re-render frequency.** At `speed=30`, the component re-renders ~30 times per second during typing. This is equivalent to a slow `requestAnimationFrame` loop. Keep the component tree under `TextTypewriter` simple to minimize reconciliation cost.
+- **Cursor animation.** The cursor blink uses `motion.span` with `opacity: [1, 0]` on `repeat: Infinity`. After typing completes (`isComplete=true`), the cursor unmounts, ending the loop. No cleanup needed.
+- **String length.** Total typing duration is `delay * 1000 + children.length * (1000 / speed)` ms. For very long strings, consider whether the user experience of waiting justifies the animation.
+
+## Customization examples
+
+### Fast typing for a live label
+
+```tsx
+import { TextTypewriter } from "@/components/animations/text/typewriter"
+
+<TextTypewriter speed={60} className="text-sm font-mono">
+  Connecting to server...
+</TextTypewriter>
+```
+
+### Custom cursor character
+
+```tsx
+import { TextTypewriter } from "@/components/animations/text/typewriter"
+
+<TextTypewriter cursorChar="_" className="text-2xl font-mono">
+  SYSTEM BOOT
+</TextTypewriter>
+```
+
+### No cursor, revealed once
+
+```tsx
+import { TextTypewriter } from "@/components/animations/text/typewriter"
+
+<TextTypewriter cursor={false} speed={40} className="text-xl italic text-neutral-500">
+  The simplest idea often wins.
+</TextTypewriter>
+```
+
+## Real-world examples
+
+### AI prompt interface typing hint
+
+```tsx
+"use client"
+import { TextTypewriter } from "@/components/animations/text/typewriter"
+
+export function PromptPlaceholder() {
+  return (
+    <div className="flex items-center gap-2 rounded-xl border border-neutral-200 px-4 py-3">
+      <TextTypewriter
+        aria-label="Ask me anything about your codebase"
+        speed={35}
+        className="text-sm text-neutral-400"
+      >
+        Ask me anything about your codebase
+      </TextTypewriter>
+    </div>
+  )
+}
+```
+
+### Terminal output reveal
+
+```tsx
+import { TextTypewriter } from "@/components/animations/text/typewriter"
+
+export function TerminalOutput() {
+  return (
+    <div className="rounded-lg bg-neutral-950 p-6 font-mono text-sm text-green-400">
+      <TextTypewriter
+        aria-label="$ npm run deploy -- Production build complete"
+        speed={50}
+        cursorChar="_"
+      >
+        $ npm run deploy -- Production build complete
+      </TextTypewriter>
+    </div>
+  )
+}
+```

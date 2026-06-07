@@ -247,9 +247,165 @@ Dramatic scale up from small with exaggerated bounce for a playful feel.
 |------|------|---------|-------------|
 | `variant` | `"scale" \| "slide-bottom" \| "slide-right" \| "fade-in" \| "scale-up"` | `"scale"` | Animation style for modal opening. |
 
-## Use Cases
+## Use cases
 
-- **Create Actions**: "New Project", "Add Item" buttons
-- **Quick Forms**: Contact forms, feedback dialogs
-- **Settings Panels**: Expandable configuration menus
-- **Confirmations**: Delete confirmations, important actions
+`SharedModal` wraps both the trigger element and the modal in a single `AnimatePresence`, toggling between them based on the `isOpen` boolean. In the `"scale"` variant, the trigger `motion.div` and the modal `motion.div` share the same `layoutId` (`modal`), so Framer Motion morphs one into the other. The close icon also uses a shared `layoutId` (`icon`) so the Plus icon seamlessly rotates into the dismiss button. Use this component when the visual connection between a compact trigger and the resulting dialog adds meaning:
+
+- **"Add item" actions.** A small circular plus button morphs into a "New Project" form. The morph communicates that the form is the expansion of that button, not a separate page.
+- **Image lightboxes.** A thumbnail trigger expands into a full-size preview dialog. Pair with `variant="scale"` to preserve the spatial relationship between the thumbnail and the overlay.
+- **Confirmation dialogs.** A delete icon expands into a confirmation panel. `variant="fade-in"` (tween 0.3s easeOut) is calmer than a bouncy spring for destructive actions.
+- **Quick forms.** Contact, feedback, or subscribe forms that should feel embedded in the page rather than navigated to. `variant="slide-bottom"` (initial `y: "100%"`) suits mobile-first layouts where bottom sheets are familiar.
+- **Side panel details.** Clicking a table row triggers a `variant="slide-right"` panel (initial `x: "100%"`) that reveals the row's full record without a page change.
+
+## When to use / when not to use
+
+**Use `SharedModal` when:**
+
+- There is one trigger and one corresponding modal, and the visual morph between them is meaningful to the user.
+- The modal content is relatively simple: a form with two or three fields, a confirmation message, or a detail preview. The component renders a fixed-height panel with a scrollable body; deeply nested UIs are awkward here.
+- The trigger is small and centered on screen, so the `"scale"` morph has room to expand without jumping off-screen.
+
+**Do not use `SharedModal` when:**
+
+- You need to open the same modal from multiple, differently-shaped triggers. Framer Motion's `layoutId` ties the morph to a single trigger element; shared IDs across multiple triggers cause the animation to jump between them.
+- The dialog needs to be fully accessible immediately (a screen reader or keyboard-only workflow). The current implementation has no focus trap, no `role="dialog"`, and no Escape key handler. Use a headless dialog primitive (Radix UI `Dialog`, Headless UI `Dialog`) with a custom `AnimatePresence` wrapper instead.
+- You want a slide-over drawer that persists across navigations. A drawer component with `position: fixed` and controlled open state is a better fit.
+- The morph effect is not worth the complexity. For a plain centered modal without a trigger-to-dialog animation, the overhead of shared `layoutId` is unnecessary. A simple `AnimatePresence` fade is cleaner.
+
+Compare with [Expanding Card](/docs/transitions/expanding-card): `ExpandingCard` morphs one item out of a grid into a detail panel; `SharedModal` morphs a single floating trigger into a dialog. If you have a grid of triggers, use `ExpandingCard`.
+
+## Accessibility notes
+
+The current implementation needs these additions before it is safe for keyboard and screen-reader users:
+
+- **Role and label.** Add `role="dialog"` and `aria-modal="true"` to the expanded `motion.div`. Add `aria-labelledby` pointing to the modal's `<h3>` id so screen readers announce the dialog title when it opens.
+- **Focus trap.** On open, move focus to the first interactive element inside the modal (the Cancel button or the close button). Use `focus-trap-react` or manually call `.focus()` inside the `animate` callback. Without this, keyboard users remain focused on the backdrop.
+- **Escape to close.** Add a `keydown` listener on `document` for `Escape` that calls `setIsOpen(false)`. Remove the listener on unmount.
+- **Return focus.** Store a ref to the trigger element before opening and restore focus to it when the dialog closes. This is especially important when the trigger is re-rendered after the `AnimatePresence` exit because the trigger `motion.div` only exists when `!isOpen`.
+- **Scroll lock.** While the modal is open, set `document.body.style.overflow = "hidden"` to prevent background scroll. Restore it on close.
+- **Close button label.** The rotated Plus icon used as a close button has no accessible text. Add `aria-label="Close dialog"` to that `<button>`.
+
+## Performance considerations
+
+- **Single `layoutId` constraint.** The `"scale"` variant connects the trigger and modal via a shared `layoutId`. Framer Motion measures both elements before and after the state change to compute the layout delta. This is a single measurement, but it takes a synchronous read of the DOM. Keep the trigger and modal subtrees shallow.
+- **`AnimatePresence` mount and unmount.** The trigger and the modal are mutually exclusive inside `AnimatePresence`. When opening, the trigger exits (unmounts) and the modal enters (mounts). On close, the reverse happens. This means the modal's children re-render from scratch on every open. Avoid putting expensive computations directly in the modal's render; memoize or fetch data before mounting.
+- **`backdrop-blur-sm` backdrop.** The `bg-black/20 backdrop-blur-sm` overlay is GPU-composited. On mobile browsers and devices with many stacking contexts, blur compositing is expensive. Test on real hardware and remove the blur if needed.
+- **`transformPerspective: 1000` style.** This is set directly on the modal `motion.div`. It creates a stacking context and can prevent certain CSS optimizations. Only relevant if you are layering many 3D-transformed elements.
+- **Variants `"slide-bottom"` and `"slide-right"`.** These do not use `layoutId`; they use plain `initial`/`animate`/`exit` values (`y: "100%"` or `x: "100%"`). This is cheaper than shared layout because no measurement is needed, just a transform animation.
+
+## Customization examples
+
+### Slide-up sheet for mobile
+
+A bottom sheet that feels native on touch devices:
+
+```tsx
+"use client"
+import { SharedModal } from "@/components/animations/transitions/shared-modal"
+
+export function MobileAddSheet() {
+  return (
+    <div className="max-w-sm mx-auto">
+      <SharedModal variant="slide-bottom" />
+    </div>
+  )
+}
+```
+
+### Calm fade for a confirmation dialog
+
+`"fade-in"` uses a tween (0.3s easeOut) instead of a spring, which reads as more serious:
+
+```tsx
+import { SharedModal } from "@/components/animations/transitions/shared-modal"
+
+export function DeleteConfirmation() {
+  return <SharedModal variant="fade-in" />
+}
+```
+
+### Side panel (slide-right)
+
+Slides in from the right like a drawer, useful for detail panels next to a table:
+
+```tsx
+import { SharedModal } from "@/components/animations/transitions/shared-modal"
+
+export function RecordDetail() {
+  return <SharedModal variant="slide-right" />
+}
+```
+
+## Real-world examples
+
+### Image lightbox
+
+A thumbnail expands into a full-size overlay. The `"scale"` variant keeps the image's position in space while it grows.
+
+```tsx
+"use client"
+import { useState, useId } from "react"
+import { motion, AnimatePresence } from "motion/react"
+
+export function ImageLightbox({ src, alt }: { src: string; alt: string }) {
+  const [open, setOpen] = useState(false)
+  const id = useId()
+
+  return (
+    <>
+      <AnimatePresence>
+        {!open && (
+          <motion.img
+            layoutId={`${id}-img`}
+            src={src}
+            alt={alt}
+            onClick={() => setOpen(true)}
+            className="w-48 h-32 object-cover rounded-lg cursor-pointer shadow-md"
+          />
+        )}
+      </AnimatePresence>
+      <AnimatePresence>
+        {open && (
+          <>
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setOpen(false)}
+              className="fixed inset-0 z-40 bg-black/70"
+            />
+            <motion.img
+              layoutId={`${id}-img`}
+              src={src}
+              alt={alt}
+              className="fixed inset-0 m-auto z-50 max-w-3xl max-h-[80vh] object-contain rounded-xl shadow-2xl"
+              transition={{ type: "spring", bounce: 0.15, duration: 0.5 }}
+            />
+          </>
+        )}
+      </AnimatePresence>
+    </>
+  )
+}
+```
+
+### "New task" button that expands into a form
+
+The floating action button morphs into a task creation form. After submit the form dismisses and the button reappears in place.
+
+```tsx
+"use client"
+import { SharedModal } from "@/components/animations/transitions/shared-modal"
+
+export function TaskPage() {
+  return (
+    <div className="relative min-h-screen bg-zinc-50 dark:bg-zinc-950 p-8">
+      <h1 className="text-2xl font-bold text-zinc-900 dark:text-zinc-100 mb-6">My Tasks</h1>
+      {/* task list here */}
+      <div className="fixed bottom-6 right-6">
+        <SharedModal variant="scale" />
+      </div>
+    </div>
+  )
+}
+```

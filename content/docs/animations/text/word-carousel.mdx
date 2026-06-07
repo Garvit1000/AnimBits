@@ -175,3 +175,179 @@ import { TextWordCarousel } from "@/components/animations/text/word-carousel"
 | `words` | `string[]` | Required | Array of words to cycle through |
 | `interval` | `number` | `2` | Time between words (seconds) |
 | `duration` | `number` | `0.3` | Transition duration (seconds) |
+
+## Use cases
+
+`TextWordCarousel` cycles words using the `useWordCarousel` hook, which runs `setInterval` at `interval * 1000` ms (default `interval=2` seconds). The hook returns `{ currentWord, currentIndex, key }`. The component wraps the current word in `<AnimatePresence mode="wait">` so the outgoing word exits (`opacity: 0, y: -20`) before the incoming word enters (`opacity: 0, y: 20` to `opacity: 1, y: 0`), each with a `duration` of 0.3 s. Reach for it when:
+
+- **Hero tagline with multiple value propositions.** Inline within a heading: "Build [Fast / Modern / Beautiful] websites" cycles through adjectives without changing the surrounding copy.
+- **Tech stack showcase.** "Built with [React / Next.js / TypeScript]" in a footer or about section.
+- **Dynamic benefit statement.** "Save time on [deployments / reviews / testing]" cycles through pain points addressed.
+- **Rotating testimonial attribution.** A name or company cycling below a quote.
+
+Unlike [DiaText](/docs/animations/text/dia-text), `TextWordCarousel` uses a plain `y` slide without the multi-color gradient trace, making it a simpler, less visually assertive choice.
+
+## When to use / when not to use
+
+**Use word-carousel when:**
+
+- The visual treatment should be subtle. The default 0.3 s slide with no color change is appropriate when the surrounding heading already has strong typography.
+- You want consistent, reliable cycling with a clean API: pass `words`, optionally set `interval` and `duration`, done.
+- The words in your array are similar in length. Width changes between words can shift surrounding text unless you apply a fixed width to the carousel span.
+
+**Reach for something else when:**
+
+- **You want a dramatic visual trace on each word change.** Use [DiaText](/docs/animations/text/dia-text), which adds a multi-color gradient sweep during entry.
+- **You need the word change to pause after the last word.** Both `TextWordCarousel` and `DiaText` loop indefinitely. There is no `loop={false}` prop.
+- **More than 4 to 5 words in the array.** Users typically see only 2 to 3 words before losing interest; longer lists cycle out-of-sight content. Keep the list short enough that users notice the pattern within the first two rotations.
+- **The text must be screen-reader friendly per-word.** The cycling text is announced continuously as words change, which can be disruptive for screen reader users. See accessibility notes below.
+- **You need a specific easing or spring on the transition.** The component hardcodes the exit/enter with `duration` and default easing. For a spring-based word change, use [DiaText](/docs/animations/text/dia-text) which uses `stiffness: 300, damping: 30`.
+
+## Accessibility notes
+
+The cycling animation is inside a plain `<span>`. Screen readers may announce each word as it rotates, which is disruptive mid-sentence. To prevent this, mark the cycling span as `aria-hidden` and provide a static `aria-label` on the parent element:
+
+```tsx
+<h1 aria-label="Build Fast websites">
+  Build{" "}
+  <span aria-hidden="true">
+    <TextWordCarousel words={["Fast", "Modern", "Beautiful"]} className="text-blue-500" />
+  </span>{" "}
+  websites
+</h1>
+```
+
+If the cycling content genuinely communicates different meaning to all users (not just visual flair), use `aria-live="polite"` on a companion visually-hidden element that mirrors the current word, and keep the visual carousel `aria-hidden`:
+
+```tsx
+"use client"
+import { useState } from "react"
+import { TextWordCarousel } from "@/components/animations/text/word-carousel"
+
+// This pattern announces words on change without over-announcing.
+// Maintain currentWord in state via the hook if exposing it is needed.
+```
+
+**Reduced motion.** The component animates `y` (translate) and `opacity` on each word change, indefinitely. Wrap to disable cycling under reduced motion:
+
+```tsx
+"use client"
+import { useReducedMotion } from "motion/react"
+import { TextWordCarousel } from "@/components/animations/text/word-carousel"
+
+function AccessibleCarousel({ words, ...props }: { words: string[] }) {
+  const reduced = useReducedMotion()
+  if (reduced) return <span {...props}>{words[0]}</span>
+  return <TextWordCarousel words={words} {...props} />
+}
+```
+
+## Performance considerations
+
+- **`setInterval` runs indefinitely.** The interval is cleared on unmount via the effect cleanup. If the component mounts off-screen and stays mounted, it keeps cycling. Pair with an `IntersectionObserver` or a conditional mount if the carousel is below the fold for extended periods.
+- **`AnimatePresence mode="wait"`.** The `wait` mode ensures the exit animation completes before the enter animation starts. At `duration=0.3`, each full transition (exit + enter) takes 0.6 s. During this window, both the exiting and entering `<motion.span>` are in the DOM briefly. At `interval=2 s`, this is well within tolerance.
+- **No width stabilization by default.** The `<span>` wrapping the carousel does not fix its width to the widest word. If words differ in length, surrounding text will reflow on each change. Add `min-w-[Xch]` or `w-[Xch]` to the `className` to prevent layout shift:
+
+```tsx
+<TextWordCarousel
+  words={["Fast", "Modern", "Beautiful"]}
+  className="inline-block min-w-[9ch] text-center text-blue-500"
+/>
+```
+
+## Customization examples
+
+### Slow, deliberate rotation
+
+```tsx
+import { TextWordCarousel } from "@/components/animations/text/word-carousel"
+
+<div className="text-2xl font-bold">
+  Code that is{" "}
+  <TextWordCarousel
+    words={["clean", "fast", "testable"]}
+    interval={3}
+    className="text-violet-500"
+  />
+</div>
+```
+
+### Fixed-width to prevent layout shift
+
+```tsx
+import { TextWordCarousel } from "@/components/animations/text/word-carousel"
+
+<h1 className="text-5xl font-black">
+  Build{" "}
+  <TextWordCarousel
+    words={["faster", "smarter", "better"]}
+    className="inline-block min-w-[6ch] text-center text-blue-600"
+    interval={2}
+  />
+  {" "}products
+</h1>
+```
+
+### Quick snap for a tech badge
+
+```tsx
+import { TextWordCarousel } from "@/components/animations/text/word-carousel"
+
+<div className="text-sm font-medium text-neutral-500">
+  Powered by{" "}
+  <TextWordCarousel
+    words={["React", "Next.js", "TypeScript"]}
+    duration={0.2}
+    interval={1.5}
+    className="font-bold text-neutral-800"
+  />
+</div>
+```
+
+## Real-world examples
+
+### SaaS hero with rotating adjective
+
+```tsx
+import { TextWordCarousel } from "@/components/animations/text/word-carousel"
+
+export function SaasHero() {
+  return (
+    <section className="py-32 text-center">
+      <h1 className="text-6xl font-black">
+        Ship{" "}
+        <TextWordCarousel
+          words={["faster", "smarter", "confidently"]}
+          className="inline-block min-w-[10ch] text-center text-blue-600"
+          interval={2}
+          duration={0.25}
+        />{" "}
+        than ever
+      </h1>
+      <p className="mt-6 text-lg text-neutral-500">
+        One platform for design, code, and deployment.
+      </p>
+    </section>
+  )
+}
+```
+
+### Footer stack attribution
+
+```tsx
+import { TextWordCarousel } from "@/components/animations/text/word-carousel"
+
+export function FooterStack() {
+  return (
+    <p className="text-sm text-neutral-400">
+      Built with{" "}
+      <TextWordCarousel
+        words={["React", "Next.js", "Tailwind", "TypeScript"]}
+        className="font-semibold text-neutral-600"
+        interval={2.5}
+        duration={0.3}
+      />
+    </p>
+  )
+}
+```

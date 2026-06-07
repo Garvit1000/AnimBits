@@ -394,3 +394,153 @@ The border gradient animation works by:
 - Works in all modern browsers that support CSS gradients and transforms
 - Requires Framer Motion for animations
 - Gracefully degrades in browsers without animation support
+
+## Use cases
+
+The `BorderGradientButton` suits situations where you want to draw the eye to a button without changing its fill color. The animated `strokeDashoffset` traces the exact perimeter of the button, including its border radius, so the gradient feels painted on rather than overlaid. Reach for it when:
+
+- **Hero CTAs.** A primary "Get started" or "Sign up free" button on a landing page benefits from the continuous motion, which naturally attracts peripheral vision.
+- **Pricing card actions.** A highlighted plan's upgrade button needs to feel premium; the gradient border differentiates it from sibling buttons without requiring a different background.
+- **Feature spotlight buttons.** Alongside a newly released feature callout, the animated border signals "pay attention here" without being as aggressive as a full background animation.
+- **Dark-mode interfaces.** On dark backgrounds (`bg-neutral-900`), the default blue-purple-pink gradient (`colors` default) pops strongly while keeping the button content legible against the dark fill.
+
+Because the SVG overlay measures actual DOM dimensions via `ResizeObserver` and reacts to `borderTopLeftRadius`, the animation adapts automatically to `rounded-lg`, `rounded-full`, and `rounded-none` without any extra config.
+
+## When to use / when not to use
+
+**Use `BorderGradientButton` when:**
+
+- You need exactly one focal CTA per viewport that merits continuous animation.
+- The button has a solid or semi-transparent background that contrasts with the gradient so the border is visible.
+- The design calls for a premium feel on a contained element rather than a full-page effect.
+
+**Reach for a different button when:**
+
+- You have three or more primary buttons visible at once. Multiple spinning borders compete for attention and exhaust the eye; use a static [Glow Button](/docs/animations/buttons/glow) or [Lift Button](/docs/animations/buttons/lift) for secondary actions instead.
+- The button sits on a light multi-color background where the default `["#3b82f6", "#8b5cf6", "#ec4899"]` gradient blends in. You will need to customize `colors` or pick a different component.
+- The user needs to activate the button repeatedly in quick succession (forms, incrementers). A continuous looping border gives no click feedback; combine with [Press Button](/docs/animations/buttons/press) via `whileTap` if you need tap confirmation.
+- The button is inside a data-dense table or list. Continuous motion in a tight grid is distracting.
+
+## Accessibility notes
+
+The `BorderGradientButton` is a `motion.button`, so it carries full button semantics by default. Still:
+
+- **Keyboard and focus.** The component spreads all props onto `motion.button`, so `:focus-visible` styles from your CSS apply. Make sure your global styles or Tailwind config define a visible ring (e.g., `focus-visible:ring-2 focus-visible:ring-blue-500`) because the animated border is not a focus indicator.
+- **Don't rely on the border color alone.** The gradient is purely decorative. Ensure the button label or an `aria-label` conveys the action; sighted users and screen reader users should both understand the purpose.
+- **Reduced motion.** The border animation loops forever via `repeat: Infinity`. Honor the OS setting to stop the loop:
+
+```tsx
+"use client"
+import { useReducedMotion } from "motion/react"
+import { BorderGradientButton } from "@/components/animations/buttons/border-gradient"
+
+function AccessibleBorderGradient({ children }: { children: React.ReactNode }) {
+  const reduced = useReducedMotion()
+  // A very long duration makes the trace imperceptibly slow for users who prefer no motion.
+  return (
+    <BorderGradientButton
+      duration={reduced ? 9999 : 2}
+      className="inline-flex h-11 items-center rounded-lg bg-white dark:bg-neutral-900 px-6 text-sm font-semibold text-neutral-900 dark:text-white"
+    >
+      {children}
+    </BorderGradientButton>
+  )
+}
+```
+
+- **ARIA attributes.** Pass `aria-disabled="true"` and `disabled` together when the button is inactive; the SVG overlay is `pointer-events-none` so it never intercepts clicks, but the `motion.button` itself must still be disabled to block keyboard activation.
+
+## Performance considerations
+
+- **Compositor-friendly animation.** The gradient traces by animating `strokeDashoffset` on an SVG `<rect>`. SVG stroke-dashoffset changes are handled by the compositor via an SVG paint layer; they do not trigger layout or pixel-level repaints of the surrounding DOM.
+- **Infinite loop caveat.** `repeat: Infinity` keeps the animation scheduled indefinitely. Conditionally render the button only when it needs to be on screen; hiding it with `display:none` or `visibility:hidden` without unmounting still runs the animation. Unmounting stops it.
+- **ResizeObserver per instance.** Each `BorderGradientButton` attaches one `ResizeObserver` to its button node for dimension tracking. This is lightweight for a handful of instances, but avoid rendering dozens of them in a list since each observer holds a separate callback slot.
+- **`useId` for gradient IDs.** The component uses React's `useId` to generate unique `linearGradient` IDs, preventing SVG `defs` collisions when multiple instances share a page. No extra config needed.
+- **SVG sizing.** The overlay SVG is sized via inline `width`/`height` attributes equal to the button's `offsetWidth` and `offsetHeight`. It does not stretch or reflow its container because it is `position: absolute` with `inset-0` and `pointer-events-none`.
+
+## Customization examples
+
+### Monochrome border on a dark card
+
+A single-color gradient pair reads as a subtle shimmer rather than a rainbow effect:
+
+```tsx
+<BorderGradientButton
+  colors={["#e2e8f0", "#94a3b8", "#e2e8f0"]}
+  duration={3}
+  className="inline-flex h-11 items-center rounded-lg bg-zinc-900 px-6 text-sm font-semibold text-white"
+>
+  View details
+</BorderGradientButton>
+```
+
+### Brand-aligned gradient
+
+Match brand colors instead of the default blue-purple-pink:
+
+```tsx
+<BorderGradientButton
+  colors={["#f97316", "#eab308", "#f97316"]}
+  duration={2.5}
+  className="inline-flex h-11 items-center rounded-lg bg-white dark:bg-neutral-900 px-6 text-sm font-semibold text-neutral-900 dark:text-white"
+>
+  Start free trial
+</BorderGradientButton>
+```
+
+### Slower, calmer cycle for secondary actions
+
+A 5-second cycle is much less distracting in a content-heavy layout:
+
+```tsx
+<BorderGradientButton
+  duration={5}
+  colors={["#6366f1", "#8b5cf6"]}
+  className="inline-flex h-11 items-center rounded-full bg-white dark:bg-neutral-900 px-6 text-sm font-semibold text-neutral-900 dark:text-white"
+>
+  Learn more
+</BorderGradientButton>
+```
+
+## Real-world examples
+
+### Pricing page upgrade CTA
+
+The animated border distinguishes the featured plan without using a different background:
+
+```tsx
+<div className="rounded-xl border border-neutral-200 dark:border-neutral-800 bg-white dark:bg-neutral-900 p-8">
+  <p className="text-xs font-semibold uppercase tracking-widest text-blue-600">Pro plan</p>
+  <p className="mt-2 text-4xl font-bold text-neutral-900 dark:text-white">$29 / mo</p>
+  <ul className="my-6 space-y-2 text-sm text-neutral-600 dark:text-neutral-400">
+    <li>Unlimited projects</li>
+    <li>Priority support</li>
+    <li>Custom domain</li>
+  </ul>
+  <BorderGradientButton
+    colors={["#3b82f6", "#8b5cf6", "#ec4899"]}
+    duration={2}
+    className="inline-flex w-full items-center justify-center rounded-lg bg-white dark:bg-neutral-900 h-11 text-sm font-semibold text-neutral-900 dark:text-white"
+  >
+    Upgrade to Pro
+  </BorderGradientButton>
+</div>
+```
+
+### Hero section primary action
+
+One animated CTA next to a plain outline secondary action keeps hierarchy clear:
+
+```tsx
+<div className="flex items-center gap-4">
+  <BorderGradientButton
+    colors={["#3b82f6", "#8b5cf6", "#ec4899"]}
+    className="inline-flex h-11 items-center rounded-lg bg-white dark:bg-neutral-900 px-6 text-sm font-semibold text-neutral-900 dark:text-white"
+  >
+    Get started free
+  </BorderGradientButton>
+  <button className="inline-flex h-11 items-center rounded-lg border border-neutral-200 dark:border-neutral-700 px-6 text-sm font-semibold text-neutral-700 dark:text-neutral-300">
+    View demo
+  </button>
+</div>
+```

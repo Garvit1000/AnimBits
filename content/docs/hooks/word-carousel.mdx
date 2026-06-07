@@ -449,3 +449,211 @@ For inline text, use `display: inline-block`:
 <Callout>
   **Accessibility:** Ensure rotating text doesn't convey critical information that users might miss. Consider adding pause controls for accessibility.
 </Callout>
+
+## Use cases
+
+The hook keeps a `currentIndex` in state and advances it on a `setInterval`, cycling through your `words` array and returning a `key` you spread onto an `AnimatePresence` child. Reach for it when:
+
+- **Hero headlines** that cycle an adjective, like "Build Fast / Modern / Beautiful apps".
+- **Rotating value props** where one slot swaps through a few benefits.
+- **Audience or persona lines**, such as "Built for Developers / Designers / Creators".
+- **Short rotating quotes** in a compact testimonial slot.
+
+The surrounding sentence should carry the meaning. The rotating word is emphasis, not the whole message.
+
+## When to use / when not to use
+
+**Use this hook when:**
+
+- You are cycling short words or phrases as decoration around a stable sentence.
+- The complete meaning still reads even if a user never sees a particular word.
+
+**Reach for something else when:**
+
+- **The rotating text is essential information.** Auto-advancing content can be missed entirely, and it works against [WCAG 2.2.2 Pause, Stop, Hide](https://www.w3.org/WAI/WCAG22/Understanding/pause-stop-hide.html). Put critical content in static text.
+- **The items are full sentences.** A fixed interval cannot match every reader's pace, so long strings get cut off mid-read. Show them as a static list.
+- **You want a prebuilt component.** If you do not need hook-level control, the [Word Carousel](/docs/animations/text/word-carousel) component wraps this for you. For a one-time reveal rather than a loop, use [useFadeIn](/docs/hooks/fade-in).
+
+## Accessibility notes
+
+Auto-rotating text is one of the easier ways to create an accessibility problem, so handle it deliberately.
+
+- **Provide a way to pause.** The shipped hook runs continuously with no pause control. If the rotation lasts longer than 5 seconds, WCAG 2.2.2 requires a pause, stop, or hide mechanism. The simplest fix is a small extension that accepts a `paused` flag (see Real-world examples below) wired to hover and focus.
+- **Control what screen readers announce.** Letting `AnimatePresence` swap text on a live region every couple of seconds either spams announcements or gets skipped. Mark the rotating word `aria-hidden="true"` and give the parent a stable `aria-label` that states the full message:
+
+```tsx
+<h1 aria-label="Built for developers, designers, and creators">
+  Built for{" "}
+  <span aria-hidden="true">
+    <AnimatePresence mode="wait">
+      <motion.span key={key} /* ... */>{currentWord}</motion.span>
+    </AnimatePresence>
+  </span>
+</h1>
+```
+
+- **Respect reduced motion.** For users who ask for less motion, drop the enter/exit transforms and show a single word:
+
+```tsx
+"use client"
+import { motion, AnimatePresence, useReducedMotion } from "motion/react"
+import { useWordCarousel } from "@/lib/hooks/use-word-carousel"
+
+function AccessibleRotator() {
+  const reduced = useReducedMotion()
+  const words = ["Fast", "Secure", "Reliable"]
+  const { currentWord, key } = useWordCarousel({ words })
+
+  if (reduced) {
+    return <span className="font-bold text-blue-600">{words[0]}</span>
+  }
+
+  return (
+    <span aria-hidden="true">
+      <AnimatePresence mode="wait">
+        <motion.span
+          key={key}
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: -10 }}
+          className="inline-block font-bold text-blue-600"
+        >
+          {currentWord}
+        </motion.span>
+      </AnimatePresence>
+    </span>
+  )
+}
+```
+
+## Performance considerations
+
+- **It re-renders on every tick.** `setCurrentIndex` fires each interval, re-rendering the component that calls the hook. Keep that component small and low in the tree so the re-render stays cheap, rather than rotating a word from a large page-level component.
+- **The interval resets when `words.length` or `interval` changes.** The effect depends on those two values, so changing the number of words restarts the cycle at index 0. A new array identity with the same length is fine.
+- **`mode="wait"` doubles the transition time.** The exit animation finishes before the enter begins, so keep durations short (0.2 to 0.4 seconds) to avoid a sluggish swap.
+- **Prefer transform and opacity.** The Slide and Scale variants animate compositor-friendly properties. The Blur variant animates a `filter`, which triggers repaint and is heavier, so reserve it for a single hero instance.
+
+## Customization examples
+
+### Reserve width to stop layout shift
+
+Words have different widths, so the text after them jumps on each swap. Stack an invisible copy of the longest word to lock the width:
+
+```tsx
+<span className="relative inline-grid">
+  <span aria-hidden="true" className="invisible col-start-1 row-start-1 font-bold">
+    Innovators
+  </span>
+  <span className="col-start-1 row-start-1">
+    <AnimatePresence mode="wait">
+      <motion.span key={key} className="inline-block font-bold text-blue-600">
+        {currentWord}
+      </motion.span>
+    </AnimatePresence>
+  </span>
+</span>
+```
+
+### Faster or slower cadence
+
+```tsx
+const fast = useWordCarousel({ words, interval: 1 })   // snappy
+const slow = useWordCarousel({ words, interval: 5 })   // calm
+```
+
+## Real-world examples
+
+### Hero headline
+
+```tsx
+"use client"
+import { motion, AnimatePresence } from "motion/react"
+import { useWordCarousel } from "@/lib/hooks/use-word-carousel"
+
+export function Hero() {
+  const words = ["Developers", "Designers", "Creators", "Innovators"]
+  const { currentWord, key } = useWordCarousel({ words, interval: 2.5 })
+
+  return (
+    <h1
+      className="text-6xl font-black"
+      aria-label={`Built for ${words.join(", ")}`}
+    >
+      Built for{" "}
+      <span aria-hidden="true" className="inline-grid">
+        <span className="invisible col-start-1 row-start-1">Innovators</span>
+        <span className="col-start-1 row-start-1">
+          <AnimatePresence mode="wait">
+            <motion.span
+              key={key}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -20 }}
+              transition={{ duration: 0.3 }}
+              className="inline-block bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent"
+            >
+              {currentWord}
+            </motion.span>
+          </AnimatePresence>
+        </span>
+      </span>
+    </h1>
+  )
+}
+```
+
+### Pause on hover and focus (WCAG-friendly)
+
+The shipped hook has no pause option, so extend it with a `paused` flag and wire it to pointer and keyboard:
+
+```tsx
+"use client"
+import * as React from "react"
+import { motion, AnimatePresence } from "motion/react"
+
+// A pausable variant of useWordCarousel.
+function usePausableWordCarousel({ words, interval = 2, paused = false }: {
+  words: string[]
+  interval?: number
+  paused?: boolean
+}) {
+  const [index, setIndex] = React.useState(0)
+
+  React.useEffect(() => {
+    if (paused) return
+    const id = setInterval(() => setIndex((p) => (p + 1) % words.length), interval * 1000)
+    return () => clearInterval(id)
+  }, [words.length, interval, paused])
+
+  return { currentWord: words[index], currentIndex: index, key: index }
+}
+
+export function PausableRotator() {
+  const [paused, setPaused] = React.useState(false)
+  const words = ["Fast", "Secure", "Reliable"]
+  const { currentWord, key } = usePausableWordCarousel({ words, interval: 2.5, paused })
+
+  return (
+    <span
+      onMouseEnter={() => setPaused(true)}
+      onMouseLeave={() => setPaused(false)}
+      onFocus={() => setPaused(true)}
+      onBlur={() => setPaused(false)}
+      tabIndex={0}
+      className="text-2xl font-bold text-blue-600 outline-none"
+    >
+      <AnimatePresence mode="wait">
+        <motion.span
+          key={key}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          className="inline-block"
+        >
+          {currentWord}
+        </motion.span>
+      </AnimatePresence>
+    </span>
+  )
+}
+```

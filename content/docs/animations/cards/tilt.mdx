@@ -169,3 +169,215 @@ import { CardTilt } from "@/components/animations/cards/tilt"
 | `duration` | `number` | `0.3` | Animation duration in seconds |
 | `className` | `string` | `undefined` | Additional CSS classes |
 
+## Use cases
+
+`CardTilt` tracks the cursor position on each `mousemove` event, normalizes it to the range `-0.5` to `0.5` relative to the card's bounding box, multiplies by `maxTilt * 2` (so at the extreme corner of a card with `maxTilt={10}` the rotation reaches 10 degrees), and stores the result in a `{ x, y }` state object. The card then animates `rotateX` and `rotateY` with `transition={{ duration }}` (default `0.3s`), and resets to zero on `mouseleave`. `transformStyle: preserve-3d` is applied so nested children with `translateZ` can layer in 3D space.
+
+Use it when:
+
+- **Portfolio project tiles.** Each tile tilts in response to the cursor, giving the grid a tactile, physical quality.
+- **Team or speaker cards.** A subtle tilt on a headshot card makes it feel like a physical photo.
+- **Product showcase tiles.** A product image card that tilts toward the cursor adds perceived depth.
+- **Interactive dashboards.** Hoverable data cards that signal interactivity through 3D feedback.
+- **NFT, card-game, or collectible galleries.** The tilt effect mimics holding a physical card.
+
+## When to use / when not to use
+
+**Use `CardTilt` when:**
+
+- You want a lighter-weight tilt without the spring physics overhead of [CardParallaxTilt](/docs/animations/cards/parallax-tilt). `CardTilt` uses a simple `animate` call rather than `useSpring`, so it returns to zero with a single short transition.
+- The card is one of several in a grid where the parallax shadow separation of `CardParallaxTilt` would be too heavy visually.
+
+**Reach for a different component when:**
+
+- You want a smooth, spring-animated tilt that overshoots and settles organically. Use [CardParallaxTilt](/docs/animations/cards/parallax-tilt), which adds `useSpring` with configurable `stiffness` and `damping`.
+- You want a directional shadow that moves with the cursor. `CardTilt` does not compute a dynamic shadow. Use [CardParallaxTilt](/docs/animations/cards/parallax-tilt) for that.
+- The card will be used on a touch-primary interface. `onMouseMove` does not fire on touch. Provide a non-interactive fallback for mobile.
+- `maxTilt={10}` still feels too aggressive in a dense layout. Reduce it to `5` or `6`, or use [CardHoverLift](/docs/animations/cards/hover-lift) which has no rotation at all.
+
+## Accessibility notes
+
+- **3D rotation can trigger vestibular discomfort.** Even at `maxTilt={10}`, continuous rotation tied to mouse movement can cause motion sickness in users with vestibular disorders. Disable the tilt for users who prefer reduced motion:
+
+```tsx
+"use client"
+import { useReducedMotion } from "motion/react"
+import { CardTilt } from "@/components/animations/cards/tilt"
+import { CardHoverLift } from "@/components/animations/cards/hover-lift"
+
+function AccessibleTiltCard({ children }: { children: React.ReactNode }) {
+  const reduced = useReducedMotion()
+
+  if (reduced) {
+    // Fall back to a simple lift with no rotation.
+    return (
+      <CardHoverLift className="rounded-2xl border border-neutral-200 dark:border-neutral-800 bg-white dark:bg-neutral-900 p-6">
+        {children}
+      </CardHoverLift>
+    )
+  }
+
+  return (
+    <CardTilt
+      maxTilt={10}
+      className="rounded-2xl border border-neutral-200 dark:border-neutral-800 bg-white dark:bg-neutral-900 p-6"
+    >
+      {children}
+    </CardTilt>
+  )
+}
+```
+
+- **`transformStyle: preserve-3d` and readability.** Text and other content inside the card rotates in 3D space along with the card face. At high tilt angles this can make text harder to read. Keep `maxTilt` at `10` or below.
+- **Keyboard focus.** `onMouseMove` does not fire on keyboard navigation. Keyboard users see no tilt effect, which is acceptable, but ensure the card has a visible `:focus-visible` ring and that interactive children are reachable.
+- **Cursor set to `pointer`.** The component applies `cursor-pointer`. This implies the card is clickable. If it is not interactive, override with `className="cursor-default"`.
+
+## Performance considerations
+
+- **`setTilt` on every `mousemove` causes React re-renders.** Unlike `CardParallaxTilt` which uses motion values (no re-renders), `CardTilt` calls `setTilt({ x, y })` on every mouse event. Each call triggers a React re-render. On a fast machine this is imperceptible, but on slower devices or inside deeply nested component trees it can produce frame drops. If performance is critical, consider migrating the state to `useMotionValue` manually, or use `CardParallaxTilt` instead.
+- **`animate={{ rotateX, rotateY }}` creates a new animation per state update.** Motion manages this efficiently, but the pattern is less optimal than motion value subscriptions which bypass React's render cycle entirely.
+- **`transformStyle: preserve-3d` creates a composited layer.** Each `CardTilt` on the page occupies a GPU layer. Keep the number of simultaneous instances below about 12 for smooth scrolling on mid-range hardware.
+- **`duration: 0.3` return time.** When the cursor leaves the card, the card eases back to `{ rotateX: 0, rotateY: 0 }` in 0.3 seconds. This means the animation continues briefly after the event, which is desirable for polish but means each card has a short "tail" of active animation cost.
+
+## Customization examples
+
+### Lower `maxTilt` for a grid context
+
+Subtle tilt in a multi-card grid avoids overlap with neighbors:
+
+```tsx
+import { CardTilt } from "@/components/animations/cards/tilt"
+
+<CardTilt
+  maxTilt={5}
+  duration={0.25}
+  className="rounded-xl border border-neutral-200 dark:border-neutral-800 bg-white dark:bg-neutral-900 overflow-hidden"
+>
+  <img src="/project.jpg" alt="Project" className="w-full h-40 object-cover" />
+  <div className="p-4">
+    <h3 className="font-semibold text-sm">Project name</h3>
+  </div>
+</CardTilt>
+```
+
+### Snappier response with a shorter `duration`
+
+A shorter return duration reads as more physically reactive:
+
+```tsx
+<CardTilt
+  maxTilt={12}
+  duration={0.15}
+  className="rounded-2xl bg-neutral-950 p-8 text-white"
+>
+  <h3 className="font-bold text-xl">Fast tilt</h3>
+  <p className="text-neutral-400 text-sm mt-2">Snaps back quickly</p>
+</CardTilt>
+```
+
+### Card with a depth layer using `translateZ`
+
+Use `transformStyle: preserve-3d` and a nested `translateZ` to add a floating element:
+
+```tsx
+<CardTilt
+  maxTilt={10}
+  className="relative rounded-2xl border border-neutral-200 dark:border-neutral-800 bg-white dark:bg-neutral-900 p-8 overflow-hidden"
+  style={{ perspective: 800 }}
+>
+  <div style={{ transform: "translateZ(20px)" }} className="relative z-10">
+    <h3 className="font-bold text-lg">Floating content</h3>
+    <p className="text-sm text-neutral-500 dark:text-neutral-400 mt-2">Appears to hover above the card</p>
+  </div>
+</CardTilt>
+```
+
+## Real-world examples
+
+### Portfolio project grid
+
+```tsx
+import { CardTilt } from "@/components/animations/cards/tilt"
+
+interface ProjectCardProps {
+  image: string
+  title: string
+  tags: string[]
+  year: number
+}
+
+export function ProjectCard({ image, title, tags, year }: ProjectCardProps) {
+  return (
+    <CardTilt
+      maxTilt={8}
+      duration={0.2}
+      className="rounded-2xl overflow-hidden border border-neutral-200 dark:border-neutral-800 bg-white dark:bg-neutral-900 group"
+    >
+      <div className="relative overflow-hidden">
+        <img
+          src={image}
+          alt={title}
+          className="w-full h-52 object-cover transition-transform duration-500 group-hover:scale-105"
+        />
+      </div>
+      <div className="p-5">
+        <h3 className="font-bold">{title}</h3>
+        <div className="flex items-center gap-2 mt-2 flex-wrap">
+          {tags.map((tag) => (
+            <span
+              key={tag}
+              className="rounded-full bg-neutral-100 dark:bg-neutral-800 px-2.5 py-0.5 text-xs font-medium text-neutral-600 dark:text-neutral-300"
+            >
+              {tag}
+            </span>
+          ))}
+          <span className="ml-auto text-xs text-neutral-400">{year}</span>
+        </div>
+      </div>
+    </CardTilt>
+  )
+}
+```
+
+### NFT or collectible card
+
+```tsx
+import { CardTilt } from "@/components/animations/cards/tilt"
+
+export function CollectibleCard({
+  name,
+  image,
+  rarity,
+  floor,
+}: {
+  name: string
+  image: string
+  rarity: string
+  floor: string
+}) {
+  return (
+    <CardTilt
+      maxTilt={14}
+      duration={0.25}
+      className="relative rounded-3xl overflow-hidden w-52 cursor-pointer bg-neutral-950"
+      style={{ perspective: 800 }}
+    >
+      <img src={image} alt={name} className="w-full h-64 object-cover" />
+      <div
+        className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent"
+        style={{ transform: "translateZ(5px)" }}
+      />
+      <div
+        className="absolute bottom-0 left-0 right-0 p-4"
+        style={{ transform: "translateZ(20px)" }}
+      >
+        <p className="text-white font-bold">{name}</p>
+        <div className="flex items-center justify-between mt-1">
+          <span className="text-xs text-yellow-400 font-semibold">{rarity}</span>
+          <span className="text-xs text-white/70">{floor}</span>
+        </div>
+      </div>
+    </CardTilt>
+  )
+}
+```

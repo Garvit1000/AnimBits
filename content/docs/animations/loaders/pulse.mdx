@@ -147,3 +147,143 @@ export default function Example() {
 | `size` | `number` | `60` | Size of the circle in pixels |
 | `color` | `string` | `"currentColor"` | Color of the pulse |
 | `duration` | `number` | `1.5` | Animation duration in seconds |
+
+## Use cases
+
+`LoaderPulse` is an **indeterminate** loader. A solid circle cycles `scale` through `[1, 1.2, 1]` and `opacity` through `[0.5, 1, 0.5]` simultaneously, so it appears to breathe in and out. The default size is `60` px, larger than most other loaders, making it well suited for prominent placements. Reach for it when:
+
+- **Status or heartbeat indicators.** A pulsing dot on a user avatar or a status badge visually communicates "alive" or "active" without being a traditional loading spinner.
+- **Ambient loading states.** While a background sync or a webhook fires, a subtle pulse in a sidebar or notification area signals that work is happening without demanding attention.
+- **Full-section or card loading overlays.** Centered in a panel, the default 60 px circle fills the space naturally.
+- **Media or streaming readiness.** A pulse next to a "Live" badge communicates a broadcast-style "on the air" signal.
+
+## When to use / when not to use
+
+**Use pulse when:**
+
+- You want a calm, breathing rhythm rather than a spinning or bouncing motion.
+- The loading state is ambient rather than blocking, and the wait can extend for several seconds without feeling urgent.
+
+**Reach for something else when:**
+
+- **You know the progress percentage.** Use [Liquid Progress](/docs/animations/loaders/liquid-progress).
+- **The UI is compact (buttons, inline labels).** At 60 px the default pulse is too large for tight contexts. A [Spinner](/docs/animations/loaders/spinner) at 16 to 20 px is far better.
+- **You need clear directional motion.** A pulse has no directional cue. For route transitions or list reveals, use [Slide In](/docs/animations/lists/slide-in) or [Page Transition Fade](/docs/animations/pages/page-transition-fade).
+- **You are loading structured content.** Use a [Skeleton](/docs/animations/loaders/skeleton) to preserve layout.
+
+## Accessibility notes
+
+`LoaderPulse` is a single `<div>` with no semantic meaning. Screen readers skip it without additional markup.
+
+- **Wrap in a live region:**
+
+```tsx
+<div role="status">
+  <LoaderPulse />
+  <span className="sr-only">Loading...</span>
+</div>
+```
+
+- **Respect reduced motion.** The scale + opacity loop is continuous. Users with vestibular sensitivities or epilepsy risk factors may find it discomforting:
+
+```tsx
+"use client"
+import { useReducedMotion } from "motion/react"
+import { LoaderPulse } from "@/components/animations/loaders/pulse"
+
+function AccessiblePulse() {
+  const reduced = useReducedMotion()
+  return (
+    <div role="status">
+      <LoaderPulse duration={reduced ? 8 : 1.5} />
+      <span className="sr-only">Loading...</span>
+    </div>
+  )
+}
+```
+
+- **Do not rely on motion alone.** The `sr-only` label is the only signal for users who suppress animation.
+
+## Performance considerations
+
+- **Transform + opacity only.** Both `scale` and `opacity` are compositor-layer properties with no layout or paint cost, making this one of the cheapest loaders in the collection.
+- **Unmount when done.** `repeat: Infinity` keeps the animation loop active. Use `{loading && <LoaderPulse />}` to stop it when the wait is over.
+- **Size does not affect performance.** Because it is a single element with CSS transforms, `size={80}` has the same animation cost as `size={20}`.
+
+## Customization examples
+
+### Tiny status dot
+
+Pair with `size` well below the default for a live-status indicator:
+
+```tsx
+<LoaderPulse size={12} color="#22c55e" duration={1.8} />
+```
+
+### Large hero indicator
+
+For a prominent splash or a blocking overlay:
+
+```tsx
+<LoaderPulse size={100} color="#6366f1" duration={2} />
+```
+
+### Semi-transparent on a dark background
+
+Use an RGBA color string for a ghostly effect:
+
+```tsx
+<LoaderPulse size={60} color="rgba(255,255,255,0.6)" duration={1.5} />
+```
+
+## Real-world examples
+
+### Live broadcast badge
+
+A green pulsing dot next to a "Live" label is an immediately recognizable pattern:
+
+```tsx
+"use client"
+import { LoaderPulse } from "@/components/animations/loaders/pulse"
+
+export function LiveBadge({ live }: { live: boolean }) {
+  if (!live) return null
+
+  return (
+    <div className="inline-flex items-center gap-1.5 rounded-full bg-red-50 px-3 py-1 dark:bg-red-950/50">
+      <div role="status" className="flex items-center">
+        <LoaderPulse size={10} color="#ef4444" duration={1.2} />
+        <span className="sr-only">Live stream active</span>
+      </div>
+      <span className="text-xs font-semibold uppercase tracking-wide text-red-600 dark:text-red-400">
+        Live
+      </span>
+    </div>
+  )
+}
+```
+
+### Section data loading
+
+A centered pulse while a card waits on its own data fetch:
+
+```tsx
+"use client"
+import { LoaderPulse } from "@/components/animations/loaders/pulse"
+
+export function AnalyticsCard({ loading, value }: { loading: boolean; value?: number }) {
+  return (
+    <div className="flex min-h-[140px] flex-col items-center justify-center rounded-xl border border-neutral-200 p-6 dark:border-neutral-800">
+      <p className="mb-4 text-sm text-neutral-500">Monthly active users</p>
+      {loading ? (
+        <div role="status" className="flex flex-col items-center gap-3">
+          <LoaderPulse size={48} color="#3b82f6" duration={1.5} />
+          <span className="sr-only">Loading analytics...</span>
+        </div>
+      ) : (
+        <p className="text-4xl font-bold tabular-nums">{value?.toLocaleString()}</p>
+      )}
+    </div>
+  )
+}
+```

@@ -163,3 +163,160 @@ export default function Example() {
 | `baseColor` | `string` | `"#e5e7eb"` | Base color of the skeleton |
 | `highlightColor` | `string` | `"#f3f4f6"` | Highlight color of the skeleton |
 | `duration` | `number` | `1.5` | Animation duration in seconds |
+
+## Use cases
+
+`LoaderSkeleton` is a **structural placeholder** loader, not a progress indicator. It renders a rectangle filled with `baseColor` (default `#e5e7eb`) and sweeps a `linear-gradient` highlight (`highlightColor`, default `#f3f4f6`) from `x: -100%` to `x: 100%` over `duration` seconds. Because `width` defaults to `"100%"` and `height` defaults to `20`, a single instance makes a text-line placeholder. Compose multiple instances to match the real content layout. Reach for it when:
+
+- **You are about to render a list.** A stack of skeleton rows shaped like actual list items (avatar circle + two text lines) dramatically reduces perceived wait compared to a centered spinner.
+- **You are loading a card with a known structure.** Profile cards, product cards, or dashboard widgets with a predictable height and layout benefit from skeletons because the layout does not shift when data arrives.
+- **The page renders in regions** and different areas load independently. Each region can show its own skeleton without blocking the rest of the UI.
+- **You want to delay showing a spinner entirely.** For content that almost always loads in under one second, a skeleton is less jarring than a spinner that flickers on and off.
+
+## When to use / when not to use
+
+**Use skeleton when:**
+
+- You know the approximate shape of the content being loaded (text, image, button, avatar).
+- The loading area is at least a couple of lines tall so the shape signal is meaningful.
+- You are building a list, feed, or grid where repeated rows create a recognizable scaffold.
+
+**Reach for a spinner or other loader when:**
+
+- **The wait is for an action, not content.** A form submit, a file delete, or a search executing does not have a content shape to fill. Use a [Spinner](/docs/animations/loaders/spinner) or [Dots](/docs/animations/loaders/dots).
+- **You have no idea what shape the content will have.** A skeleton for unknown-shape content just looks like placeholder rectangles, which is no better than a spinner.
+- **The content area is tiny.** A 20 px high skeleton inside a button is meaningless. Use a [Spinner](/docs/animations/loaders/spinner) instead.
+- **You know the exact progress percentage.** Use [Liquid Progress](/docs/animations/loaders/liquid-progress).
+
+## Accessibility notes
+
+Skeleton loaders are purely visual placeholders. The shimmer animation provides no semantic signal to assistive technologies.
+
+- **Wrap the entire skeleton group in a live region:**
+
+```tsx
+<div role="status" aria-label="Loading profile">
+  <div className="flex flex-col gap-3 w-64">
+    <LoaderSkeleton width={64} height={64} borderRadius={32} />
+    <LoaderSkeleton width="100%" height={20} />
+    <LoaderSkeleton width="80%" height={16} />
+  </div>
+  <span className="sr-only">Loading profile...</span>
+</div>
+```
+
+- **Do not add `role="status"` to each individual skeleton.** One wrapper announcement is enough. Multiple live regions firing at once create noise.
+- **Respect reduced motion.** The shimmer sweep is a continuous translation. Slow it significantly or stop it for users who prefer less motion:
+
+```tsx
+"use client"
+import { useReducedMotion } from "motion/react"
+import { LoaderSkeleton } from "@/components/animations/loaders/skeleton"
+
+function AccessibleSkeleton(props: React.ComponentProps<typeof LoaderSkeleton>) {
+  const reduced = useReducedMotion()
+  return <LoaderSkeleton {...props} duration={reduced ? 0 : 1.5} />
+}
+```
+
+Setting `duration={0}` stops the motion entirely while keeping the base color as a static placeholder.
+
+## Performance considerations
+
+- **The shimmer is a transform.** The gradient element animates `x` (a `translateX` transform), which is compositor-only with no layout or paint cost.
+- **Many skeletons = many animation loops.** A 20-row list with three skeletons per row mounts 60 `motion.div` instances, each with its own `repeat: Infinity`. This is heavier than a single [Spinner](/docs/animations/loaders/spinner). Consider:
+  - Capping the skeleton row count to 5 to 8 visible items even if more are expected.
+  - Using a CSS-only shimmer (a `@keyframes` on `background-position`) for very long lists, since a single CSS animation is shared across all instances.
+- **Unmount when done.** Skeletons are often swapped out by conditionally rendering either the skeleton group or the real content, which handles cleanup automatically.
+
+## Customization examples
+
+### Circle avatar placeholder
+
+```tsx
+<LoaderSkeleton width={48} height={48} borderRadius={24} />
+```
+
+### Dark-mode aware colors
+
+Pass explicit colors that match your dark palette:
+
+```tsx
+<LoaderSkeleton
+  width="100%"
+  height={20}
+  baseColor="#27272a"
+  highlightColor="#3f3f46"
+/>
+```
+
+### Wide banner placeholder
+
+```tsx
+<LoaderSkeleton width="100%" height={180} borderRadius={12} />
+```
+
+## Real-world examples
+
+### User profile card skeleton
+
+```tsx
+"use client"
+import { LoaderSkeleton } from "@/components/animations/loaders/skeleton"
+
+export function ProfileCardSkeleton() {
+  return (
+    <div
+      role="status"
+      aria-label="Loading profile"
+      className="flex flex-col gap-3 w-64 rounded-xl border border-neutral-200 p-5 dark:border-neutral-800"
+    >
+      <LoaderSkeleton width={56} height={56} borderRadius={28} />
+      <LoaderSkeleton width="70%" height={18} borderRadius={4} />
+      <LoaderSkeleton width="50%" height={14} borderRadius={4} />
+      <div className="flex gap-2 pt-2">
+        <LoaderSkeleton width={72} height={32} borderRadius={8} />
+        <LoaderSkeleton width={72} height={32} borderRadius={8} />
+      </div>
+      <span className="sr-only">Loading profile...</span>
+    </div>
+  )
+}
+```
+
+### Feed list skeleton
+
+Use it as a drop-in replacement while the real list items are fetching:
+
+```tsx
+"use client"
+import { LoaderSkeleton } from "@/components/animations/loaders/skeleton"
+
+function FeedRowSkeleton() {
+  return (
+    <div className="flex items-start gap-3 py-4">
+      <LoaderSkeleton width={40} height={40} borderRadius={20} />
+      <div className="flex flex-1 flex-col gap-2">
+        <LoaderSkeleton width="60%" height={14} borderRadius={4} />
+        <LoaderSkeleton width="90%" height={12} borderRadius={4} />
+        <LoaderSkeleton width="75%" height={12} borderRadius={4} />
+      </div>
+    </div>
+  )
+}
+
+export function FeedSkeleton() {
+  return (
+    <div
+      role="status"
+      aria-label="Loading feed"
+      className="divide-y divide-neutral-100 dark:divide-neutral-800"
+    >
+      {Array.from({ length: 5 }).map((_, i) => (
+        <FeedRowSkeleton key={i} />
+      ))}
+      <span className="sr-only">Loading feed...</span>
+    </div>
+  )
+}
+```

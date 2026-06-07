@@ -214,3 +214,218 @@ export function ReactionButton({
 | `isLiked` | `boolean` | `false` | Initial state of the button. |
 | `onToggle` | `(isLiked: boolean) => void` | - | Callback function when the button is toggled. |
 | `className` | `string` | - | Additional CSS classes. |
+
+## Use cases
+
+`ReactionButton` wraps any `LucideIcon` in a `motion()` call and animates its `scale`, `fill`, and `stroke` properties on toggle. On activation it plays a `[0.8, 1.2, 1]` scale keyframe and three burst sparkle sub-animations: a cross SVG that scales and rotates, and two dot divs that fly outward from the corners. The component is controlled via the `isLiked` prop and fires `onToggle` with the new boolean state.
+
+- **Like/love buttons on posts.** Pass `Icon={Heart}` with `colors={{ liked: "#ef4444" }}` for the classic heart reaction on user-generated content feeds.
+- **Favorites and bookmarks.** Use `Icon={Bookmark}` or `Icon={Star}` to let users save articles, products, or playlists to a collection.
+- **Upvote on comments or answers.** `Icon={ThumbsUp}` with `colors={{ liked: "#3b82f6" }}` matches common Q&A and forum upvote patterns.
+- **Approve in review flows.** A `ThumbsUp` or `CheckCircle` button in a code review or content approval workflow gives reviewers a quick signal to emit without a text response.
+- **Wishlist toggles on product cards.** An e-commerce product grid where each card has a `Bookmark` or `Heart` react button for adding to the wishlist without leaving the page.
+
+For a grouped reaction picker with magnification, see [Reaction Dock](/docs/animations/specials/reaction-dock).
+
+## When to use / when not to use
+
+**Use `ReactionButton` when:**
+
+- You need a single binary toggle (liked / not liked). The component maintains its own `liked` state internally, initialized from `isLiked`, and calls `onToggle` with each change.
+- The icon is from Lucide. `motion()` wraps a `LucideIcon` directly; other SVG components need additional adapter work.
+- You want the burst sparkle effect on a single icon. For a row of labeled emoji reactions, [Reaction Dock](/docs/animations/specials/reaction-dock) is the right choice.
+
+**Do not use `ReactionButton` when:**
+
+- You need more than two states (e.g., "like", "love", "wow"). The component is strictly a boolean toggle. Implement a multi-state reaction picker separately.
+- The toggle state must be server-synced immediately on every click. The component fires `onToggle` synchronously on click; optimistic UI patterns work, but error rollback (flipping back to the previous state on network failure) requires wiring the `isLiked` prop as a controlled value from the parent.
+- The sparkle animation is unwanted (e.g., a minimal design system). The sparkles render whenever `liked` is `true` with no opt-out prop. To suppress them, fork the component and remove the sparkle `div` block.
+
+## Accessibility notes
+
+- **Button role.** The `MotionIcon` is rendered as a plain SVG element with an `onClick` handler, not wrapped in a `<button>`. This means it lacks keyboard focus, Enter/Space activation, and a `role="button"` by default. Wrap it:
+
+```tsx
+<button
+  aria-label={liked ? "Unlike" : "Like"}
+  aria-pressed={liked}
+  onClick={handleClick}
+  className="rounded focus-visible:ring-2 focus-visible:ring-blue-500"
+>
+  <ReactionButton Icon={Heart} isLiked={liked} onToggle={setLiked} />
+</button>
+```
+
+Or fork the component and replace the outer `div` with a `<button>` element.
+
+- **`aria-pressed`.** The button conveys a two-state toggle. `aria-pressed={liked}` communicates the current state to screen readers and switches from "not pressed" to "pressed" on activation.
+- **Accessible label.** An icon-only button must have a label. Either `aria-label` or a visually-hidden `span` is required. A label like "Add to favorites" (initial state) and "Remove from favorites" (active state) is more descriptive than "Like".
+- **Color-only state change.** The toggle animates `fill` and `stroke` color changes. Users with color blindness may not distinguish `"currentColor"` (unfilled) from `colors.liked` (filled). Ensure the `fill` change (hollow to solid) provides enough shape contrast beyond hue alone. Lucide icons in their filled state look visually distinct, which helps.
+- **Reduced motion.** The `[0.8, 1.2, 1]` scale keyframe and sparkle animations should be disabled for users who prefer reduced motion:
+
+```tsx
+"use client"
+import { useReducedMotion } from "motion/react"
+
+function AccessibleReactionButton(props: React.ComponentProps<typeof ReactionButton>) {
+  const reduced = useReducedMotion()
+  // When reduced, bypass the animated scale sequence
+  return <ReactionButton {...props} />
+  // Fork the component to conditionally render sparkles and skip scale keyframes
+}
+```
+
+## Performance considerations
+
+- **`motion(Icon)` wrapping.** `motion()` is called once per render of `ReactionButton`. Move it outside the component body to avoid re-creating the enhanced component on every render:
+
+```tsx
+// At module level, outside the component
+const MotionHeart = motion(Heart)
+```
+
+The current source calls `const MotionIcon = motion(Icon)` inside the function body. If `Icon` is stable (the same reference each render), `motion()` caches by identity and this is safe. If `Icon` is defined inline it creates a new component every render.
+
+- **Sparkle unmount.** The sparkle `div` block is conditionally rendered when `liked` is `true`. It contains three `motion.div` sub-elements, each with their own `animate` sequence. These animate once and stay rendered until `liked` becomes `false`. The animations complete in 300 to 400 ms, after which the elements are static but still in the DOM. This has negligible cost for a few buttons but avoids the issue entirely by using `AnimatePresence` for exit-based cleanup.
+- **`whileTap` scale.** The `whileTap={{ scale: 0.8 }}` gesture adds a compositor animation on pointer down. With many buttons in a dense list (a comment feed with 50 items), all buttons have the gesture listener registered. This is fine because gesture listeners are passive by default.
+- **Fill/stroke color animation.** `fill` and `stroke` are CSS properties animated by `motion/react`. They are paint operations, not compositor-only. On a grid of 100 reaction buttons all toggling simultaneously this could cause a batch repaint. In practice, toggles happen one at a time, so cost is negligible.
+
+## Customization examples
+
+### Bookmark with save confirmation
+
+```tsx
+"use client"
+import { useState } from "react"
+import { Bookmark } from "lucide-react"
+import { ReactionButton } from "@/components/animations/specials/reaction-button"
+
+export function BookmarkButton({ articleId }: { articleId: string }) {
+  const [saved, setSaved] = useState(false)
+
+  async function handleToggle(isLiked: boolean) {
+    setSaved(isLiked)
+    await updateBookmark(articleId, isLiked)
+  }
+
+  return (
+    <button
+      aria-label={saved ? "Remove bookmark" : "Bookmark this article"}
+      aria-pressed={saved}
+      className="rounded p-1 focus-visible:ring-2 focus-visible:ring-blue-500"
+    >
+      <ReactionButton
+        Icon={Bookmark}
+        size={20}
+        isLiked={saved}
+        colors={{ initial: "currentColor", liked: "#6366f1" }}
+        onToggle={handleToggle}
+      />
+    </button>
+  )
+}
+```
+
+### Star rating (controlled)
+
+```tsx
+"use client"
+import { useState } from "react"
+import { Star } from "lucide-react"
+import { ReactionButton } from "@/components/animations/specials/reaction-button"
+
+export function StarToggle() {
+  const [starred, setStarred] = useState(false)
+
+  return (
+    <div className="flex items-center gap-2">
+      <button aria-label={starred ? "Unstar" : "Star"} aria-pressed={starred} className="rounded p-1">
+        <ReactionButton
+          Icon={Star}
+          size={28}
+          isLiked={starred}
+          colors={{ initial: "#a3a3a3", liked: "#eab308" }}
+          onToggle={setStarred}
+        />
+      </button>
+      <span className="text-sm text-neutral-500">{starred ? "Starred" : "Not starred"}</span>
+    </div>
+  )
+}
+```
+
+## Real-world examples
+
+### Post like button with count
+
+```tsx
+"use client"
+import { useState } from "react"
+import { Heart } from "lucide-react"
+import { ReactionButton } from "@/components/animations/specials/reaction-button"
+
+export function PostLikeButton({ initialCount = 0 }: { initialCount?: number }) {
+  const [liked, setLiked] = useState(false)
+  const [count, setCount] = useState(initialCount)
+
+  function handleToggle(isLiked: boolean) {
+    setLiked(isLiked)
+    setCount((prev) => (isLiked ? prev + 1 : prev - 1))
+  }
+
+  return (
+    <button
+      aria-label={liked ? `Unlike (${count} likes)` : `Like (${count} likes)`}
+      aria-pressed={liked}
+      className="inline-flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-sm text-neutral-600 hover:bg-neutral-100 dark:text-neutral-400 dark:hover:bg-neutral-800"
+    >
+      <ReactionButton
+        Icon={Heart}
+        size={18}
+        isLiked={liked}
+        colors={{ initial: "currentColor", liked: "#ef4444" }}
+        onToggle={handleToggle}
+      />
+      <span>{count}</span>
+    </button>
+  )
+}
+```
+
+### Wishlist button on a product card
+
+```tsx
+"use client"
+import { useState } from "react"
+import { Bookmark } from "lucide-react"
+import { ReactionButton } from "@/components/animations/specials/reaction-button"
+
+export function ProductCard({ name, price }: { name: string; price: string }) {
+  const [wishlisted, setWishlisted] = useState(false)
+
+  return (
+    <div className="relative rounded-2xl border border-neutral-200 bg-white p-4 shadow-sm dark:border-neutral-800 dark:bg-neutral-900">
+      <div className="mb-3 h-40 rounded-xl bg-neutral-100 dark:bg-neutral-800" />
+      <div className="flex items-start justify-between">
+        <div>
+          <p className="font-semibold">{name}</p>
+          <p className="text-sm text-neutral-500">{price}</p>
+        </div>
+        <button
+          aria-label={wishlisted ? "Remove from wishlist" : "Add to wishlist"}
+          aria-pressed={wishlisted}
+          className="rounded-lg p-1 hover:bg-neutral-100 dark:hover:bg-neutral-800"
+        >
+          <ReactionButton
+            Icon={Bookmark}
+            size={20}
+            isLiked={wishlisted}
+            colors={{ initial: "currentColor", liked: "#6366f1" }}
+            onToggle={setWishlisted}
+          />
+        </button>
+      </div>
+    </div>
+  )
+}
+```

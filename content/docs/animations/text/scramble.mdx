@@ -197,3 +197,153 @@ import { TextScramble } from "@/components/animations/text/scramble"
 | `duration` | `number` | `1` | Decode duration (seconds) |
 | `delay` | `number` | `0` | Delay before animation |
 | `scrambleChars` | `string` | `"!@#$%^&*"` | Characters to use for scrambling |
+
+## Use cases
+
+`TextScramble` uses the `useScramble` hook to run a decoding animation. Internally, the hook calculates `iterations = Math.floor(duration * 60)` frames and schedules them at `duration * 1000 / iterations` ms intervals (roughly 16 ms, or one frame at 60 fps). On each frame, characters to the left of the current progress ratio are already resolved; the rest are randomly replaced from `scrambleChars`. Spaces are preserved. The hook fires once on mount. Reach for it when:
+
+- **Password or code reveal.** Simulating a system "cracking" a code works in hacker/terminal UIs.
+- **Loading complete label.** After a process finishes (file upload, compilation), scramble-reveal the completion message for a satisfying effect.
+- **Teaser text on hover.** Trigger the scramble on `onMouseEnter` to reveal a button label or product name dramatically.
+- **Error code display.** In a dark-themed dashboard or log viewer, scramble-in an error code or ID to reinforce the terminal aesthetic.
+
+The component renders a `<motion.p>` with `font-mono` applied by default, so the scramble resolves in a fixed-width font where substituted characters do not cause layout shifts.
+
+## When to use / when not to use
+
+**Use scramble when:**
+
+- The effect matches the product's personality: technical, cyberpunk, security-focused, or terminal-inspired.
+- The text is short. At 30 characters and `duration=0.8`, the animation resolves in about 0.8 s. Long strings take longer to resolve character by character and the readable content is delayed.
+
+**Reach for something else when:**
+
+- **Essential information users must read immediately.** A scramble animation delays legibility by design. Error messages, alerts, and success confirmations should be readable the moment they appear. Use [Fade In](/docs/animations/text/fade-in) or a plain static element instead.
+- **Body copy or any text longer than a short label.** Reading is impossible during the scramble phase. The effect is appropriate only when the content is revealed as a reward after the user waits.
+- **Long strings.** A 60-character string resolves left-to-right, meaning the right half is unreadable for nearly the full duration. Prefer [Typewriter](/docs/animations/text/typewriter) if you need a character-by-character reveal that stays readable as it builds.
+- **Frequent updates.** Each `children` change replays the full scramble from the start. If the text updates every few seconds (e.g., a live feed), the repeated scramble becomes noise.
+
+## Accessibility notes
+
+During the scramble phase the displayed text is random characters, not the intended message. Screen readers may announce the scrambled content if the `<p>` is in the normal document flow. To ensure assistive technology announces the final text rather than the scramble noise:
+
+```tsx
+<TextScramble
+  aria-label="SYSTEM READY"
+  className="text-2xl font-mono"
+>
+  SYSTEM READY
+</TextScramble>
+```
+
+The `aria-label` is read immediately, while the visual scramble plays out. Never rely solely on the scrambled text to convey information.
+
+**Reduced motion.** The hook runs a frame-by-frame interval regardless of user preference. Wrap the component to skip the scramble and show the final text directly:
+
+```tsx
+"use client"
+import { useReducedMotion } from "motion/react"
+import { TextScramble } from "@/components/animations/text/scramble"
+
+function AccessibleScramble({ children, ...props }: { children: string; [key: string]: unknown }) {
+  const reduced = useReducedMotion()
+  if (reduced) return <p className="font-mono" {...props}>{children}</p>
+  return <TextScramble {...props}>{children}</TextScramble>
+}
+```
+
+**`aria-live` caution.** If you place `TextScramble` inside an `aria-live` region, every frame update will trigger an announcement in the live region. Avoid live regions around scrambling text; announce only the final resolved value.
+
+## Performance considerations
+
+- **Frame-rate interval.** The hook runs `setInterval` at approximately 16 ms (1000 ms / 60 iterations for a 1 s duration), producing up to 60 state updates per second via `setDisplayText`. Each update causes a React re-render of the component. This is by design but means the component is a continuous re-render source for its duration.
+- **Duration scales iterations.** `iterations = Math.floor(duration * 60)`. A 2 s scramble runs 120 `setDisplayText` calls. Keep `duration` at 0.5 to 1.5 s to limit re-render count.
+- **`font-mono` by default.** The component applies `font-mono` to prevent layout shifts as random characters replace each other. Do not remove this class unless your custom font is a monospace face.
+- **Only one scramble at a time.** The hook uses a single `setInterval` and `clearInterval` cleanup. Multiple simultaneous `TextScramble` instances each run their own interval. Keep active instances to 1 or 2 on screen at a time.
+
+## Customization examples
+
+### Alphanumeric-only scramble for a less aggressive effect
+
+```tsx
+import { TextScramble } from "@/components/animations/text/scramble"
+
+<TextScramble
+  scrambleChars="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789"
+  duration={0.8}
+  className="text-2xl"
+>
+  COMPLETE
+</TextScramble>
+```
+
+### Slow decode for dramatic effect
+
+```tsx
+import { TextScramble } from "@/components/animations/text/scramble"
+
+<TextScramble duration={2} className="text-4xl font-bold tracking-widest">
+  CLASSIFIED
+</TextScramble>
+```
+
+### Delayed reveal after page load
+
+```tsx
+import { TextScramble } from "@/components/animations/text/scramble"
+
+<TextScramble delay={1.5} duration={0.8} className="text-xl font-mono">
+  ACCESS GRANTED
+</TextScramble>
+```
+
+## Real-world examples
+
+### Terminal-style loading complete message
+
+```tsx
+"use client"
+import { useState } from "react"
+import { TextScramble } from "@/components/animations/text/scramble"
+
+export function ProcessingLabel({ isComplete }: { isComplete: boolean }) {
+  return (
+    <div className="rounded-lg bg-neutral-950 px-4 py-3 text-green-400">
+      {isComplete ? (
+        <TextScramble
+          aria-label="Build complete"
+          className="text-sm"
+          duration={0.6}
+          scrambleChars="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789"
+        >
+          BUILD COMPLETE
+        </TextScramble>
+      ) : (
+        <span className="text-sm font-mono text-neutral-500">Building...</span>
+      )}
+    </div>
+  )
+}
+```
+
+### Security dashboard badge
+
+```tsx
+import { TextScramble } from "@/components/animations/text/scramble"
+
+export function SecurityBadge() {
+  return (
+    <div className="inline-flex items-center gap-2 rounded-full border border-green-500/30 bg-green-500/10 px-4 py-1">
+      <span className="h-2 w-2 rounded-full bg-green-500" />
+      <TextScramble
+        aria-label="SECURE"
+        className="text-xs text-green-400"
+        duration={0.5}
+        delay={0.2}
+      >
+        SECURE
+      </TextScramble>
+    </div>
+  )
+}
+```

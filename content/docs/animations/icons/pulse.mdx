@@ -392,3 +392,189 @@ export default function Example() {
 | `children` | `ReactNode` | - | The icon element to animate |
 | `trigger` | `"mount"` \| `"hover"` \| `"always"` | `"always"` | When to trigger the pulse animation |
 | `duration` | `number` | `0.8` | Duration of one pulse cycle in seconds |
+
+## Use cases
+
+`PulseIcon` drives `scale: [1, 1.05, 1]` and `opacity: [1, 0.8, 1]` on a `repeat: Infinity` cycle using `createContinuousTransition` with `easeInOut`. The default `trigger="always"` means it pulses from the moment it mounts. `trigger="hover"` enables it only while the cursor is over the element. Good fits:
+
+- **Live / recording indicators.** A `Radio` or `Dot` icon pulsing at 0.8 s communicates "live now" without a badge.
+- **Unread notification bell.** A pulsing `Bell` on a nav bar tells the user there is something to read, with `trigger="hover"` to stop on interaction.
+- **Real-time sync status.** A `RefreshCw` or `Cloud` icon pulsing while data is syncing and stopping once the sync resolves.
+- **Call-to-action emphasis.** A `ChevronRight` or `ArrowRight` that gently pulses at 1.2 s to nudge the user toward the next step.
+- **Hover feedback on icon buttons.** `trigger="hover"` adds a scale swell on mouseover without committing to a continuous animation.
+
+## When to use / when not to use
+
+**Use `PulseIcon` when:**
+
+- One icon needs to pulse to communicate an ongoing state (live, active, syncing) and the rest of the page is static.
+- `trigger="hover"` is appropriate for subtle interactive feedback when you want motion on demand rather than always-on.
+
+**Do not use `trigger="always"` when:**
+
+- More than one icon on the screen is already using `repeat: Infinity` motion. Multiple simultaneous scale pulses compete for attention and make the interface feel unstable.
+- The icon is inside a table, list, or repeated card component. A pulsing icon in every row is overwhelming. Reserve always-on pulse for a single focal element.
+- The pulsing serves no informational purpose. A purely decorative icon that pulses forever trains users to ignore it, making it useless as a real attention signal later.
+- A calmer visual rhythm would work. [HeartbeatIcon](/docs/animations/icons/heartbeat) with its natural double-beat pause feels less aggressive than a constant scale loop, and [BounceContinuous](/docs/animations/icons/bounce-continuous) works better for directional cues.
+
+## Accessibility notes
+
+- A pulsing icon alone does not communicate state to screen readers. Add a text description alongside it:
+
+```tsx
+<div className="flex items-center gap-2" role="status">
+  <PulseIcon trigger="always" duration={0.8}>
+    <Radio className="w-4 h-4 text-red-500" aria-hidden="true" />
+  </PulseIcon>
+  <span className="text-sm font-medium">Live</span>
+</div>
+```
+
+- `repeat: Infinity` scale animations can cause discomfort for users with vestibular sensitivities. Always check `prefers-reduced-motion` and either stop the pulse or use a non-motion indicator (color flash via CSS, for example):
+
+```tsx
+"use client"
+import { useReducedMotion } from "motion/react"
+import { PulseIcon } from "@/components/animations/icons/pulse"
+import { Radio } from "lucide-react"
+
+export function LiveIndicator() {
+  const reduced = useReducedMotion()
+  return (
+    <div className="flex items-center gap-2">
+      {reduced ? (
+        <Radio className="w-4 h-4 text-red-500" aria-hidden="true" />
+      ) : (
+        <PulseIcon trigger="always" duration={1.2}>
+          <Radio className="w-4 h-4 text-red-500" aria-hidden="true" />
+        </PulseIcon>
+      )}
+      <span className="text-sm font-medium text-red-600">Live</span>
+    </div>
+  )
+}
+```
+
+- When `trigger="hover"`, the pulse only fires for pointer users. Keyboard and touch users will never see it. Do not rely on the hover pulse to communicate interactive affordance; pair it with a visible focus ring and color change.
+
+## Performance considerations
+
+- The animation modifies `scale` and `opacity`, both compositor-only properties. No layout recalculation or repaint.
+- `repeat: Infinity` with `trigger="always"` keeps the compositor thread active indefinitely. Unmount rather than hide:
+
+```tsx
+{isSyncing && (
+  <PulseIcon trigger="always" duration={0.8}>
+    <RefreshCw className="w-5 h-5 text-blue-500" aria-hidden="true" />
+  </PulseIcon>
+)}
+```
+
+- `trigger="hover"` is significantly cheaper than `trigger="always"` because the animation only runs while the mouse is over the element. Prefer hover-based pulsing for any icon that does not need to communicate an always-on status.
+- Avoid more than one `trigger="always"` `PulseIcon` mounted simultaneously. The compositor cost is low per instance, but the perceptual cost of multiple simultaneous scale loops is high.
+
+## Customization examples
+
+### Fast pulse for urgency
+
+A shorter `duration` (0.5 s) reads as more alert, appropriate for a critical indicator:
+
+```tsx
+import { PulseIcon } from "@/components/animations/icons/pulse"
+import { AlertCircle } from "lucide-react"
+
+<PulseIcon trigger="always" duration={0.5}>
+  <AlertCircle className="w-5 h-5 text-orange-500" aria-hidden="true" />
+</PulseIcon>
+```
+
+### Slow pulse for ambient status
+
+A longer `duration` (1.5 s) feels calm and unobtrusive, like a breathing indicator:
+
+```tsx
+import { PulseIcon } from "@/components/animations/icons/pulse"
+import { Cloud } from "lucide-react"
+
+<PulseIcon trigger="always" duration={1.5}>
+  <Cloud className="w-5 h-5 text-sky-400" aria-hidden="true" />
+</PulseIcon>
+```
+
+### Hover-only pulse on a nav icon
+
+Only pulses while the user is hovering, adding tactile feel to a navigation item:
+
+```tsx
+import { PulseIcon } from "@/components/animations/icons/pulse"
+import { Bell } from "lucide-react"
+
+<button aria-label="Notifications" className="rounded-full p-2 hover:bg-neutral-100">
+  <PulseIcon trigger="hover" duration={0.6}>
+    <Bell className="w-5 h-5" aria-hidden="true" />
+  </PulseIcon>
+</button>
+```
+
+## Real-world examples
+
+### Live broadcast badge
+
+Shows while a stream is active and stops (unmounts) when the stream ends:
+
+```tsx
+import { PulseIcon } from "@/components/animations/icons/pulse"
+import { useReducedMotion } from "motion/react"
+import { Radio } from "lucide-react"
+
+export function LiveBadge({ isLive }: { isLive: boolean }) {
+  const reduced = useReducedMotion()
+  if (!isLive) return null
+
+  return (
+    <div
+      role="status"
+      className="flex items-center gap-1.5 rounded-full bg-red-100 px-2.5 py-1 text-xs font-semibold text-red-600 dark:bg-red-950 dark:text-red-400"
+    >
+      {reduced ? (
+        <Radio className="w-3.5 h-3.5" aria-hidden="true" />
+      ) : (
+        <PulseIcon trigger="always" duration={1}>
+          <Radio className="w-3.5 h-3.5" aria-hidden="true" />
+        </PulseIcon>
+      )}
+      LIVE
+    </div>
+  )
+}
+```
+
+### Sync status icon in a toolbar
+
+Pulses while a save is in flight, then unmounts cleanly when done:
+
+```tsx
+"use client"
+import { PulseIcon } from "@/components/animations/icons/pulse"
+import { RefreshCw, CheckCircle } from "lucide-react"
+
+export function SyncStatus({ syncing }: { syncing: boolean }) {
+  return (
+    <div className="flex items-center gap-1.5 text-xs text-neutral-500">
+      {syncing ? (
+        <>
+          <PulseIcon trigger="always" duration={0.8}>
+            <RefreshCw className="w-4 h-4 text-blue-500" aria-hidden="true" />
+          </PulseIcon>
+          <span>Syncing...</span>
+        </>
+      ) : (
+        <>
+          <CheckCircle className="w-4 h-4 text-green-500" aria-hidden="true" />
+          <span>Up to date</span>
+        </>
+      )}
+    </div>
+  )
+}
+```

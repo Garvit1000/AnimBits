@@ -202,3 +202,144 @@ export default function Hero() {
 | words       | string[]              | Required      | Array of words to cycle through                  |
 | duration    | number                | 2000          | Duration to display each word (ms)               |
 | className   | string                | -             | Additional classes for the container wrapper     |
+
+## Use cases
+
+`DiaText` cycles through a `words` array using `setInterval` at `duration` milliseconds per word (default 2000 ms). Each word enters from below with a spring transition (`stiffness: 300, damping: 30`) and blurs out upward on exit. While sliding in, the word's text color sweeps left-to-right from a multi-color gradient (blue `#2563EB`, orange `#EA580C`, pink `#DB2777`, purple `#9333EA`) to the solid inherited `currentColor` via `background-position` animation. An invisible spacer span preserves layout width. Reach for it when:
+
+- **Hero taglines.** Inline within an `<h1>` to convey a product's multiple value propositions without a full content switch: "Build [Chat / Ship / Deploy] products."
+- **Feature rotation.** Cycling benefit keywords next to a static verb: "Code [faster / smarter / without friction]."
+- **Brand voice statements.** Short, punchy adjectives that establish tone above the fold.
+- **Pricing headline.** "The [simplest / most affordable / best-value] plan for your team."
+
+The gradient trace is purely cosmetic and always resolves to the parent's text color, so the component drops into any heading without custom color configuration.
+
+## When to use / when not to use
+
+**Use DiaText when:**
+
+- The rotating words are roughly similar in character length. The container uses an invisible spacer to hold width, so words that are much longer or shorter than the spacer word can cause minor layout shifts.
+- You want a visually premium kinetic effect at the start of a page where grabbing attention is the goal.
+- The list has 2 to 5 items. Longer lists mean users may never see all words, which wastes content.
+
+**Reach for something else when:**
+
+- You need more than word rotation, such as full phrase changes. [Word Carousel](/docs/animations/text/word-carousel) uses the same slide mechanic with a simpler, gradient-free implementation.
+- The parent text is body copy or inside a paragraph users must read. The continuous cycling distraction hurts reading comprehension; reserve this effect for display text only.
+- You want the user to control the rotation (e.g., a tabbed interface). The `setInterval` runs unconditionally; there is no pause or manual trigger prop.
+- The page has multiple DiaText instances on screen at once. Competing simultaneous rotations split attention and dilute the effect of each.
+
+## Accessibility notes
+
+The currently visible word lives inside an `<AnimatePresence>` block inside a `<span>`. Screen readers may announce each word change as it cycles, which can be disruptive mid-sentence. Two mitigations to consider:
+
+**Option 1: Mark the rotating span as `aria-hidden` and provide a static accessible label on the parent.**
+
+```tsx
+<h1 className="text-4xl font-bold">
+  <span aria-label="Chat, Build, and Ship with your tabs">
+    <span aria-hidden="true">
+      <DiaText words={["Chat", "Build", "Ship"]} />
+    </span>
+    {" "}with your tabs
+  </span>
+</h1>
+```
+
+**Option 2: Use `aria-live="off"` to suppress announcements** if the rotating text is purely decorative and the static surrounding text already conveys the meaning.
+
+**Reduced motion.** The component does not check `prefers-reduced-motion`. Wrap it to show only the first word statically when motion is reduced:
+
+```tsx
+"use client"
+import { useReducedMotion } from "motion/react"
+import { DiaText } from "@/components/animations/text/dia-text"
+
+function AccessibleDiaText({ words, ...props }: { words: string[] }) {
+  const reduced = useReducedMotion()
+  if (reduced) return <span {...props}>{words[0]}</span>
+  return <DiaText words={words} {...props} />
+}
+```
+
+**Color contrast.** The gradient trace uses `WebkitTextFillColor: "transparent"` during the sweep, which means the text is briefly visible only through the gradient colors. Ensure each gradient color meets the WCAG AA contrast ratio against your background. The animation resolves to `currentColor` within 0.8 s, so this is a transient concern rather than a static one.
+
+## Performance considerations
+
+- **`setInterval` runs indefinitely.** The interval is cleared on unmount via the effect cleanup, but if the component is mounted off-screen, it keeps cycling without any visual output. Pair with an in-view check to pause when not visible.
+- **`background-position` animation.** The inner `motion.span` animates `backgroundPosition` on every cycle, which triggers a paint on the text layer. Because it uses `background-clip: text` and `WebkitTextFillColor: transparent`, it cannot be promoted to its own compositor layer; each cycle is a repaint. This is acceptable for a single instance in a hero, but avoid multiple simultaneous DiaText components.
+- **Spring transition.** The `y` transition uses a spring (`stiffness: 300, damping: 30`), which runs on the compositor as a transform and costs nothing after the initial frame calculation.
+- **Invisible spacer.** The spacer `<span aria-hidden="true">` always renders the current word invisibly to hold layout. If your words have wildly different widths, the container can appear to jump. Pre-size the container with a `min-w-[Xch]` class.
+
+## Customization examples
+
+### Slower rotation for a calmer feel
+
+```tsx
+import { DiaText } from "@/components/animations/text/dia-text"
+
+<h1 className="text-5xl font-bold">
+  We build <DiaText words={["products", "experiences", "tools"]} duration={3000} /> people love
+</h1>
+```
+
+### Matching parent font weight
+
+```tsx
+import { DiaText } from "@/components/animations/text/dia-text"
+
+<div className="text-3xl font-light">
+  Thinking <DiaText words={["clearly", "simply", "boldly"]} className="font-light" />
+</div>
+```
+
+### Inside a colored heading
+
+```tsx
+import { DiaText } from "@/components/animations/text/dia-text"
+
+<h2 className="text-4xl font-bold text-emerald-600">
+  Build <DiaText words={["reliable", "scalable", "modern"]} /> systems
+</h2>
+```
+
+## Real-world examples
+
+### SaaS landing page hero
+
+```tsx
+import { DiaText } from "@/components/animations/text/dia-text"
+
+export function HeroHeadline() {
+  return (
+    <section className="py-32 text-center">
+      <h1 className="text-6xl font-black leading-tight md:text-8xl">
+        <DiaText words={["Design", "Build", "Ship"]} duration={2200} />{" "}
+        faster than ever
+      </h1>
+      <p className="mt-6 text-xl text-neutral-500">
+        One platform for your entire product workflow.
+      </p>
+    </section>
+  )
+}
+```
+
+### Feature list rotator
+
+```tsx
+import { DiaText } from "@/components/animations/text/dia-text"
+
+export function FeatureRotator() {
+  return (
+    <div className="text-2xl font-semibold text-center">
+      Your team can now{" "}
+      <DiaText
+        words={["collaborate in real time", "review designs faster", "ship with confidence"]}
+        duration={2500}
+        className="font-semibold"
+      />
+    </div>
+  )
+}
+```

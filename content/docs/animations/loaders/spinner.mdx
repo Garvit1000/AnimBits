@@ -137,3 +137,186 @@ export default function Example() {
 | `color` | `string` | `"currentColor"` | Color of the spinner |
 | `borderWidth` | `number` | `4` | Border width in pixels |
 | `duration` | `number` | `1` | Animation duration in seconds |
+
+## Use cases
+
+The spinner communicates an **indeterminate** wait, meaning work is happening but you can't say how far along it is. Reach for it when:
+
+- **Button actions.** Disable a submit button and swap its label for a spinner while a request is in flight, so the user can't double-submit.
+- **Inline async work.** Saving a field, refreshing a widget, or loading a dropdown's options after it opens.
+- **Section-level loading.** A card, table, or panel waiting on its own fetch while the rest of the page stays interactive.
+- **Route transitions.** A brief overlay while the next page's data resolves.
+
+Because `color` defaults to `currentColor`, the spinner inherits the text color of its container. Drop it inside a button or a colored badge and it matches automatically with no extra config.
+
+## When to use / when not to use
+
+**Use a spinner when:**
+
+- The wait is roughly **0.3 to 10 seconds** and you have no progress information.
+- The blocked area is small, like a button or a card, rather than a full content-heavy page.
+
+**Reach for something else when:**
+
+- **You know the percentage.** Use a determinate indicator like [Liquid Progress](/docs/animations/loaders/liquid-progress) instead. A spinner that could show real progress but doesn't feels slower than it is.
+- **You're loading structured content** such as lists, articles, or profiles. A [Skeleton](/docs/animations/loaders/skeleton) preserves layout and reduces perceived wait better than a centered spinner.
+- **The wait is under ~300ms.** Mounting a spinner that flashes for one frame is more distracting than showing nothing. Delay it:
+
+```tsx
+import { useEffect, useState } from "react"
+import { LoaderSpinner } from "@/components/animations/loaders/spinner"
+
+// Only show the spinner if loading outlasts the delay, avoiding a flicker on fast responses.
+function DelayedSpinner({ loading, delay = 300 }: { loading: boolean; delay?: number }) {
+  const [visible, setVisible] = useState(false)
+
+  useEffect(() => {
+    if (!loading) return setVisible(false)
+    const id = setTimeout(() => setVisible(true), delay)
+    return () => clearTimeout(id)
+  }, [loading, delay])
+
+  return visible ? <LoaderSpinner /> : null
+}
+```
+
+## Accessibility notes
+
+The spinner is a purely visual element. On its own a screen reader sees an empty, rotating `<div>`. Make the loading state perceivable to everyone:
+
+- **Announce it.** Wrap the spinner in a live region with an accessible label so assistive tech says "Loading" instead of nothing:
+
+```tsx
+<div role="status">
+  <LoaderSpinner />
+  <span className="sr-only">Loading...</span>
+</div>
+```
+
+- **Don't rely on motion alone.** Some users disable animations entirely; the `role="status"` text above is what actually conveys "busy" to them.
+- **Respect reduced motion.** A continuous spin can trigger discomfort for users with vestibular sensitivities. Honor their OS setting and slow it down or stop it:
+
+```tsx
+"use client"
+import { useReducedMotion } from "motion/react"
+import { LoaderSpinner } from "@/components/animations/loaders/spinner"
+
+function AccessibleSpinner() {
+  const reduced = useReducedMotion()
+  // Near-still rotation keeps the "busy" affordance without spinning fast.
+  return <LoaderSpinner duration={reduced ? 4 : 1} />
+}
+```
+
+- **Manage focus on overlays.** If a spinner blocks the whole screen, move focus to the overlay and restore it when the wait ends, so keyboard users aren't interacting with hidden content underneath.
+
+## Performance considerations
+
+- **GPU-friendly by design.** The animation only changes `rotate`, which is a transform, so it runs on the compositor with no layout and no repaint. You get a steady 60fps even on low-end devices.
+- **It runs forever until unmounted.** `repeat: Infinity` keeps the compositor awake. Conditionally render the spinner (`{loading && <LoaderSpinner />}`) rather than hiding it with CSS, so the animation stops when the work is done.
+- **Avoid spinner swarms.** Twenty spinners in a list each schedule their own animation frame. For repeated rows, prefer a single section spinner or a [Skeleton](/docs/animations/loaders/skeleton).
+- **No `will-change` needed.** A transform-only animation is already composited, so adding `will-change` here just costs memory.
+
+## Customization examples
+
+### Branded, inherits text color
+
+`currentColor` means the spinner takes on its parent's color for free:
+
+```tsx
+<button className="inline-flex items-center gap-2 text-blue-600">
+  <LoaderSpinner size={16} borderWidth={2} />
+  Saving
+</button>
+```
+
+### Thin and subtle
+
+Smaller border width and a slower duration read as calmer:
+
+```tsx
+<LoaderSpinner size={24} borderWidth={2} duration={1.4} color="#94a3b8" />
+```
+
+### Bold and prominent
+
+For full-page or hero loading states:
+
+```tsx
+<LoaderSpinner size={72} borderWidth={8} duration={0.8} color="#3b82f6" />
+```
+
+## Real-world examples
+
+### Submit button with loading state
+
+The most common use: block the action, show progress, and prevent double clicks.
+
+```tsx
+"use client"
+import { useState } from "react"
+import { LoaderSpinner } from "@/components/animations/loaders/spinner"
+
+export function SaveButton() {
+  const [saving, setSaving] = useState(false)
+
+  async function handleSave() {
+    setSaving(true)
+    try {
+      await saveChanges()
+    } finally {
+      setSaving(false)
+    }
+  }
+
+  return (
+    <button
+      onClick={handleSave}
+      disabled={saving}
+      className="inline-flex h-11 items-center gap-2 rounded-lg bg-blue-600 px-6 text-sm font-semibold text-white disabled:opacity-70"
+    >
+      {saving && <LoaderSpinner size={16} borderWidth={2} />}
+      {saving ? "Saving..." : "Save changes"}
+    </button>
+  )
+}
+```
+
+### Section that loads its own data
+
+Keep the rest of the page usable while one card fetches:
+
+```tsx
+"use client"
+import { LoaderSpinner } from "@/components/animations/loaders/spinner"
+
+export function StatsCard({ loading, value }: { loading: boolean; value?: string }) {
+  return (
+    <div className="rounded-xl border border-neutral-200 p-6 dark:border-neutral-800">
+      <p className="text-sm text-neutral-500">Revenue</p>
+      {loading ? (
+        <div role="status" className="flex h-9 items-center">
+          <LoaderSpinner size={20} borderWidth={2} color="#3b82f6" />
+          <span className="sr-only">Loading revenue...</span>
+        </div>
+      ) : (
+        <p className="text-3xl font-bold">{value}</p>
+      )}
+    </div>
+  )
+}
+```
+
+### Full-page overlay
+
+For blocking transitions where the whole view is pending:
+
+```tsx
+<div
+  role="status"
+  className="fixed inset-0 z-50 flex items-center justify-center bg-white/70 backdrop-blur-sm dark:bg-black/70"
+>
+  <LoaderSpinner size={48} borderWidth={5} color="#3b82f6" />
+  <span className="sr-only">Loading page...</span>
+</div>
+```

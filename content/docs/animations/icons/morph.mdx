@@ -255,3 +255,208 @@ export default function Example() {
 | `strokeWidth` | `number` | `2` | Stroke width |
 | `viewBox` | `string` | - | SVG viewBox attribute |
 | `className` | `string` | - | Additional CSS classes |
+
+## Use cases
+
+`MorphIcon` animates the SVG `d` attribute between consecutive entries in the `paths` array using `motion/react`'s `animate` prop on a `<motion.path>`. A `setInterval` advances the index every `interval` seconds, and the path transitions with `easeInOut` over `duration` seconds. For the morph to work visually, paths must have the same number of SVG commands and points; paths with mismatched structures will snap rather than interpolate.
+
+Good use cases:
+
+- **Play/Pause toggle.** The play triangle (`M5 3l14 9-14 9V3z`) and the pause bars are among the most natural icon morphs and the canonical demo for this component.
+- **Hamburger/Close toggle.** Three horizontal lines morphing into an X is a widely understood mobile navigation pattern.
+- **State-driven icon swaps.** A lock icon morphing between open and closed, or a settings gear morphing between states, reinforces mode changes without needing two separate icon elements.
+- **Ambient looping illustration.** Cycling through three or more path states on a fixed `interval` gives a subtle living quality to an otherwise static hero illustration.
+
+## When to use / when not to use
+
+**Use `MorphIcon` when:**
+
+- The two or more icon states share the same SVG structure (same number of path commands and points). The morph quality degrades sharply if the paths diverge in complexity.
+- The icon communicates a binary or sequential state toggle, not a notification or alert that needs to interrupt the user.
+- You need the morph to happen automatically on a timer (`interval`). For user-triggered state changes where you control the `paths[currentIndex]` from outside, you may prefer a controlled pattern using `motion.path` directly.
+
+**Do not use it when:**
+
+- The before/after paths have a very different number of SVG commands. The browser interpolates by index, so mismatched paths produce distorted in-between frames. Use two separate icons with a [FadeInIcon](/docs/animations/icons/fade-in) crossfade instead.
+- The morphing is on a fast `interval` (under 1 s) with a slow `duration` (over 0.5 s), causing the animation to still be running when the next state begins. Keep `duration` well below `interval`.
+- The icon is small (under 16x16 px). The morph easing is subtle and will be invisible at small sizes.
+
+## Accessibility notes
+
+- `MorphIcon` renders a bare `<svg>` with no accessible name. Add a `<title>` element or `aria-label` on a parent button so assistive technology knows what the icon represents:
+
+```tsx
+<button aria-label="Toggle play/pause">
+  <MorphIcon
+    paths={["M5 3l14 9-14 9V3z", "M6 4h4v16H6V4zm8 0h4v16h-4V4z"]}
+    viewBox="0 0 24 24"
+    className="w-6 h-6"
+    aria-hidden="true"
+  />
+</button>
+```
+
+- When the morph reflects a binary state (open/closed, playing/paused), also toggle `aria-pressed` or `aria-expanded` on the button rather than relying on the visual path change alone.
+- The internal `setInterval` fires even if the user has `prefers-reduced-motion` set. Pause automatic morphing for those users:
+
+```tsx
+"use client"
+import { useReducedMotion } from "motion/react"
+import { MorphIcon } from "@/components/animations/icons/morph"
+
+export function ControlledMorph() {
+  const reduced = useReducedMotion()
+  return (
+    <MorphIcon
+      paths={["M5 3l14 9-14 9V3z", "M6 4h4v16H6V4zm8 0h4v16h-4V4z"]}
+      viewBox="0 0 24 24"
+      className="w-8 h-8"
+      // A very long interval effectively stops automatic cycling when motion is reduced.
+      interval={reduced ? 999999 : 2}
+      duration={reduced ? 0 : 0.3}
+    />
+  )
+}
+```
+
+## Performance considerations
+
+- Animating the `d` attribute on an SVG path is more expensive than animating `transform` or `opacity`. The browser must recalculate the path geometry on each animation frame during the transition.
+- Keep `duration` short (0.2 to 0.5 s) to minimize the number of frames spent recalculating path geometry.
+- The internal `setInterval` is cleaned up on unmount via the `useEffect` return function. No memory leak to worry about, but conditionally render or unmount the component when it is off screen to avoid unnecessary timer callbacks.
+- A single `MorphIcon` is lightweight. Placing dozens of them in a list, each cycling through paths, will produce noticeable CPU usage because path interpolation bypasses the compositor.
+
+## Customization examples
+
+### Slower morph with a longer interval
+
+A gentle transition over 0.5 s that advances every 3 s reads as deliberate state communication rather than decoration:
+
+```tsx
+import { MorphIcon } from "@/components/animations/icons/morph"
+
+<MorphIcon
+  paths={[
+    "M4 6h16M4 12h16M4 18h16",
+    "M6 18L18 6M6 6l12 12"
+  ]}
+  viewBox="0 0 24 24"
+  className="w-8 h-8 text-neutral-700 dark:text-neutral-300"
+  duration={0.5}
+  interval={3}
+/>
+```
+
+### Custom stroke width and color
+
+Override `strokeWidth` and `strokeColor` to match your design tokens:
+
+```tsx
+import { MorphIcon } from "@/components/animations/icons/morph"
+
+<MorphIcon
+  paths={[
+    "M5 3l14 9-14 9V3z",
+    "M6 4h4v16H6V4zm8 0h4v16h-4V4z"
+  ]}
+  viewBox="0 0 24 24"
+  className="w-10 h-10"
+  strokeColor="#3b82f6"
+  strokeWidth={1.5}
+  duration={0.3}
+  interval={2}
+/>
+```
+
+### Three-state cycle
+
+Cycle through three states by providing a `paths` array with three entries:
+
+```tsx
+import { MorphIcon } from "@/components/animations/icons/morph"
+
+<MorphIcon
+  paths={[
+    "M12 2L2 7l10 5 10-5-10-5z",
+    "M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5",
+    "M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"
+  ]}
+  viewBox="0 0 24 24"
+  className="w-8 h-8 text-purple-500"
+  interval={1.5}
+  duration={0.4}
+/>
+```
+
+## Real-world examples
+
+### Controlled play/pause button
+
+Drive the active state from outside rather than relying on the internal timer:
+
+```tsx
+"use client"
+import { useState } from "react"
+import { MorphIcon } from "@/components/animations/icons/morph"
+
+const PLAY_PATH  = "M5 3l14 9-14 9V3z"
+const PAUSE_PATH = "M6 4h4v16H6V4zm8 0h4v16h-4V4z"
+
+export function PlayPauseButton() {
+  const [playing, setPlaying] = useState(false)
+
+  return (
+    <button
+      onClick={() => setPlaying((p) => !p)}
+      aria-label={playing ? "Pause" : "Play"}
+      aria-pressed={playing}
+      className="flex h-12 w-12 items-center justify-center rounded-full bg-blue-600 text-white hover:bg-blue-700"
+    >
+      <MorphIcon
+        paths={playing ? [PLAY_PATH, PAUSE_PATH] : [PAUSE_PATH, PLAY_PATH]}
+        viewBox="0 0 24 24"
+        className="w-6 h-6"
+        strokeColor="white"
+        duration={0.25}
+        interval={999999}
+        aria-hidden="true"
+      />
+    </button>
+  )
+}
+```
+
+### Animated hamburger menu toggle
+
+Morph between the hamburger and close paths when the mobile navigation opens:
+
+```tsx
+"use client"
+import { useState } from "react"
+import { MorphIcon } from "@/components/animations/icons/morph"
+
+const HAMBURGER = "M4 6h16M4 12h16M4 18h16"
+const CLOSE     = "M6 18L18 6M6 6l12 12"
+
+export function MobileMenuButton() {
+  const [open, setOpen] = useState(false)
+
+  return (
+    <button
+      onClick={() => setOpen((p) => !p)}
+      aria-label={open ? "Close menu" : "Open menu"}
+      aria-expanded={open}
+      className="rounded-md p-2 hover:bg-neutral-100 dark:hover:bg-neutral-800"
+    >
+      <MorphIcon
+        paths={open ? [HAMBURGER, CLOSE] : [CLOSE, HAMBURGER]}
+        viewBox="0 0 24 24"
+        className="w-6 h-6"
+        duration={0.3}
+        interval={999999}
+        aria-hidden="true"
+      />
+    </button>
+  )
+}
+```

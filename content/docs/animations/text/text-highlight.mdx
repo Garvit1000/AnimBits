@@ -233,3 +233,145 @@ export default function Example() {
 - **Smooth animation**: Custom easing for professional motion
 - **Fully customizable**: Adjust color, duration, and delay
 - **Minimal design**: No glow, shimmer, or background effects - just clean highlighting
+
+## Use cases
+
+`TextHighlight` renders a `<span>` containing the `children` text and an absolutely positioned `<motion.span>` acting as an 8 px rounded underline bar. The bar animates `scaleX` from `0` to `1` with `transformOrigin: "left"` using a custom spring-like ease `[0.16, 1, 0.3, 1]`. The color defaults to `#fde047` (Tailwind `yellow-300`). The bar is `bottom-0` inside a `pb-1` padded wrapper, so it sits just below the text baseline. Reach for it when:
+
+- **Marketing copy keyword emphasis.** Highlight 1 to 3 keywords in a hero tagline or features section to draw the eye to the most important claim.
+- **Tutorials and docs callouts.** Draw attention to a term being introduced in a step-by-step guide or onboarding walkthrough.
+- **Testimonials.** Highlight the most impactful phrase in a customer quote to anchor the reader's eye.
+- **Blog article pull-quotes.** Underline a short memorable phrase in a featured excerpt.
+- **Animated section headings.** A highlight that sweeps in as a section enters the viewport adds a subtle editorial flourish.
+
+Multiple `TextHighlight` instances in the same sentence can be staggered using the `delay` prop to produce a sequential "marker sweep" effect.
+
+## When to use / when not to use
+
+**Use text-highlight when:**
+
+- The highlighted word or phrase is genuinely the most important in its context. Overusing it dilutes the effect.
+- The text is inline within a sentence or heading, not a standalone block.
+- You want a color accent that complements (not replaces) the text color. The bar sits below the text; the text color itself is unchanged.
+
+**Reach for something else when:**
+
+- **Long phrases or multiple lines.** The `scaleX` animation on a multi-line span will only draw a bar under the last line because `bottom: 0` is relative to the last line box. For multi-line highlights, apply one `TextHighlight` per line or use a background-highlight approach.
+- **Critical information that must be highlighted for accessibility.** Color underlines are a visual-only cue. If the highlight is intended to convey "important" or "error" meaning, supplement with a semantic element (`<strong>`, `<em>`, `aria-label`).
+- **You need a background fill behind the text (like a real marker highlighter).** This component uses an underline bar, not a background fill. For a full-width background fill that sweeps behind the text, you would need a custom implementation.
+- **Navigation or interactive contexts.** Do not use `TextHighlight` on links or buttons, as the animated underline conflicts with the conventional hover underline affordance.
+
+## Accessibility notes
+
+The highlight is a purely visual decoration. The `<motion.span>` underline bar has no semantic meaning and is not announced by screen readers. The text content inside `TextHighlight` is read normally.
+
+**Do not rely on the highlight to convey meaning alone.** If the highlight signals importance, pair it with a semantic element:
+
+```tsx
+<strong>
+  <TextHighlight color="#fbbf24">critical update</TextHighlight>
+</strong>
+```
+
+**Reduced motion.** The `scaleX` animation sweeps the bar horizontally. For users who have opted out of motion, render the bar in its final state immediately:
+
+```tsx
+"use client"
+import { useReducedMotion } from "motion/react"
+import { TextHighlight } from "@/components/animations/text/text-highlight"
+
+function AccessibleHighlight({ children, color, ...props }: React.ComponentProps<typeof TextHighlight>) {
+  const reduced = useReducedMotion()
+  return (
+    <TextHighlight
+      color={color}
+      duration={reduced ? 0 : 0.6}
+      {...props}
+    >
+      {children}
+    </TextHighlight>
+  )
+}
+```
+
+**Color contrast.** The `color` prop sets the bar's `backgroundColor`. The bar is 8 px tall below the text; it is a supporting decoration, not the text itself. However, ensure the bar color does not clash with the background to the point of invisibility. The default `#fde047` on a white background is visible but does not meet contrast requirements as a text color: this is acceptable because the bar is not text and carries no meaning independently.
+
+## Performance considerations
+
+- **Single `scaleX` animation.** The bar animates only `scaleX`, which is a CSS transform composited on the GPU. There is no paint cost after the initial render. This is the most performant animation in the text animation collection.
+- **One extra DOM node per highlight.** Each `TextHighlight` instance adds two `<span>` elements (the wrapper and the bar). For a paragraph with 5 highlighted keywords, this is 10 extra nodes, which is negligible.
+- **Single-shot.** The animation fires once on mount and does not loop. After it completes there is no ongoing cost.
+- **Inline layout.** The wrapper `<span>` is `inline-block` with `pb-1`. This adds 4 px of bottom padding that slightly increases line height on the highlighted words. If you need tight line spacing, adjust with a negative margin or reduce `pb`.
+
+## Customization examples
+
+### Branded accent color
+
+```tsx
+import { TextHighlight } from "@/components/animations/text/text-highlight"
+
+<h1 className="text-4xl font-bold">
+  The fastest way to <TextHighlight color="#6366f1">ship UI</TextHighlight>
+</h1>
+```
+
+### Slow, dramatic reveal
+
+```tsx
+import { TextHighlight } from "@/components/animations/text/text-highlight"
+
+<h2 className="text-3xl font-semibold">
+  We build <TextHighlight color="#2dd4bf" duration={1.2} delay={0.4}>products</TextHighlight> people love
+</h2>
+```
+
+### Sequential highlights in a sentence
+
+```tsx
+import { TextHighlight } from "@/components/animations/text/text-highlight"
+
+<p className="text-xl">
+  <TextHighlight color="#fbbf24" delay={0}>Fast</TextHighlight>,{" "}
+  <TextHighlight color="#34d399" delay={0.4}>reliable</TextHighlight>, and{" "}
+  <TextHighlight color="#60a5fa" delay={0.8}>open source</TextHighlight>.
+</p>
+```
+
+## Real-world examples
+
+### Hero tagline with keyword emphasis
+
+```tsx
+import { TextHighlight } from "@/components/animations/text/text-highlight"
+
+export function HeroTagline() {
+  return (
+    <section className="py-24 text-center">
+      <h1 className="mx-auto max-w-3xl text-5xl font-black leading-tight">
+        The component library that makes your app feel{" "}
+        <TextHighlight color="#fbbf24" delay={0.3}>
+          alive
+        </TextHighlight>
+      </h1>
+    </section>
+  )
+}
+```
+
+### Testimonial pull-quote with emphasis
+
+```tsx
+import { TextHighlight } from "@/components/animations/text/text-highlight"
+
+export function Testimonial() {
+  return (
+    <blockquote className="text-2xl font-medium text-neutral-800 max-w-xl">
+      "AnimBits cut our animation implementation time by{" "}
+      <TextHighlight color="#86efac" delay={0.5} duration={0.7}>
+        80 percent
+      </TextHighlight>{" "}
+      and the results look incredible."
+    </blockquote>
+  )
+}
+```

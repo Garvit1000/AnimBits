@@ -187,3 +187,158 @@ import { TextShimmer } from "@/components/animations/text/shimmer"
 | `duration` | `number` | `2` | Animation duration (seconds) |
 | `colors` | `string[]` | `["transparent", "rgba(255,255,255,0.8)", "transparent"]` | Shimmer colors |
 | `as` | `string` | `"p"` | HTML element to render |
+
+## Use cases
+
+`TextShimmer` uses the `useShimmer` hook to inject a CSS `@keyframes shimmer` rule into the document head (once, guarded by a `styleId` check) and applies it via inline `animation`. The shimmer sweeps a bright band defined by the `colors` tuple from `200% center` to `-200% center`, creating a traveling highlight. The default colors are `["transparent", "#3b82f6", "transparent"]` (a blue highlight on a transparent base). Reach for it when:
+
+- **Processing or pending states.** A shimmer on a label like "Analyzing..." or "Generating..." communicates active work without a spinner, keeping the text visible.
+- **Premium feature labels.** A shimmer on "Pro" or "AI Powered" adds polish to marketing tiers.
+- **Loading skeleton text fallback.** Before real text resolves, shimmer placeholder lines communicate that content is on the way.
+- **Decorative headings.** Short display-size headlines in dark themes where a bright traveling highlight suits the aesthetic.
+
+The `as` prop lets you render the shimmer as any heading level (`h1` through `h6`) or inline (`span`) without extra wrapper markup.
+
+## When to use / when not to use
+
+**Use shimmer text when:**
+
+- The animation adds meaning: it signals an ongoing process or a premium state rather than just looking animated.
+- The text is short to medium (1 to 10 words). The sweep is most readable when the highlight visually completes a full pass in a perceivable time.
+
+**Reach for something else when:**
+
+- **Essential, must-read text.** The `WebkitTextFillColor: transparent` approach renders the text color from the gradient alone. If the gradient colors lack contrast against the background, the text may be difficult or impossible to read during certain phases of the animation cycle. For information users must not miss, use static text.
+- **Body copy.** Continuous shimmer on a paragraph is visually tiring and impairs reading. Reserve shimmer for short labels, headings, or decorative strings.
+- **Multiple shimmer instances.** Each instance runs its own CSS animation indefinitely. A page with many simultaneous shimmer texts accumulates paint work. If you need a single shimmer across multiple elements, consider a shared CSS class approach instead.
+- **Static gradient without motion.** If you want gradient text but not the sweeping animation, use [Gradient](/docs/animations/text/gradient) with `animate={false}`.
+
+## Accessibility notes
+
+The shimmer uses `WebkitTextFillColor: transparent` with `background-clip: text`. The text is real DOM content and screen readers can read it, but contrast is determined by the gradient colors at any given frame, not by a static color value.
+
+**Provide a solid color fallback.** Set a `color` property on the wrapper that meets contrast requirements; it will show if `background-clip` is unsupported or overridden:
+
+```tsx
+<TextShimmer
+  className="text-3xl font-bold text-blue-600"
+  colors={["transparent", "#2563eb", "transparent"]}
+>
+  Analyzing...
+</TextShimmer>
+```
+
+**Reduced motion.** The `useShimmer` hook does not check `prefers-reduced-motion`; the CSS `animation` property runs regardless. Detect the preference and skip the shimmer hook output:
+
+```tsx
+"use client"
+import { useReducedMotion } from "motion/react"
+import { TextShimmer } from "@/components/animations/text/shimmer"
+
+function AccessibleShimmer({ children, className }: { children: string; className?: string }) {
+  const reduced = useReducedMotion()
+  if (reduced) return <p className={className}>{children}</p>
+  return <TextShimmer className={className}>{children}</TextShimmer>
+}
+```
+
+**`aria-live` considerations.** If the shimmer text is inside an `aria-live` region and the text content changes, the change will be announced. The animation itself is invisible to screen readers; only text changes matter.
+
+**Color alone.** Do not rely on the shimmer highlight color alone to convey status. A shimmer on "Error" in red may be invisible to colorblind users; pair with an icon or label.
+
+## Performance considerations
+
+- **CSS animation, not JavaScript.** The `@keyframes shimmer` rule is injected once and the animation runs entirely in CSS. Unlike the motion-library-based components, this does not create JavaScript frame callbacks per instance. The browser handles the sweep natively.
+- **`background-clip: text` repaint.** Despite being CSS-driven, `background-clip: text` requires the browser to repaint the text layer on each animation frame because the background must be composited against the glyph shapes. This is more expensive than a plain `opacity` or `transform` animation.
+- **Indefinite loop.** The animation runs `infinite` with `linear` timing. Conditionally render the component (e.g., unmount it when the pending state resolves) rather than hiding it with CSS to stop the animation.
+- **Style tag deduplication.** The hook checks for a `<style id="shimmer-keyframes">` element before inserting one. Multiple `TextShimmer` instances on the same page share one `@keyframes` rule.
+
+## Customization examples
+
+### White shimmer for dark backgrounds
+
+```tsx
+import { TextShimmer } from "@/components/animations/text/shimmer"
+
+<TextShimmer
+  colors={["transparent", "rgba(255, 255, 255, 0.9)", "transparent"]}
+  className="text-3xl font-bold text-white"
+>
+  Loading your workspace
+</TextShimmer>
+```
+
+### Gold shimmer for a premium badge
+
+```tsx
+import { TextShimmer } from "@/components/animations/text/shimmer"
+
+<TextShimmer
+  as="span"
+  colors={["transparent", "#f59e0b", "transparent"]}
+  duration={1.8}
+  className="text-sm font-bold tracking-widest uppercase text-amber-500"
+>
+  Pro
+</TextShimmer>
+```
+
+### Faster shimmer for an active state label
+
+```tsx
+import { TextShimmer } from "@/components/animations/text/shimmer"
+
+<TextShimmer
+  duration={1}
+  colors={["transparent", "#22c55e", "transparent"]}
+  className="text-base font-mono text-green-500"
+>
+  Streaming...
+</TextShimmer>
+```
+
+## Real-world examples
+
+### AI generation in-progress label
+
+```tsx
+"use client"
+import { TextShimmer } from "@/components/animations/text/shimmer"
+
+export function GeneratingLabel({ generating }: { generating: boolean }) {
+  if (!generating) return null
+  return (
+    <div className="flex items-center gap-2">
+      <TextShimmer
+        as="span"
+        colors={["transparent", "#818cf8", "transparent"]}
+        duration={1.5}
+        className="text-sm font-medium text-indigo-400"
+      >
+        Generating response...
+      </TextShimmer>
+    </div>
+  )
+}
+```
+
+### Hero headline with sweep effect
+
+```tsx
+import { TextShimmer } from "@/components/animations/text/shimmer"
+
+export function ShimmerHero() {
+  return (
+    <section className="bg-neutral-950 py-32 text-center">
+      <TextShimmer
+        as="h1"
+        colors={["#e2e8f0", "#ffffff", "#e2e8f0"]}
+        duration={3}
+        className="text-6xl font-black text-slate-200"
+      >
+        The future of building
+      </TextShimmer>
+    </section>
+  )
+}
+```

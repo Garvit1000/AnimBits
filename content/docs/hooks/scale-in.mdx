@@ -205,3 +205,167 @@ const scaleProps = useScaleIn({
   ease: [0.68, -0.55, 0.265, 1.55],  // Bounce easing
 })
 ```
+
+## Use cases
+
+`useScaleIn` returns `MotionProps` with `initial` (containing `scale: from` and `opacity: initialOpacity`), `whileInView` (containing `scale: to` and `opacity: 1`), `viewport`, and `transition`. Spread the props onto any `motion.*` element to reveal it as it enters the viewport.
+
+- **Modal and dialog entrances.** Mount a `motion.div` with `useScaleIn({ from: 0.6, duration: 0.3 })` to make a dialog appear to grow from the center of the screen.
+- **Product cards in a grid.** Stagger each card with `delay: index * 0.08` so the grid populates from top-left to bottom-right as the user scrolls.
+- **Feature tiles on a landing page.** Cards at `from: 0.85` with `ease: "easeOut"` scale up just enough to feel like they "land" into place without a dramatic pop.
+- **Avatars and icon badges.** Small circular avatars with `from: 0.4` and a bouncy ease give social or collaboration features a lively feel.
+- **Toast notifications.** Combine with `useSlideIn` to make a toast slide in from a corner and scale up simultaneously.
+
+## When to use / when not to use
+
+**Use `useScaleIn` directly when:**
+
+- You need the scale entrance on a custom element not covered by a prebuilt component.
+- You want to compose it with [useFadeIn](/docs/hooks/fade-in) or [useSlideIn](/docs/hooks/slide-in) by merging their `initial` and `whileInView` objects.
+- You need `viewport: "always"` so the element scales in every time it re-enters the viewport.
+
+**Avoid `useScaleIn` when:**
+
+- The element is a block-level section that spans the full viewport width. Scaling the entire section causes surrounding layout to shift, which feels chaotic. Prefer [useFadeIn](/docs/hooks/fade-in) for large sections.
+- The scale start value `from` is 0. Starting at zero makes the element appear to appear from nothing, which can disorient users who are sensitive to sudden size changes. Use `from: 0.7` or higher for smoother reveals.
+- Multiple overlapping elements scale in at the same time without stagger. The overlapping motions compete and can cause perceived jank. Apply sequential `delay` values.
+
+## Accessibility notes
+
+`useScaleIn` uses `whileInView` and sets `initial.opacity: 0`. The element is in the DOM from mount but hidden visually. Screen readers can still find it.
+
+Respect `prefers-reduced-motion` by returning props with `opacity` animation only, dropping the scale change:
+
+```tsx
+"use client"
+import { motion } from "motion/react"
+import { useReducedMotion } from "motion/react"
+import { useScaleIn } from "@/lib/use-scale-in"
+import { useFadeIn } from "@/lib/use-fade-in"
+
+export function FeatureTile({ title, icon }: { title: string; icon: React.ReactNode }) {
+  const reduced = useReducedMotion()
+  const scaleProps = useScaleIn({ from: 0.85, duration: 0.4 })
+  const fadeProps = useFadeIn({ duration: 0.4 })
+
+  return (
+    <motion.div
+      {...(reduced ? fadeProps : scaleProps)}
+      className="rounded-xl border border-neutral-200 p-6"
+    >
+      <div className="mb-3 text-blue-500">{icon}</div>
+      <h3 className="font-semibold">{title}</h3>
+    </motion.div>
+  )
+}
+```
+
+- When `initialOpacity: 0` is the default, ensure any content that must be immediately readable (for example, navigation labels) is not wrapped in a `useScaleIn` without a near-zero delay. Use `delay: 0` and a very short `duration` for content that must be visible immediately.
+
+## Performance considerations
+
+- `useScaleIn` animates `scale` (a transform, compositor-only) and `opacity` (also compositor-only). No layout or paint is triggered during the animation.
+- `whileInView` uses an `IntersectionObserver` internally. With `viewport: "once"` (default), the observer disconnects after the first intersection, incurring no ongoing cost.
+- For grids of more than 20 items, consider using Framer Motion's `staggerChildren` variant system instead of calling `useScaleIn` inside a `.map()`, as many simultaneous `IntersectionObserver` instances can add up.
+- The `initialOpacity: 0` default means the element is transparent until it enters the viewport. If the page is scrolled past the element's position on first load, the element will never animate in unless `viewport: "always"` is set.
+
+## Customization examples
+
+### Staggered card grid
+
+```tsx
+import { motion } from "motion/react"
+import { useScaleIn } from "@/lib/use-scale-in"
+
+const items = ["Analytics", "Automation", "Collaboration", "Security"]
+
+export function FeatureGrid() {
+  return (
+    <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
+      {items.map((item, i) => {
+        const scaleProps = useScaleIn({ from: 0.8, delay: i * 0.08, duration: 0.4 })
+        return (
+          <motion.div key={item} {...scaleProps} className="rounded-xl border border-neutral-200 p-5 text-center">
+            <p className="font-semibold text-sm">{item}</p>
+          </motion.div>
+        )
+      })}
+    </div>
+  )
+}
+```
+
+### Avatar pop-in on a team list
+
+```tsx
+import { motion } from "motion/react"
+import { useScaleIn } from "@/lib/use-scale-in"
+
+export function Avatar({ src, name, delay }: { src: string; name: string; delay: number }) {
+  const scaleProps = useScaleIn({
+    from: 0.3,
+    duration: 0.35,
+    delay,
+    ease: [0.68, -0.55, 0.265, 1.55],
+  })
+
+  return (
+    <motion.img
+      {...scaleProps}
+      src={src}
+      alt={name}
+      title={name}
+      className="h-10 w-10 rounded-full border-2 border-white object-cover shadow-sm"
+    />
+  )
+}
+```
+
+## Real-world examples
+
+### Modal dialog with scale entrance
+
+```tsx
+"use client"
+import { motion, AnimatePresence } from "motion/react"
+import { useScaleIn } from "@/lib/use-scale-in"
+
+export function ConfirmDialog({
+  open,
+  title,
+  message,
+  onConfirm,
+  onCancel,
+}: {
+  open: boolean
+  title: string
+  message: string
+  onConfirm: () => void
+  onCancel: () => void
+}) {
+  const scaleProps = useScaleIn({ from: 0.7, duration: 0.25 })
+
+  return (
+    <AnimatePresence>
+      {open && (
+        <>
+          <div className="fixed inset-0 z-40 bg-black/40" onClick={onCancel} />
+          <motion.div
+            {...scaleProps}
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="dialog-title"
+            className="fixed left-1/2 top-1/2 z-50 w-full max-w-sm -translate-x-1/2 -translate-y-1/2 rounded-2xl bg-white p-6 shadow-xl"
+          >
+            <h2 id="dialog-title" className="text-lg font-bold">{title}</h2>
+            <p className="mt-2 text-sm text-neutral-500">{message}</p>
+            <div className="mt-6 flex gap-3 justify-end">
+              <button onClick={onCancel} className="rounded-lg border px-4 py-2 text-sm">Cancel</button>
+              <button onClick={onConfirm} className="rounded-lg bg-red-600 px-4 py-2 text-sm font-semibold text-white">Confirm</button>
+            </div>
+          </motion.div>
+        </>
+      )}
+    </AnimatePresence>
+  )
+}

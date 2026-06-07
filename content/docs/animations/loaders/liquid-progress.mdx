@@ -162,3 +162,238 @@ export default function Example() {
 | `color` | `string` | `"#3b82f6"` | Color of the liquid |
 | `duration` | `number` | `1` | Animation duration in seconds |
 | `className` | `string` | - | Additional CSS classes |
+
+## Use cases
+
+`LoaderLiquidProgress` is a **determinate** progress indicator. The fill bar translates from `x: -100%` to `x: ${progress - 100}%`, so a `progress` of 60 moves it to `x: -40%` (60% visible). A pulsing radial gradient overlay adds the "liquid" feel. Use it **only when you have real progress data**:
+
+- **File uploads.** You know bytes transferred vs total bytes, so you can map that ratio to a 0 to 100 value.
+- **Multi-step wizards.** Show progress through a defined number of steps: `progress={(currentStep / totalSteps) * 100}`.
+- **Batch processing.** Rendering a PDF, compressing images, or running a queued job where a server reports completion percentage.
+- **Download progress.** Pair with `XMLHttpRequest` or `fetch` with `ReadableStream` to read bytes and update the bar in real time.
+
+## When to use / when not to use
+
+**Use liquid progress when:**
+
+- You have an actual 0 to 100 number representing real progress.
+- The user's mental model benefits from knowing "how much is left" (long file operations, multi-step onboarding, checkout flows).
+
+**Do not use it when:**
+
+- **You have no progress percentage.** Animating a fake or random value to simulate progress misleads users. Use an indeterminate loader like [Spinner](/docs/animations/loaders/spinner), [Dots](/docs/animations/loaders/dots), or [Bars](/docs/animations/loaders/bars) instead.
+- **The wait is under ~1 second.** A bar that jumps from 0 to 100 in one second just looks like a spinner without the convenience. An indeterminate option is simpler.
+- **You are loading a content-shaped layout.** Use a [Skeleton](/docs/animations/loaders/skeleton) to preserve the content structure while data loads.
+
+## Accessibility notes
+
+A progress bar is semantically a `progressbar` role, not just a visual element. The component renders a plain `<div>` that needs ARIA attributes to be announced correctly by screen readers.
+
+- **Wrap with `role="progressbar"` and live values:**
+
+```tsx
+<div
+  role="progressbar"
+  aria-valuenow={progress}
+  aria-valuemin={0}
+  aria-valuemax={100}
+  aria-label="Upload progress"
+>
+  <LoaderLiquidProgress progress={progress} />
+</div>
+```
+
+- **Add a text label alongside the bar** so users who cannot see the fill level get a numeric reading:
+
+```tsx
+<div className="flex items-center gap-3">
+  <div
+    className="flex-1"
+    role="progressbar"
+    aria-valuenow={progress}
+    aria-valuemin={0}
+    aria-valuemax={100}
+    aria-label="Upload progress"
+  >
+    <LoaderLiquidProgress progress={progress} />
+  </div>
+  <span className="text-sm tabular-nums" aria-hidden>{progress}%</span>
+</div>
+```
+
+- **Respect reduced motion.** The inner radial-gradient overlay pulses indefinitely with `scale` and `opacity`. Honor the user's preference:
+
+```tsx
+"use client"
+import { useReducedMotion } from "motion/react"
+
+// When reduced motion is preferred, stop the inner pulse by setting
+// a very long duration, or replace with a static bar via className overrides.
+```
+
+In practice, the outer fill bar only moves when `progress` changes, so it is not a continuous animation. The persistent pulsing overlay is the only concern.
+
+## Performance considerations
+
+- **The fill bar itself is transform-only.** `x` translates the element, which is a compositor-layer operation with no layout cost. Updates driven by real progress events are efficient.
+- **The pulsing overlay runs forever.** `scale` and `opacity` loop with `repeat: Infinity`. This is cheap on the compositor but is wasted work while the bar sits at 0% or 100%. Consider unmounting or freezing the component when progress reaches 100.
+- **One bar per loading context.** Do not mount many `LoaderLiquidProgress` bars simultaneously. If you have a table of concurrent uploads, consider a single summary bar.
+- **Update `progress` at a sensible rate.** Firing a state update on every byte received will cause excessive re-renders. Throttle updates to every 250 ms or every 1% change.
+
+## Customization examples
+
+### Thin, subtle progress bar
+
+Works well as a top-of-page loading bar similar to NProgress:
+
+```tsx
+<LoaderLiquidProgress
+  progress={progress}
+  height={3}
+  color="#6366f1"
+  duration={0.3}
+  className="rounded-none"
+/>
+```
+
+### Tall bar with percentage label
+
+```tsx
+<div className="flex items-center gap-4">
+  <div className="flex-1" role="progressbar" aria-valuenow={progress} aria-valuemin={0} aria-valuemax={100}>
+    <LoaderLiquidProgress progress={progress} height={14} color="#10b981" />
+  </div>
+  <span className="text-sm font-medium tabular-nums w-10 text-right">{progress}%</span>
+</div>
+```
+
+### Green success bar
+
+Swap color when complete:
+
+```tsx
+<LoaderLiquidProgress
+  progress={progress}
+  height={8}
+  color={progress === 100 ? "#10b981" : "#3b82f6"}
+/>
+```
+
+## Real-world examples
+
+### File upload with real progress
+
+```tsx
+"use client"
+import { useState } from "react"
+import { LoaderLiquidProgress } from "@/components/animations/loaders/liquid-progress"
+
+export function FileUploader() {
+  const [progress, setProgress] = useState(0)
+  const [uploading, setUploading] = useState(false)
+  const [done, setDone] = useState(false)
+
+  async function handleUpload(file: File) {
+    setUploading(true)
+    setProgress(0)
+    setDone(false)
+
+    const xhr = new XMLHttpRequest()
+    xhr.upload.onprogress = (e) => {
+      if (e.lengthComputable) {
+        setProgress(Math.round((e.loaded / e.total) * 100))
+      }
+    }
+    xhr.onload = () => {
+      setProgress(100)
+      setDone(true)
+      setUploading(false)
+    }
+    xhr.open("POST", "/api/upload")
+    xhr.send(file)
+  }
+
+  return (
+    <div className="flex flex-col gap-3 w-full max-w-md rounded-xl border border-neutral-200 p-5 dark:border-neutral-800">
+      <p className="text-sm font-medium">Upload file</p>
+      {uploading || done ? (
+        <div
+          role="progressbar"
+          aria-valuenow={progress}
+          aria-valuemin={0}
+          aria-valuemax={100}
+          aria-label="Upload progress"
+          className="flex flex-col gap-1"
+        >
+          <LoaderLiquidProgress
+            progress={progress}
+            height={8}
+            color={done ? "#10b981" : "#3b82f6"}
+          />
+          <p className="text-xs text-neutral-500">
+            {done ? "Upload complete" : `${progress}% uploaded`}
+          </p>
+        </div>
+      ) : (
+        <label className="cursor-pointer rounded-lg border-2 border-dashed border-neutral-300 p-8 text-center text-sm text-neutral-500 hover:border-blue-400 dark:border-neutral-700">
+          <input
+            type="file"
+            className="sr-only"
+            onChange={(e) => e.target.files?.[0] && handleUpload(e.target.files[0])}
+          />
+          Click to select a file
+        </label>
+      )}
+    </div>
+  )
+}
+```
+
+### Multi-step wizard progress
+
+```tsx
+"use client"
+import { useState } from "react"
+import { LoaderLiquidProgress } from "@/components/animations/loaders/liquid-progress"
+
+const STEPS = ["Account", "Profile", "Billing", "Review"]
+
+export function OnboardingWizard() {
+  const [step, setStep] = useState(0)
+  const progress = Math.round((step / (STEPS.length - 1)) * 100)
+
+  return (
+    <div className="flex flex-col gap-4 w-full max-w-lg">
+      <div className="flex items-center justify-between text-sm">
+        <span className="font-medium">Step {step + 1} of {STEPS.length}: {STEPS[step]}</span>
+        <span className="tabular-nums text-neutral-500">{progress}%</span>
+      </div>
+      <div
+        role="progressbar"
+        aria-valuenow={progress}
+        aria-valuemin={0}
+        aria-valuemax={100}
+        aria-label="Onboarding progress"
+      >
+        <LoaderLiquidProgress progress={progress} height={6} color="#6366f1" duration={0.5} />
+      </div>
+      <div className="flex gap-2 mt-2">
+        <button
+          onClick={() => setStep((s) => Math.max(0, s - 1))}
+          disabled={step === 0}
+          className="rounded-lg border border-neutral-200 px-4 py-2 text-sm disabled:opacity-40 dark:border-neutral-800"
+        >
+          Back
+        </button>
+        <button
+          onClick={() => setStep((s) => Math.min(STEPS.length - 1, s + 1))}
+          disabled={step === STEPS.length - 1}
+          className="rounded-lg bg-indigo-600 px-4 py-2 text-sm font-semibold text-white disabled:opacity-40"
+        >
+          Next
+        </button>
+      </div>
+    </div>
+  )
+}
+```

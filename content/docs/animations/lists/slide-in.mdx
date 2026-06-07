@@ -277,3 +277,172 @@ export default function Example() {
 | `as` | `keyof JSX.IntrinsicElements` | `"div"` | Container element type |
 | `className` | `string` | - | Additional CSS classes |
 
+## Use cases
+
+`SlideInList` animates each child from an offset position (`distance` pixels in the chosen `direction`) and `opacity: 0` to its natural position and `opacity: 1`. Each item is delayed by `index * staggerDelay` seconds, creating a cascade. The `as` prop lets you render the wrapper as a semantic `<ul>`, `<ol>`, or `<section>` instead of a `<div>`. Reach for it when:
+
+- **Page or route entry animations.** When a page first renders, sliding the main list items in from the left gives a clear sense of arrival and draws the user's eye down the content.
+- **Notification or activity feeds.** New items appearing from one direction imply they are being pushed into a stack.
+- **Feature lists or pricing tiers.** Staggered slide-in makes a flat list of bullet points feel more structured and intentional on a marketing page.
+- **Sidebar navigation or menu items.** Sliding from the left when a sidebar opens matches the drawer metaphor.
+
+## When to use / when not to use
+
+**Use slide-in when:**
+
+- You want each item to carry a clear directional cue, communicating where the list "came from."
+- The list has between 3 and ~15 items. Longer lists accumulate significant delay on the last item: 15 items at `staggerDelay={0.1}` means the final item starts entering at 1.4 s.
+
+**Reach for something else when:**
+
+- **The list is long (20+ items).** The cumulative stagger delay becomes too long and items never finish entering before the user has scrolled past them. Either reduce `staggerDelay` to 0.03 to 0.05 or use [Stagger Fade](/docs/animations/lists/stagger-fade) which is more subtle.
+- **Items load one at a time from a server stream** rather than all at once. `SlideInList` receives all children at mount time. It is not designed for items appended dynamically after mount.
+- **The content is already on screen and is being updated.** A list that re-renders with new data will replay the whole entry animation, which can feel jarring. Consider conditionally unmounting/remounting for intentional replays.
+- **The horizontal slide direction conflicts with existing page scroll direction.** Left/right slide on a page that itself slide-transitions can create double-movement artifacts. Use `direction="top"` or switch to [Stagger Fade](/docs/animations/lists/stagger-fade).
+
+## Accessibility notes
+
+`SlideInList` wraps each child in a `motion.div`. The semantic role of the list depends entirely on the `as` prop and the children you pass.
+
+- **Use `as="ul"` with `<li>` children** when the content is a genuine list so screen readers announce the item count:
+
+```tsx
+<SlideInList as="ul" direction="left" staggerDelay={0.08} className="space-y-2">
+  {items.map((item, i) => (
+    <li key={i} className="rounded-lg border p-3 text-sm">
+      {item}
+    </li>
+  ))}
+</SlideInList>
+```
+
+- **Respect reduced motion.** The slide uses `x`/`y` translation which can feel disorienting. Reduce the `distance` to 0 when the user prefers less motion, effectively turning it into a fade:
+
+```tsx
+"use client"
+import { useReducedMotion } from "motion/react"
+import { SlideInList } from "@/components/animations/lists/slide-in"
+
+function AccessibleSlideIn({ items }: { items: string[] }) {
+  const reduced = useReducedMotion()
+  return (
+    <SlideInList direction="left" distance={reduced ? 0 : 20} staggerDelay={0.1}>
+      {items.map((item, i) => (
+        <div key={i} className="p-3 border rounded-lg">{item}</div>
+      ))}
+    </SlideInList>
+  )
+}
+```
+
+- **Do not rely on the animation to convey order.** The stagger is a visual enhancement; the semantic order of the DOM is what matters for assistive tech.
+
+## Performance considerations
+
+- **`x` and `y` are transform properties.** The translation animation runs on the compositor thread with no layout recalculation on each frame.
+- **`opacity` is also compositor-only.** Both animated properties are cheap, so `SlideInList` scales well for lists of ~20 items.
+- **Each child gets its own `motion.div`.** The overhead is proportional to `count`. For very large lists (50+), every mounted `motion.div` adds to startup rendering time even though the animations are inexpensive.
+- **The animation runs once on mount** (no `repeat`). There is no ongoing cost after the entry animation finishes.
+
+## Customization examples
+
+### Slide from bottom (modal content)
+
+Items rising up when a modal opens feels natural:
+
+```tsx
+<SlideInList direction="bottom" staggerDelay={0.08} distance={16}>
+  {items.map((item, i) => (
+    <div key={i} className="py-2 text-sm border-b border-neutral-100 dark:border-neutral-800">
+      {item}
+    </div>
+  ))}
+</SlideInList>
+```
+
+### Fast stagger for a long list
+
+Tighter delay prevents the last item from waiting too long:
+
+```tsx
+<SlideInList direction="left" staggerDelay={0.04} duration={0.25} distance={14}>
+  {items.map((item, i) => <div key={i}>{item}</div>)}
+</SlideInList>
+```
+
+### Semantic ordered list
+
+```tsx
+<SlideInList as="ol" direction="top" staggerDelay={0.12} className="list-none space-y-3">
+  {steps.map((step, i) => (
+    <li key={i} className="flex gap-3 items-start">
+      <span className="font-bold text-indigo-600">{i + 1}.</span>
+      <span className="text-sm">{step}</span>
+    </li>
+  ))}
+</SlideInList>
+```
+
+## Real-world examples
+
+### Notification feed on page load
+
+```tsx
+"use client"
+import { SlideInList } from "@/components/animations/lists/slide-in"
+
+const notifications = [
+  { id: 1, text: "Your export is ready", time: "just now" },
+  { id: 2, text: "Anna commented on your doc", time: "3m ago" },
+  { id: 3, text: "Deployment succeeded", time: "12m ago" },
+  { id: 4, text: "You were mentioned in #general", time: "1h ago" },
+]
+
+export function NotificationPanel() {
+  return (
+    <SlideInList
+      as="ul"
+      direction="left"
+      staggerDelay={0.07}
+      duration={0.25}
+      className="w-full max-w-sm divide-y divide-neutral-100 dark:divide-neutral-800"
+    >
+      {notifications.map((n) => (
+        <li
+          key={n.id}
+          className="flex items-start justify-between gap-4 py-3 text-sm"
+        >
+          <span>{n.text}</span>
+          <span className="text-xs text-neutral-400 flex-shrink-0">{n.time}</span>
+        </li>
+      ))}
+    </SlideInList>
+  )
+}
+```
+
+### Feature list on a landing page
+
+```tsx
+"use client"
+import { SlideInList } from "@/components/animations/lists/slide-in"
+
+const features = [
+  { icon: "shield", label: "SOC 2 Type II certified" },
+  { icon: "zap", label: "Sub-100 ms median response time" },
+  { icon: "globe", label: "Deployed across 12 edge regions" },
+]
+
+export function FeatureList() {
+  return (
+    <SlideInList direction="left" staggerDelay={0.1} className="flex flex-col gap-4">
+      {features.map((f) => (
+        <div key={f.icon} className="flex items-center gap-3 text-sm font-medium">
+          <div className="h-8 w-8 rounded-lg bg-indigo-100 dark:bg-indigo-900/40" />
+          {f.label}
+        </div>
+      ))}
+    </SlideInList>
+  )
+}
+```

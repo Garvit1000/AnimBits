@@ -168,3 +168,190 @@ import { SlideInButton } from "@/components/animations/buttons/slide-in"
 | `delay` | `number` | `0` | Delay before animation (seconds) |
 | `duration` | `number` | `0.3` | Animation duration (seconds) |
 | `children` | `React.ReactNode` | Required | Button content |
+
+## Use cases
+
+`SlideInButton` builds a custom variant pair where `hidden` sets `opacity: 0` plus a 20-pixel offset in the chosen direction (`x: -20` for `left`, `x: 20` for `right`, `y: -20` for `up`, `y: 20` for `down`) and `visible` resets both to `opacity: 1, x: 0, y: 0`. The animation fires on mount via `initial="hidden"` and `animate="visible"`, using `createDelayedTransition(delay, duration)` which produces an `easeOut` transition. Reach for it when:
+
+- **Sequenced toolbar reveals.** A row of action buttons that slide in from the left with `delay={0}`, `delay={0.1}`, `delay={0.2}` communicates that the toolbar has just become available.
+- **Dialog and sheet footer buttons.** Confirmation and cancel buttons that slide up from the bottom (`direction="down"`) reinforce the vertical nature of a bottom sheet entering from below.
+- **Page-level CTA sections.** A hero or section CTA that slides in from the left on mount provides a sense of arrival distinct from a plain [Fade In Button](/docs/animations/buttons/fade-in).
+- **Notification action buttons.** "Undo" or "Dismiss" buttons that appear after an action can slide in from the right to draw attention without a dramatic pop.
+- **Sidebar navigation items.** Navigation buttons that appear after a sidebar opens can stagger in from the left to reinforce the left-to-right reading direction.
+
+The 20-pixel offset is small enough not to disturb the layout visually, but large enough to communicate direction clearly.
+
+## When to use / when not to use
+
+**Use `SlideInButton` when:**
+
+- You want a mount-time entrance animation that includes both opacity and directional movement.
+- The `direction` aligns with the conceptual origin of the content: a bottom sheet's actions should use `direction="down"`, left-rail navigation should use `direction="left"`.
+- You're staggering multiple buttons with different `delay` values to create a sequence.
+
+**Reach for a different button when:**
+
+- You only need a fade without directional motion. [Fade In Button](/docs/animations/buttons/fade-in) animates only `opacity`, which is lighter and less distracting in dense layouts.
+- You need a hover or click interaction. `SlideInButton` has no `whileHover` or `whileTap` state; it is entrance-only. Combine with [Press Button](/docs/animations/buttons/press) via `whileTap={{ scale: 0.96 }}` passed as a prop, or use a completely different button for interactive states.
+- The button re-mounts frequently (conditionally shown/hidden). Every unmount and remount replays the slide-in from the beginning. If toggling visibility is the pattern, keep the component mounted and use `animate` to toggle between `hidden` and `visible` externally, or prefer [Fade In Button](/docs/animations/buttons/fade-in) whose opacity-only animation is less disruptive on repeated toggling.
+- The slide direction conflicts with your layout's reading direction (e.g., a right-to-left locale where `direction="left"` feels backward). Pass `direction="right"` when entering from the leading edge in RTL layouts.
+
+## Accessibility notes
+
+`SlideInButton` renders a `motion.button`, so it participates in the normal tab order and is keyboard-accessible.
+
+- **Content is in the DOM immediately.** Screen readers see the button as soon as it mounts, even while `opacity` is 0 and the element is offset by 20px. There is no visibility delay for assistive technology.
+- **The `x`/`y` offset is a `transform`, not a position change.** The button's layout box stays in its normal document position throughout the animation. Nothing shifts or reflows.
+- **Focus during animation.** If the user tabs to the button while it is mid-animation, it receives focus and activates normally. The transform and opacity do not affect interactivity.
+- **Reduced motion.** The directional slide adds spatial motion on top of the opacity fade. Users with vestibular sensitivities may find it uncomfortable. Collapse the animation to a plain fade or skip it entirely:
+
+```tsx
+"use client"
+import { useReducedMotion } from "motion/react"
+import { SlideInButton } from "@/components/animations/buttons/slide-in"
+import { FadeInButton } from "@/components/animations/buttons/fade-in"
+
+function AccessibleSlideIn({ children }: { children: React.ReactNode }) {
+  const reduced = useReducedMotion()
+  // Use the simpler opacity-only FadeInButton when motion is reduced.
+  if (reduced) {
+    return (
+      <FadeInButton
+        duration={0.3}
+        className="inline-flex h-11 items-center rounded-lg bg-blue-600 px-6 text-sm font-semibold text-white"
+      >
+        {children}
+      </FadeInButton>
+    )
+  }
+  return (
+    <SlideInButton
+      direction="left"
+      duration={0.3}
+      className="inline-flex h-11 items-center rounded-lg bg-blue-600 px-6 text-sm font-semibold text-white"
+    >
+      {children}
+    </SlideInButton>
+  )
+}
+```
+
+## Performance considerations
+
+- **Both `opacity` and `x`/`y` are compositor-safe.** Motion maps `x` and `y` to `transform: translateX/Y(...)`. Opacity is also handled by the compositor. Neither triggers layout recalculation or paint during the transition.
+- **Single-fire animation.** Like [Fade In Button](/docs/animations/buttons/fade-in), the animation plays once on mount. After it completes, no animation frames are scheduled and the element rests at `opacity: 1, transform: none`.
+- **`createDelayedTransition` uses a CSS animation delay.** The `delay` prop is passed to Motion's transition config, not a `setTimeout`. There are no extra React renders during the delay period.
+- **Staggering cost.** Rendering 10 `SlideInButton` instances with increasing `delay` values is safe; the total animation duration across all instances is `0 + (n-1) * delay + duration`. All animations run concurrently on the compositor and the stagger is encoded in the delay offsets, not in sequential scheduling.
+- **Remount replays.** Because `animate="visible"` is always set, unmounting and remounting the component replays the animation from scratch. If you're conditionally showing a toolbar, avoid toggling its parent's mount/unmount at high frequency.
+
+## Customization examples
+
+### Bottom sheet confirm buttons sliding down into view
+
+Using `direction="down"` reinforces that these actions arrived from the sheet footer:
+
+```tsx
+<div className="flex gap-3">
+  <SlideInButton
+    direction="down"
+    delay={0.05}
+    duration={0.3}
+    className="inline-flex h-11 flex-1 items-center justify-center rounded-lg border border-neutral-200 dark:border-neutral-700 text-sm font-semibold text-neutral-700 dark:text-neutral-300"
+  >
+    Cancel
+  </SlideInButton>
+  <SlideInButton
+    direction="down"
+    delay={0.15}
+    duration={0.3}
+    className="inline-flex h-11 flex-1 items-center justify-center rounded-lg bg-blue-600 text-sm font-semibold text-white"
+  >
+    Confirm
+  </SlideInButton>
+</div>
+```
+
+### Longer entrance duration for a high-impact hero CTA
+
+A 0.5-second slide with a lead-in delay gives surrounding content time to settle first:
+
+```tsx
+<SlideInButton
+  direction="left"
+  delay={0.5}
+  duration={0.5}
+  className="inline-flex h-12 items-center rounded-xl bg-neutral-900 dark:bg-white px-8 text-sm font-bold text-white dark:text-neutral-900"
+>
+  Get early access
+</SlideInButton>
+```
+
+### Right-to-left stagger for a notification action group
+
+Undo/dismiss slide in from the right to suggest they came from off-screen:
+
+```tsx
+<div className="flex gap-2">
+  <SlideInButton direction="right" delay={0} duration={0.25} className="inline-flex h-8 items-center rounded-lg bg-neutral-100 dark:bg-neutral-800 px-3 text-xs font-semibold text-neutral-700 dark:text-neutral-300">
+    Undo
+  </SlideInButton>
+  <SlideInButton direction="right" delay={0.08} duration={0.25} className="inline-flex h-8 items-center rounded-lg px-3 text-xs font-medium text-neutral-500">
+    Dismiss
+  </SlideInButton>
+</div>
+```
+
+## Real-world examples
+
+### Sidebar navigation that reveals items on open
+
+When the sidebar mounts, links slide in from the left with a short stagger:
+
+```tsx
+const navItems = [
+  { label: "Dashboard", href: "/dashboard" },
+  { label: "Projects", href: "/projects" },
+  { label: "Settings", href: "/settings" },
+]
+
+export function Sidebar() {
+  return (
+    <nav className="flex w-56 flex-col gap-1 bg-white dark:bg-neutral-900 p-4">
+      {navItems.map((item, i) => (
+        <SlideInButton
+          key={item.href}
+          direction="left"
+          delay={i * 0.07}
+          duration={0.3}
+          className="inline-flex h-10 w-full items-center rounded-lg px-3 text-sm font-medium text-neutral-700 hover:bg-neutral-100 dark:text-neutral-300 dark:hover:bg-neutral-800"
+          onClick={() => { window.location.href = item.href }}
+        >
+          {item.label}
+        </SlideInButton>
+      ))}
+    </nav>
+  )
+}
+```
+
+### Empty-state with a primary action sliding in from below
+
+The button appears after the illustration, reinforcing that the action is secondary to the message:
+
+```tsx
+<div className="flex flex-col items-center gap-6 py-24 text-center">
+  <div className="h-24 w-24 rounded-full bg-neutral-100 dark:bg-neutral-800" />
+  <div>
+    <p className="text-lg font-semibold text-neutral-900 dark:text-white">No projects yet</p>
+    <p className="mt-1 text-sm text-neutral-500">Create your first project to get started.</p>
+  </div>
+  <SlideInButton
+    direction="up"
+    delay={0.2}
+    duration={0.35}
+    className="inline-flex h-11 items-center rounded-lg bg-blue-600 px-6 text-sm font-semibold text-white"
+  >
+    Create project
+  </SlideInButton>
+</div>
+```

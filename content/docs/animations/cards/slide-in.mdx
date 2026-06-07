@@ -213,3 +213,193 @@ import { CardSlideIn } from "@/components/animations/cards/slide-in"
 | `direction` | `"left" \| "right" \| "up" \| "down"` | `"left"` | Slide direction |
 | `distance` | `number` | `50` | Distance to slide in pixels |
 | `className` | `string` | `undefined` | Additional CSS classes |
+
+## Use cases
+
+`CardSlideIn` uses `whileInView` (once by default) to transition from `{ x: -50, opacity: 0 }` (for `direction="left"`) to `{ x: 0, opacity: 1 }`. The `useSlideIn` hook maps each direction to an initial `x` or `y` offset of `+/-distance` (default `50px`) and animates to zero on both axes. The `easeOut` easing makes the slide decelerate naturally at the end.
+
+Use it when:
+
+- **Feature sections with a clear reading direction.** Slide cards in from the left as the user scrolls down a left-to-right reading layout.
+- **Two-column split layouts.** Left column slides from left, right column from right, meeting in the middle.
+- **Notification or feed items.** New items that push into view from the top or bottom.
+- **Step-by-step process cards.** Each numbered step slides in from below with a small `delay` increment.
+- **Dashboard panels loaded after data fetch.** Slide in the panel from below once the data arrives.
+
+## When to use / when not to use
+
+**Use `CardSlideIn` when:**
+
+- You want a viewport-triggered entrance with a clear spatial direction that reinforces the page layout (e.g., left-side content slides in from the left).
+- You want combined translation + opacity, which `useSlideIn` provides together.
+
+**Reach for a different component when:**
+
+- You want a scale entrance rather than a slide. Use [CardScaleIn](/docs/animations/cards/scale-in) for a zoom-in effect.
+- The card is above the fold at page load. `whileInView` fires immediately for visible elements, but [CardFadeIn](/docs/animations/cards/fade-in) is semantically cleaner for always-visible content.
+- `distance={50}` causes the card to appear from outside its parent container. If the parent has `overflow: hidden`, the initial off-screen position will be invisible anyway (which is fine), but the clipping can make the entrance feel abrupt. Reduce `distance` to `20` or `30` for contained layouts.
+- The slide direction contradicts the reading flow. Sliding cards in from the right in a left-to-right document feels counterintuitive. Match direction to the natural scroll or reading axis.
+
+## Accessibility notes
+
+- **Starting position is `opacity: 0`** and offset by `distance` pixels. Screen readers access the content immediately from the DOM regardless of visual state. Do not hide the card from the accessibility tree during the animation.
+- **Translation is motion.** A 50px slide, while moderate, is a positional animation. Honor `prefers-reduced-motion` by skipping both the translate and the opacity fade:
+
+```tsx
+"use client"
+import { useReducedMotion } from "motion/react"
+import { CardSlideIn } from "@/components/animations/cards/slide-in"
+
+function AccessibleSlideCard({ children }: { children: React.ReactNode }) {
+  const reduced = useReducedMotion()
+  return (
+    <CardSlideIn
+      distance={reduced ? 0 : 50}
+      duration={reduced ? 0 : 0.5}
+      direction="left"
+      className="rounded-xl border border-neutral-200 dark:border-neutral-800 bg-white dark:bg-neutral-900 p-6"
+    >
+      {children}
+    </CardSlideIn>
+  )
+}
+```
+
+- **`viewport: { once: true }` is the default.** This means the card slides in once and stays put. If you set `viewport="always"`, the card will re-animate every time it leaves and re-enters the viewport, which can be disorienting. Leave it at `"once"` for most use cases.
+- **Keyboard navigation.** The card is in the normal tab order from the start. Keyboard users can reach a `CardSlideIn`-wrapped card while it is still animating. Ensure focus rings are visible throughout the animation.
+
+## Performance considerations
+
+- **`x`/`y` translation and `opacity` are GPU-composited.** The animation runs off the main thread and does not trigger layout or paint.
+- **`IntersectionObserver` via `whileInView`.** One observer per card; cheap. After the animation completes with `once: true`, the observer disconnects.
+- **`distance={50}` can cause a brief layout gap.** The initial offset positions the card 50px away from its final position. In some layouts, particularly flex or grid containers without fixed heights, this can shift surrounding elements during the entrance. Fix by adding a fixed height to the card container, or use `overflow: hidden` on the row.
+- **Avoid large `distance` values.** At `distance={200}`, the card starts far enough off that the slide takes a noticeable path. Values above `80` should be paired with a longer `duration` (0.7 or more) to avoid a too-fast whip-in.
+
+## Customization examples
+
+### Up direction for a card that loads from below
+
+```tsx
+import { CardSlideIn } from "@/components/animations/cards/slide-in"
+
+<CardSlideIn
+  direction="up"
+  distance={30}
+  duration={0.4}
+  className="rounded-xl border border-neutral-200 dark:border-neutral-800 bg-white dark:bg-neutral-900 p-6"
+>
+  <p className="font-semibold">Slides up from below</p>
+</CardSlideIn>
+```
+
+### Two-column split: left and right
+
+```tsx
+<div className="grid grid-cols-2 gap-6">
+  <CardSlideIn direction="left" distance={40} duration={0.45}>
+    <div className="rounded-2xl border border-neutral-200 dark:border-neutral-800 bg-white dark:bg-neutral-900 p-6">
+      <h3 className="font-bold">Left column</h3>
+    </div>
+  </CardSlideIn>
+  <CardSlideIn direction="right" distance={40} duration={0.45}>
+    <div className="rounded-2xl border border-neutral-200 dark:border-neutral-800 bg-white dark:bg-neutral-900 p-6">
+      <h3 className="font-bold">Right column</h3>
+    </div>
+  </CardSlideIn>
+</div>
+```
+
+### Staggered step cards
+
+```tsx
+const steps = ["Research", "Design", "Build", "Launch"]
+
+export function ProcessSteps() {
+  return (
+    <div className="flex flex-col gap-4">
+      {steps.map((step, i) => (
+        <CardSlideIn
+          key={step}
+          direction="left"
+          distance={40}
+          delay={i * 0.1}
+          duration={0.4}
+          className="rounded-xl border border-neutral-200 dark:border-neutral-800 bg-white dark:bg-neutral-900 p-5 flex items-center gap-4"
+        >
+          <span className="text-2xl font-black text-neutral-200 dark:text-neutral-700 w-8 shrink-0">{i + 1}</span>
+          <p className="font-semibold">{step}</p>
+        </CardSlideIn>
+      ))}
+    </div>
+  )
+}
+```
+
+## Real-world examples
+
+### SaaS landing page feature section
+
+```tsx
+import { CardSlideIn } from "@/components/animations/cards/slide-in"
+
+interface FeatureProps {
+  icon: React.ReactNode
+  title: string
+  description: string
+  index: number
+}
+
+export function LandingFeatureCard({ icon, title, description, index }: FeatureProps) {
+  return (
+    <CardSlideIn
+      direction="up"
+      distance={35}
+      delay={index * 0.08}
+      duration={0.45}
+      className="rounded-2xl border border-neutral-200 dark:border-neutral-800 bg-white dark:bg-neutral-900 p-7 flex flex-col gap-4"
+    >
+      <div className="h-11 w-11 rounded-xl bg-neutral-100 dark:bg-neutral-800 flex items-center justify-center text-neutral-600 dark:text-neutral-300">
+        {icon}
+      </div>
+      <div>
+        <h3 className="font-bold">{title}</h3>
+        <p className="text-sm text-neutral-500 dark:text-neutral-400 mt-1 leading-relaxed">{description}</p>
+      </div>
+    </CardSlideIn>
+  )
+}
+```
+
+### Notification feed that slides new items in from the top
+
+```tsx
+"use client"
+import { useState } from "react"
+import { CardSlideIn } from "@/components/animations/cards/slide-in"
+
+interface Notification {
+  id: string
+  message: string
+  time: string
+}
+
+export function NotificationFeed({ items }: { items: Notification[] }) {
+  return (
+    <div className="flex flex-col gap-2 w-80">
+      {items.map((n, i) => (
+        <CardSlideIn
+          key={n.id}
+          direction="down"
+          distance={20}
+          delay={i * 0.05}
+          duration={0.3}
+          className="rounded-xl border border-neutral-200 dark:border-neutral-800 bg-white dark:bg-neutral-900 px-4 py-3 flex items-center justify-between"
+        >
+          <p className="text-sm">{n.message}</p>
+          <span className="text-xs text-neutral-400 shrink-0 ml-3">{n.time}</span>
+        </CardSlideIn>
+      ))}
+    </div>
+  )
+}
+```

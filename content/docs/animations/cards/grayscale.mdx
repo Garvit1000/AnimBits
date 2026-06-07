@@ -162,3 +162,169 @@ import { CardGrayscale } from "@/components/animations/cards/grayscale"
 |------|------|---------|-------------|
 | `duration` | `number` | `0.5` | Animation duration in seconds |
 | `className` | `string` | `undefined` | Additional CSS classes |
+
+## Use cases
+
+`CardGrayscale` manages a `isHovered` boolean with `onHoverStart`/`onHoverEnd` and animates the CSS `filter` between `grayscale(100%)` (resting state) and `grayscale(0%)` (hovered). The transition takes `duration` seconds (default `0.5`). The wrapper has `relative overflow-hidden` baked in.
+
+Use it when:
+
+- **Photography portfolios.** All thumbnails start muted; hovering one saturates it, drawing attention without competing colors.
+- **Editorial image galleries.** News, magazine, or blog image grids where you want a calm default state that springs to life on interaction.
+- **Team member photos.** A classic design pattern that conveys "hover to see who this person is."
+- **Partner/client logo grids.** Logos shown in grayscale by default, full color on hover, keeping the grid visually balanced.
+- **Before/after product showcases.** Wrap only the image portion while keeping the surrounding card layout in full color.
+
+## When to use / when not to use
+
+**Use `CardGrayscale` when:**
+
+- The content inside the wrapper is primarily an image or video that benefits visually from desaturation at rest.
+- You want a low-motion, filter-only hover effect without any geometry change.
+
+**Reach for a different component when:**
+
+- The card content is mostly text or UI chrome without strong color. Grayscale has no visible effect on black-and-white content.
+- You want a physical hover response like lift or glow. Combine `CardGrayscale` with [CardHoverLift](/docs/animations/cards/hover-lift) by wrapping one inside the other, or use `CardHoverGlow` alone if the image coloring is secondary.
+- You need the full-color version visible by default and want to desaturate on hover. The component always starts at `grayscale(100%)` and cannot be inverted without forking the source.
+- The images are already low-contrast or monochromatic. The effect will be imperceptible.
+
+## Accessibility notes
+
+- **CSS `filter` animates on the GPU compositor.** It does not affect DOM structure, tab order, or the accessibility tree. Screen readers are unaffected by the grayscale state.
+- **Do not rely on color alone to convey meaning.** WCAG 1.4.1 prohibits using color as the only visual means of conveying information. If the only way to distinguish an "active" card from an "inactive" one is the presence of color vs. grayscale, add a secondary indicator (e.g., a border, label, or icon).
+- **Respect `prefers-reduced-motion`.** The `filter` transition is subtle but still motion. Users who prefer reduced motion should see an instant switch rather than a 0.5-second dissolve:
+
+```tsx
+"use client"
+import { useReducedMotion } from "motion/react"
+import { CardGrayscale } from "@/components/animations/cards/grayscale"
+
+function AccessibleGrayscaleCard({ src, alt }: { src: string; alt: string }) {
+  const reduced = useReducedMotion()
+  return (
+    <CardGrayscale
+      duration={reduced ? 0 : 0.5}
+      className="rounded-xl overflow-hidden w-64"
+    >
+      <img src={src} alt={alt} className="w-full h-48 object-cover" />
+    </CardGrayscale>
+  )
+}
+```
+
+- **Keyboard access.** `onHoverStart`/`onHoverEnd` do not fire on keyboard focus. If the card is interactive (a link, a button), add matching `onFocus`/`onBlur` behavior so keyboard users also see the color state.
+
+## Performance considerations
+
+- **CSS `filter` is GPU-composited on modern browsers.** The transition between `grayscale(100%)` and `grayscale(0%)` runs off the main thread on Chrome, Firefox, and Safari. It does not trigger layout or paint.
+- **Filter creates a stacking context.** Applying a CSS filter promotes the element to its own composited layer. In a grid of many thumbnails, this adds GPU memory. For image grids with 50+ items, consider only applying the filter to the visible viewport (e.g., with `content-visibility`).
+- **Two state updates per hover cycle.** The component calls `setIsHovered` on each `onHoverStart` and `onHoverEnd`. These are cheap React state updates, but avoid nesting `CardGrayscale` inside rapidly re-rendering parents.
+- **`framer-motion/client` import.** The source uses `import * as motion from "framer-motion/client"`, which enables RSC-compatible rendering. No client bundle overhead beyond the motion library itself.
+
+## Customization examples
+
+### Faster snap for interactive grids
+
+A quick transition reads as responsive rather than filmic:
+
+```tsx
+import { CardGrayscale } from "@/components/animations/cards/grayscale"
+
+<CardGrayscale duration={0.2} className="rounded-lg overflow-hidden w-48">
+  <img src="/photo.jpg" alt="Gallery item" className="w-full h-36 object-cover" />
+</CardGrayscale>
+```
+
+### Pair with overlay text on hover
+
+The grayscale-to-color transition works well alongside a CSS hover overlay:
+
+```tsx
+<CardGrayscale
+  duration={0.4}
+  className="group relative rounded-xl overflow-hidden w-56 cursor-pointer"
+>
+  <img src="/portrait.jpg" alt="Team member" className="w-full h-64 object-cover" />
+  <div className="absolute inset-0 bg-black/0 group-hover:bg-black/30 transition-colors flex items-end p-4 opacity-0 group-hover:opacity-100">
+    <p className="text-white font-semibold text-sm">View profile</p>
+  </div>
+</CardGrayscale>
+```
+
+### Logo grid, no overflow clipping needed
+
+When wrapping SVG logos, drop `overflow-hidden` since logos have no bleed:
+
+```tsx
+<CardGrayscale duration={0.3} className="p-4 rounded-lg border border-neutral-200 dark:border-neutral-800">
+  <img src="/logo-acme.svg" alt="Acme Corp" className="h-8 w-auto" />
+</CardGrayscale>
+```
+
+## Real-world examples
+
+### Photography portfolio grid
+
+```tsx
+import { CardGrayscale } from "@/components/animations/cards/grayscale"
+
+interface Photo {
+  src: string
+  alt: string
+  title: string
+}
+
+export function PortfolioGrid({ photos }: { photos: Photo[] }) {
+  return (
+    <div className="grid grid-cols-3 gap-4">
+      {photos.map((photo) => (
+        <CardGrayscale
+          key={photo.src}
+          duration={0.4}
+          className="group relative rounded-xl overflow-hidden aspect-square cursor-pointer"
+        >
+          <img
+            src={photo.src}
+            alt={photo.alt}
+            className="w-full h-full object-cover"
+          />
+          <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors duration-400 flex items-end p-4">
+            <p className="text-white text-xs font-medium opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+              {photo.title}
+            </p>
+          </div>
+        </CardGrayscale>
+      ))}
+    </div>
+  )
+}
+```
+
+### Partner logo wall
+
+```tsx
+import { CardGrayscale } from "@/components/animations/cards/grayscale"
+
+const partners = [
+  { name: "Acme Corp", logo: "/logos/acme.svg" },
+  { name: "Globex", logo: "/logos/globex.svg" },
+  { name: "Initech", logo: "/logos/initech.svg" },
+]
+
+export function PartnerLogos() {
+  return (
+    <div className="flex flex-wrap gap-6 items-center justify-center">
+      {partners.map((p) => (
+        <CardGrayscale
+          key={p.name}
+          duration={0.3}
+          className="px-6 py-4 rounded-xl border border-neutral-200 dark:border-neutral-800 bg-white dark:bg-neutral-900"
+        >
+          <img src={p.logo} alt={p.name} className="h-8 w-auto" />
+        </CardGrayscale>
+      ))}
+    </div>
+  )
+}
+```

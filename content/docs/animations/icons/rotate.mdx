@@ -404,3 +404,205 @@ export default function Example() {
 | `children` | `ReactNode` | - | The icon element to animate |
 | `trigger` | `"hover"` \| `"tap"` \| `"mount"` | `"hover"` | When to trigger the rotation animation |
 | `direction` | `"clockwise"` \| `"counterclockwise"` | `"clockwise"` | Rotation direction |
+
+## Use cases
+
+`RotateIcon` animates `rotate` from 0 to 360 (clockwise) or 0 to -360 (counterclockwise) over 0.5 s with `easeInOut`. It is a one-shot animation: it fires on the chosen trigger and stops. A `key` increment on `tap` allows it to re-fire reliably on repeated interactions. Good use cases:
+
+- **Refresh / reload buttons.** A `RefreshCw` that rotates 360 degrees on hover or tap directly mimics the action it represents.
+- **Settings gear.** A gear icon rotating a quarter turn on hover communicates "this is configurable" without words.
+- **Expand/collapse toggles.** `trigger="mount"` on a chevron that appears when a section opens, combined with rotate CSS in the collapsed state, creates a smooth open/close affordance.
+- **Delete/clear actions.** A counterclockwise rotation on a close or trash icon adds a tactile sense of reversal.
+- **Transition feedback.** `trigger="mount"` on a sync or loading icon that rotates once when the async process begins.
+
+Note that `RotateIcon` rotates once and stops. If you need continuous rotation (loading spinner), use [SpinIcon](/docs/animations/icons/spin).
+
+## When to use / when not to use
+
+**Use `RotateIcon` when:**
+
+- You want a precise, one-shot rotation that confirms an action without looping.
+- `direction="clockwise"` pairs semantically with "forward" or "refresh" actions; `direction="counterclockwise"` pairs with "undo" or "reverse" actions.
+- `trigger="hover"` provides lightweight hover feedback that does not require state management.
+
+**Do not use it when:**
+
+- You need continuous rotation while a process is running. Use [SpinIcon](/docs/animations/icons/spin), which sets `repeat: Infinity`.
+- The rotation is used as the only signal for a state change. A gear that rotates once on click tells the user something happened but not what the new state is. Pair with a label or color change.
+- The icon is in a dense list where hover triggers fire on every row as the user moves the cursor through the list. This creates a distracting sequence of rotations; prefer a color-only hover state.
+
+## Accessibility notes
+
+- Rotation is a purely visual effect. Add `aria-hidden="true"` to the icon when it is accompanied by a text label. When the icon is the sole interactive element, give the parent button an `aria-label`:
+
+```tsx
+<button
+  aria-label="Refresh data"
+  className="rounded p-2 hover:bg-neutral-100"
+>
+  <RotateIcon trigger="hover">
+    <RefreshCw className="w-5 h-5" aria-hidden="true" />
+  </RotateIcon>
+</button>
+```
+
+- For `trigger="tap"`, the rotation fires after the `onTap` event. This is a motion/react gesture event that does not fire on keyboard activation (Enter or Space). Ensure the parent element is a proper `<button>` so keyboard users still trigger the action even without seeing the rotation.
+- The 0.5 s single rotation is brief enough that most users with motion sensitivity will not be affected. For extra safety, you can reduce the rotation angle:
+
+```tsx
+"use client"
+import { useReducedMotion } from "motion/react"
+import { RotateIcon } from "@/components/animations/icons/rotate"
+import { RefreshCw } from "lucide-react"
+
+export function RefreshButton({ onClick }: { onClick: () => void }) {
+  const reduced = useReducedMotion()
+  return (
+    <button onClick={onClick} aria-label="Refresh" className="rounded p-2 hover:bg-neutral-100">
+      {reduced ? (
+        <RefreshCw className="w-5 h-5" aria-hidden="true" />
+      ) : (
+        <RotateIcon trigger="hover">
+          <RefreshCw className="w-5 h-5" aria-hidden="true" />
+        </RotateIcon>
+      )}
+    </button>
+  )
+}
+```
+
+## Performance considerations
+
+- `rotate` is a transform. The animation runs on the compositor thread with no layout recalculation or repaint.
+- One-shot animation (no `repeat`). The compositor releases it after 0.5 s. No ongoing cost.
+- The `key` increment on `tap` remounts the `motion.div` to restart the animation. For a single icon this is a negligible DOM operation.
+- `trigger="hover"` uses `whileHover`, which transitions back to `initial` (rotate 0) when the cursor leaves. Because the element is not mid-animation at exit, the return is instantaneous (no reverse animation), which is the correct behavior for a refresh icon.
+
+## Customization examples
+
+### Counterclockwise undo icon
+
+```tsx
+import { RotateIcon } from "@/components/animations/icons/rotate"
+import { RotateCcw } from "lucide-react"
+
+<button aria-label="Undo" className="rounded p-2 hover:bg-neutral-100">
+  <RotateIcon trigger="hover" direction="counterclockwise">
+    <RotateCcw className="w-5 h-5 text-neutral-600" aria-hidden="true" />
+  </RotateIcon>
+</button>
+```
+
+### Settings icon on hover
+
+Rotating a gear communicates interactivity before the click:
+
+```tsx
+import { RotateIcon } from "@/components/animations/icons/rotate"
+import { Settings } from "lucide-react"
+
+<button aria-label="Settings" className="rounded p-2 hover:bg-neutral-100">
+  <RotateIcon trigger="hover" direction="clockwise">
+    <Settings className="w-5 h-5 text-neutral-600" aria-hidden="true" />
+  </RotateIcon>
+</button>
+```
+
+### Mount rotation on a success confirmation icon
+
+Fires once when the status icon appears after an action resolves:
+
+```tsx
+import { RotateIcon } from "@/components/animations/icons/rotate"
+import { CheckCircle } from "lucide-react"
+
+{actionComplete && (
+  <RotateIcon trigger="mount" direction="clockwise">
+    <CheckCircle className="w-6 h-6 text-green-500" aria-hidden="true" />
+  </RotateIcon>
+)}
+```
+
+## Real-world examples
+
+### Refresh button in a data card header
+
+The icon rotates on each click to confirm the refresh was triggered, and is disabled while the fetch is in flight:
+
+```tsx
+"use client"
+import { useState } from "react"
+import { RotateIcon } from "@/components/animations/icons/rotate"
+import { RefreshCw } from "lucide-react"
+
+export function CardHeader({ onRefresh }: { onRefresh: () => Promise<void> }) {
+  const [refreshing, setRefreshing] = useState(false)
+
+  async function handleRefresh() {
+    if (refreshing) return
+    setRefreshing(true)
+    try {
+      await onRefresh()
+    } finally {
+      setRefreshing(false)
+    }
+  }
+
+  return (
+    <div className="flex items-center justify-between border-b border-neutral-200 px-4 py-3 dark:border-neutral-800">
+      <h3 className="text-sm font-semibold">Analytics</h3>
+      <button
+        onClick={handleRefresh}
+        disabled={refreshing}
+        aria-label="Refresh analytics"
+        className="rounded p-1.5 hover:bg-neutral-100 disabled:opacity-50 dark:hover:bg-neutral-800"
+      >
+        <RotateIcon trigger="tap">
+          <RefreshCw className="w-4 h-4 text-neutral-500" aria-hidden="true" />
+        </RotateIcon>
+      </button>
+    </div>
+  )
+}
+```
+
+### Settings dropdown with rotating gear
+
+The gear icon rotates when the dropdown opens, adding a visual accent to the interaction:
+
+```tsx
+"use client"
+import { useState } from "react"
+import { RotateIcon } from "@/components/animations/icons/rotate"
+import { Settings } from "lucide-react"
+
+export function SettingsMenu() {
+  const [open, setOpen] = useState(false)
+
+  return (
+    <div className="relative">
+      <button
+        onClick={() => setOpen((p) => !p)}
+        aria-expanded={open}
+        aria-label="Settings"
+        className="flex items-center gap-1.5 rounded-lg px-3 py-2 text-sm font-medium hover:bg-neutral-100 dark:hover:bg-neutral-800"
+      >
+        <RotateIcon trigger="tap">
+          <Settings className="w-4 h-4" aria-hidden="true" />
+        </RotateIcon>
+        Settings
+      </button>
+      {open && (
+        <div className="absolute right-0 mt-1 w-40 rounded-lg border border-neutral-200 bg-white shadow-md dark:border-neutral-700 dark:bg-neutral-900">
+          <button className="w-full px-4 py-2 text-left text-sm hover:bg-neutral-50 dark:hover:bg-neutral-800">
+            Profile
+          </button>
+          <button className="w-full px-4 py-2 text-left text-sm hover:bg-neutral-50 dark:hover:bg-neutral-800">
+            Billing
+          </button>
+        </div>
+      )}
+    </div>
+  )
+}
+```

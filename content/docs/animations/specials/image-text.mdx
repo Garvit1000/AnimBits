@@ -284,3 +284,177 @@ export function ImageTextChanging() {
 | `direction` | `"horizontal" \| "vertical" \| "diagonal" \| "none"` | `"horizontal"` | The direction of the background animation. |
 | `interval` | `number` | `3000` | The duration (ms) to show each image when `imageUrl` is an array. |
 | `className` | `string` | - | Additional classes for custom text styling (size, weight). |
+
+## Use cases
+
+`ImageText` uses `background-clip: text` with `WebkitBackgroundClip: text` and `WebkitTextFillColor: transparent` to reveal an animated image through the letterforms of the text. The background position animates continuously via a `motion/react` `backgroundPosition` keyframe with `repeat: Infinity` and `ease: "linear"` over 15 seconds. When `imageUrl` is an array, `AnimatePresence` fades between images on an `interval` timer.
+
+- **Hero section wordmarks.** A single large word like a brand name or headline word filled with a landscape photo creates an immediate visual anchor for landing pages.
+- **Category or section headers.** Fill section titles with thematic imagery (a forest photo for "Nature", a cityscape for "Urban") to tie typography to content.
+- **Rotating seasonal imagery.** Pass an array of images with `direction="none"` and `interval={3000}` to cycle through seasonal or campaign photos as the text background.
+- **Pull-quotes or statistics.** A bold number like "10x" or "500K" filled with a gradient photo makes a metric stand out on a marketing page.
+
+## When to use / when not to use
+
+**Use `ImageText` when:**
+
+- The text is large (approximately `text-6xl` and above). Below that, `background-clip: text` produces an illegible smear rather than a readable image fill.
+- You have one or two visually distinct words to highlight. The component renders a hidden `h1` placeholder for layout, then an absolutely-positioned animated `motion.h1` on top. Wrapping many lines of body text this way produces layout complications.
+- The imagery is high-contrast relative to the page background so the text remains readable where the image is bright.
+
+**Do not use `ImageText` when:**
+
+- The text is body copy or small UI labels. Use a standard color or gradient text class instead.
+- You need the text indexed by search engines as actual copy. `background-clip: text` renders real DOM text, so SEO is preserved, but the invisible layout placeholder `h1` is a duplicate element. Prefer wrapping with a semantic container and confirming your crawler sees the real content.
+- The page background is similar in brightness to the image fill. The text will disappear. Ensure a contrasting matte background or use a `text-shadow` fallback.
+- You are cycling images rapidly (`interval` below 1000 ms). The `AnimatePresence` fade uses a 1-second `opacity` transition. Images cycling faster than the fade duration will overlap visually.
+
+## Accessibility notes
+
+- **Semantic heading.** The component renders an `h1` element by default. If the text is not a page title, override with a `span` or `h2` by customizing the component to match the correct heading level in context. Do not place multiple `h1` elements on a page.
+- **Color contrast.** `background-clip: text` with a photographic image does not have a predictable contrast ratio. Parts of the image that are close in luminance to the page background will make the text unreadable. Always verify contrast with your specific image, especially for users with low vision.
+- **Fallback for unsupported environments.** Browsers that do not support `WebkitBackgroundClip: text` will render transparent text (invisible). Add a CSS fallback:
+
+```css
+/* In your global CSS */
+@supports not (-webkit-background-clip: text) {
+  .image-text-fallback {
+    color: inherit;
+    background: none;
+  }
+}
+```
+
+- **Reduced motion.** The `backgroundPosition` keyframe runs infinitely. Respect user preference:
+
+```tsx
+"use client"
+import { useReducedMotion } from "motion/react"
+import { ImageText } from "@/components/animations/specials/image-text"
+
+function AccessibleImageText(props: React.ComponentProps<typeof ImageText>) {
+  const reduced = useReducedMotion()
+  return <ImageText {...props} direction={reduced ? "none" : props.direction} />
+}
+```
+
+- **Alt text.** Because the image is a CSS background, screen readers do not announce it. The visible `text` prop is the accessible label; no additional `alt` is required.
+
+## Performance considerations
+
+- **Two `h1` elements per instance.** The component renders a visually hidden (`invisible`) `h1` for layout and a positioned animated `motion.h1` on top. This is intentional to prevent layout collapse, but it means two heading elements in the DOM. In a page with many instances, this multiplies DOM nodes.
+- **`backgroundPosition` with `repeat: Infinity`.** For `direction="horizontal"` (the default), the background animates from `0% 50%` to `100% 50%` and back over 15 seconds. This is a compositable CSS property on modern browsers but may fall back to main-thread painting on older engines.
+- **`backgroundSize: "150% auto"`.** The image is scaled to 150% of the container width for all directions except `"none"`. Ensure the source image is large enough that the browser does not upscale a small image to fill the oversized background, which would look blurry.
+- **`AnimatePresence` on image arrays.** Each image change mounts a new `motion.h1` and unmounts the previous one with a 1-second opacity fade. On slow connections the incoming image may not be loaded when the `interval` fires, causing a flash of the previous image. Preload images with `new Image().src = url` before passing them to the component.
+- **Avoid many instances on a single page.** Each instance runs a continuous `requestAnimationFrame`-backed animation. Two or three instances are fine; ten on a scroll-driven page will consume compositor resources.
+
+## Customization examples
+
+### Diagonal pan, extra-bold display text
+
+```tsx
+import { ImageText } from "@/components/animations/specials/image-text"
+
+export function HeroTitle() {
+  return (
+    <ImageText
+      text="Velocity"
+      imageUrl="https://images.unsplash.com/photo-1528360983277-13d401cdc186?q=80&w=2670&auto=format&fit=crop"
+      direction="diagonal"
+      className="text-9xl font-black tracking-tighter"
+    />
+  )
+}
+```
+
+### Static image (no panning)
+
+Use `direction="none"` when the image itself has enough motion or detail:
+
+```tsx
+import { ImageText } from "@/components/animations/specials/image-text"
+
+export function StaticFill() {
+  return (
+    <ImageText
+      text="Focus"
+      imageUrl="https://images.unsplash.com/photo-1441974231531-c6227db76b6e?q=80&w=2560&auto=format&fit=crop"
+      direction="none"
+      className="text-8xl font-bold"
+    />
+  )
+}
+```
+
+### Cycling images with fast interval
+
+```tsx
+import { ImageText } from "@/components/animations/specials/image-text"
+
+export function CyclingSeasonsTitle() {
+  return (
+    <ImageText
+      text="Seasons"
+      imageUrl={[
+        "https://images.unsplash.com/photo-1490750967868-58cb75063ed4?q=80&w=2670&auto=format&fit=crop",
+        "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?q=80&w=2673&auto=format&fit=crop",
+        "https://images.unsplash.com/photo-1523712999610-f77fbcfc3843?q=80&w=2670&auto=format&fit=crop",
+      ]}
+      direction="none"
+      interval={4000}
+      className="text-8xl font-black"
+    />
+  )
+}
+```
+
+## Real-world examples
+
+### Landing page hero with subheading
+
+```tsx
+import { ImageText } from "@/components/animations/specials/image-text"
+
+export function LandingHero() {
+  return (
+    <section className="flex flex-col items-center gap-6 py-24 text-center">
+      <p className="text-sm font-medium uppercase tracking-widest text-neutral-500">Introducing</p>
+      <ImageText
+        text="Momentum"
+        imageUrl="https://images.unsplash.com/photo-1518531933037-91b2f5f229cc?q=80&w=1567&auto=format&fit=crop"
+        direction="horizontal"
+        className="text-9xl font-black"
+      />
+      <p className="max-w-md text-lg text-neutral-600 dark:text-neutral-400">
+        The design system that ships with animation built in.
+      </p>
+      <a
+        href="/docs"
+        className="rounded-full bg-neutral-900 px-6 py-3 text-sm font-semibold text-white hover:bg-neutral-700 dark:bg-white dark:text-neutral-900 dark:hover:bg-neutral-200"
+      >
+        Get started
+      </a>
+    </section>
+  )
+}
+```
+
+### Marketing stat block
+
+```tsx
+import { ImageText } from "@/components/animations/specials/image-text"
+
+export function StatBlock() {
+  return (
+    <div className="flex flex-col items-center gap-2">
+      <ImageText
+        text="10x"
+        imageUrl="https://images.unsplash.com/photo-1543269865-cbf427effbad?q=80&w=2670&auto=format&fit=crop"
+        direction="vertical"
+        className="text-8xl font-extrabold"
+      />
+      <p className="text-base font-medium text-neutral-600 dark:text-neutral-400">faster deployment</p>
+    </div>
+  )
+}
+```

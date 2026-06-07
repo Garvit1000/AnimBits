@@ -153,3 +153,171 @@ import { TextSlideUp } from "@/components/animations/text/slide-up"
 | `by` | `"word" \| "character"` | `"word"` | Animation unit |
 | `staggerDelay` | `number` | `0.03` | Delay between units |
 | `distance` | `number` | `20` | Slide distance (pixels) |
+
+## Use cases
+
+`TextSlideUp` animates each word or character from `opacity: 0, y: distance` (default `20` px) to `opacity: 1, y: 0` in a staggered sequence. The default `by="word"` splits on spaces; `by="character"` splits on every character. With the defaults, a 10-word headline completes in `0 + 9 * 0.03 + 0.5 = 0.77 s`. Reach for it when:
+
+- **Hero section titles.** A word-by-word upward entry on a headline is one of the most legible text reveal patterns, because each word is fully visible once it completes.
+- **Scroll-triggered section headings.** Entering from below on scroll is a conventional, expected motion pattern that does not surprise or disorient users.
+- **Card or panel titles.** A subtle stagger on a short 2 to 4 word title adds hierarchy without heavy animation.
+- **Animated statistics.** The slide-up pairs naturally with a number counter: the label slides up while the counter increments.
+
+The `distance` prop lets you tune the entry from a subtle nudge (`distance={8}`) to a more theatrical entrance (`distance={40}`).
+
+## When to use / when not to use
+
+**Use slide-up when:**
+
+- You want a directional entrance that feels natural on most content: text entering from below is a spatial metaphor for "coming up" into view.
+- The string is short enough that the stagger completes before the user needs to act on the content.
+- You want a slightly more directional alternative to [Fade In](/docs/animations/text/fade-in), which is purely opacity.
+
+**Reach for something else when:**
+
+- **Long paragraphs.** Same rule as fade-in: a 50-word paragraph at 0.03 s stagger takes nearly 2 seconds to complete. Users will read the start before the end appears, creating a disjointed experience. Use no animation or a single uniform fade on the whole block.
+- **Navigation or interactive elements.** Animating menu items or buttons on every page load adds latency to interaction. Reserve text animations for read-only display text.
+- **Per-character on long strings.** A 40-character string with `by="character"` and `staggerDelay={0.03}` takes over 1.7 s to complete. Prefer `by="word"` for anything over ~15 characters.
+- **You want a purely atmospheric entrance** without spatial movement. Use [Blur In](/docs/animations/text/blur-in) for a softer focus-in effect or [Fade In](/docs/animations/text/fade-in) for no direction at all.
+
+## Accessibility notes
+
+The component splits text into per-word or per-character `<motion.span>` elements inside a `<motion.p>`. Provide `aria-label` on the wrapper to ensure screen readers announce the full sentence as one unit rather than individual spans:
+
+```tsx
+<TextSlideUp
+  aria-label="Ship products faster than ever"
+  className="text-4xl font-bold"
+>
+  Ship products faster than ever
+</TextSlideUp>
+```
+
+**Reduced motion.** The component animates both `opacity` and `y`, so it moves text across the screen. This is a translational motion and may trigger discomfort for users with vestibular sensitivities. Wrap to skip the animation:
+
+```tsx
+"use client"
+import { useReducedMotion } from "motion/react"
+import { TextSlideUp } from "@/components/animations/text/slide-up"
+
+function AccessibleSlideUp({ children, ...props }: { children: string; [key: string]: unknown }) {
+  const reduced = useReducedMotion()
+  if (reduced) return <p {...props}>{children}</p>
+  return <TextSlideUp {...props}>{children}</TextSlideUp>
+}
+```
+
+**Invisible initial state.** `opacity: 0` on mount means text is hidden until JavaScript hydrates and runs the animation. For essential page content (headings, body copy), this is a risk: if the hydration is delayed or JavaScript fails, users see nothing. Consider progressive enhancement patterns where the initial server-rendered state is visible.
+
+## Performance considerations
+
+- **Translate + opacity.** `TextSlideUp` animates `y` (a CSS `transform`) and `opacity`. Both run on the compositor thread without layout or paint, making this the most GPU-friendly of the staggered text components alongside [Fade In](/docs/animations/text/fade-in).
+- **Per-span nodes.** One `<motion.span>` per unit. Keep total span count under 30 to avoid registering too many motion observers simultaneously.
+- **Single-shot.** The animation fires once on mount; `animate={{ opacity: 1, y: 0 }}` with no repeat. No ongoing compositor cost after completion.
+- **`overflow-hidden` if needed.** The initial `y: distance` pushes text below its final position, which can cause a brief overflow flash on the parent element. Wrap in `overflow-hidden` if the text lives near a container edge.
+
+## Customization examples
+
+### Subtle nudge for a card title
+
+```tsx
+import { TextSlideUp } from "@/components/animations/text/slide-up"
+
+<TextSlideUp
+  distance={8}
+  duration={0.4}
+  staggerDelay={0.04}
+  className="text-lg font-semibold"
+>
+  Getting started
+</TextSlideUp>
+```
+
+### Dramatic hero entrance
+
+```tsx
+import { TextSlideUp } from "@/components/animations/text/slide-up"
+
+<TextSlideUp
+  distance={40}
+  duration={0.7}
+  staggerDelay={0.06}
+  className="text-7xl font-black"
+>
+  Ship faster
+</TextSlideUp>
+```
+
+### Per-character on a short word
+
+```tsx
+import { TextSlideUp } from "@/components/animations/text/slide-up"
+
+<TextSlideUp
+  by="character"
+  distance={20}
+  staggerDelay={0.04}
+  className="text-5xl font-black tracking-widest uppercase"
+>
+  Launch
+</TextSlideUp>
+```
+
+## Real-world examples
+
+### Hero section title with subheading
+
+```tsx
+import { TextSlideUp } from "@/components/animations/text/slide-up"
+
+export function HeroSection() {
+  return (
+    <div className="flex flex-col gap-4">
+      <TextSlideUp
+        aria-label="Build products that last"
+        className="text-6xl font-black leading-tight"
+        staggerDelay={0.05}
+        duration={0.6}
+      >
+        Build products that last
+      </TextSlideUp>
+      <TextSlideUp
+        className="text-xl text-neutral-500"
+        delay={0.5}
+        duration={0.4}
+        staggerDelay={0.03}
+      >
+        From idea to production in days, not months
+      </TextSlideUp>
+    </div>
+  )
+}
+```
+
+### Animated stat with label
+
+```tsx
+import { TextSlideUp } from "@/components/animations/text/slide-up"
+
+export function StatItem({ value, label }: { value: string; label: string }) {
+  return (
+    <div className="flex flex-col gap-1 text-center">
+      <TextSlideUp
+        className="text-5xl font-black"
+        distance={24}
+        duration={0.5}
+      >
+        {value}
+      </TextSlideUp>
+      <TextSlideUp
+        className="text-sm uppercase tracking-widest text-neutral-400"
+        delay={0.2}
+        duration={0.4}
+        staggerDelay={0.03}
+      >
+        {label}
+      </TextSlideUp>
+    </div>
+  )
+}
+```

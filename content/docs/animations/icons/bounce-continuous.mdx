@@ -387,3 +387,186 @@ export default function Example() {
 |------|------|---------|-------------|
 | `children` | `ReactNode` | - | The icon element to animate |
 | `duration` | `number` | `1` | Duration of one bounce cycle in seconds |
+
+## Use cases
+
+`BounceContinuous` translates the wrapped element along the y-axis on a repeating `easeInOut` cycle: `y: [0, -10, 0]` with `repeat: Infinity`. It never stops on its own, so every use is a deliberate commitment to persistent motion. Good spots for it:
+
+- **Scroll-down cues.** An `ArrowDown` or `ChevronDown` bouncing beneath hero content tells visitors the page continues without needing text.
+- **Download nudges.** A `Download` icon on a prominent CTA that you want users to notice immediately.
+- **Jump-to section arrows** inside a long docs page or landing page where the next block is just below the fold.
+- **Empty-state illustrations** paired with a large icon to soften the "nothing here yet" message and add energy.
+
+Because the component accepts any `ReactNode`, you can also wrap a small illustration or an emoji span, not just Lucide icons.
+
+## When to use / when not to use
+
+**Use `BounceContinuous` when:**
+
+- The bouncing element is the only or primary focal point on screen and you actively want the eye to land there.
+- The motion meaningfully supports a scrolling or downward-direction metaphor (ArrowDown, ChevronDown, MoveDown).
+- You are willing to stop the animation once the user has acted (e.g., unmount it after they scroll past the hero).
+
+**Do not use it when:**
+
+- Multiple icons on the same page are already animated. Two or more independently bouncing elements compete for attention and make the page feel restless.
+- The icon is inside a list, table row, or card grid. A bouncing icon among static siblings will draw constant, unwanted focus away from the actual content.
+- The page already contains a [SpinIcon](/docs/animations/icons/spin), [PulseIcon](/docs/animations/icons/pulse), or [HeartbeatIcon](/docs/animations/icons/heartbeat). Mixing several `repeat: Infinity` animations stacks compositor work and creates visual noise.
+- You want the bounce to happen once on hover. Use [BounceIcon](/docs/animations/icons/bounce) instead, which fires a single `scale: [1, 1.2, 0.9, 1.1, 1]` cycle only when triggered.
+
+## Accessibility notes
+
+- Icons used purely as scroll cues are decorative. Add `aria-hidden="true"` to the child icon element so screen readers skip it, and rely on surrounding text to communicate the action.
+- If the bouncing icon is the only affordance for "scroll down" or "download", add a visually hidden label:
+
+```tsx
+<BounceContinuous duration={1}>
+  <ArrowDown className="w-8 h-8 text-blue-500" aria-hidden="true" />
+  <span className="sr-only">Scroll down for more content</span>
+</BounceContinuous>
+```
+
+- `repeat: Infinity` motion can cause discomfort for users with vestibular disorders. Respect `prefers-reduced-motion` by pausing the animation entirely:
+
+```tsx
+"use client"
+import { useReducedMotion } from "motion/react"
+import { BounceContinuous } from "@/components/animations/icons/bounce-continuous"
+import { ArrowDown } from "lucide-react"
+
+export function ScrollCue() {
+  const reduced = useReducedMotion()
+  // When reduced motion is on, render the icon statically with no wrapper.
+  if (reduced) return <ArrowDown className="w-8 h-8 text-blue-500" />
+  return (
+    <BounceContinuous duration={1.5}>
+      <ArrowDown className="w-8 h-8 text-blue-500" aria-hidden="true" />
+    </BounceContinuous>
+  )
+}
+```
+
+- Never use the bouncing motion alone to indicate a required action. Pair it with visible text so the message survives without animation.
+
+## Performance considerations
+
+- The animation only changes `translateY`, which is a transform property. Transforms run on the compositor thread with no layout recalculation and no repaint, so even on low-end devices this stays smooth.
+- `repeat: Infinity` keeps the compositor thread active for as long as the component is mounted. Conditionally unmount rather than hide with CSS:
+
+```tsx
+{showScrollCue && <BounceContinuous duration={1}><ArrowDown className="w-8 h-8" /></BounceContinuous>}
+```
+
+- If you need the icon on screen but want the animation to stop after a few seconds (e.g., after the user has seen the cue), drive a state boolean that swaps between `BounceContinuous` and a plain div.
+- Avoid mounting more than one or two `BounceContinuous` instances simultaneously. Each maintains its own `repeat: Infinity` cycle on the compositor, and the cost multiplies linearly with count.
+
+## Customization examples
+
+### Slower, more gentle bounce
+
+A longer `duration` creates a leisurely float that feels less urgent:
+
+```tsx
+import { BounceContinuous } from "@/components/animations/icons/bounce-continuous"
+import { ChevronDown } from "lucide-react"
+
+<BounceContinuous duration={2}>
+  <ChevronDown className="w-10 h-10 text-neutral-400" />
+</BounceContinuous>
+```
+
+### Faster, more energetic bounce
+
+A short `duration` reads as excitement or urgency:
+
+```tsx
+import { BounceContinuous } from "@/components/animations/icons/bounce-continuous"
+import { ArrowDown } from "lucide-react"
+
+<BounceContinuous duration={0.5}>
+  <ArrowDown className="w-8 h-8 text-blue-500" />
+</BounceContinuous>
+```
+
+### Larger icon with colored wrapper
+
+Increase the icon size and add a background pill to make the cue more prominent:
+
+```tsx
+import { BounceContinuous } from "@/components/animations/icons/bounce-continuous"
+import { MoveDown } from "lucide-react"
+
+<BounceContinuous duration={1.2}>
+  <div className="rounded-full bg-blue-100 p-3 dark:bg-blue-900">
+    <MoveDown className="w-6 h-6 text-blue-600 dark:text-blue-300" />
+  </div>
+</BounceContinuous>
+```
+
+## Real-world examples
+
+### Hero scroll indicator
+
+Placed at the bottom of a full-viewport hero section and unmounted once the user has scrolled past it:
+
+```tsx
+"use client"
+import { useEffect, useState } from "react"
+import { BounceContinuous } from "@/components/animations/icons/bounce-continuous"
+import { useReducedMotion } from "motion/react"
+import { ArrowDown } from "lucide-react"
+
+export function HeroScrollCue() {
+  const [visible, setVisible] = useState(true)
+  const reduced = useReducedMotion()
+
+  useEffect(() => {
+    const onScroll = () => {
+      if (window.scrollY > 80) setVisible(false)
+    }
+    window.addEventListener("scroll", onScroll, { passive: true })
+    return () => window.removeEventListener("scroll", onScroll)
+  }, [])
+
+  if (!visible) return null
+  if (reduced) return (
+    <div className="flex flex-col items-center gap-1 text-neutral-400">
+      <ArrowDown className="w-6 h-6" aria-hidden="true" />
+      <span className="sr-only">Scroll down</span>
+    </div>
+  )
+
+  return (
+    <div className="flex flex-col items-center gap-1">
+      <BounceContinuous duration={1.2}>
+        <ArrowDown className="w-6 h-6 text-neutral-400" aria-hidden="true" />
+      </BounceContinuous>
+      <span className="sr-only">Scroll down for more</span>
+    </div>
+  )
+}
+```
+
+### Download CTA button with bouncing icon
+
+The bounce draws attention to the primary download action while the button label communicates the meaning:
+
+```tsx
+import { BounceContinuous } from "@/components/animations/icons/bounce-continuous"
+import { Download } from "lucide-react"
+
+export function DownloadButton({ href }: { href: string }) {
+  return (
+    <a
+      href={href}
+      download
+      className="inline-flex items-center gap-3 rounded-xl bg-blue-600 px-6 py-3 text-sm font-semibold text-white hover:bg-blue-700"
+    >
+      <BounceContinuous duration={1}>
+        <Download className="w-5 h-5" aria-hidden="true" />
+      </BounceContinuous>
+      Download for free
+    </a>
+  )
+}
+```

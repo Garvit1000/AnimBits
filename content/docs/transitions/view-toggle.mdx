@@ -338,3 +338,131 @@ Smooth opacity transition without scale effects.
 | `views` | `Array<"grid" \| "list" \| "compact" \| "card">` | `["grid", "list"]` | Available view modes. |
 | `variant` | `"smooth" \| "stagger" \| "scale-fade" \| "crossfade"` | `"smooth"` | Animation style for view transitions. |
 | `className` | `string` | - | Additional CSS classes. |
+
+## Use cases
+
+`ListGrid` (exported as `ViewToggle` in the docs) renders the same `items` array in two mutually exclusive layouts (default: `"grid"` and `"list"`). Each item is a `motion.div` with `layout` set, so Framer Motion measures and animates the transition from one grid position to another as the `view` state changes. The active view indicator uses a shared `layoutId` (`bg`) on the toggle buttons. Items enter/exit via `AnimatePresence` with `scale` + `opacity`.
+
+Use it when the same data can be meaningfully presented in more than one layout density and the user should be able to choose:
+
+- **Team member or contact directory.** Grid view shows avatar-focused cards; list view shows a denser row with name, role, and status badge. Users on large screens prefer grid; users scanning quickly prefer list.
+- **File explorer or media library.** Grid view shows large thumbnails; list view shows file name, size, and date in a table-like row. The `"stagger"` variant (0.05s delay per item) adds a pleasing cascade when switching.
+- **Product catalog.** Grid for visual browsing, list for comparing specs. The `"crossfade"` variant (tween, no scale) is most appropriate when items contain complex UI that would distort under scale transforms.
+- **Project or task board.** Grid view shows cards with progress indicators; list view shows a compact row per task. `"smooth"` (spring, bounce 0.2) feels natural for task management tools.
+- **Search results.** Let users choose between image-heavy grid results and text-dense list results.
+
+## When to use / when not to use
+
+**Use `ListGrid` (ViewToggle) when:**
+
+- The same data makes sense in two or more layout densities and users have a preference. Both layouts show identical records; only the visual arrangement changes.
+- You have 4 to 24 items. Fewer than four makes the layout toggle feel pointless; many more and the `layout` animation (which measures every item) becomes expensive.
+
+**Do not use `ListGrid` when:**
+
+- You are switching between different content panels (Overview, Analytics, Reports). That is a tab navigation pattern. Use [Tab Switcher](/docs/transitions/tab-switcher) instead. The difference: ViewToggle switches the layout of the same data; TabSwitcher switches the content to entirely different data.
+- Items have very different sizes across views. Framer Motion's `layout` animation interpolates bounding rects; if an item shrinks dramatically between grid and list, the spring can overshoot and look like a glitch. Use `"crossfade"` (no spring) in that case.
+- You need more than two view modes with complex transitions between all pairs. The component supports `compact` and `card` as view values in the type but only renders `grid` and `list` layout classes in the source. Adding more modes requires modifying the component.
+
+## Accessibility notes
+
+- **Toggle button labels.** The grid and list toggle buttons render `<Grid size={16} />` and `<List size={16} />` icons with no visible text. Add `aria-label="Grid view"` and `aria-label="List view"` to each button so screen readers announce the action.
+- **Active view announcement.** When the view changes, screen readers should be informed. Wrap the toggle group in a `<div role="group" aria-label="View options">`. The active button can carry `aria-pressed="true"` or `aria-current="true"` so the current layout is communicated.
+- **Item content.** Each `motion.div` item is purely presentational. If items contain interactive elements (buttons, links), ensure focus order is logical in both grid and list views. The reflow from grid to list can move DOM elements visually but not in the DOM order, which can confuse screen readers if the source order is not preserved.
+- **`AnimatePresence` remounting.** Items are entered and exited by `AnimatePresence`. If an item had focus when the view switched, focus is lost because the element unmounts and remounts. Restore focus to the previously focused item after the switch, or avoid putting interactive controls inside items.
+- **Reduced motion.** The `layout` animation and the `scale`/`opacity` enter/exit will still run under `prefers-reduced-motion` because the component does not check for it. Add a `useReducedMotion` check from `motion/react` and set `transition={{ duration: 0 }}` on the `motion.div` items if reduced motion is preferred.
+
+## Performance considerations
+
+- **`layout` on every item.** Each `motion.div` item has the `layout` prop, which means Framer Motion measures its bounding rect before and after every view switch. With 24 items, that is 48 synchronous DOM reads per switch. This is fine for typical item counts but becomes expensive beyond 30 to 40 items. For large datasets, consider virtualization (e.g., `@tanstack/react-virtual`) and disable `layout` animation in favor of a simpler fade.
+- **`AnimatePresence` inside a `layout` parent.** The outer `motion.div` has `layout` set, so its height animates when items change height. Nested `AnimatePresence` inside a `layout` container is a known Framer Motion complexity; keep the tree shallow to avoid unexpected layout cascades.
+- **`"stagger"` variant.** The stagger adds `index * 0.05` seconds of delay per item. With 20 items, the last item starts its animation 1 second after the view switch. If the animation feels laggy, reduce the multiplier or switch to `"smooth"`.
+- **`"crossfade"` variant.** Uses `type: "tween", duration: 0.3` with no scale. This is the cheapest variant because there is no spring settling. Use it for large item counts or items with complex internal layouts.
+- **Toggle button shared `layoutId`.** The active background indicator uses `layoutId="bg"` (namespaced with `useId()`). This is a single lightweight shared layout. Mounting multiple `ListGrid` instances on the same page is safe because each uses its own `useId()`.
+
+## Customization examples
+
+### Read-only list with crossfade
+
+For a data-heavy table-style list where scale distortion would look wrong:
+
+```tsx
+import { ListGrid } from "@/components/animations/transitions/list-grid"
+
+const files = [
+  { id: "f1", title: "Q4 Report.pdf", subtitle: "4.2 MB", status: "Active" },
+  { id: "f2", title: "Brand Assets.zip", subtitle: "128 MB", status: "Active" },
+  { id: "f3", title: "backup-2024.tar.gz", subtitle: "892 MB", status: "Archived" },
+]
+
+export function FileList() {
+  return <ListGrid items={files} variant="crossfade" views={["grid", "list"]} />
+}
+```
+
+### Staggered team directory
+
+The cascade of items entering one by one is satisfying for a people directory:
+
+```tsx
+import { ListGrid } from "@/components/animations/transitions/list-grid"
+
+const team = [
+  { id: "1", title: "Aria Nakamura", subtitle: "Staff Engineer", status: "Active", avatar: "https://i.pravatar.cc/150?img=5" },
+  { id: "2", title: "Ben Okafor", subtitle: "Design Lead", status: "Active", avatar: "https://i.pravatar.cc/150?img=8" },
+  { id: "3", title: "Clara Weiss", subtitle: "Product Manager", status: "Pending", avatar: "https://i.pravatar.cc/150?img=11" },
+]
+
+export function TeamDirectory() {
+  return <ListGrid items={team} variant="stagger" />
+}
+```
+
+## Real-world examples
+
+### Product gallery with grid/list toggle
+
+An e-commerce page where users can switch between visual grid shopping and list-based comparison:
+
+```tsx
+"use client"
+import { ListGrid } from "@/components/animations/transitions/list-grid"
+
+const products = [
+  { id: "p1", title: "Noise-cancelling Headphones", subtitle: "Wireless, 30h battery", status: "Active", avatar: "https://i.pravatar.cc/150?img=60" },
+  { id: "p2", title: "Mechanical Keyboard", subtitle: "TKL, Cherry MX Red", status: "Active", avatar: "https://i.pravatar.cc/150?img=62" },
+  { id: "p3", title: "4K USB-C Monitor", subtitle: '27", 144 Hz', status: "Active", avatar: "https://i.pravatar.cc/150?img=64" },
+  { id: "p4", title: "Ergonomic Chair", subtitle: "Lumbar support, mesh back", status: "Pending", avatar: "https://i.pravatar.cc/150?img=66" },
+]
+
+export function ProductCatalog() {
+  return (
+    <div className="max-w-2xl mx-auto py-8">
+      <h1 className="text-2xl font-bold text-zinc-900 dark:text-zinc-100 mb-6">Gear</h1>
+      <ListGrid items={products} variant="smooth" views={["grid", "list"]} />
+    </div>
+  )
+}
+```
+
+### Repository file browser
+
+Files and folders in a code browser where dense list view is preferred for reading but grid view helps scan thumbnails:
+
+```tsx
+"use client"
+import { ListGrid } from "@/components/animations/transitions/list-grid"
+
+const files = [
+  { id: "src", title: "src/", subtitle: "Modified 2 hours ago", status: "Active" },
+  { id: "public", title: "public/", subtitle: "Modified yesterday", status: "Active" },
+  { id: "pkg", title: "package.json", subtitle: "1.4 KB", status: "Active" },
+  { id: "tsconfig", title: "tsconfig.json", subtitle: "1.1 KB", status: "Active" },
+  { id: "readme", title: "README.md", subtitle: "3.2 KB", status: "Active" },
+  { id: "gitignore", title: ".gitignore", subtitle: "512 B", status: "Archived" },
+]
+
+export function FileBrowser() {
+  return <ListGrid items={files} variant="crossfade" />
+}
+```

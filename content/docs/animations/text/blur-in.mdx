@@ -150,3 +150,160 @@ import { TextBlurIn } from "@/components/animations/text/blur-in"
 | `delay` | `number` | `0` | Initial delay |
 | `by` | `"word" \| "character"` | `"word"` | Animation unit |
 | `staggerDelay` | `number` | `0.04` | Delay between units |
+
+## Use cases
+
+`TextBlurIn` animates each word (or character) from `opacity: 0, filter: blur(10px)` to fully visible, staggered by `staggerDelay` seconds per unit. Reach for it when:
+
+- **Hero headings.** A short 3 to 6 word headline blurs into focus on page load, drawing the eye without jarring movement.
+- **Section titles.** A `by="word"` stagger at the default 0.04 s delay feels cinematic for above-the-fold section reveals triggered by scroll.
+- **Pull quotes.** A short emphasized sentence that appears as the user scrolls past a content break.
+- **App splash / onboarding.** A product name or tagline that blurs in on first render before the rest of the UI populates.
+
+The `by="word"` default (splitting on spaces) keeps DOM node count low: a 6-word headline produces 6 `<span>` elements. Switching to `by="character"` on the same string produces one span per character, so reserve character-level blur for very short strings (under ~20 characters).
+
+## When to use / when not to use
+
+**Use blur-in when:**
+
+- The string is short enough that the stagger completes in under 1 second at the default 0.04 s delay (roughly 25 words or fewer).
+- You want a softer, atmospheric reveal rather than a directional motion. Blur reads as "coming into focus" rather than "sliding in from below," which suits editorial and creative contexts.
+
+**Reach for something else when:**
+
+- **Body copy or multi-sentence text.** A paragraph with 40+ words at `staggerDelay={0.04}` takes over 1.5 seconds to fully reveal. Users will start reading before the blur clears, which fights comprehension. Use [Fade In](/docs/animations/text/fade-in) with a single short duration or no animation at all.
+- **Long strings with `by="character"`.** A 50-character string produces 50 motion spans, each running its own filter animation. On lower-end mobile devices this can drop frames. Switch to `by="word"` or [Slide Up](/docs/animations/text/slide-up) which uses only translate and opacity.
+- **Content that must be immediately scannable** (navigation items, table headers, form labels). Delays hurt usability in interactive contexts.
+
+## Accessibility notes
+
+The component renders each word or character as a `<motion.span>` inside a `<motion.p>`. Because the text is split into individual spans, screen readers may read each span separately or announce the paragraph as fragmented. To guarantee the full string is announced as a single phrase:
+
+```tsx
+<TextBlurIn
+  aria-label="This text blurs into focus"
+  className="text-3xl font-bold"
+>
+  This text blurs into focus
+</TextBlurIn>
+```
+
+Adding `aria-label` on the wrapping `<p>` provides the complete string to assistive technology. You can also add `aria-hidden` to the individual spans if you render them yourself, though the component does not expose that level of control directly.
+
+**Reduced motion.** The component does not currently check `prefers-reduced-motion` internally. Add a wrapper to skip the blur when the user has opted out of motion:
+
+```tsx
+"use client"
+import { useReducedMotion } from "motion/react"
+import { TextBlurIn } from "@/components/animations/text/blur-in"
+
+function AccessibleBlurIn({ children, ...props }: { children: string; [key: string]: unknown }) {
+  const reduced = useReducedMotion()
+  if (reduced) return <p {...props}>{children}</p>
+  return <TextBlurIn {...props}>{children}</TextBlurIn>
+}
+```
+
+Never hide the text behind the animation; the initial `opacity: 0` state means content is invisible until the animation fires. Ensure the page is usable if JavaScript or motion is blocked.
+
+## Performance considerations
+
+- **Filter animations are GPU-accelerated** on modern browsers when combined with an opacity change, but `filter: blur()` can be more expensive than a plain opacity or transform. On a short hero headline (under 10 words) the cost is negligible; on long strings with `by="character"`, each span runs its own blur, which multiplies compositor work.
+- **Per-span DOM cost.** A 100-character string with `by="character"` creates 100 motion spans, each registered with the motion library. Keep character-mode strings under ~25 characters.
+- **Static `staggerDelay`.** Total animation time is `delay + (units.length - 1) * staggerDelay + duration`. For `by="word"` with 10 words: `0 + 9 * 0.04 + 0.8 = 1.16 s`. Plan the total duration to not exceed 1 to 1.5 seconds for a comfortable page load experience.
+- **Animate only on mount.** The component runs once on mount via `animate={{ opacity: 1, filter: "blur(0px)" }}` with no repeat, so there is no continuous compositor load after the animation completes.
+
+## Customization examples
+
+### Character-level blur on a short title
+
+```tsx
+import { TextBlurIn } from "@/components/animations/text/blur-in"
+
+<TextBlurIn by="character" staggerDelay={0.06} duration={0.6} className="text-5xl font-black tracking-tight">
+  LAUNCH
+</TextBlurIn>
+```
+
+### Slower, atmospheric reveal for a tagline
+
+```tsx
+import { TextBlurIn } from "@/components/animations/text/blur-in"
+
+<TextBlurIn duration={1.2} staggerDelay={0.08} delay={0.3} className="text-xl font-light text-neutral-500">
+  Design tools for modern teams
+</TextBlurIn>
+```
+
+### Delayed reveal after a hero title
+
+```tsx
+import { TextBlurIn } from "@/components/animations/text/blur-in"
+
+export function HeroSection() {
+  return (
+    <div className="flex flex-col gap-4">
+      <TextBlurIn className="text-6xl font-black" delay={0}>
+        Ship faster
+      </TextBlurIn>
+      <TextBlurIn className="text-lg text-neutral-400" delay={0.6} duration={0.6}>
+        Everything you need to build
+      </TextBlurIn>
+    </div>
+  )
+}
+```
+
+## Real-world examples
+
+### Landing page hero headline
+
+```tsx
+import { TextBlurIn } from "@/components/animations/text/blur-in"
+
+export function Hero() {
+  return (
+    <section className="flex flex-col items-center gap-6 py-24 text-center">
+      <TextBlurIn
+        aria-label="Your workflow, reimagined"
+        className="text-5xl font-bold leading-tight md:text-7xl"
+        duration={0.8}
+        staggerDelay={0.05}
+      >
+        Your workflow, reimagined
+      </TextBlurIn>
+      <TextBlurIn
+        className="max-w-md text-lg text-neutral-500"
+        delay={0.5}
+        duration={0.6}
+        staggerDelay={0.03}
+      >
+        Automate the boring stuff and focus on what matters
+      </TextBlurIn>
+    </section>
+  )
+}
+```
+
+### Scroll-triggered section title
+
+```tsx
+"use client"
+import { useInView } from "motion/react"
+import { useRef } from "react"
+import { TextBlurIn } from "@/components/animations/text/blur-in"
+
+export function SectionTitle({ text }: { text: string }) {
+  const ref = useRef(null)
+  const inView = useInView(ref, { once: true, margin: "-80px" })
+  return (
+    <div ref={ref}>
+      {inView && (
+        <TextBlurIn className="text-3xl font-semibold" staggerDelay={0.05}>
+          {text}
+        </TextBlurIn>
+      )}
+    </div>
+  )
+}
+```

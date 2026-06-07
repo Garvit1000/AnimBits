@@ -225,3 +225,201 @@ function Card({
 | `children` | `ReactNode[]` | - | Array of items to stack. |
 | `onSwipeRight` | `(index) => void` | - | Callback when swiped right. |
 | `onSwipeLeft` | `(index) => void` | - | Callback when swiped left. |
+
+## Use cases
+
+`SwipeableStack` manages an array of cards derived from `React.Children.toArray(children)`. The top card (last in array) has `drag="x"` enabled with `dragElastic={0.7}`. During drag, `useTransform` maps the `x` motion value to `rotate` (from -25 to 25 degrees) and `opacity` (0.5 at the extremes). When `|offset.x| > 100` the card is animated off-screen (`x: 500` or `x: -500`) and removed from the stack. Cards below the top are stacked using `scale = 1 - reverseIndex * 0.05` and `y = reverseIndex * 15`, creating a visible depth of cards. An internal `history` array tracks removed cards; when the stack is empty a "Reset" button restores all children.
+
+- **Onboarding card decks.** A swipeable introduction sequence where each card covers a feature or setup step; right swipe advances through the deck.
+- **Content discovery feeds.** Article or product cards presented one at a time for decision-making, similar to Tinder-style browsing.
+- **Flashcard apps.** Study decks where left swipe marks a card as "needs review" and right swipe marks it as "known", using `onSwipeLeft` and `onSwipeRight` callbacks to update state.
+- **Photo selection.** A small batch of candidate images that a user accepts or rejects one at a time.
+- **Survey or quiz questions.** Sequential question cards that advance on swipe instead of a next button.
+
+## When to use / when not to use
+
+**Use `SwipeableStack` when:**
+
+- The deck is small: 3 to 10 cards. The component renders all cards simultaneously as absolutely-positioned layers. A large number of cards means many concurrent DOM nodes.
+- The user is on a touch device or the interaction is intended as a touch-first experience. The drag gesture works on both touch and mouse, but the swipe metaphor is native to mobile.
+- Each decision is binary (accept/reject, like/skip). The two-direction gesture maps cleanly to `onSwipeRight` and `onSwipeLeft`.
+
+**Do not use `SwipeableStack` when:**
+
+- You need non-destructive browsing where the user scrolls back and forth through items. `SwipeableStack` removes cards from the visible stack on swipe; the "Reset" button restores from `children`, but there is no built-in undo for individual swipes. If users need to revisit specific cards, use a [Linear Carousel](/docs/animations/specials/linear-carousel) instead.
+- The primary interface is desktop with keyboard-only users. There is no built-in keyboard alternative to the swipe gesture. Add keyboard handlers before using in production for desktop apps.
+- You need to display metadata alongside the stack (a progress bar, a count, labels). The component provides no built-in UI for this; you must build it around the stack using the `onSwipeLeft`/`onSwipeRight` callbacks.
+- The cards contain forms or interactive content that the user needs to interact with without accidentally triggering a swipe. Drag with `dragElastic={0.7}` is very sensitive. Input focus does not suppress drag in the current implementation.
+
+## Accessibility notes
+
+- **No keyboard swipe alternative.** The drag gesture is the only way to advance cards. Keyboard users cannot interact. Add Arrow Left/Arrow Right key handlers in a `useEffect` on the `SwipeableStack` wrapper:
+
+```tsx
+useEffect(() => {
+  const handler = (e: KeyboardEvent) => {
+    if (e.key === "ArrowRight") triggerSwipe("right")
+    if (e.key === "ArrowLeft") triggerSwipe("left")
+  }
+  window.addEventListener("keydown", handler)
+  return () => window.removeEventListener("keydown", handler)
+}, [cards])
+```
+
+- **Screen reader announcements.** When a card is swiped, screen readers are not informed that the content has changed. Add a live region that announces the current card position:
+
+```tsx
+<div role="status" aria-live="polite" className="sr-only">
+  Card {totalCards - cards.length + 1} of {totalCards}
+</div>
+```
+
+- **Interactive content inside cards.** If cards contain buttons, links, or form elements, the outer `motion.div` with `drag="x"` may capture pointer events before they reach the child. Ensure interactive elements have `stopPropagation` on pointerdown or use `dragListener={false}` inside nested interactive areas.
+- **"No more items" state.** The empty state renders a "Reset" button as a `<button>` element, which is keyboard-accessible. Confirm the button receives focus after the last card is removed so keyboard users can continue.
+- **Reduced motion.** The rotate, scale, and fly-off animations should be suppressed:
+
+```tsx
+"use client"
+import { useReducedMotion } from "motion/react"
+
+function AccessibleSwipeableStack(props: React.ComponentProps<typeof SwipeableStack>) {
+  const reduced = useReducedMotion()
+  // When reduced, a keyboard-driven advance replaces the animated swipe
+  // Fork the component to conditionally skip x/rotate animations
+  return <SwipeableStack {...props} />
+}
+```
+
+## Performance considerations
+
+- **All cards mounted simultaneously.** Every child is in the DOM as an absolutely-positioned `motion.div`. The top card has active drag listeners; background cards are static. For 5 cards this is fine. Avoid passing more than 20 children without virtualization.
+- **`useMotionValue`, `useTransform`, `useAnimation` per card.** Each `Card` instance creates its own set of motion values and an animation controller. These are lightweight, but with many cards visible simultaneously the initial mount cost is proportional to the card count.
+- **`dragElastic={0.7}`.** High elastic allows the card to move well beyond `dragConstraints: { left: 0, right: 0 }`. The elastic resistance runs on the main thread during drag. Lower values (0.3 to 0.5) reduce the overshoot distance and may feel snappier on lower-end devices.
+- **`AnimatePresence` exit.** When `onRemove("right")` is called, `controls.start({ x: 500, opacity: 0 })` runs to completion, then the card is removed from state. `AnimatePresence` handles the exit of the removed element. The fly-off is compositor-friendly (transform + opacity only).
+- **`array.pop()` mutation.** The `removeCard` function calls `cards.pop()` directly on the state-derived array before calling `setCards`. This mutates the array in place, which can cause subtle bugs if `cards` is referenced elsewhere before the state update flushes. Prefer `cards.slice(0, -1)` for a pure immutable update.
+
+## Customization examples
+
+### Flashcard deck with callbacks
+
+```tsx
+"use client"
+import { useState } from "react"
+import { SwipeableStack } from "@/components/animations/specials/swipeable-stack"
+
+const flashcards = [
+  { question: "What is a closure?", answer: "A function that retains access to its lexical scope." },
+  { question: "What is a pure function?", answer: "A function with no side effects that returns the same output for the same input." },
+  { question: "What is memoization?", answer: "Caching the result of a function call to avoid redundant computation." },
+]
+
+export function FlashcardDeck() {
+  const [known, setKnown] = useState<string[]>([])
+  const [review, setReview] = useState<string[]>([])
+
+  return (
+    <div className="flex flex-col items-center gap-6">
+      <p className="text-sm text-neutral-500">
+        Swipe right to mark known, left to review.
+      </p>
+      <div className="h-64 w-56">
+        <SwipeableStack
+          onSwipeRight={(i) => setKnown((prev) => [...prev, flashcards[i]?.question ?? ""])}
+          onSwipeLeft={(i) => setReview((prev) => [...prev, flashcards[i]?.question ?? ""])}
+        >
+          {flashcards.map((card, i) => (
+            <div key={i} className="flex h-full w-full flex-col justify-center gap-3 rounded-2xl bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 p-5 shadow-sm">
+              <p className="text-xs font-medium uppercase tracking-wide text-neutral-400">Question</p>
+              <p className="text-base font-semibold text-neutral-800 dark:text-neutral-100">{card.question}</p>
+            </div>
+          ))}
+        </SwipeableStack>
+      </div>
+      <div className="flex gap-4 text-sm text-neutral-500">
+        <span>Known: {known.length}</span>
+        <span>Review: {review.length}</span>
+      </div>
+    </div>
+  )
+}
+```
+
+### Photo selection deck
+
+```tsx
+import { SwipeableStack } from "@/components/animations/specials/swipeable-stack"
+
+const photos = [
+  { src: "https://images.unsplash.com/photo-1506744038136-46273834b3fb?q=80&w=400&auto=format&fit=crop", alt: "Mountain" },
+  { src: "https://images.unsplash.com/photo-1501785888041-af3ef285b470?q=80&w=400&auto=format&fit=crop", alt: "Ocean" },
+  { src: "https://images.unsplash.com/photo-1472214103451-9374bd1c798e?q=80&w=400&auto=format&fit=crop", alt: "Forest" },
+]
+
+export function PhotoSelector() {
+  return (
+    <div className="h-80 w-64">
+      <SwipeableStack>
+        {photos.map((photo, i) => (
+          <img
+            key={i}
+            src={photo.src}
+            alt={photo.alt}
+            className="h-full w-full rounded-2xl object-cover"
+          />
+        ))}
+      </SwipeableStack>
+    </div>
+  )
+}
+```
+
+## Real-world examples
+
+### App onboarding steps
+
+```tsx
+"use client"
+import { SwipeableStack } from "@/components/animations/specials/swipeable-stack"
+import { Zap, Shield, Users } from "lucide-react"
+
+const steps = [
+  {
+    icon: <Zap className="h-8 w-8 text-yellow-500" />,
+    title: "Ship faster",
+    body: "Use pre-built animated components and skip hours of motion work.",
+  },
+  {
+    icon: <Shield className="h-8 w-8 text-emerald-500" />,
+    title: "Built for production",
+    body: "Accessible, tested, and composable with your existing design system.",
+  },
+  {
+    icon: <Users className="h-8 w-8 text-blue-500" />,
+    title: "Team-friendly",
+    body: "Copy the source code, own it fully, and customize without constraints.",
+  },
+]
+
+export function OnboardingDeck() {
+  return (
+    <div className="flex flex-col items-center gap-4">
+      <p className="text-xs text-neutral-400">Swipe to explore</p>
+      <div className="h-72 w-64">
+        <SwipeableStack>
+          {steps.map((step, i) => (
+            <div
+              key={i}
+              className="flex h-full w-full flex-col items-center justify-center gap-4 rounded-2xl border border-neutral-200 bg-white p-8 text-center shadow-md dark:border-neutral-800 dark:bg-neutral-900"
+            >
+              <div className="rounded-2xl bg-neutral-100 p-4 dark:bg-neutral-800">{step.icon}</div>
+              <h3 className="text-lg font-bold text-neutral-900 dark:text-white">{step.title}</h3>
+              <p className="text-sm text-neutral-500">{step.body}</p>
+              <p className="text-xs text-neutral-400">{i + 1} of {steps.length}</p>
+            </div>
+          ))}
+        </SwipeableStack>
+      </div>
+    </div>
+  )
+}
+```

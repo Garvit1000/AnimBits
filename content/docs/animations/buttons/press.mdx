@@ -163,3 +163,182 @@ import { PressButton } from "@/components/animations/buttons/press"
 <Callout>
   **Tip:** Combine with other effects like lift or glow for richer interactions.
 </Callout>
+
+## Use cases
+
+`PressButton` uses `usePress` which binds `whileTap: { scale: pressScale }` (default `0.95`) with a `duration: 0.1` `easeInOut` transition. This is a click-feedback animation only; no hover state is involved. Reach for it when:
+
+- **Form submit buttons.** A 5% scale-down on press gives the user instant confirmation that the button registered the click before the async action starts.
+- **Icon action buttons.** Compact round or square icon buttons (bookmark, like, share) benefit from the press scale because their small size otherwise provides little tactile feedback.
+- **Payment and checkout CTAs.** A clear, snappy press response reduces anxiety about whether the button was actually activated.
+- **Keyboard-triggered actions.** Because `whileTap` also fires on `Enter` and `Space` for a `motion.button`, keyboard users get the same visual feedback as mouse users.
+- **Mobile-first touch buttons.** On touch devices, `whileTap` fires on `touchstart`/`touchend`, so the scale-down reads as a native tap affordance.
+
+The 0.1-second duration is intentionally short; anything longer than 0.15 seconds makes the press feel laggy relative to the user's action.
+
+## When to use / when not to use
+
+**Use `PressButton` when:**
+
+- The button's only interactive state is its clicked/tapped state and you don't need hover decoration.
+- You want a universal click affordance that works on both mouse and touch without special handling.
+- The button will be used frequently (form saves, increment/decrement counters, media controls) and a persistent hover effect would be distracting.
+
+**Reach for a different button when:**
+
+- You need hover feedback in addition to click feedback. `PressButton` has no `whileHover` behavior. Combine it with [Lift Button](/docs/animations/buttons/lift) by passing `whileHover={{ y: -6 }}` via props, or pair with [Glow Button](/docs/animations/buttons/glow) for color-matched hover.
+- The button should feel physically elevated before the press (like a physical key). Use [Lift Button](/docs/animations/buttons/lift) for the resting state with a `whileTap={{ y: 0, scale: 0.97 }}` override.
+- The click should produce a spatial ripple originating from the cursor position. Use [Ripple Button](/docs/animations/buttons/ripple) instead, which spawns an expanding circle at the exact click coordinate.
+- The `scale` shrinks text in a way that is distracting. Reduce `scale` to 0.98 or use `scale={1}` with a different feedback signal.
+
+## Accessibility notes
+
+`PressButton` renders a `motion.button`, so it is focusable, activatable with `Enter` and `Space`, and exposed to the accessibility tree as a button.
+
+- **`whileTap` fires on keyboard activation.** This is Motion's behavior for `motion.button`; pressing `Enter` or `Space` while the button is focused triggers the scale animation identically to a mouse click. This is the correct accessible behavior.
+- **Scale-down does not hide content.** A 5% scale-down at `scale={0.95}` is imperceptible to most users and does not cause text to become unreadable or clipping against the container boundary.
+- **Don't use `scale` as the sole indication of an active/pressed state.** For a toggle button (`aria-pressed`), supplement the animation with a color change or label swap; the scale alone is not perceivable for screen reader users.
+- **Reduced motion.** The press animation is 0.1 seconds. Under `prefers-reduced-motion`, even this short animation can feel unexpected to some users. To disable it:
+
+```tsx
+"use client"
+import { useReducedMotion } from "motion/react"
+import { PressButton } from "@/components/animations/buttons/press"
+
+function AccessiblePress({ children, onClick }: { children: React.ReactNode; onClick: () => void }) {
+  const reduced = useReducedMotion()
+  // scale=1 means whileTap animates to scale:1, effectively no visible change.
+  return (
+    <PressButton
+      scale={reduced ? 1 : 0.95}
+      onClick={onClick}
+      className="inline-flex h-11 items-center rounded-lg bg-blue-600 px-6 text-sm font-semibold text-white focus-visible:ring-2 focus-visible:ring-blue-400"
+    >
+      {children}
+    </PressButton>
+  )
+}
+```
+
+## Performance considerations
+
+- **`scale` is a compositor transform.** `whileTap` animates only `scale`, which runs on the compositor thread with no layout recalculation or repaint.
+- **No ongoing animation.** The animation fires on pointer down and reverses on pointer up. Between interactions there are zero active animation frames. This makes `PressButton` the lightest of the animated button components in this library in terms of ongoing cost.
+- **No re-renders during animation.** `whileTap` is handled entirely by Motion's internal reconciler; it does not call `setState` or trigger React renders during the press.
+- **Rendering many `PressButton` instances is safe.** A list of 50 interactive items, each with `PressButton`, is fine because each instance only activates during an active tap and is otherwise inert.
+- **Short `duration`.** The 0.1-second transition is short enough that even on low-powered devices the animation completes before the user perceives any lag.
+
+## Customization examples
+
+### Very subtle press for a text link button
+
+Near-invisible scale-down preserves the button's feel without drawing attention to the animation:
+
+```tsx
+<PressButton
+  scale={0.98}
+  className="inline-flex h-9 items-center rounded px-3 text-sm font-medium text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-900/20"
+>
+  View all
+</PressButton>
+```
+
+### Strong press for a game-like action button
+
+A more dramatic scale-down reinforces a "physical press" metaphor:
+
+```tsx
+<PressButton
+  scale={0.88}
+  className="inline-flex h-12 items-center rounded-xl bg-yellow-400 px-8 text-base font-bold text-yellow-900 shadow-[0_4px_0_#ca8a04]"
+>
+  Roll dice
+</PressButton>
+```
+
+### Press combined with lift via prop spreading
+
+`whileHover` can be passed directly since `PressButton` spreads props onto `motion.button`:
+
+```tsx
+<PressButton
+  scale={0.95}
+  whileHover={{ y: -4, boxShadow: "0 8px 16px rgba(0,0,0,0.15)" }}
+  className="inline-flex h-11 items-center rounded-lg bg-blue-600 px-6 text-sm font-semibold text-white"
+>
+  Save changes
+</PressButton>
+```
+
+## Real-world examples
+
+### Form submit with loading guard
+
+The press animation runs even while the async action is in flight; `disabled` prevents duplicate submissions:
+
+```tsx
+"use client"
+import { useState } from "react"
+import { PressButton } from "@/components/animations/buttons/press"
+
+export function SubmitButton({ onSubmit }: { onSubmit: () => Promise<void> }) {
+  const [loading, setLoading] = useState(false)
+
+  async function handleClick() {
+    setLoading(true)
+    try {
+      await onSubmit()
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  return (
+    <PressButton
+      scale={0.95}
+      onClick={handleClick}
+      disabled={loading}
+      className="inline-flex h-11 items-center rounded-lg bg-blue-600 px-6 text-sm font-semibold text-white disabled:opacity-60 focus-visible:ring-2 focus-visible:ring-blue-400"
+    >
+      {loading ? "Saving..." : "Save changes"}
+    </PressButton>
+  )
+}
+```
+
+### Like button with toggle state
+
+The press animation fires on every click; `aria-pressed` communicates state to screen readers:
+
+```tsx
+"use client"
+import { useState } from "react"
+import { PressButton } from "@/components/animations/buttons/press"
+
+export function LikeButton({ initialCount }: { initialCount: number }) {
+  const [liked, setLiked] = useState(false)
+  const [count, setCount] = useState(initialCount)
+
+  function toggle() {
+    setLiked((v) => !v)
+    setCount((v) => (liked ? v - 1 : v + 1))
+  }
+
+  return (
+    <PressButton
+      scale={0.9}
+      onClick={toggle}
+      aria-pressed={liked}
+      aria-label={`Like. ${count} likes.`}
+      className={`inline-flex h-9 items-center gap-2 rounded-full px-4 text-sm font-semibold transition-colors ${
+        liked
+          ? "bg-red-50 text-red-600 dark:bg-red-900/20"
+          : "bg-neutral-100 text-neutral-700 dark:bg-neutral-800 dark:text-neutral-300"
+      }`}
+    >
+      <span aria-hidden>{liked ? "♥" : "♡"}</span>
+      {count}
+    </PressButton>
+  )
+}
+```

@@ -415,3 +415,217 @@ export default function Example() {
 | `delay` | `number` | `0` | Delay before animation starts in seconds |
 | `duration` | `number` | `0.3` | Animation duration in seconds |
 | `from` | `number` | `0.9` | Initial scale value |
+
+## Use cases
+
+`ScaleInIcon` animates `scale` from `from` (default `0.9`) to `1` and `opacity` from `0` to `1` using `createDelayedTransition` with `easeOut`. The animation fires once on mount. Unlike [PopIcon](/docs/animations/icons/pop), which starts from `scale: 0` with an overshoot, `ScaleInIcon` starts from a value close to the final size, producing a compact zoom-in that is noticeable but not jarring.
+
+Good use cases:
+
+- **Feature icon reveals.** Icon sets on landing pages or pricing tables that scale in with a slight delay cascade feel polished and intentional.
+- **Newly added list items.** When an item is added to a list, its icon scales in from `0.8` to `1` to highlight the change.
+- **Empty-state icons.** A large decorative icon that zooms in gently draws the eye to the message without the drama of a pop.
+- **Notification icons.** An avatar or status badge that scales in alongside its parent element as part of a compound entrance.
+- **Tab or step indicator icons.** As the user advances through a stepper, the active step's icon scales in to mark the current state.
+
+## When to use / when not to use
+
+**Use `ScaleInIcon` when:**
+
+- You want more visual presence than [FadeInIcon](/docs/animations/icons/fade-in) but less drama than [PopIcon](/docs/animations/icons/pop).
+- `from={0.5}` or lower creates a more noticeable entrance for standalone icons; `from={0.9}` (default) is appropriate for icons within dense content where subtlety matters.
+- You need to stagger multiple icons by incrementing `delay`, as the `easeOut` curve makes staggered sequences feel natural.
+
+**Do not use it when:**
+
+- The icon must re-animate on user interaction. `ScaleInIcon` only fires at mount. For tap or hover responses, use [BounceIcon](/docs/animations/icons/bounce), [WiggleIcon](/docs/animations/icons/wiggle), or [PopIcon](/docs/animations/icons/pop).
+- You want a celebratory or playful arrival. The `easeOut` curve without overshoot is calm. Use [PopIcon](/docs/animations/icons/pop) with its back-out bezier for a more energetic entrance.
+- The `from` value is below `0.3` and `duration` is long (above 0.5 s). A slow zoom from very small to full-size crosses into territory where users wait for the icon to arrive, which feels sluggish.
+
+## Accessibility notes
+
+- Scale and opacity transitions run through the entrance once and leave the element fully static. Screen readers are not affected by the transition itself.
+- Icons alongside text labels should carry `aria-hidden="true"`. Icons that are the sole content of an interactive element need an accessible name on the parent:
+
+```tsx
+<button aria-label="Boost post" className="rounded p-1.5 hover:bg-neutral-100">
+  <ScaleInIcon delay={0} from={0.8}>
+    <Zap className="w-5 h-5 text-yellow-500" aria-hidden="true" />
+  </ScaleInIcon>
+</button>
+```
+
+- `prefers-reduced-motion` users still see the final visible state because `ScaleInIcon` renders the element from the start; only the transition is affected. To skip the animation entirely for reduced-motion users:
+
+```tsx
+"use client"
+import { useReducedMotion } from "motion/react"
+import { ScaleInIcon } from "@/components/animations/icons/scale-in"
+import { Sparkles } from "lucide-react"
+
+export function AnimatedBadge() {
+  const reduced = useReducedMotion()
+  return (
+    <ScaleInIcon delay={reduced ? 0 : 0.2} duration={reduced ? 0 : 0.3} from={reduced ? 1 : 0.8}>
+      <Sparkles className="w-6 h-6 text-purple-500" aria-hidden="true" />
+    </ScaleInIcon>
+  )
+}
+```
+
+## Performance considerations
+
+- The animation modifies `scale` and `opacity`, both compositor-only properties. No layout or repaint cost.
+- One-shot animation (no `repeat`). After `duration` seconds, the element is a normal static node with no ongoing animation overhead.
+- Staggering many `ScaleInIcon` instances by incrementing `delay` is safe. The total animation time is `delay + duration` per item, and short non-overlapping animations are trivially cheap.
+- No `will-change` is needed. Scale and opacity are already composited without hinting.
+
+## Customization examples
+
+### Subtle entrance for a compact icon
+
+The default `from={0.9}` is barely perceptible at small sizes; fine for UI chrome:
+
+```tsx
+import { ScaleInIcon } from "@/components/animations/icons/scale-in"
+import { Star } from "lucide-react"
+
+<ScaleInIcon from={0.9} duration={0.25}>
+  <Star className="w-4 h-4 text-yellow-500" aria-hidden="true" />
+</ScaleInIcon>
+```
+
+### Dramatic entrance for a hero illustration icon
+
+Starting from `0.3` with a slightly longer duration makes the arrival unmistakable:
+
+```tsx
+import { ScaleInIcon } from "@/components/animations/icons/scale-in"
+import { Sparkles } from "lucide-react"
+
+<ScaleInIcon from={0.3} duration={0.5} delay={0.4}>
+  <Sparkles className="w-16 h-16 text-purple-500" aria-hidden="true" />
+</ScaleInIcon>
+```
+
+### Staggered feature icon row with precise delays
+
+```tsx
+import { ScaleInIcon } from "@/components/animations/icons/scale-in"
+import { Shield, Zap, Globe } from "lucide-react"
+
+const items = [
+  { icon: Shield, color: "text-blue-500",   label: "Secure" },
+  { icon: Zap,    color: "text-yellow-500", label: "Fast"   },
+  { icon: Globe,  color: "text-green-500",  label: "Global" },
+]
+
+export function FeatureIcons() {
+  return (
+    <div className="flex gap-10">
+      {items.map(({ icon: Icon, color, label }, i) => (
+        <div key={label} className="flex flex-col items-center gap-2">
+          <ScaleInIcon delay={i * 0.1} from={0.7} duration={0.3}>
+            <Icon className={`w-8 h-8 ${color}`} aria-hidden="true" />
+          </ScaleInIcon>
+          <span className="text-sm font-medium">{label}</span>
+        </div>
+      ))}
+    </div>
+  )
+}
+```
+
+## Real-world examples
+
+### Newly added item in a list
+
+The icon for a freshly inserted item scales in to signal it is new:
+
+```tsx
+"use client"
+import { useState } from "react"
+import { ScaleInIcon } from "@/components/animations/icons/scale-in"
+import { CheckCircle, Plus } from "lucide-react"
+
+type Item = { id: number; label: string; fresh: boolean }
+
+export function TaskList() {
+  const [items, setItems] = useState<Item[]>([
+    { id: 1, label: "Write documentation", fresh: false },
+  ])
+
+  function addItem() {
+    setItems((prev) => [
+      ...prev,
+      { id: Date.now(), label: "New task", fresh: true },
+    ])
+  }
+
+  return (
+    <div className="space-y-2">
+      {items.map((item) => (
+        <div key={item.id} className="flex items-center gap-2 rounded-lg border border-neutral-200 px-3 py-2 dark:border-neutral-800">
+          {item.fresh ? (
+            <ScaleInIcon from={0.5} duration={0.3}>
+              <CheckCircle className="w-4 h-4 text-green-500" aria-hidden="true" />
+            </ScaleInIcon>
+          ) : (
+            <CheckCircle className="w-4 h-4 text-neutral-300" aria-hidden="true" />
+          )}
+          <span className="text-sm">{item.label}</span>
+        </div>
+      ))}
+      <button
+        onClick={addItem}
+        className="flex items-center gap-1.5 rounded-lg border border-dashed border-neutral-300 px-3 py-2 text-sm text-neutral-500 hover:border-neutral-400 dark:border-neutral-700"
+      >
+        <Plus className="w-4 h-4" aria-hidden="true" />
+        Add task
+      </button>
+    </div>
+  )
+}
+```
+
+### Step progress indicator
+
+The active step icon scales in as the user advances:
+
+```tsx
+"use client"
+import { useState } from "react"
+import { ScaleInIcon } from "@/components/animations/icons/scale-in"
+import { Check } from "lucide-react"
+
+const steps = ["Account", "Profile", "Review"]
+
+export function StepIndicator() {
+  const [current, setCurrent] = useState(0)
+
+  return (
+    <div className="flex items-center gap-4">
+      {steps.map((step, i) => (
+        <div key={step} className="flex items-center gap-2">
+          <div className="flex h-7 w-7 items-center justify-center rounded-full bg-blue-600 text-white">
+            {i < current ? (
+              <ScaleInIcon from={0.6} duration={0.25}>
+                <Check className="w-4 h-4" aria-hidden="true" />
+              </ScaleInIcon>
+            ) : (
+              <span className="text-xs font-semibold">{i + 1}</span>
+            )}
+          </div>
+          <span className="text-sm font-medium">{step}</span>
+        </div>
+      ))}
+      <button
+        onClick={() => setCurrent((p) => Math.min(p + 1, steps.length))}
+        className="ml-4 rounded-lg bg-blue-600 px-3 py-1.5 text-sm font-medium text-white hover:bg-blue-700"
+      >
+        Next
+      </button>
+    </div>
+  )
+}
+```

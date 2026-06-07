@@ -143,3 +143,152 @@ import { ShineButton } from "@/components/animations/buttons/shine"
   Dark Shine
 </ShineButton>
 ```
+
+## Use cases
+
+`ShineButton` positions a `motion.div` overlay with the CSS background `linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent)`. On mount, `initial="initial"` places the overlay at `x: "-100%"` (for `direction="right"`). When the parent's `whileHover="hover"` fires, the overlay translates to `x: "100%"` over 0.6 seconds with `easeInOut`. The shine sweeps the full button width from left to right (or right to left for `direction="left"`). Reach for it when:
+
+- **Premium upgrade and upsell CTAs.** A "Upgrade to Pro" button on a gradient fill feels more crafted with a shine sweep than a plain color-shift on hover.
+- **Product launch announcement buttons.** A "What's new" or "See release notes" button with a shine sweep signals novelty.
+- **Dark-themed dashboards.** Buttons on dark backgrounds (`bg-neutral-900`, `bg-zinc-800`) show the white shine gradient most clearly.
+- **One-per-section primary actions.** The shine is eye-catching; a single shining CTA per visible section draws attention without competing with other elements.
+
+Because the overlay is `absolute inset-0 pointer-events-none`, it does not intercept clicks or affect the button's layout.
+
+## When to use / when not to use
+
+**Use `ShineButton` when:**
+
+- The button has a dark or saturated fill where a white-ish gradient overlay is clearly visible.
+- You want hover feedback that feels luxurious rather than mechanical.
+- The button's context benefits from implying light/sheen (e-commerce "Add to cart", SaaS "Start trial").
+
+**Reach for a different button when:**
+
+- The button is on a light background. A `rgba(255,255,255,0.3)` shine on a white button is imperceptible. Use [Lift Button](/docs/animations/buttons/lift) or [Glow Button](/docs/animations/buttons/glow) for light surfaces.
+- You need click feedback rather than hover feedback. The shine only activates on `whileHover` and has no `whileTap` behavior. Combine with [Press Button](/docs/animations/buttons/press) by passing `whileTap={{ scale: 0.97 }}` as a prop if tap confirmation is also needed.
+- The button's text content includes light-colored icons or labels that would disappear under the passing shine for a moment. Check that your label remains readable during the 0.6-second sweep.
+- You want to animate a border rather than the button surface itself. Use [Border Gradient Button](/docs/animations/buttons/border-gradient) for an animated perimeter effect instead.
+
+## Accessibility notes
+
+`ShineButton` renders a `motion.button` that contains the shine overlay as an `absolute`-positioned `motion.div`. The overlay is `pointer-events-none` and holds no content.
+
+- **The shine div is invisible to screen readers.** It has no role, no text, and no accessible name. Assistive technology sees only the button and its children.
+- **Keyboard hover.** Motion's `whileHover` fires on `focus` in some versions of Motion when the element is focused via keyboard. Test whether the shine triggers on tab focus in your Motion version. If it does, this is acceptable; if it causes distraction, wrap in a `useState` to only enable `whileHover` on mouse hover.
+- **Focus ring visibility.** The button enforces `overflow-hidden` via class concatenation. Ensure your CSS focus ring uses `outline` (which draws outside the border-box and is not clipped by `overflow-hidden`) rather than `box-shadow` (which is clipped).
+- **Reduced motion.** The 0.6-second sweep is directional motion that can be distracting. To disable the shine for users who prefer reduced motion:
+
+```tsx
+"use client"
+import { useReducedMotion } from "motion/react"
+import { ShineButton } from "@/components/animations/buttons/shine"
+
+function AccessibleShine({ children }: { children: React.ReactNode }) {
+  const reduced = useReducedMotion()
+  // Render a plain motion.button with no shine overlay by passing a static class.
+  // We set whileHover to an empty object to suppress the shine animation
+  // by overriding the parent's whileHover="hover" variant trigger.
+  return (
+    <ShineButton
+      direction={reduced ? undefined : "right"}
+      style={reduced ? { pointerEvents: "auto" } : undefined}
+      className="inline-flex h-11 items-center rounded-lg bg-blue-600 px-6 text-sm font-semibold text-white focus-visible:ring-2 focus-visible:ring-blue-400 focus-visible:ring-offset-2"
+    >
+      {children}
+    </ShineButton>
+  )
+}
+```
+
+## Performance considerations
+
+- **`translateX` animation is compositor-safe.** The shine overlay moves via `x` (a transform), so the transition runs on the compositor thread with no layout recalculation. This is the most efficient part of the component.
+- **The overlay is `absolute` and `pointer-events-none`.** It does not participate in layout and does not cause repaints of sibling elements.
+- **No ongoing animation.** The shine fires once on hover enter and stops at `x: "100%"`. It resets to `x: "-100%"` only when `whileHover` ends. Between hovers there are no animation frames scheduled.
+- **`overflow-hidden` forces a new stacking context.** The clipping boundary is created by the `overflow-hidden` class on the button. This is a single composited layer and does not cause an excessive number of layers.
+- **Avoid rendering many `ShineButton` components simultaneously.** If many buttons are hovered at once (e.g., in a card grid where the grid itself triggers hover on all children), multiple gradient overlays will sweep at the same time. This is visually noisy and wastes compositor resources; use one `ShineButton` per card at most.
+
+## Customization examples
+
+### Left-to-right sweep on a gradient CTA
+
+The default direction is already `"right"`, but explicit assignment documents intent:
+
+```tsx
+<ShineButton
+  direction="right"
+  className="inline-flex h-11 items-center rounded-lg bg-gradient-to-r from-violet-600 to-indigo-600 px-6 text-sm font-semibold text-white"
+>
+  Upgrade plan
+</ShineButton>
+```
+
+### Right-to-left sweep for visual variety
+
+Reversing the direction distinguishes a secondary shine action from a primary one:
+
+```tsx
+<ShineButton
+  direction="left"
+  className="inline-flex h-11 items-center rounded-lg bg-zinc-800 dark:bg-zinc-700 px-6 text-sm font-semibold text-white"
+>
+  View source
+</ShineButton>
+```
+
+### Shine with press feedback
+
+Add `whileTap` via props since `ShineButton` spreads onto `motion.button`:
+
+```tsx
+<ShineButton
+  whileTap={{ scale: 0.97 }}
+  className="inline-flex h-11 items-center rounded-lg bg-blue-600 px-6 text-sm font-semibold text-white"
+>
+  Start free trial
+</ShineButton>
+```
+
+## Real-world examples
+
+### SaaS pricing page primary CTA
+
+A shining button on the featured plan stands out without requiring a different size:
+
+```tsx
+<div className="rounded-xl border-2 border-violet-500 bg-white dark:bg-neutral-900 p-8">
+  <p className="text-xs font-semibold uppercase tracking-widest text-violet-600">Pro</p>
+  <p className="mt-1 text-4xl font-bold text-neutral-900 dark:text-white">$49</p>
+  <p className="text-sm text-neutral-500">per month</p>
+  <ul className="my-6 space-y-2 text-sm text-neutral-600 dark:text-neutral-400">
+    <li>Unlimited seats</li>
+    <li>Custom domain</li>
+    <li>Priority support</li>
+  </ul>
+  <ShineButton
+    direction="right"
+    className="inline-flex w-full items-center justify-center rounded-lg bg-gradient-to-r from-violet-600 to-indigo-600 h-11 text-sm font-semibold text-white"
+  >
+    Start Pro trial
+  </ShineButton>
+</div>
+```
+
+### E-commerce "Add to cart" button
+
+The shine sweep on hover suggests the product is worth a closer look:
+
+```tsx
+<div className="rounded-xl border border-neutral-200 dark:border-neutral-800 bg-white dark:bg-neutral-900 p-6">
+  <div className="aspect-square rounded-lg bg-neutral-100 dark:bg-neutral-800" />
+  <p className="mt-3 text-sm font-semibold text-neutral-900 dark:text-white">Matte black mug</p>
+  <p className="mt-0.5 text-sm text-neutral-500">$24.00</p>
+  <ShineButton
+    direction="right"
+    className="mt-4 inline-flex w-full items-center justify-center rounded-lg bg-neutral-900 dark:bg-white h-10 text-sm font-semibold text-white dark:text-neutral-900"
+  >
+    Add to cart
+  </ShineButton>
+</div>
+```

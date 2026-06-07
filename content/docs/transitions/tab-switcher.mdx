@@ -430,3 +430,205 @@ Tabs enhanced with icons for better visual hierarchy.
 | `defaultTab` | `string` | `tabs[0].id` | ID of the initially active tab. |
 | `variant` | `"pill" \| "underline" \| "segmented"` | `"pill"` | Visual style of the tab indicator. |
 | `className` | `string` | - | Additional CSS classes. |
+
+## Use cases
+
+`TabSwitcher` drives its active indicator with a single `layoutId` per variant: `bubble` for pill, `underline` for underline, and `segmented` for the segmented control. Switching tabs moves that `motion.div` to the new button using a spring (`bounce: 0.2`, `duration: 0.6`). Content transitions use `AnimatePresence mode="wait"` with a short fade-and-slide (`opacity`, `x: -10/10`, `duration: 0.2`). Use it when:
+
+- **Dashboard sections.** Overview, Analytics, and Reports are parallel content panels for the same entity. The `"underline"` variant reads as a formal navigation row above a data table.
+- **Settings pages.** General, Security, Notifications, and Billing are mutually exclusive panels. The `"segmented"` variant (full-width, iOS-style) signals "pick exactly one" clearly.
+- **Product detail pages.** Description, Specifications, and Reviews are all about the same product. The `"pill"` variant is compact enough to sit near the product title without dominating the layout.
+- **Time-range pickers.** Daily, Weekly, Monthly controls that update a chart below them. Use `"segmented"` because the three options are equal-width and semantically a choice among three mutually exclusive values.
+- **Feature comparison tabs.** Features, Pricing, and Testimonials on a marketing page. `"underline"` suits long labels; the indicator glides smoothly between them.
+
+## When to use / when not to use
+
+**Use `TabSwitcher` when:**
+
+- Content panels are mutually exclusive and roughly equal in importance. Tabs are the right pattern when the user should look at one section at a time.
+- You have 2 to 6 tabs. Fewer than two gives you a toggle; more than six and the labels overflow or become unreadable on mobile.
+- The tab labels fit on one line. The indicator animation relies on each tab button having a stable position; wrapping to a second line breaks the `layoutId` morph.
+
+**Do not use `TabSwitcher` when:**
+
+- You need to **switch the layout of the same data** (grid vs. list of the same items). That is a view mode toggle, not a tab navigation. Use [View Toggle](/docs/transitions/view-toggle) instead.
+- The content panels are independent pages with their own URLs. Use real navigation with `<Link>` elements and URL-driven routing; client-side tabs that should be linkable are an antipattern.
+- One of the panels is significantly more important than the others and should always be visible. Use progressive disclosure or a details/summary element instead.
+- You have only two options and one is "on" or "off". A labeled toggle switch is more appropriate.
+
+## Accessibility notes
+
+The source uses plain `<button>` elements inside a flex container. This is functional for mouse users but fails several ARIA tab requirements. Before shipping in production, wire up the roles so each button and panel are linked:
+
+```tsx
+<div role="tablist" aria-label="Section navigation">
+  <button
+    role="tab"
+    aria-selected={activeTab === tab.id}
+    aria-controls={`panel-${tab.id}`}
+  >
+    {tab.label}
+  </button>
+</div>
+
+<div role="tabpanel" id={`panel-${tab.id}`}>
+  {tab.content}
+</div>
+```
+
+- **Tab list and tab roles.** Wrap the button row in `role="tablist"` with an `aria-label`, and give each button `role="tab"`.
+- **Tab panel role.** The content container for each tab needs `role="tabpanel"` and an `id` that matches the button's `aria-controls`, so the link resolves.
+- **Arrow-key navigation.** The ARIA tabs pattern requires `ArrowLeft` and `ArrowRight` to move focus between tabs, with `Home` and `End` for first and last. Mouse-only `onClick` is insufficient. Implement a roving tabindex: set `tabIndex={0}` on the active tab and `tabIndex={-1}` on all others, then update it in a `keydown` handler.
+- **`aria-selected`.** Currently the active tab is distinguished only by visual styling. Screen readers need `aria-selected="true"` on the active tab and `aria-selected="false"` on all others.
+- **Keyboard activation.** The ARIA tabs pattern uses automatic activation on focus (focus moves + content updates) or manual activation (focus moves, user presses Enter or Space to activate). Pick one and be consistent.
+- **Icon-only tabs.** If you pass icons without labels, add `aria-label` to each button.
+
+## Performance considerations
+
+- **Single `layoutId` indicator.** Each variant tracks one `motion.div` (the indicator) across tabs. This is a lightweight shared layout: Framer Motion measures only that element's bounding rect before and after the active tab changes. The spring animation runs on the compositor.
+- **`AnimatePresence mode="wait"`.** The content panel uses `mode="wait"`, which means the old content exits completely before the new content enters. This prevents two panels from being in the DOM simultaneously, keeping memory usage low. The tradeoff is a brief gap (equal to the exit duration, 0.2s) before new content appears.
+- **Content size changes.** The content wrapper has `layout` set, so Framer Motion will re-measure and animate the wrapper's height when the active panel changes height. If your tabs have very different content heights, this layout animation adds to the per-switch cost. Set a fixed `min-h` on the wrapper to avoid height jumping.
+- **`useId()` prefix.** The component namespaces `layoutId` values with `useId()`. Mounting multiple `TabSwitcher` instances on the same page is safe; the indicators will not cross-animate.
+
+## Customization examples
+
+### Controlled tab with external state
+
+Read and set the active tab from outside the component using `defaultTab` and an `onChange` pattern. Currently the component is uncontrolled (no `onChange` prop), so you would need to either lift state or copy the component and add a controlled prop:
+
+```tsx
+"use client"
+import { useState } from "react"
+import { TabSwitcher } from "@/components/animations/transitions/tab-switcher"
+
+const tabs = [
+  { id: "overview", label: "Overview", content: <div className="p-6">Overview panel</div> },
+  { id: "settings", label: "Settings", content: <div className="p-6">Settings panel</div> },
+]
+
+export function ControlledTabs() {
+  return (
+    <TabSwitcher
+      tabs={tabs}
+      defaultTab="settings"
+      variant="underline"
+    />
+  )
+}
+```
+
+### Segmented time-range picker
+
+Three equal-width options with a sliding background:
+
+```tsx
+import { TabSwitcher } from "@/components/animations/transitions/tab-switcher"
+
+const ranges = [
+  { id: "7d",  label: "7 days",  content: <div className="p-6 text-sm text-zinc-600 dark:text-zinc-400">Last 7 days of data</div> },
+  { id: "30d", label: "30 days", content: <div className="p-6 text-sm text-zinc-600 dark:text-zinc-400">Last 30 days of data</div> },
+  { id: "90d", label: "90 days", content: <div className="p-6 text-sm text-zinc-600 dark:text-zinc-400">Last 90 days of data</div> },
+]
+
+export function RangePicker() {
+  return <TabSwitcher tabs={ranges} variant="segmented" defaultTab="30d" />
+}
+```
+
+## Real-world examples
+
+### Analytics dashboard
+
+The canonical use case: three mutually exclusive data views for the same entity, using `"pill"` for a compact navigation bar.
+
+```tsx
+"use client"
+import { TabSwitcher } from "@/components/animations/transitions/tab-switcher"
+
+const dashboardTabs = [
+  {
+    id: "overview",
+    label: "Overview",
+    content: (
+      <div className="p-6 grid grid-cols-2 gap-4">
+        <div className="rounded-lg bg-zinc-50 dark:bg-zinc-800 p-4">
+          <p className="text-xs text-zinc-500 uppercase tracking-wide">Revenue</p>
+          <p className="text-2xl font-bold text-zinc-900 dark:text-zinc-100 mt-1">$128,430</p>
+        </div>
+        <div className="rounded-lg bg-zinc-50 dark:bg-zinc-800 p-4">
+          <p className="text-xs text-zinc-500 uppercase tracking-wide">Users</p>
+          <p className="text-2xl font-bold text-zinc-900 dark:text-zinc-100 mt-1">9,271</p>
+        </div>
+      </div>
+    ),
+  },
+  {
+    id: "analytics",
+    label: "Analytics",
+    content: (
+      <div className="p-6">
+        <p className="text-sm text-zinc-600 dark:text-zinc-400">Traffic breakdown by channel goes here.</p>
+      </div>
+    ),
+  },
+  {
+    id: "reports",
+    label: "Reports",
+    content: (
+      <div className="p-6">
+        <p className="text-sm text-zinc-600 dark:text-zinc-400">Downloadable report list goes here.</p>
+      </div>
+    ),
+  },
+]
+
+export function DashboardTabs() {
+  return <TabSwitcher tabs={dashboardTabs} variant="pill" defaultTab="overview" />
+}
+```
+
+### Settings page with underline nav
+
+Underline suits settings because the labels are descriptive and a full-width indicator matches the form layout below.
+
+```tsx
+"use client"
+import { TabSwitcher } from "@/components/animations/transitions/tab-switcher"
+
+const settingsTabs = [
+  {
+    id: "profile",
+    label: "Profile",
+    content: (
+      <div className="p-6 space-y-4">
+        <div>
+          <label className="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-1">Display name</label>
+          <input className="w-full rounded-lg border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 px-3 py-2 text-sm" defaultValue="Garvit" />
+        </div>
+      </div>
+    ),
+  },
+  {
+    id: "security",
+    label: "Security",
+    content: (
+      <div className="p-6">
+        <p className="text-sm text-zinc-600 dark:text-zinc-400">Password and two-factor authentication settings.</p>
+      </div>
+    ),
+  },
+  {
+    id: "billing",
+    label: "Billing",
+    content: (
+      <div className="p-6">
+        <p className="text-sm text-zinc-600 dark:text-zinc-400">Subscription and payment method management.</p>
+      </div>
+    ),
+  },
+]
+
+export function SettingsTabs() {
+  return <TabSwitcher tabs={settingsTabs} variant="underline" />
+}
+```

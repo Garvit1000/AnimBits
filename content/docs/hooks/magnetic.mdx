@@ -346,13 +346,186 @@ export function MagneticLiftButton() {
 }
 ```
 
+## Use cases
+
+`useMagnetic` returns `{ magneticProps, ref }`. The `magneticProps` object contains a `style` with spring-driven `x` and `y` MotionValues, plus `onMouseMove` and `onMouseLeave` event handlers. Attach `ref` to the element so the hook can read its bounding rect.
+
+- **Hero CTA buttons.** A primary action button that follows the cursor by a few pixels feels alive and invites a click more than a static button.
+- **Social media icon links in a footer or profile page.** Small icons with `strength: 40` and `stiffness: 200` respond snappily to precise cursor movement.
+- **Navigation pill links.** A subtle `strength: 20` on nav links creates a soft floating effect without moving the link far enough to confuse the user about its position.
+- **Logo mark in a header.** A logo that gently shifts toward the cursor adds personality to an otherwise static header without interfering with the nav layout.
+- **Floating action buttons.** An FAB with `strength: 35` and `damping: 12` gives a satisfying pull-toward-you feel before the user clicks.
+
+## When to use / when not to use
+
+**Use `useMagnetic` directly when:**
+
+- You need the magnetic effect on a custom element, such as a `motion.a` or a styled icon wrapper, that is not covered by a prebuilt component.
+- You want to compose the magnetic translation with another hook: because `magneticProps.style` sets `x` and `y` as MotionValues, you can pass those values into `useTransform` for derived effects.
+
+**Avoid `useMagnetic` when:**
+
+- The element is inside a scrollable container. The hook uses `getBoundingClientRect()` to compute the center; inside a scrolled container the `rect.left` and `rect.top` values are correct, but rapid scroll while hovering can cause visible jumps.
+- Multiple adjacent elements each have the magnetic effect and their movement radius overlaps. Users hovering the gap between two magnetic elements can trigger both, making both elements shift unpredictably.
+- The surface is touch-only. The `onMouseMove` handler never fires on a touch device, so the element appears completely static. Pair with [usePress](/docs/hooks/press) for touch feedback.
+- The element is a form input or a text area. Mouse-following translation on an input moves the entire field, making it hard to click a specific character position.
+
+## Accessibility notes
+
+`useMagnetic` attaches `onMouseMove` and `onMouseLeave` event handlers that animate `x` and `y` via MotionValues. These are pointer-driven and have no effect on keyboard navigation.
+
+- The magnetic effect is decorative. Do not use it to signal interactivity for keyboard users. Rely on semantic HTML (`<button>`, `<a>`) and visible `:focus-visible` styles for keyboard affordance.
+- Respect `prefers-reduced-motion`. The spring-based motion can cause vestibular discomfort, especially with high `strength` values. When the preference is set, return static props with no movement:
+
+```tsx
+"use client"
+import { motion } from "motion/react"
+import { useReducedMotion } from "motion/react"
+import { useMagnetic } from "@/lib/use-magnetic"
+
+export function MagneticCTA({ label }: { label: string }) {
+  const reduced = useReducedMotion()
+  const { magneticProps, ref } = useMagnetic({ strength: 30 })
+
+  return (
+    <motion.button
+      ref={ref}
+      {...(reduced ? {} : magneticProps)}
+      className="rounded-xl bg-blue-600 px-8 py-3 text-sm font-semibold text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-500"
+    >
+      {label}
+    </motion.button>
+  )
+}
+```
+
+- Because the element translates away from its original position, ensure that its hover hitbox remains consistent. Framer Motion keeps the layout anchor at the original position, so the painted element may appear to drift outside its clickable area at large `strength` values (above 50). Keep `strength` at or below 40 for buttons that need precise clicking.
+
+## Performance considerations
+
+- `useMagnetic` drives `x` and `y` via `useMotionValue` and `useSpring`. Both are MotionValues that bypass React renders entirely. The spring interpolation is performed in Framer Motion's internal rAF loop and only updates the DOM via direct style writes. No component re-render occurs on mouse move.
+- `onMouseMove` fires on every pointer move event. Framer Motion's MotionValue batches updates in its animation frame loop, so even rapid cursor movement does not schedule extra frames.
+- Each `useMagnetic` call creates two springs. On pages with many magnetic elements, the total number of active springs grows linearly. Keep the number of simultaneously visible magnetic elements low (single digits) to avoid saturating the animation frame budget.
+- When the element unmounts, Framer Motion automatically cancels the springs and removes the listeners. No manual cleanup is needed.
+
+## Customization examples
+
+### Tight, snappy magnetic icon button
+
+```tsx
+import { motion } from "motion/react"
+import { useMagnetic } from "@/lib/use-magnetic"
+
+export function IconMagnet({ icon, label }: { icon: React.ReactNode; label: string }) {
+  const { magneticProps, ref } = useMagnetic({ strength: 40, stiffness: 300, damping: 12 })
+
+  return (
+    <motion.button
+      ref={ref}
+      {...magneticProps}
+      aria-label={label}
+      className="flex h-10 w-10 items-center justify-center rounded-full border border-neutral-200 text-neutral-600 hover:text-neutral-900"
+    >
+      {icon}
+    </motion.button>
+  )
+}
+```
+
+### Soft, slow magnetic card
+
+```tsx
+import { motion } from "motion/react"
+import { useMagnetic } from "@/lib/use-magnetic"
+
+export function SoftMagnetCard({ children }: { children: React.ReactNode }) {
+  const { magneticProps, ref } = useMagnetic({ strength: 15, stiffness: 80, damping: 20 })
+
+  return (
+    <motion.div
+      ref={ref}
+      {...magneticProps}
+      className="rounded-2xl border border-neutral-100 bg-white p-6 shadow-sm"
+    >
+      {children}
+    </motion.div>
+  )
+}
+```
+
+## Real-world examples
+
+### Hero section CTA with magnetic pull
+
+```tsx
+"use client"
+import { motion } from "motion/react"
+import { useReducedMotion } from "motion/react"
+import { useMagnetic } from "@/lib/use-magnetic"
+
+export function HeroCTA() {
+  const reduced = useReducedMotion()
+  const { magneticProps, ref } = useMagnetic({ strength: 30, stiffness: 150, damping: 15 })
+
+  return (
+    <div className="flex flex-col items-center gap-8 py-24">
+      <h1 className="text-5xl font-black">Build better UIs</h1>
+      <motion.a
+        href="/docs/getting-started"
+        ref={ref}
+        {...(reduced ? {} : magneticProps)}
+        className="inline-flex h-14 items-center gap-2 rounded-2xl bg-blue-600 px-10 text-base font-semibold text-white shadow-lg shadow-blue-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-500"
+      >
+        Get started
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="2">
+          <path d="M3 8h10M9 4l4 4-4 4" strokeLinecap="round" />
+        </svg>
+      </motion.a>
+    </div>
+  )
+}
+```
+
+### Social links row in a footer
+
+```tsx
+"use client"
+import { motion } from "motion/react"
+import { useMagnetic } from "@/lib/use-magnetic"
+
+const socials = [
+  { href: "https://github.com", label: "GitHub", icon: "github" },
+  { href: "https://twitter.com", label: "Twitter", icon: "twitter" },
+  { href: "https://linkedin.com", label: "LinkedIn", icon: "linkedin" },
+]
+
+function SocialLink({ href, label }: { href: string; label: string }) {
+  const { magneticProps, ref } = useMagnetic({ strength: 35, stiffness: 200, damping: 14 })
+  return (
+    <motion.a
+      href={href}
+      ref={ref}
+      {...magneticProps}
+      aria-label={label}
+      className="flex h-9 w-9 items-center justify-center rounded-full border border-neutral-200 text-neutral-500 hover:border-neutral-400 hover:text-neutral-800 dark:border-neutral-700"
+    >
+      <span className="text-xs font-bold">{label[0]}</span>
+    </motion.a>
+  )
+}
+
+export function SocialRow() {
+  return (
+    <div className="flex gap-3">
+      {socials.map((s) => <SocialLink key={s.href} href={s.href} label={s.label} />)}
+    </div>
+  )
+}
+```
+
 ## Browser Support
 
 Works in all modern browsers that support CSS transforms:
 - Chrome/Edge 90+
 - Firefox 88+
 - Safari 14+
-
-<Callout type="warn">
-  Consider disabling on mobile devices where hover interactions don't apply.
-</Callout>

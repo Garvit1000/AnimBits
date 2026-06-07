@@ -158,3 +158,192 @@ import { CardFlip } from "@/components/animations/cards/flip"
 | `duration` | `number` | `0.6` | Animation duration in seconds |
 | `axis` | `"x" \| "y"` | `"y"` | Flip axis |
 | `className` | `string` | `undefined` | Additional CSS classes |
+
+## Use cases
+
+`CardFlip` applies `rotateY: 180` (or `rotateX: 180` when `axis="x"`) on `whileHover` via `transformStyle: "preserve-3d"`. The entire card contents rotate; this component does not manage a separate front and back face. It is the caller's responsibility to place front-face and back-face children and apply `backface-visibility: hidden` to each.
+
+Use it when:
+
+- **Product cards with front/back details.** Front shows photo and price; back reveals specs, sizing, or a CTA button.
+- **Flashcard or quiz UIs.** Term on the front, definition on the back.
+- **Team member cards.** Photo and name on the front, bio and social links on the back.
+- **Feature reveal.** An icon tile that flips to show a short explainer paragraph.
+
+## When to use / when not to use
+
+**Use `CardFlip` when:**
+
+- The hover surface is large enough that users will naturally hover over it (at least 120px x 120px).
+- The back-face content adds genuine value, not just decorative text that could appear in a tooltip.
+
+**Reach for a different component when:**
+
+- You only want a subtle hover response without hiding content. Use [CardHoverLift](/docs/animations/cards/hover-lift) or [CardHoverGlow](/docs/animations/cards/hover-glow) instead.
+- The card is in a dense grid where accidental hover triggers make the flip feel twitchy. Tighter grids work better with [CardHoverLift](/docs/animations/cards/hover-lift).
+- You are building for touch-primary devices. `whileHover` does not reliably fire on touch screens; back-face content becomes inaccessible. Provide a tap-to-toggle fallback using `useState`.
+- Content hierarchy is important and back-face items need to be always reachable. See the accessibility section below for keyboard and screen-reader concerns.
+
+## Accessibility notes
+
+**This is one of the most accessibility-sensitive animations in this library.** Address all of the following before shipping.
+
+- **3D rotation can cause vestibular discomfort.** Flipping a card 180 degrees is a significant spatial transformation. Users with vestibular disorders, migraines, or motion sensitivity may experience nausea or disorientation. Always respect `prefers-reduced-motion` by reducing or eliminating the rotation:
+
+```tsx
+"use client"
+import { useReducedMotion } from "motion/react"
+import { CardFlip } from "@/components/animations/cards/flip"
+
+function AccessibleFlipCard({ front, back }: { front: React.ReactNode; back: React.ReactNode }) {
+  const reduced = useReducedMotion()
+  // With reduced motion, use a near-instant fade instead of a full 3D flip.
+  return (
+    <CardFlip
+      duration={reduced ? 0.01 : 0.6}
+      className="relative h-64 w-48 rounded-xl"
+    >
+      <div className="absolute inset-0 backface-hidden">{front}</div>
+      <div className="absolute inset-0 backface-hidden rotate-y-180">{back}</div>
+    </CardFlip>
+  )
+}
+```
+
+- **Back-face content must remain reachable.** Because the flip is hover-only and `whileHover` does not fire on keyboard focus by default, any interactive elements on the back face (buttons, links) are unreachable by keyboard. Add a matching `whileFocus` or use a `useState`-driven toggle that responds to both hover and focus.
+- **Screen readers do not perceive the visual flip.** Both front and back children are in the DOM simultaneously. Without additional management, a screen reader will read both faces. Use `aria-hidden` on the non-active face and toggle it with state.
+- **Do not convey meaning through rotation alone.** If the back face contains the only CTA or price, that information must also be accessible to users who cannot hover or use a mouse.
+
+## Performance considerations
+
+- **3D transforms run on the compositor.** `rotateX` and `rotateY` are transforms; they do not trigger layout or paint. The flip itself is GPU-accelerated.
+- **`transformStyle: preserve-3d` creates a stacking context.** Every `CardFlip` instance establishes a new stacking context and composited layer. Dozens of flip cards on one page add GPU memory overhead. For long lists, consider rendering flip behavior only on the currently hovered card.
+- **`whileHover` polls continuously during hover.** Motion tracks the hover state and re-evaluates variants on each relevant pointer event. This is lightweight but worth noting for extremely large DOM trees.
+- **Avoid animating heavy children.** If the back face contains large images or complex layouts, the flip will stutter on low-end hardware because compositing the rotated face is more expensive when the painted content is large.
+
+## Customization examples
+
+### X-axis flip (vertical flip)
+
+```tsx
+import { CardFlip } from "@/components/animations/cards/flip"
+
+<CardFlip axis="x" duration={0.5} className="relative h-48 w-64 rounded-xl cursor-pointer">
+  <div
+    className="absolute inset-0 rounded-xl bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 flex items-center justify-center"
+    style={{ backfaceVisibility: "hidden" }}
+  >
+    <p className="font-semibold">Front face</p>
+  </div>
+  <div
+    className="absolute inset-0 rounded-xl bg-neutral-900 dark:bg-white flex items-center justify-center"
+    style={{ backfaceVisibility: "hidden", transform: "rotateX(180deg)" }}
+  >
+    <p className="font-semibold text-white dark:text-neutral-900">Back face</p>
+  </div>
+</CardFlip>
+```
+
+### Slower, more deliberate flip
+
+```tsx
+<CardFlip duration={1.0} className="relative h-64 w-48 rounded-2xl">
+  {/* front and back face content */}
+</CardFlip>
+```
+
+## Real-world examples
+
+### Team member card with bio on back
+
+```tsx
+"use client"
+import { CardFlip } from "@/components/animations/cards/flip"
+
+interface TeamCardProps {
+  name: string
+  role: string
+  avatar: string
+  bio: string
+  twitter: string
+}
+
+export function TeamCard({ name, role, avatar, bio, twitter }: TeamCardProps) {
+  return (
+    <CardFlip
+      axis="y"
+      duration={0.6}
+      className="relative h-72 w-56 rounded-2xl"
+      style={{ perspective: 1000 }}
+    >
+      {/* Front */}
+      <div
+        className="absolute inset-0 rounded-2xl overflow-hidden border border-neutral-200 dark:border-neutral-800 bg-white dark:bg-neutral-900 flex flex-col items-center justify-center gap-3 p-6"
+        style={{ backfaceVisibility: "hidden" }}
+      >
+        <img src={avatar} alt={name} className="w-20 h-20 rounded-full object-cover" />
+        <div className="text-center">
+          <p className="font-bold">{name}</p>
+          <p className="text-sm text-neutral-500 dark:text-neutral-400">{role}</p>
+        </div>
+      </div>
+
+      {/* Back */}
+      <div
+        className="absolute inset-0 rounded-2xl border border-neutral-200 dark:border-neutral-800 bg-neutral-50 dark:bg-neutral-800 flex flex-col items-center justify-center gap-4 p-6"
+        style={{ backfaceVisibility: "hidden", transform: "rotateY(180deg)" }}
+      >
+        <p className="text-sm text-center text-neutral-600 dark:text-neutral-300">{bio}</p>
+        <a
+          href={`https://twitter.com/${twitter}`}
+          className="text-sm font-semibold text-blue-500 hover:underline"
+          aria-label={`${name} on Twitter`}
+        >
+          @{twitter}
+        </a>
+      </div>
+    </CardFlip>
+  )
+}
+```
+
+### Flashcard for a quiz app
+
+```tsx
+"use client"
+import { useState } from "react"
+import { motion } from "motion/react"
+
+// Using raw motion here for a click-controlled flip, which is more accessible than hover-only.
+export function Flashcard({ term, definition }: { term: string; definition: string }) {
+  const [flipped, setFlipped] = useState(false)
+
+  return (
+    <button
+      onClick={() => setFlipped((f) => !f)}
+      className="relative h-48 w-80 cursor-pointer [perspective:1000px] focus-visible:ring-2 focus-visible:ring-neutral-900 dark:focus-visible:ring-white rounded-2xl"
+      aria-label={flipped ? `Definition: ${definition}` : `Term: ${term}`}
+    >
+      <motion.div
+        animate={{ rotateY: flipped ? 180 : 0 }}
+        transition={{ duration: 0.5 }}
+        style={{ transformStyle: "preserve-3d" }}
+        className="relative w-full h-full"
+      >
+        <div
+          className="absolute inset-0 rounded-2xl bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 flex items-center justify-center p-6"
+          style={{ backfaceVisibility: "hidden" }}
+        >
+          <p className="text-xl font-bold text-center">{term}</p>
+        </div>
+        <div
+          className="absolute inset-0 rounded-2xl bg-neutral-900 dark:bg-white flex items-center justify-center p-6"
+          style={{ backfaceVisibility: "hidden", transform: "rotateY(180deg)" }}
+        >
+          <p className="text-sm text-center text-white dark:text-neutral-900">{definition}</p>
+        </div>
+      </motion.div>
+    </button>
+  )
+}
+```

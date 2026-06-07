@@ -191,6 +191,148 @@ export function ThemeToggle() {
 | `blur` | `number` | `0` | Blur amount in pixels |
 | `className` | `string` | - | Additional CSS classes |
 
+## Use cases
+
+`ThemeToggleSlideLeft` adds `theme-slide-left` to `<html>` before the `startViewTransition` call. The CSS animates `slide-out-left` (`translateX(-100%)` on the old snapshot) and `slide-in-left` (`translateX(-100%)` start on the new snapshot) using `cubic-bezier(0.4, 0, 0.2, 1)`. The current page slides out to the left while the new theme arrives from the same direction, creating a left-to-right page-flip.
+
+Use it when:
+
+- Your layout reads left to right and the theme toggle is part of a horizontal control (e.g., a left sidebar toggle button, a left-aligned navbar item). The slide direction reinforces the spatial origin.
+- You want the transition to feel like "going forward" in a left-to-right context, for example a multi-step wizard where dark mode is presented as a "next" option.
+- Your app uses a left drawer or left sidebar and you want theme changes to visually originate from the same side.
+
+## When to use / when not to use
+
+**Use slide-left when:**
+
+- The toggle is in a left sidebar or left-anchored nav. The leftward departure and leftward arrival creates a sense that the theme "comes from" the sidebar.
+- You want a horizontal transition and the new theme should feel like it is arriving from the left side of the screen.
+
+**Consider a different variant when:**
+
+- The toggle button is in a top navbar. [Slide Top](/docs/transitions/theme-toggle-slide-top) is more spatially coherent for a top control.
+- The toggle is in a bottom nav bar. [Slide Bottom](/docs/transitions/theme-toggle-slide-bottom) aligns better.
+- You want the reveal to originate from the exact click point regardless of button position. [Circular](/docs/transitions/theme-toggle-circular) handles that case.
+- Your layout is right-to-left (RTL). The leftward slide may feel like "going backward" in RTL contexts. Consider [Slide Right](/docs/transitions/theme-toggle-slide-right) instead.
+
+## Accessibility notes
+
+- **Trigger semantics.** The wrapper `<div onClick={...}>` is not focusable or announced by screen readers. Always pass a real `<button>` as `children` with an `aria-label` such as `"Toggle theme"`.
+- **State communication.** Add `aria-pressed={isDark}` to the inner button (or use `role="switch"` with `aria-checked`) so screen readers report the current mode. The visual icon swap is not enough.
+- **`prefers-reduced-motion`.** The CSS includes `@media (prefers-reduced-motion: reduce)` which sets `animation: none !important` on all `::view-transition-*` pseudo-elements when `.theme-slide-left` is present. Users with reduced motion preferences get an instant, animation-free theme swap.
+- **Input blocking during transition.** `pointerEvents: none` is applied to the wrapper while `isTransitioning` is true. Keep `speed` short (0.3 to 0.6s) to minimize the window where the toggle is unresponsive.
+
+## Performance considerations
+
+- **Transform-only.** Both `slide-out-left` and `slide-in-left` animate only `translateX`, which runs on the GPU compositor without triggering layout or paint. The animation cost is equivalent to a CSS `transition: transform`.
+- **No coordinate reads.** Unlike [Circular](/docs/transitions/theme-toggle-circular), this variant does not call `e.clientX`/`e.clientY`. The click handler is a simple async function with no synchronous DOM measurements.
+- **`cubic-bezier(0.4, 0, 0.2, 1)`.** The Material Design standard easing registers well at `speed=0.4` to `0.5`. At very short durations (0.15s or less), the ease-in portion of the curve compresses to near-linearity, so consider switching to `ease-out` for `speed` values below 0.25.
+- **`blur` prop.** Full-viewport blur on `::view-transition-old` and `::view-transition-new` is compositor-heavy. Avoid it on mobile or keep values at or below 6px.
+- **Class cleanup.** `theme-slide-left` is removed in the `finally` block, so interrupted transitions (e.g., rapid tab switching) do not leave the class on `<html>` permanently.
+
+## Customization examples
+
+### Directional ease: emphasize arrival
+
+Ease-out on the incoming layer makes the new theme feel like it "snaps into" place:
+
+```css
+.theme-slide-left::view-transition-old(root) {
+  animation: slide-out-left var(--transition-speed) ease-in;
+}
+.theme-slide-left::view-transition-new(root) {
+  animation: slide-in-left var(--transition-speed) ease-out;
+}
+```
+
+### Faster slide for a sidebar toggle
+
+```tsx
+<ThemeToggleSlideLeft speed={0.3} onToggle={toggleTheme}>
+  <button aria-label="Toggle theme" className="w-full flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-zinc-100 dark:hover:bg-zinc-800 text-sm">
+    <Sun className="h-4 w-4 dark:hidden" />
+    <Moon className="h-4 w-4 hidden dark:block" />
+    <span>Toggle theme</span>
+  </button>
+</ThemeToggleSlideLeft>
+```
+
+## Real-world examples
+
+### Left sidebar theme row
+
+A "Dark mode" toggle at the bottom of a left navigation sidebar, where the leftward slide reinforces that the change comes from the sidebar:
+
+```tsx
+"use client"
+import { useTheme } from "next-themes"
+import { ThemeToggleSlideLeft } from "@/components/animations/transitions/theme-toggle-slide-left"
+import { Moon, Sun } from "lucide-react"
+
+export function SidebarThemeToggle() {
+  const { theme, setTheme } = useTheme()
+
+  const toggleTheme = () => {
+    const isDark = document.documentElement.classList.contains("dark")
+    document.documentElement.classList.toggle("dark", !isDark)
+    setTheme(isDark ? "light" : "dark")
+  }
+
+  return (
+    <div className="w-64 flex flex-col border-r border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950 min-h-screen p-4">
+      <nav className="flex-1 space-y-1">
+        <a href="#" className="block px-3 py-2 rounded-lg text-sm font-medium text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-800">Dashboard</a>
+        <a href="#" className="block px-3 py-2 rounded-lg text-sm font-medium text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-800">Projects</a>
+      </nav>
+      <ThemeToggleSlideLeft speed={0.35} onToggle={toggleTheme}>
+        <button
+          aria-pressed={theme === "dark"}
+          aria-label="Toggle theme"
+          className="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium text-zinc-600 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-800"
+        >
+          <Sun className="h-4 w-4 dark:hidden" />
+          <Moon className="h-4 w-4 hidden dark:block" />
+          <span>Dark mode</span>
+        </button>
+      </ThemeToggleSlideLeft>
+    </div>
+  )
+}
+```
+
+### Horizontal onboarding step
+
+In a multi-step wizard where dark mode is step 3, the leftward page flip matches the forward-progression direction:
+
+```tsx
+"use client"
+import { useTheme } from "next-themes"
+import { ThemeToggleSlideLeft } from "@/components/animations/transitions/theme-toggle-slide-left"
+import { Button } from "@/components/ui/button"
+
+export function AppearanceStep({ onNext }: { onNext: () => void }) {
+  const { theme, setTheme } = useTheme()
+
+  const applyAndProceed = () => {
+    const isDark = document.documentElement.classList.contains("dark")
+    document.documentElement.classList.toggle("dark", !isDark)
+    setTheme(isDark ? "light" : "dark")
+    onNext()
+  }
+
+  return (
+    <div className="space-y-6 max-w-sm">
+      <h2 className="text-xl font-bold text-zinc-900 dark:text-zinc-100">Choose your theme</h2>
+      <ThemeToggleSlideLeft speed={0.4} onToggle={applyAndProceed}>
+        <Button variant="outline" className="w-full justify-start gap-2">
+          Switch to {theme === "dark" ? "light" : "dark"} mode and continue
+        </Button>
+      </ThemeToggleSlideLeft>
+    </div>
+  )
+}
+```
+
 ## Examples
 
 ### Fast Transition

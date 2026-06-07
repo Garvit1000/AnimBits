@@ -395,3 +395,186 @@ export default function Example() {
 |------|------|---------|-------------|
 | `children` | `ReactNode` | - | The icon element to animate |
 | `trigger` | `"hover"` \| `"tap"` \| `"mount"` | `"hover"` | When to trigger the bounce animation |
+
+## Use cases
+
+`BounceIcon` plays a one-shot scale sequence: `scale: [1, 1.2, 0.9, 1.1, 1]` over 0.6 s with `easeInOut`. Because the animation fires once and stops (not `repeat: Infinity`), it is safe to use on interactive elements without dominating the screen. Good spots:
+
+- **Favorite / star buttons.** A single bounce when the user stars an item rewards the click with satisfying physical feedback.
+- **Like buttons.** Pair `trigger="tap"` with a state change (empty to filled heart) to reinforce the action.
+- **Icon-only toolbar buttons.** A hover bounce on save, share, or copy icons adds tactile depth without a tooltip.
+- **Success confirmations.** Mount the bounce once (`trigger="mount"`) when a checkmark icon appears after form submission.
+- **Gamification icons.** Coins, trophies, or badge icons that bounce on award to reinforce delight.
+
+The `key` increment trick inside the component (incrementing `key` on `onTap`) means a `tap` trigger re-fires the animation cleanly even on repeated taps without any additional code.
+
+## When to use / when not to use
+
+**Use `BounceIcon` when:**
+
+- You want a single, self-contained response to a user action, not a looping distraction.
+- `trigger="hover"` on icon buttons adds interactivity without requiring JavaScript state.
+- `trigger="mount"` suits success/error icons that appear after an async operation.
+
+**Do not use it when:**
+
+- You need the icon to bounce continuously while a condition is active. Use [BounceContinuous](/docs/animations/icons/bounce-continuous) for that case.
+- The icon is purely decorative with no interactive purpose. An unprovoked bounce on a static status icon will confuse users about clickability.
+- Many icons in a list or table all share `trigger="hover"`. The constant firing of scale animations as the user mouses through rows is distracting. Prefer subtler hover states (color change, opacity) for dense lists.
+
+## Accessibility notes
+
+- Icons next to text labels (e.g., a star next to "Favourites") are decorative. Set `aria-hidden="true"` on the icon so screen readers do not announce duplicate information.
+- Icons that are the sole interactive element must have an accessible name. Wrap with a `<button>` that carries an `aria-label`:
+
+```tsx
+<button aria-label="Add to favourites" className="rounded p-1">
+  <BounceIcon trigger="tap">
+    <Star className="w-5 h-5 text-yellow-500" aria-hidden="true" />
+  </BounceIcon>
+</button>
+```
+
+- Do not use the bounce alone to signal state changes. A heart that bounces when toggled still needs a color or fill change so the new state is visible to users with reduced motion or poor contrast.
+- For users who prefer reduced motion, the scale overshoot (`1.2` then `0.9`) can feel jarring. Dampen it:
+
+```tsx
+"use client"
+import { useReducedMotion } from "motion/react"
+import { BounceIcon } from "@/components/animations/icons/bounce"
+import { Heart } from "lucide-react"
+
+export function LikeButton() {
+  const reduced = useReducedMotion()
+  // With reduced motion, skip the bounce entirely and let the color change carry the state.
+  return reduced ? (
+    <Heart className="w-6 h-6 text-red-500 fill-red-500" />
+  ) : (
+    <BounceIcon trigger="tap">
+      <Heart className="w-6 h-6 text-red-500 fill-red-500" aria-hidden="true" />
+    </BounceIcon>
+  )
+}
+```
+
+## Performance considerations
+
+- The animation only changes `scale`, a transform property. It runs entirely on the compositor thread with no layout recalculation or repaint.
+- `BounceIcon` is a one-shot animation (`repeat` is not set), so once the cycle ends the compositor releases it. There is no ongoing cost unlike `repeat: Infinity` animations.
+- The `key` increment on `tap` unmounts and remounts the motion element to reset the animation. Each remount is a lightweight DOM operation for a simple `div`, but avoid it inside virtualized lists where rapid key changes can cause unnecessary reconciliation.
+- Because the animation runs on `whileHover`, it fires as long as the cursor is over the element. Motion/react handles the transition back to `initial` gracefully, but on hover triggers the scale returns to 1 automatically when the cursor leaves. No cleanup needed.
+
+## Customization examples
+
+### Softer bounce with a slower duration
+
+The default duration is 0.6 s (hardcoded in the component transition). Wrap the component and change the transition via `style` or override at the component source for a slower, calmer feel:
+
+```tsx
+import { BounceIcon } from "@/components/animations/icons/bounce"
+import { Star } from "lucide-react"
+
+// Default 0.6s duration gives a lively feel; use trigger="hover" for subtlety.
+<BounceIcon trigger="hover" className="cursor-pointer">
+  <Star className="w-6 h-6 text-yellow-500 fill-yellow-500" aria-hidden="true" />
+</BounceIcon>
+```
+
+### Mount bounce as a success indicator
+
+Fire once when the icon appears after a successful action:
+
+```tsx
+import { BounceIcon } from "@/components/animations/icons/bounce"
+import { CheckCircle } from "lucide-react"
+
+<BounceIcon trigger="mount">
+  <CheckCircle className="w-8 h-8 text-green-500" aria-hidden="true" />
+</BounceIcon>
+```
+
+### Tap bounce on a toolbar action
+
+Re-fires on every tap thanks to the internal `key` reset:
+
+```tsx
+import { BounceIcon } from "@/components/animations/icons/bounce"
+import { Bookmark } from "lucide-react"
+
+<button aria-label="Save bookmark" className="rounded p-2 hover:bg-neutral-100">
+  <BounceIcon trigger="tap">
+    <Bookmark className="w-5 h-5" aria-hidden="true" />
+  </BounceIcon>
+</button>
+```
+
+## Real-world examples
+
+### Like button with toggle state
+
+The icon bounces on each tap and its fill state changes to confirm the action:
+
+```tsx
+"use client"
+import { useState } from "react"
+import { BounceIcon } from "@/components/animations/icons/bounce"
+import { Heart } from "lucide-react"
+
+export function LikeButton() {
+  const [liked, setLiked] = useState(false)
+
+  return (
+    <button
+      onClick={() => setLiked((prev) => !prev)}
+      aria-label={liked ? "Unlike" : "Like"}
+      aria-pressed={liked}
+      className="flex items-center gap-1.5 rounded-lg px-3 py-2 text-sm font-medium text-neutral-600 hover:bg-neutral-100 dark:text-neutral-400 dark:hover:bg-neutral-800"
+    >
+      <BounceIcon trigger="tap">
+        <Heart
+          className={`w-5 h-5 transition-colors ${liked ? "fill-red-500 text-red-500" : "text-neutral-400"}`}
+          aria-hidden="true"
+        />
+      </BounceIcon>
+      {liked ? "Liked" : "Like"}
+    </button>
+  )
+}
+```
+
+### Star rating with per-icon bounce
+
+Each star bounces when clicked to give immediate feedback, and the selection propagates upward:
+
+```tsx
+"use client"
+import { useState } from "react"
+import { BounceIcon } from "@/components/animations/icons/bounce"
+import { Star } from "lucide-react"
+
+export function StarRating({ max = 5 }: { max?: number }) {
+  const [rating, setRating] = useState(0)
+
+  return (
+    <div className="flex gap-1" role="group" aria-label="Star rating">
+      {Array.from({ length: max }, (_, i) => (
+        <button
+          key={i}
+          onClick={() => setRating(i + 1)}
+          aria-label={`Rate ${i + 1} out of ${max}`}
+          className="rounded p-0.5"
+        >
+          <BounceIcon trigger="tap">
+            <Star
+              className={`w-6 h-6 transition-colors ${
+                i < rating ? "fill-yellow-400 text-yellow-400" : "text-neutral-300"
+              }`}
+              aria-hidden="true"
+            />
+          </BounceIcon>
+        </button>
+      ))}
+    </div>
+  )
+}
+```

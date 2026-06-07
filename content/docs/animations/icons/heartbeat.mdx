@@ -388,3 +388,192 @@ export default function Example() {
 |------|------|---------|-------------|
 | `children` | `ReactNode` | - | The icon element to animate |
 | `bpm` | `number` | `60` | Beats per minute (controls animation speed) |
+
+## Use cases
+
+`HeartbeatIcon` fires the scale sequence `[1, 1.15, 1, 1.15, 1, 1, 1, 1]` with `repeat: Infinity`. The period is derived directly from `bpm`: `duration = 60 / bpm`. At 60 bpm the cycle takes 1 s; at 120 bpm it takes 0.5 s. The double-beat pattern (two quick peaks followed by a rest) mirrors a real cardiac rhythm, making it semantically appropriate wherever a heartbeat metaphor fits:
+
+- **Health and fitness dashboards.** A pulsing heart icon next to a resting heart rate stat makes the number feel alive.
+- **Live or active status indicators.** A heart beating next to "Live" or "Active" tells users data is fresh without words.
+- **Likes and favorites with sustained animation.** After a user likes a post, replace a static heart with a `HeartbeatIcon` at 60 bpm to mark the "liked" state.
+- **Wellness apps.** Breathing exercises or meditation timers that show a calm 60 bpm heart as a pacing cue.
+- **Real-time counters.** A heart beating at a `bpm` derived from incoming like events communicates engagement velocity.
+
+## When to use / when not to use
+
+**Use `HeartbeatIcon` when:**
+
+- The heart or pulse metaphor genuinely matches the content (health, fitness, love, social engagement).
+- The icon is isolated and prominent enough that continuous motion does not compete with other interactive elements.
+- You can tie `bpm` to real data (actual heart rate from a sensor or derived from event frequency).
+
+**Do not use it when:**
+
+- The icon is decorative or used purely for aesthetics with no heart/life/activity meaning. A logo or star pulsing at heartbeat rhythm will read as a glitch.
+- The page already has other `repeat: Infinity` animations ([SpinIcon](/docs/animations/icons/spin), [PulseIcon](/docs/animations/icons/pulse), [BounceContinuous](/docs/animations/icons/bounce-continuous)). Multiple simultaneous infinite animations compete for the viewer's attention and tire the eye.
+- `bpm` is above 120. Fast heartbeats read as distress or danger, not delight. If you only want a gentle scale pulse without the double-beat pattern, use [PulseIcon](/docs/animations/icons/pulse) with `trigger="always"` instead.
+- The icon is inside a dense list or table. A beating heart in every row of a social feed is visually overwhelming.
+
+## Accessibility notes
+
+- The animation is purely decorative. Add `aria-hidden="true"` to the child icon when paired with a text label so screen readers do not read out redundant icon information.
+- When the heartbeat communicates live or real-time status, add a live region so assistive technology announces changes:
+
+```tsx
+<div className="flex items-center gap-2" role="status" aria-label="Live">
+  <HeartbeatIcon bpm={60}>
+    <Heart className="w-5 h-5 text-red-500 fill-red-500" aria-hidden="true" />
+  </HeartbeatIcon>
+  <span className="text-sm font-medium">Live</span>
+</div>
+```
+
+- `repeat: Infinity` scale animation can cause discomfort for users with vestibular disorders. Respect `prefers-reduced-motion` by stopping the animation entirely:
+
+```tsx
+"use client"
+import { useReducedMotion } from "motion/react"
+import { HeartbeatIcon } from "@/components/animations/icons/heartbeat"
+import { Heart } from "lucide-react"
+
+export function LiveHeart({ bpm = 60 }: { bpm?: number }) {
+  const reduced = useReducedMotion()
+  if (reduced) return <Heart className="w-6 h-6 text-red-500 fill-red-500" aria-hidden="true" />
+  return (
+    <HeartbeatIcon bpm={bpm}>
+      <Heart className="w-6 h-6 text-red-500 fill-red-500" aria-hidden="true" />
+    </HeartbeatIcon>
+  )
+}
+```
+
+- Never rely on the heartbeat animation alone to signal a critical condition (e.g., a health alert). Pair it with color and text.
+
+## Performance considerations
+
+- The animation only modifies `scale`, which is a transform. It runs on the compositor thread with no layout or repaint cost.
+- `repeat: Infinity` keeps the compositor thread active indefinitely. Conditionally unmount the component when it is not needed rather than hiding it with CSS:
+
+```tsx
+{isLive && (
+  <HeartbeatIcon bpm={60}>
+    <Heart className="w-5 h-5 text-red-500 fill-red-500" aria-hidden="true" />
+  </HeartbeatIcon>
+)}
+```
+
+- The `bpm` prop converts directly to `duration = 60 / bpm`. Passing very high bpm values (e.g., 300+) produces a sub-0.2 s cycle that can feel jittery, especially on 60 Hz displays where sub-frame differences are not perceptible. Stay in the 40 to 180 bpm range for reliable results.
+- Avoid rendering many `HeartbeatIcon` instances simultaneously. A social feed with 20 liked posts all showing beating hearts will schedule 20 independent `repeat: Infinity` transform cycles on the compositor.
+
+## Customization examples
+
+### Resting pace (60 bpm) for a calm indicator
+
+```tsx
+import { HeartbeatIcon } from "@/components/animations/icons/heartbeat"
+import { Heart } from "lucide-react"
+
+<HeartbeatIcon bpm={60}>
+  <Heart className="w-6 h-6 text-red-500 fill-red-500" aria-hidden="true" />
+</HeartbeatIcon>
+```
+
+### Elevated rate tied to a live metric
+
+Derive `bpm` from real data, clamped to a readable range:
+
+```tsx
+import { HeartbeatIcon } from "@/components/animations/icons/heartbeat"
+import { Activity } from "lucide-react"
+
+export function MetricPulse({ rawBpm }: { rawBpm: number }) {
+  const bpm = Math.max(40, Math.min(rawBpm, 180))
+  return (
+    <HeartbeatIcon bpm={bpm}>
+      <Activity className="w-6 h-6 text-rose-500" aria-hidden="true" />
+    </HeartbeatIcon>
+  )
+}
+```
+
+### Larger icon with label for a wellness dashboard widget
+
+```tsx
+import { HeartbeatIcon } from "@/components/animations/icons/heartbeat"
+import { Heart } from "lucide-react"
+
+export function HeartRateWidget({ bpm }: { bpm: number }) {
+  return (
+    <div className="flex items-center gap-3 rounded-xl border border-neutral-200 px-4 py-3 dark:border-neutral-800">
+      <HeartbeatIcon bpm={bpm}>
+        <Heart className="w-7 h-7 text-red-500 fill-red-500" aria-hidden="true" />
+      </HeartbeatIcon>
+      <div>
+        <p className="text-xs text-neutral-500">Heart rate</p>
+        <p className="text-lg font-semibold">{bpm} bpm</p>
+      </div>
+    </div>
+  )
+}
+```
+
+## Real-world examples
+
+### "Liked" state on a social post
+
+The heart only beats after the user likes the post, reinforcing the active state:
+
+```tsx
+"use client"
+import { useState } from "react"
+import { HeartbeatIcon } from "@/components/animations/icons/heartbeat"
+import { useReducedMotion } from "motion/react"
+import { Heart } from "lucide-react"
+
+export function PostLike({ count }: { count: number }) {
+  const [liked, setLiked] = useState(false)
+  const reduced = useReducedMotion()
+
+  const icon = (
+    <Heart
+      className={`w-5 h-5 transition-colors ${liked ? "fill-red-500 text-red-500" : "text-neutral-400"}`}
+      aria-hidden="true"
+    />
+  )
+
+  return (
+    <button
+      onClick={() => setLiked((p) => !p)}
+      aria-label={liked ? "Unlike post" : "Like post"}
+      aria-pressed={liked}
+      className="flex items-center gap-1.5 text-sm text-neutral-500 hover:text-neutral-700"
+    >
+      {liked && !reduced ? <HeartbeatIcon bpm={72}>{icon}</HeartbeatIcon> : icon}
+      <span>{liked ? count + 1 : count}</span>
+    </button>
+  )
+}
+```
+
+### Live stream viewer count widget
+
+The heart beats at a rate proportional to the number of concurrent viewers:
+
+```tsx
+import { HeartbeatIcon } from "@/components/animations/icons/heartbeat"
+import { Heart } from "lucide-react"
+
+export function LiveViewerBadge({ viewers }: { viewers: number }) {
+  // More viewers = faster pulse, capped at 120 bpm.
+  const bpm = Math.min(60 + Math.floor(viewers / 100), 120)
+
+  return (
+    <div className="flex items-center gap-1.5 rounded-full bg-red-50 px-3 py-1 text-sm font-medium text-red-600 dark:bg-red-950 dark:text-red-400">
+      <HeartbeatIcon bpm={bpm}>
+        <Heart className="w-4 h-4 fill-red-500 text-red-500" aria-hidden="true" />
+      </HeartbeatIcon>
+      <span>{viewers.toLocaleString()} watching</span>
+    </div>
+  )
+}
+```

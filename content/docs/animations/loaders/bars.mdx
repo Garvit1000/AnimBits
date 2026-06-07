@@ -146,3 +146,155 @@ export default function Example() {
 | `count` | `number` | `5` | Number of bars |
 | `gap` | `number` | `4` | Gap between bars in pixels |
 | `duration` | `number` | `1` | Animation duration in seconds |
+
+## Use cases
+
+`LoaderBars` is an **indeterminate** loader: it communicates ongoing work without reporting any percentage. Each bar animates its height between 30% and 100% of `barHeight`, with each bar delayed by `index * (duration / count)` seconds so they cascade rather than all move together. Reach for it when:
+
+- **Audio or media processing.** The rhythmic bar pattern strongly suggests waveforms, so it fits well in media players, speech-to-text UI, or podcast editors waiting on transcription.
+- **AI / stream responses.** While waiting for an LLM stream to begin, a bars loader matches the "typing" metaphor better than a circle.
+- **Section-level loading with a musical or rhythmic brand voice.** Dashboard widgets, activity feeds, or sidebars with a dynamic feel.
+- **Small inline indicators.** At `count={3}` and `barWidth={3}` the component is compact enough to sit inside a chat bubble or a status badge.
+
+## When to use / when not to use
+
+**Use bars when:**
+
+- The wait is indeterminate and you want something livelier than a plain [Spinner](/docs/animations/loaders/spinner).
+- The surrounding context has a waveform, audio, or signal metaphor.
+- You want a horizontal loading affordance that does not take up a circular footprint.
+
+**Reach for something else when:**
+
+- **You know the progress percentage.** Use [Liquid Progress](/docs/animations/loaders/liquid-progress) so the user can see how far along the work is.
+- **You are loading a content-shaped layout** such as cards, articles, or profile rows. A [Skeleton](/docs/animations/loaders/skeleton) communicates "content is coming here" far better than floating bars.
+- **Motion is too busy for the context.** Five bars cycling continuously can be distracting inside a data-dense table or a tight sidebar. A [Spinner](/docs/animations/loaders/spinner) is less visually noisy.
+- **The wait is under ~300 ms.** A delay pattern (see spinner docs) avoids a flash.
+
+## Accessibility notes
+
+`LoaderBars` renders plain `<div>` elements. Without additional markup, screen readers have no indication work is happening.
+
+- **Wrap in a live region:**
+
+```tsx
+<div role="status">
+  <LoaderBars />
+  <span className="sr-only">Loading...</span>
+</div>
+```
+
+- **Respect reduced motion.** All five bars animate continuously. Use `useReducedMotion` from `motion/react` and either pause the animation or reduce the bars to a single static bar when the user has requested less motion:
+
+```tsx
+"use client"
+import { useReducedMotion } from "motion/react"
+import { LoaderBars } from "@/components/animations/loaders/bars"
+
+function AccessibleBars() {
+  const reduced = useReducedMotion()
+  // Longer duration slows the cycling to near-still without removing the busy indicator.
+  return (
+    <div role="status">
+      <LoaderBars duration={reduced ? 8 : 1} />
+      <span className="sr-only">Loading...</span>
+    </div>
+  )
+}
+```
+
+- **Do not rely on motion alone.** The `sr-only` label is the only signal for users who suppress animations.
+
+## Performance considerations
+
+- **Transform-free height animation.** Each bar animates `height`, which triggers layout recalculation on every frame. This is less efficient than a transform-only animation like the [Spinner](/docs/animations/loaders/spinner). For most cases the cost is negligible, but avoid placing many `LoaderBars` instances on the same page simultaneously.
+- **Conditionally render, do not hide.** `repeat: Infinity` keeps the animation loop running. Use `{loading && <LoaderBars />}` rather than a CSS `display:none` or `visibility:hidden` wrapper so the bars are fully unmounted when work completes.
+- **Keep `count` reasonable.** Each bar is a separate `motion.div` with its own animation. `count={5}` (the default) is fine; `count={20}` schedules 20 concurrent animations and noticeably increases CPU usage on lower-end hardware.
+
+## Customization examples
+
+### Narrow and minimal
+
+Three thin bars work well inside a badge or a chat status indicator:
+
+```tsx
+<LoaderBars count={3} barWidth={2} barHeight={16} gap={3} />
+```
+
+### Wide audio-style bars
+
+Seven bars with more height feel like an equalizer visualization:
+
+```tsx
+<LoaderBars count={7} barWidth={5} barHeight={40} gap={3} color="#3b82f6" duration={0.8} />
+```
+
+### Slow and calm
+
+A slower duration reduces perceived energy for contexts that should feel relaxed:
+
+```tsx
+<LoaderBars count={4} barWidth={4} barHeight={28} duration={1.8} color="#94a3b8" />
+```
+
+## Real-world examples
+
+### AI response waiting state
+
+Show bars while waiting for the first token of a streamed response:
+
+```tsx
+"use client"
+import { useState } from "react"
+import { LoaderBars } from "@/components/animations/loaders/bars"
+
+export function AIChatInput({ onSubmit }: { onSubmit: (q: string) => Promise<void> }) {
+  const [waiting, setWaiting] = useState(false)
+
+  async function handleAsk(query: string) {
+    setWaiting(true)
+    try {
+      await onSubmit(query)
+    } finally {
+      setWaiting(false)
+    }
+  }
+
+  return (
+    <div className="flex items-center gap-3 rounded-xl border border-neutral-200 px-4 py-3 dark:border-neutral-800">
+      {waiting ? (
+        <div role="status" className="flex items-center gap-2 text-sm text-neutral-500">
+          <LoaderBars count={4} barWidth={3} barHeight={16} color="#6366f1" duration={0.8} />
+          <span className="sr-only">Waiting for response...</span>
+          <span aria-hidden>Thinking</span>
+        </div>
+      ) : (
+        <span className="text-sm text-neutral-400">Ask anything...</span>
+      )}
+    </div>
+  )
+}
+```
+
+### Media player loading track
+
+```tsx
+"use client"
+import { LoaderBars } from "@/components/animations/loaders/bars"
+
+export function TrackRow({ title, loading }: { title: string; loading: boolean }) {
+  return (
+    <div className="flex items-center gap-3 rounded-lg px-4 py-3 hover:bg-neutral-100 dark:hover:bg-neutral-800">
+      {loading ? (
+        <div role="status" className="w-5 flex justify-center">
+          <LoaderBars count={3} barWidth={2} barHeight={14} gap={2} color="#10b981" duration={0.9} />
+          <span className="sr-only">Loading track...</span>
+        </div>
+      ) : (
+        <div className="h-4 w-4 rounded bg-neutral-300 dark:bg-neutral-600" />
+      )}
+      <span className="text-sm font-medium">{title}</span>
+    </div>
+  )
+}
+```

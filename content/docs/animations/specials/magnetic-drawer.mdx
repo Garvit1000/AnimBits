@@ -248,3 +248,193 @@ export function MagneticDrawer({
 | `open` | `boolean` | - | Controls visibility. |
 | `onOpenChange` | `(open) => void` | - | State updater. |
 | `snapPoints` | `number[]` | `[0.5, 0.9]` | Array of open heights (0 to 1). |
+
+## Use cases
+
+`MagneticDrawer` renders via `createPortal` into `document.body`, sits at `z-index: 100`, and uses a `useMotionValue` `y` driven by `drag="y"` for real-time resistance. On drag end it snaps to the closest value in `snapPoints` (each a fraction of viewport height, 0 to 1) using a `spring(damping: 30, stiffness: 300)` animation. A velocity threshold of 500 px/s triggers dismiss or a snap-up override.
+
+- **Mobile navigation drawers.** A bottom sheet with `snapPoints={[0.4, 0.85]}` gives users a peek state (40% open) and an expanded state (85% open) for a two-stage navigation panel.
+- **Detail panels in list-detail layouts.** Tap a list item to reveal more detail at the `0.5` snap without fully covering the list, then drag up to `0.9` for the full record.
+- **Filter and sort sheets.** E-commerce or search UIs can expose filter controls in the drawer at a half-height snap, letting users see the list update behind a translucent backdrop.
+- **Media player controls.** A mini-player at `0.15` that expands to `0.8` on drag up matches common mobile music app patterns.
+- **Contextual action sheets.** Present share, copy, or delete actions in a bottom drawer triggered by a long-press or button click.
+
+## When to use / when not to use
+
+**Use `MagneticDrawer` when:**
+
+- Your primary audience is on a touch-enabled device. The drag mechanic with `dragElastic={0.05}` and velocity-based snap feel natural on mobile.
+- You need two or more partial open states (multiple snap points). A dialog covers the full screen; the drawer is for layered reveal.
+- The content inside the drawer is scrollable. The inner container uses `overflow-y-auto` so long content scrolls without conflicting with the drag gesture.
+
+**Do not use `MagneticDrawer` when:**
+
+- The interaction is primarily mouse-driven on desktop. The drag handle and snap mechanic feel unnatural with a mouse compared to native `<dialog>` or a slide-out sidebar. Consider a side panel or popover for desktop-first UIs.
+- The content requires modal-level focus isolation (e.g., a payment form). The current implementation uses `AnimatePresence` but does not enforce a full focus trap. Use a proper dialog component with `aria-modal="true"` and a focus trap library for critical flows.
+- You need a static, non-draggable overlay panel. The component is built around drag physics; if the user should not be able to resize it, a regular modal is simpler and more accessible.
+- The UI has very few vertical pixels (small embedded iframes, kiosk displays). The drawer uses `window.innerHeight` for its geometry; in constrained viewports this can result in unusable layouts.
+
+## Accessibility notes
+
+- **Focus management.** When the drawer opens, focus should move to the drawer container or its first interactive element. The current source does not do this automatically. Add it with a `useEffect` and a `ref` on the drawer:
+
+```tsx
+// After the drawer mounts and opens, move focus to the drawer content
+useEffect(() => {
+  if (open && containerRef.current) {
+    containerRef.current.focus()
+  }
+}, [open])
+
+// Add tabIndex={-1} to the motion.div container
+<motion.div ref={containerRef} tabIndex={-1} ... >
+```
+
+- **Return focus on close.** Store a reference to the element that triggered the drawer and restore focus to it when the drawer closes:
+
+```tsx
+const triggerRef = useRef<HTMLButtonElement>(null)
+// On open, triggerRef.current is the button
+// On onOpenChange(false), call triggerRef.current?.focus()
+```
+
+- **Escape key.** The drawer does not handle keyboard Escape. Add a `keydown` listener:
+
+```tsx
+useEffect(() => {
+  const handler = (e: KeyboardEvent) => {
+    if (e.key === "Escape" && open) onOpenChange(false)
+  }
+  window.addEventListener("keydown", handler)
+  return () => window.removeEventListener("keydown", handler)
+}, [open, onOpenChange])
+```
+
+- **`aria-modal`.** The drawer blocks interaction with the page behind it (backdrop `pointer-events`). Add `role="dialog"` and `aria-modal="true"` to the drawer container so screen readers understand the modal context.
+- **Drag handle label.** The visual drag handle (the `h-1.5 w-12` pill) has no accessible description. Consider adding a visually-hidden hint: `<span className="sr-only">Drag to resize</span>`.
+- **Scroll lock.** The component calls `document.body.style.overflow = "hidden"` on open. This is the correct approach; confirm it does not break fixed headers or custom scroll containers in your layout.
+- **Reduced motion.** The spring snap and dismiss animations should be instantaneous for users who prefer reduced motion:
+
+```tsx
+"use client"
+import { useReducedMotion } from "motion/react"
+
+// Pass a transition override to animate() calls that uses duration: 0
+const transition = useReducedMotion()
+  ? { duration: 0 }
+  : { type: "spring", damping: 30, stiffness: 300 }
+```
+
+## Performance considerations
+
+- **`useMotionValue` for `y`.** All drag and spring animations run through the motion value pipeline, bypassing React re-renders during the gesture. Layout only re-renders when `open` or `drawerHeight` state changes, keeping gesture performance smooth.
+- **`createPortal` into `document.body`.** The drawer renders outside the React tree of the trigger component. This avoids stacking context issues but means it cannot inherit CSS custom properties from a parent provider unless they are on `:root` or `body`.
+- **Backdrop `useTransform`.** `backdropOpacity` is derived from `y` via `useTransform`. This is evaluated in the motion value pipeline without re-rendering. The `pointerEvents` transform also derives from `y`, which prevents backdrop clicks when the drawer is fully closed.
+- **`window.innerHeight` on resize.** The component listens to `resize` and updates `drawerHeight` state, which triggers a React re-render and recalculates the snap target positions. This is correct but avoid opening the drawer during an active resize.
+- **`overflow-y-auto` inner scroll vs. drag conflict.** Content inside the drawer can scroll vertically. The `touchAction: "none"` on the outer container prevents native scroll from conflicting with `framer-motion`'s drag. If the inner scroll container has long content, test that scroll and drag do not conflict on iOS Safari.
+
+## Customization examples
+
+### Three snap points (mini, half, full)
+
+```tsx
+import { MagneticDrawer } from "@/components/animations/specials/magnetic-drawer"
+import { useState } from "react"
+
+export function ThreeSnapDrawer() {
+  const [open, setOpen] = useState(false)
+
+  return (
+    <>
+      <button
+        onClick={() => setOpen(true)}
+        className="rounded-lg bg-neutral-900 px-5 py-2.5 text-sm font-medium text-white dark:bg-white dark:text-neutral-900"
+      >
+        Open filters
+      </button>
+      <MagneticDrawer open={open} onOpenChange={setOpen} snapPoints={[0.25, 0.55, 0.9]}>
+        <div className="space-y-4 p-4">
+          <h2 className="text-lg font-semibold">Filters</h2>
+          <p className="text-sm text-neutral-500">Drag to expand or collapse.</p>
+        </div>
+      </MagneticDrawer>
+    </>
+  )
+}
+```
+
+### Tall content with inner scroll
+
+```tsx
+import { MagneticDrawer } from "@/components/animations/specials/magnetic-drawer"
+import { useState } from "react"
+
+export function ScrollableDrawer() {
+  const [open, setOpen] = useState(false)
+
+  return (
+    <>
+      <button onClick={() => setOpen(true)} className="rounded-lg border px-4 py-2 text-sm">
+        View details
+      </button>
+      <MagneticDrawer open={open} onOpenChange={setOpen} snapPoints={[0.6]}>
+        <div className="space-y-3 p-4">
+          {Array.from({ length: 20 }, (_, i) => (
+            <div key={i} className="rounded-lg bg-neutral-100 dark:bg-neutral-800 p-3 text-sm">
+              Row {i + 1} of content
+            </div>
+          ))}
+        </div>
+      </MagneticDrawer>
+    </>
+  )
+}
+```
+
+## Real-world examples
+
+### Mobile navigation drawer
+
+```tsx
+"use client"
+import { useState } from "react"
+import { MagneticDrawer } from "@/components/animations/specials/magnetic-drawer"
+
+const navItems = ["Dashboard", "Projects", "Team", "Settings", "Billing"]
+
+export function MobileNav() {
+  const [open, setOpen] = useState(false)
+
+  return (
+    <>
+      <button
+        onClick={() => setOpen(true)}
+        className="rounded-md border border-neutral-200 p-2 dark:border-neutral-800"
+        aria-label="Open navigation"
+      >
+        <svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor">
+          <path fillRule="evenodd" d="M2 4.75A.75.75 0 012.75 4h14.5a.75.75 0 010 1.5H2.75A.75.75 0 012 4.75zm0 10.5a.75.75 0 01.75-.75h7.5a.75.75 0 010 1.5h-7.5a.75.75 0 01-.75-.75zM2 10a.75.75 0 01.75-.75h14.5a.75.75 0 010 1.5H2.75A.75.75 0 012 10z" clipRule="evenodd" />
+        </svg>
+      </button>
+
+      <MagneticDrawer open={open} onOpenChange={setOpen} snapPoints={[0.5, 0.85]}>
+        <nav className="p-6" role="navigation" aria-label="Main navigation">
+          <p className="mb-4 text-xs font-semibold uppercase tracking-widest text-neutral-400">Navigation</p>
+          <ul className="space-y-1">
+            {navItems.map((item) => (
+              <li key={item}>
+                <a
+                  href={`/${item.toLowerCase()}`}
+                  className="block rounded-lg px-3 py-2.5 text-sm font-medium text-neutral-700 hover:bg-neutral-100 dark:text-neutral-300 dark:hover:bg-neutral-800"
+                >
+                  {item}
+                </a>
+              </li>
+            ))}
+          </ul>
+        </nav>
+      </MagneticDrawer>
+    </>
+  )
+}
+```

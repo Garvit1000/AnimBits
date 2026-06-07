@@ -399,6 +399,158 @@ export function NavigateButton() {
 | `className` | `string` | - | Additional CSS classes |
 | `...props` | `LinkProps` | - | All Next.js Link props |
 
+## Use cases
+
+`PageTransitionSlide` builds on the same View Transitions API mechanism as `PageTransitionFade` but adds a `direction` prop that sets a `data-slide-direction` attribute on `<html>`. The installed CSS uses attribute selectors to choose among `slide-out-left`/`slide-in-left`, `slide-out-right`/`slide-in-right`, `slide-out-top`/`slide-in-top`, and `slide-out-bottom`/`slide-in-bottom` keyframes. The `PageTransitionLink` component calls `document.startViewTransition` before `router.push`. The default `direction` is `"left"`, meaning the new page slides in from the right (the old page exits to the left). Reach for it when:
+
+- **Apps with a clear hierarchical navigation.** "List to detail" flows benefit from a left-slide-in so the user perceives drilling deeper. Pressing back then slides right, mirroring the mental model of mobile navigation.
+- **Tab-style navigation.** Sliding between peer sections of an app (Dashboard, Reports, Settings) with consistent direction cues reinforces spatial memory.
+- **Onboarding steps.** A left-to-right slide forward and right-to-left slide backward is the universal wizard metaphor.
+- **Mobile-first web apps.** Slide transitions match native iOS/Android navigation conventions, making a PWA feel native.
+
+## When to use / when not to use
+
+**Use slide transitions when:**
+
+- Routes have a meaningful spatial or hierarchical relationship that maps to a direction.
+- You are building a mobile-first or PWA experience where native-feeling navigation is important.
+
+**Reach for [Page Transition Fade](/docs/animations/pages/page-transition-fade) instead when:**
+
+- Routes are peers with no natural direction (top-level marketing pages, flat site maps). A fade is neutral; a slide implies direction that may not exist.
+- The page contains horizontal scroll. A horizontal slide transition that animates the whole page can visually conflict with scrollable regions.
+
+**Avoid both when:**
+
+- **Safari is a primary target.** View Transitions API is not yet supported in Safari. Both components fall back to instant navigation silently.
+- **The content has many absolutely-positioned or sticky elements.** These can behave unexpectedly during a view transition screenshot.
+
+## Accessibility notes
+
+Slide transitions move the entire page viewport and have stronger visual motion than a fade. This makes reduced-motion handling critical.
+
+- **Focus management on navigation.** Same as the fade variant: verify that focus moves to the correct element after the transition completes, especially if you use dynamic direction changes.
+- **Reduced motion is handled in CSS.** The installed `globals.css` includes:
+
+```css
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-group(*),
+  ::view-transition-old(*),
+  ::view-transition-new(*) {
+    animation: none !important;
+  }
+}
+```
+
+Full-page slides are among the most likely animations to cause discomfort for users with vestibular disorders. The CSS media query above ensures they see instant navigation. Verify this is in your `globals.css`.
+
+- **Do not use slide transitions as the only navigation cue.** The direction of the slide communicates spatial relationship, but ensure the URL, breadcrumb, and page heading also convey where the user is.
+
+## Performance considerations
+
+- **View Transitions API is GPU-composited.** The browser screenshots old and new pages and animates them with CSS transforms, so there is no per-frame JavaScript cost.
+- **`transform: translateX/Y` is the animation.** Slide keyframes use `translateX`/`translateY`, which are compositor-layer operations. No layout is triggered during the animation.
+- **`duration` defaults to 0.4 s.** This is already at the high end for a repeated navigation gesture. Keep it at or below 0.4 s for routes users navigate frequently, such as tab switching.
+- **The wrapper renders no DOM element.** `PageTransitionSlide` returns `<>{children}</>` and uses `useEffect` to write CSS properties. There is no layout overhead.
+- **The `data-slide-direction` attribute is set on `document.documentElement`.** This means the browser must re-evaluate the CSS attribute selectors for the whole document on each navigation. The cost is negligible in practice.
+
+## Customization examples
+
+### Direction that mirrors browser back/forward
+
+```tsx
+"use client"
+import { useState, useEffect } from "react"
+import { usePathname } from "next/navigation"
+import { PageTransitionSlide, SlideDirection } from "@/components/animations/pages/page-transition-slide"
+
+export function DirectionalSlide({ children }: { children: React.ReactNode }) {
+  const pathname = usePathname()
+  const [direction, setDirection] = useState<SlideDirection>("left")
+  const [prev, setPrev] = useState(pathname)
+
+  useEffect(() => {
+    setDirection(pathname.length >= prev.length ? "left" : "right")
+    setPrev(pathname)
+  }, [pathname, prev])
+
+  return (
+    <PageTransitionSlide direction={direction} duration={0.35}>
+      {children}
+    </PageTransitionSlide>
+  )
+}
+```
+
+### Faster mobile-native feel
+
+Tighter timing matches iOS/Android native app transitions:
+
+```tsx
+<PageTransitionSlide direction="left" duration={0.28} ease="cubic-bezier(0.4, 0, 0.2, 1)">
+  {children}
+</PageTransitionSlide>
+```
+
+## Real-world examples
+
+### Settings section navigation
+
+Slide left when entering a settings sub-page, slide right when going back:
+
+```tsx title="app/settings/layout.tsx"
+"use client"
+import { useState, useEffect } from "react"
+import { usePathname } from "next/navigation"
+import { PageTransitionSlide, SlideDirection } from "@/components/animations/pages/page-transition-slide"
+import { PageTransitionLink } from "@/components/animations/pages/page-transition-link"
+
+const SETTINGS_NAV = [
+  { href: "/settings/profile", label: "Profile" },
+  { href: "/settings/security", label: "Security" },
+  { href: "/settings/notifications", label: "Notifications" },
+  { href: "/settings/billing", label: "Billing" },
+]
+
+export default function SettingsLayout({ children }: { children: React.ReactNode }) {
+  const pathname = usePathname()
+  const [direction, setDirection] = useState<SlideDirection>("left")
+  const [prevPath, setPrevPath] = useState(pathname)
+
+  useEffect(() => {
+    const prevIdx = SETTINGS_NAV.findIndex((n) => n.href === prevPath)
+    const nextIdx = SETTINGS_NAV.findIndex((n) => n.href === pathname)
+    setDirection(nextIdx >= prevIdx ? "left" : "right")
+    setPrevPath(pathname)
+  }, [pathname, prevPath])
+
+  return (
+    <PageTransitionSlide direction={direction} duration={0.3}>
+      <div className="flex min-h-screen">
+        <aside className="w-56 border-r border-neutral-200 p-4 dark:border-neutral-800">
+          <nav className="flex flex-col gap-1">
+            {SETTINGS_NAV.map((item) => (
+              <PageTransitionLink
+                key={item.href}
+                href={item.href}
+                className={`rounded-lg px-3 py-2 text-sm font-medium transition-colors ${
+                  pathname === item.href
+                    ? "bg-neutral-100 dark:bg-neutral-800"
+                    : "text-neutral-600 hover:bg-neutral-50 dark:text-neutral-400 dark:hover:bg-neutral-800/50"
+                }`}
+              >
+                {item.label}
+              </PageTransitionLink>
+            ))}
+          </nav>
+        </aside>
+        <main className="flex-1 p-8">{children}</main>
+      </div>
+    </PageTransitionSlide>
+  )
+}
+```
+
 ## Examples
 
 ### Slide from Left

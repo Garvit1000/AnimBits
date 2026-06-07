@@ -294,6 +294,159 @@ export function ThemeToggle() {
 | `blur` | `number` | `0` | Blur amount in pixels |
 | `className` | `string` | - | Additional CSS classes |
 
+## Use cases
+
+`ThemeToggleCircular` reads the click coordinates (`e.clientX`, `e.clientY`) and stores them as `--x` and `--y` CSS custom properties on `<html>`. The CSS then drives a `clip-path: circle(0% at var(--x) var(--y))` to `circle(150% at ...)` keyframe animation on the `::view-transition-new(root)` pseudo-element when going to dark, and the reverse (`circle-reverse`) when going to light. The result is a radial reveal that originates from the exact point where the user clicked, which feels intentional and spatial.
+
+Use it when:
+
+- Your navbar or header has a Sun/Moon toggle button and you want the theme change to feel tied to that specific button rather than emanating from an edge of the screen.
+- The toggle can appear anywhere on the page (floating action button, inline settings toggle, command palette shortcut). Because the origin is the click point, it works regardless of button position.
+- You want the ripple to feel "organic": `speed=0.3` to `0.5` with `blur=0` gives a crisp, fast reveal; `speed=0.8` with `blur=8` gives a softer, dreamlike wash.
+
+## When to use / when not to use
+
+**Use circular when:**
+
+- The toggle button can be anywhere on the screen and the radial origin naturally follows it. This variant reads as the most spatially grounded of the five.
+- You want a single, direction-agnostic reveal. The circular keyframe works well at any button position without looking awkward.
+
+**Consider a different variant when:**
+
+- Your layout has a natural horizontal or vertical axis and you want the transition to reinforce it. A sidebar-based toggle that slides the page from left to right is more meaningful with [Slide Left](/docs/transitions/theme-toggle-slide-left) or [Slide Right](/docs/transitions/theme-toggle-slide-right).
+- The toggle is always at the top of the page (in a sticky nav). [Slide Top](/docs/transitions/theme-toggle-slide-top) (new theme slides down from the top) or [Slide Bottom](/docs/transitions/theme-toggle-slide-bottom) (new theme slides up from the bottom) aligns the animation direction with the button's screen position.
+- You want zero-configuration without needing to track `clientX`/`clientY`. The four slide variants (`slide-top`, `slide-bottom`, `slide-left`, `slide-right`) do not need click coordinates; they are simpler to drop in.
+
+**Do not use any theme toggle when:**
+
+- The transition animation is purely cosmetic and your users are on devices or browsers that do not support the View Transitions API (Firefox as of mid-2025, Safari before 18). All five variants fall back to an instant theme change via the `!document.startViewTransition` guard, which is safe.
+
+## Accessibility notes
+
+- **Accessible name on the trigger.** `ThemeToggleCircular` renders a wrapper `<div>` and delegates the click. Your `children` must be a button or include an accessible label. Use `<Button variant="ghost" size="icon" aria-label="Toggle theme">` so screen readers announce the action.
+- **`aria-pressed` or role switch.** The toggle button should communicate its current state. Either use `aria-pressed={isDark}` on an icon button, or a `role="switch"` with `aria-checked`. Without it, screen reader users hear "Toggle theme button" with no indication of the current value.
+- **The clip-path animation is decorative.** The theme change itself (class toggling on `<html>`) must happen synchronously inside the `startViewTransition` callback, which it does via `onToggle?.()`. Users who switch themes rapidly or interrupt the transition still get the correct theme because the DOM change is not gated on the animation finishing.
+- **`prefers-reduced-motion`.** The CSS already includes `@media (prefers-reduced-motion: reduce) { ::view-transition-group(*), ::view-transition-old(*), ::view-transition-new(*) { animation: none !important; } }`. For users who prefer reduced motion, the theme switches instantly with no circle animation. This is correct behavior and requires no extra JavaScript.
+- **`isTransitioning` guard.** The component sets `pointerEvents: none` during the transition and bails out early if a transition is already in progress. This prevents double-firing but also means the button is briefly unreachable. Ensure the `speed` is short enough (0.3 to 0.8s) that users do not notice the brief unresponsiveness.
+
+## Performance considerations
+
+- **View Transitions API is hardware-accelerated.** `document.startViewTransition` takes a snapshot of the current page, applies the DOM change, then cross-fades using `::view-transition-old` and `::view-transition-new` pseudo-elements. The browser composites these as GPU layers, so the circular `clip-path` animation avoids layout and paint.
+- **`clip-path: circle(...)` is GPU-friendly** when painted on a compositor layer. The `will-change: clip-path` declaration in the CSS primes the layer in advance, but keep the viewport pixel count in mind: a full-screen clip-path on a 4K display still moves many pixels per frame. Keep `speed` at or below 0.6s for large displays.
+- **`blur` prop performance.** Setting `blur` to any value greater than 0 applies `filter: blur()` via the `--transition-blur` CSS variable to both `::view-transition-old` and `::view-transition-new`. CSS blur is expensive on large surfaces; use it sparingly (4 to 8px maximum) and only on desktop-class hardware.
+- **One transition at a time.** The `isTransitioning` boolean prevents overlapping `startViewTransition` calls. Rapid theme toggling without this guard can leave stale `data-theme-transition` attributes on `<html>`, breaking subsequent animations. The `finally` block in `handleClick` cleans up the attribute reliably.
+- **No Framer Motion cost.** This component does not use `motion` or `AnimatePresence`; it relies entirely on the native View Transitions API. There is no Framer Motion overhead at runtime.
+
+## Customization examples
+
+### Bouncy circular reveal
+
+Override the easing with a cubic-bezier that overshoots:
+
+```css
+[data-theme-transition="to-dark"]::view-transition-new(root) {
+  animation: circle var(--transition-speed) cubic-bezier(0.68, -0.55, 0.27, 1.55);
+}
+[data-theme-transition="to-light"]::view-transition-old(root) {
+  animation: circle-reverse var(--transition-speed) cubic-bezier(0.68, -0.55, 0.27, 1.55);
+}
+```
+
+### Asymmetric speeds
+
+Go to dark quickly, return to light slowly:
+
+```css
+[data-theme-transition="to-dark"]::view-transition-new(root) {
+  animation: circle 0.3s ease-out;
+}
+[data-theme-transition="to-light"]::view-transition-old(root) {
+  animation: circle-reverse 0.8s ease-in;
+}
+```
+
+### Blurred dream transition
+
+Add a blur for an impressionistic feel on desktop:
+
+```tsx
+<ThemeToggleCircular speed={0.7} blur={12} onToggle={toggleTheme}>
+  <Button variant="ghost" size="icon" aria-label="Toggle theme">
+    <Sun className="h-5 w-5 dark:hidden" />
+    <Moon className="h-5 w-5 hidden dark:block" />
+  </Button>
+</ThemeToggleCircular>
+```
+
+## Real-world examples
+
+### Navbar theme toggle (next-themes)
+
+The most common integration: a Sun/Moon button in the top navigation bar that triggers a radial reveal from the button's click position.
+
+```tsx
+"use client"
+import { useTheme } from "next-themes"
+import { ThemeToggleCircular } from "@/components/animations/transitions/theme-toggle-circular"
+import { Moon, Sun } from "lucide-react"
+import { Button } from "@/components/ui/button"
+
+export function NavbarThemeToggle() {
+  const { setTheme } = useTheme()
+
+  const toggleTheme = () => {
+    const isDark = document.documentElement.classList.contains("dark")
+    document.documentElement.classList.toggle("dark", !isDark)
+    setTheme(isDark ? "light" : "dark")
+  }
+
+  return (
+    <nav className="flex items-center justify-between px-6 py-4 border-b border-zinc-200 dark:border-zinc-800">
+      <span className="font-bold text-zinc-900 dark:text-zinc-100">Acme</span>
+      <ThemeToggleCircular onToggle={toggleTheme} speed={0.5}>
+        <Button variant="ghost" size="icon" aria-label="Toggle theme">
+          <Sun className="h-5 w-5 rotate-0 scale-100 dark:-rotate-90 dark:scale-0 transition-all" />
+          <Moon className="absolute h-5 w-5 rotate-90 scale-0 dark:rotate-0 dark:scale-100 transition-all" />
+        </Button>
+      </ThemeToggleCircular>
+    </nav>
+  )
+}
+```
+
+### Settings page toggle with label
+
+A labeled row in a settings panel, where the circular reveal clarifies which side of the screen is "activating" the change:
+
+```tsx
+"use client"
+import { useTheme } from "next-themes"
+import { ThemeToggleCircular } from "@/components/animations/transitions/theme-toggle-circular"
+import { Switch } from "@/components/ui/switch"
+import { Label } from "@/components/ui/label"
+
+export function AppearanceRow() {
+  const { theme, setTheme } = useTheme()
+  const isDark = theme === "dark"
+
+  const toggleTheme = () => {
+    document.documentElement.classList.toggle("dark", !isDark)
+    setTheme(isDark ? "light" : "dark")
+  }
+
+  return (
+    <div className="flex items-center justify-between py-4 border-b border-zinc-100 dark:border-zinc-800">
+      <Label htmlFor="theme-toggle" className="text-sm font-medium text-zinc-900 dark:text-zinc-100">
+        Dark mode
+      </Label>
+      <ThemeToggleCircular onToggle={toggleTheme} speed={0.4}>
+        <Switch id="theme-toggle" checked={isDark} aria-label="Toggle dark mode" />
+      </ThemeToggleCircular>
+    </div>
+  )
+}
+```
+
 ## Examples
 
 ### Fast Transition

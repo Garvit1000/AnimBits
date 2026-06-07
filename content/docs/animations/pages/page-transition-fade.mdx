@@ -308,6 +308,136 @@ export function NavigateButton() {
 | `className` | `string` | - | Additional CSS classes |
 | `...props` | `LinkProps` | - | All Next.js Link props |
 
+## Use cases
+
+`PageTransitionFade` uses the native View Transitions API. `PageTransitionFade` itself is a thin wrapper that writes CSS custom properties (`--page-transition-duration`, `--page-transition-ease`) to the document root on every `pathname` change. The actual animation lives in `globals.css` via `::view-transition-old(root)` and `::view-transition-new(root)`. Navigation is handled by `PageTransitionLink`, which calls `document.startViewTransition` before pushing a new route. Reach for it when:
+
+- **Content-heavy multi-page apps.** Articles, docs sites, and portfolios where navigating between pages benefits from a moment of visual continuity.
+- **Onboarding flows and wizards.** A gentle fade between steps feels less jarring than an instant page swap.
+- **Marketing sites.** Fading between top-level pages (Home, About, Pricing) adds polish without imposing a directional assumption about the site structure.
+- **Apps where you want the simplest possible transition.** Fade is the safest choice when you do not know whether a slide direction would feel natural to all users.
+
+## When to use / when not to use
+
+**Use fade transitions when:**
+
+- You want page changes to feel smooth but you have no meaningful spatial relationship between routes (no "drill-in" or "back" navigation).
+- Browser support coverage of Chrome 111+/Edge 111+ is acceptable for your audience. The CSS fallback is instant navigation.
+
+**Reach for something else when:**
+
+- **Routes have a spatial hierarchy** (like a detail page inside a list). A left/right slide from [Page Transition Slide](/docs/animations/pages/page-transition-slide) communicates "forward" and "back" far better than a fade.
+- **The page is long and scroll position matters.** View Transitions capture the full rendered page and can flash the scroll position to the top during the transition. Test carefully.
+- **Safari is a primary target.** View Transitions API is not supported in Safari at time of writing (support is in progress). All fade behavior will silently fall back to instant navigation.
+
+## Accessibility notes
+
+Page transitions involve replacing visible content, which creates two accessibility concerns.
+
+- **Focus management.** When a new page renders, focus should move to a logical starting point (the `<h1>`, the skip-link, or the main landmark). In Next.js App Router this is handled automatically, but verify it works in your project because the View Transition timing can interfere with focus restoration.
+- **Reduced motion is handled by the CSS.** The installed `globals.css` already includes:
+
+```css
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-group(*),
+  ::view-transition-old(*),
+  ::view-transition-new(*) {
+    animation: none !important;
+  }
+}
+```
+
+This completely disables the transition for users who opt out of motion via their OS settings. No extra JavaScript is needed.
+
+- **Do not animate content that conveys status.** If the page that fades in contains a confirmation message, make sure the message is in a live region (`role="status"` or `aria-live="polite"`) so it is announced even if it entered via animation.
+
+## Performance considerations
+
+- **The View Transitions API is hardware-accelerated.** The browser takes a screenshot of the old page and composites it with the new page using GPU transforms, so the fade costs no JavaScript on each frame.
+- **`duration` defaults to 0.3 s.** Fade transitions longer than 0.5 s feel slow. Keep the duration short for navigation that users repeat frequently.
+- **The `PageTransitionFade` component itself renders no DOM.** It returns `<>{children}</>` and only writes CSS custom properties via `useEffect`. There is no wrapping element and no layout cost.
+- **`document.startViewTransition` is called synchronously before `router.push`.** This means the browser's transition lifecycle is tightly coupled to Next.js's navigation. If `router.push` is slow (e.g., slow RSC fetch), the old page stays frozen until the new page is ready. This is the expected behavior, but it can make slow navigations feel "stuck." Consider showing a loading indicator for navigations that take more than 300 ms.
+
+## Customization examples
+
+### Top-of-page loading bar during transition
+
+Combine a thin progress bar with the fade to indicate slow navigations:
+
+```tsx
+"use client"
+import { useState } from "react"
+import { PageTransitionLink } from "@/components/animations/pages/page-transition-link"
+import { LoaderLiquidProgress } from "@/components/animations/loaders/liquid-progress"
+
+export function NavLink({ href, children }: { href: string; children: React.ReactNode }) {
+  const [navigating, setNavigating] = useState(false)
+
+  return (
+    <>
+      {navigating && (
+        <div className="fixed top-0 left-0 right-0 z-50">
+          <LoaderLiquidProgress progress={70} height={3} color="#6366f1" duration={0.4} />
+        </div>
+      )}
+      <PageTransitionLink
+        href={href}
+        onClick={() => setNavigating(true)}
+        className="hover:text-blue-600 transition-colors"
+      >
+        {children}
+      </PageTransitionLink>
+    </>
+  )
+}
+```
+
+### Custom cubic-bezier easing
+
+A more dramatic ease-in/ease-out for a cinematic feel:
+
+```tsx
+<PageTransitionFade duration={0.45} ease="cubic-bezier(0.4, 0, 0.2, 1)">
+  {children}
+</PageTransitionFade>
+```
+
+## Real-world examples
+
+### Layout with persistent nav
+
+```tsx title="app/layout.tsx"
+import { PageTransitionFade } from "@/components/animations/pages/page-transition-fade"
+import { PageTransitionLink } from "@/components/animations/pages/page-transition-link"
+
+export default function RootLayout({ children }: { children: React.ReactNode }) {
+  return (
+    <html lang="en">
+      <body>
+        <PageTransitionFade duration={0.3} ease="ease-in-out">
+          <header className="sticky top-0 z-40 border-b border-neutral-200 bg-white/80 backdrop-blur dark:border-neutral-800 dark:bg-neutral-950/80">
+            <nav className="mx-auto flex max-w-5xl items-center gap-6 px-4 py-3">
+              <PageTransitionLink href="/" className="font-semibold">
+                Acme
+              </PageTransitionLink>
+              <PageTransitionLink href="/about" className="text-sm text-neutral-600 hover:text-black dark:text-neutral-400 dark:hover:text-white">
+                About
+              </PageTransitionLink>
+              <PageTransitionLink href="/pricing" className="text-sm text-neutral-600 hover:text-black dark:text-neutral-400 dark:hover:text-white">
+                Pricing
+              </PageTransitionLink>
+            </nav>
+          </header>
+          <main className="mx-auto max-w-5xl px-4 py-10">
+            {children}
+          </main>
+        </PageTransitionFade>
+      </body>
+    </html>
+  )
+}
+```
+
 ## Examples
 
 ### Fast Fade

@@ -156,3 +156,138 @@ export default function Example() {
 | `particleCount` | `number` | `3` | Number of particles |
 | `color` | `string` | `"currentColor"` | Color of the particles |
 | `duration` | `number` | `1.5` | Animation duration in seconds |
+
+## Use cases
+
+`LoaderOrbit` is an **indeterminate** loader. The outer container rotates at a constant `linear` speed while the particles are placed at static positions around the center using trigonometry: `radius = size / 2 - particleSize`, giving each particle a fixed orbit exactly one `particleSize` away from the container edge. Because only the wrapper rotates, all particles spin as a rigid constellation. Reach for it when:
+
+- **Technical or scientific products.** The orbital motion reads as "system working" and fits developer tools, dashboards, or data-processing UIs.
+- **Section-level loading with a bit more visual weight than a spinner.** With `size={60}` and `particleCount={5}` it fills a card's loading state nicely.
+- **Status indicators that need to feel purposeful.** Three evenly spaced orbiting dots suggest precision and structure.
+
+## When to use / when not to use
+
+**Use orbit when:**
+
+- You want an indeterminate loader that reads as more structured than a [Spinner](/docs/animations/loaders/spinner) but less animated than [Morphing](/docs/animations/loaders/morphing) or [Gooey Blobs](/docs/animations/loaders/gooey-blobs).
+- The loading area is roughly 40 px or larger, because the particles need room to spread out.
+
+**Reach for something else when:**
+
+- **You know the progress percentage.** Use [Liquid Progress](/docs/animations/loaders/liquid-progress).
+- **The container is very small (under ~32 px).** At small sizes the particles collapse toward the center and become indistinguishable. Use a [Spinner](/docs/animations/loaders/spinner) at small sizes.
+- **You are loading structured content.** Use a [Skeleton](/docs/animations/loaders/skeleton).
+- **Multiple loaders appear in the same view.** Rotating constellations next to each other create visual competition. Prefer a single spinner or skeleton instead.
+
+## Accessibility notes
+
+`LoaderOrbit` renders plain `<div>` elements. Without markup it is invisible to screen readers.
+
+- **Wrap in a live region:**
+
+```tsx
+<div role="status">
+  <LoaderOrbit />
+  <span className="sr-only">Loading...</span>
+</div>
+```
+
+- **Respect reduced motion.** The entire container rotates continuously. Honor the user's preference:
+
+```tsx
+"use client"
+import { useReducedMotion } from "motion/react"
+import { LoaderOrbit } from "@/components/animations/loaders/orbit"
+
+function AccessibleOrbit() {
+  const reduced = useReducedMotion()
+  return (
+    <div role="status">
+      <LoaderOrbit duration={reduced ? 10 : 1.5} />
+      <span className="sr-only">Loading...</span>
+    </div>
+  )
+}
+```
+
+- **Do not rely on motion alone.** The `sr-only` label is the accessible signal for screen-reader users.
+
+## Performance considerations
+
+- **Rotation only, no layout.** The `rotate: 360` animation is a pure compositor transform. It costs nothing in layout or paint and runs at a steady 60 fps even on low-end devices.
+- **Particle positions are computed once at render time** via `Math.cos`/`Math.sin` calls, not on every animation frame. The DOM is static; only the CSS transform updates.
+- **Unmount when done.** `repeat: Infinity` keeps the compositor awake. Use `{loading && <LoaderOrbit />}` to stop it.
+- **No `will-change` needed.** The transform animation is already composited.
+
+## Customization examples
+
+### Tight and minimal
+
+Fewer, smaller particles at a fast speed:
+
+```tsx
+<LoaderOrbit size={32} particleCount={2} particleSize={5} duration={1} />
+```
+
+### Prominent multi-particle
+
+More particles and a larger orbit for a hero loading state:
+
+```tsx
+<LoaderOrbit size={72} particleCount={6} particleSize={10} color="#6366f1" duration={2} />
+```
+
+### Slow and deliberate
+
+Fewer rotations per second for calmer contexts:
+
+```tsx
+<LoaderOrbit size={48} particleCount={3} particleSize={7} color="#94a3b8" duration={3} />
+```
+
+## Real-world examples
+
+### Data-processing card
+
+```tsx
+"use client"
+import { LoaderOrbit } from "@/components/animations/loaders/orbit"
+
+export function ProcessingCard({ processing, label }: { processing: boolean; label: string }) {
+  return (
+    <div className="flex items-center gap-4 rounded-xl border border-neutral-200 p-5 dark:border-neutral-800">
+      {processing ? (
+        <div role="status" className="flex-shrink-0">
+          <LoaderOrbit size={40} particleCount={3} particleSize={7} color="#3b82f6" duration={1.5} />
+          <span className="sr-only">Processing...</span>
+        </div>
+      ) : (
+        <div className="h-10 w-10 flex-shrink-0 rounded-full bg-green-100 dark:bg-green-900/40" />
+      )}
+      <p className="text-sm font-medium">{label}</p>
+    </div>
+  )
+}
+```
+
+### Full-page initialization overlay
+
+```tsx
+"use client"
+import { LoaderOrbit } from "@/components/animations/loaders/orbit"
+
+export function InitOverlay({ initializing }: { initializing: boolean }) {
+  if (!initializing) return null
+
+  return (
+    <div
+      role="status"
+      className="fixed inset-0 z-50 flex flex-col items-center justify-center gap-6 bg-neutral-950"
+    >
+      <LoaderOrbit size={64} particleCount={4} particleSize={10} color="#3b82f6" duration={2} />
+      <p className="text-sm text-neutral-400">Connecting to server...</p>
+      <span className="sr-only">Initializing application...</span>
+    </div>
+  )
+}
+```

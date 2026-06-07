@@ -169,3 +169,207 @@ export default function Example() {
 | `children` | `ReactNode` | - | The icon element to animate |
 | `delay` | `number` | `0` | Delay before animation starts in seconds |
 | `duration` | `number` | `0.3` | Animation duration in seconds |
+
+## Use cases
+
+`FadeInIcon` transitions `opacity` from 0 to 1 using `createDelayedTransition`, which applies `easeOut` with a configurable `delay` and `duration`. It animates on mount and stays visible. Because opacity-only transitions are among the cheapest possible animations, this component is safe to use broadly:
+
+- **Staggered icon rows.** Incrementing `delay` by 0.1 s per icon creates a cascading reveal for feature grids, pricing tables, or icon legend rows.
+- **Async content icons.** Fade in a success checkmark, warning triangle, or loading spinner as soon as it becomes relevant without a jarring pop.
+- **Navigation icons.** Fade in sidebar or bottom-nav icons when the layout first renders to soften the initial page paint.
+- **Empty-state illustrations.** A subtle fade on a large decorative icon makes the empty state feel intentional rather than blank.
+- **Tooltip or popover icons.** Fade in helper icons (info circle, question mark) alongside their parent elements for a cohesive entrance.
+
+## When to use / when not to use
+
+**Use `FadeInIcon` when:**
+
+- You need the gentlest possible entrance: no scale, no movement, just opacity.
+- You are staggering several icons sequentially and want to keep the motion calm.
+- The icon is small and paired with text; a dramatic entrance like [PopIcon](/docs/animations/icons/pop) or [ScaleInIcon](/docs/animations/icons/scale-in) would overpower the surrounding content.
+
+**Do not use it when:**
+
+- You need a more noticeable entrance. A small icon fading from 0 to 1 over 0.3 s in a large empty area can feel underwhelming. Reach for [ScaleInIcon](/docs/animations/icons/scale-in) (`from={0.5}`) or [PopIcon](/docs/animations/icons/pop) to make the arrival feel more deliberate.
+- The icon needs to re-animate on interaction. `FadeInIcon` fires once at mount and never again. For hover or tap responses, use [BounceIcon](/docs/animations/icons/bounce), [WiggleIcon](/docs/animations/icons/wiggle), or [RotateIcon](/docs/animations/icons/rotate).
+- You are fading in dozens of icons simultaneously with `delay={0}`. Without stagger, a wall of icons all fading in at the same moment is barely distinguishable from no animation.
+
+## Accessibility notes
+
+- `FadeInIcon` animates opacity only. Most screen readers do not announce the visibility change, so the icon must carry meaning through text (a sibling label or `aria-label` on the parent button), not through its appearance.
+- Icons paired with a text label are decorative. Apply `aria-hidden="true"` directly to the icon:
+
+```tsx
+<FadeInIcon delay={0.2}>
+  <Sparkles className="w-5 h-5 text-yellow-500" aria-hidden="true" />
+</FadeInIcon>
+```
+
+- When a standalone icon fades in to convey information (e.g., a checkmark confirming success), pair it with a live region so screen readers announce the state change:
+
+```tsx
+<div role="status">
+  <FadeInIcon delay={0}>
+    <CheckCircle className="w-6 h-6 text-green-500" aria-hidden="true" />
+  </FadeInIcon>
+  <span className="sr-only">Saved successfully</span>
+</div>
+```
+
+- `prefers-reduced-motion` users still see the final state (opacity 1) because `FadeInIcon` renders the element immediately at the target; the fade is just the transition. No special handling is needed for the end state, but you can skip the transition entirely for a fully instant reveal:
+
+```tsx
+"use client"
+import { useReducedMotion } from "motion/react"
+import { FadeInIcon } from "@/components/animations/icons/fade-in"
+import { Sparkles } from "lucide-react"
+
+export function AnimatedSparkles() {
+  const reduced = useReducedMotion()
+  return (
+    <FadeInIcon delay={reduced ? 0 : 0.3} duration={reduced ? 0 : 0.3}>
+      <Sparkles className="w-6 h-6 text-yellow-500" aria-hidden="true" />
+    </FadeInIcon>
+  )
+}
+```
+
+## Performance considerations
+
+- Opacity-only animations run entirely on the compositor thread. There is zero layout recalculation or paint involved, making this the most performant entrance animation available.
+- The animation fires once on mount and does not repeat. After completion the element is a normal static node with no ongoing animation cost.
+- Staggering many `FadeInIcon` instances with different `delay` values is fine because each animation is short (default 0.3 s) and non-overlapping after the delays are applied. Hundreds of staggered fade-ins are cheaper than a single `repeat: Infinity` scale animation.
+- No `will-change` optimization is needed. Opacity transitions are already composited without hinting.
+
+## Customization examples
+
+### Very fast fade for near-instant feedback
+
+A `duration` under 0.15 s is essentially instant but avoids the visual jolt of no animation at all:
+
+```tsx
+import { FadeInIcon } from "@/components/animations/icons/fade-in"
+import { CheckCircle } from "lucide-react"
+
+<FadeInIcon duration={0.15}>
+  <CheckCircle className="w-5 h-5 text-green-500" aria-hidden="true" />
+</FadeInIcon>
+```
+
+### Slow, atmospheric fade
+
+A longer `duration` works well for large decorative icons in hero or empty-state contexts:
+
+```tsx
+import { FadeInIcon } from "@/components/animations/icons/fade-in"
+import { Star } from "lucide-react"
+
+<FadeInIcon duration={0.8} delay={0.3}>
+  <Star className="w-16 h-16 text-yellow-400" aria-hidden="true" />
+</FadeInIcon>
+```
+
+### Manual stagger in a feature grid
+
+Incrementing delay per item creates a left-to-right cascade:
+
+```tsx
+import { FadeInIcon } from "@/components/animations/icons/fade-in"
+import { Shield, Zap, Globe } from "lucide-react"
+
+const features = [
+  { icon: Shield, label: "Secure", color: "text-blue-500" },
+  { icon: Zap,    label: "Fast",   color: "text-yellow-500" },
+  { icon: Globe,  label: "Global", color: "text-green-500" },
+]
+
+export function FeatureRow() {
+  return (
+    <div className="flex gap-8">
+      {features.map(({ icon: Icon, label, color }, i) => (
+        <div key={label} className="flex flex-col items-center gap-2">
+          <FadeInIcon delay={i * 0.12} duration={0.3}>
+            <Icon className={`w-8 h-8 ${color}`} aria-hidden="true" />
+          </FadeInIcon>
+          <span className="text-sm font-medium">{label}</span>
+        </div>
+      ))}
+    </div>
+  )
+}
+```
+
+## Real-world examples
+
+### Async success icon after form submit
+
+The checkmark fades in after the server confirms the save:
+
+```tsx
+"use client"
+import { useState } from "react"
+import { FadeInIcon } from "@/components/animations/icons/fade-in"
+import { CheckCircle, Loader2 } from "lucide-react"
+
+export function SaveForm() {
+  const [status, setStatus] = useState<"idle" | "saving" | "saved">("idle")
+
+  async function handleSave() {
+    setStatus("saving")
+    await new Promise((r) => setTimeout(r, 1200))
+    setStatus("saved")
+  }
+
+  return (
+    <div className="flex items-center gap-3">
+      <button
+        onClick={handleSave}
+        disabled={status === "saving"}
+        className="rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white disabled:opacity-60"
+      >
+        {status === "saving" ? "Saving..." : "Save"}
+      </button>
+      {status === "saved" && (
+        <div role="status" className="flex items-center gap-1.5 text-green-600">
+          <FadeInIcon duration={0.25}>
+            <CheckCircle className="w-5 h-5" aria-hidden="true" />
+          </FadeInIcon>
+          <span className="text-sm font-medium">Saved</span>
+        </div>
+      )}
+    </div>
+  )
+}
+```
+
+### Staggered icon legend for a pricing page
+
+Icons arrive in sequence as the section scrolls into view:
+
+```tsx
+import { FadeInIcon } from "@/components/animations/icons/fade-in"
+import { Check, X } from "lucide-react"
+
+const rows = [
+  { label: "Unlimited projects", included: true },
+  { label: "Priority support",   included: true },
+  { label: "Custom domain",      included: false },
+]
+
+export function PricingFeatures() {
+  return (
+    <ul className="space-y-3">
+      {rows.map(({ label, included }, i) => (
+        <li key={label} className="flex items-center gap-2 text-sm">
+          <FadeInIcon delay={i * 0.1} duration={0.25}>
+            {included
+              ? <Check className="w-4 h-4 text-green-500" aria-hidden="true" />
+              : <X className="w-4 h-4 text-neutral-400" aria-hidden="true" />}
+          </FadeInIcon>
+          <span className={included ? "" : "text-neutral-400"}>{label}</span>
+        </li>
+      ))}
+    </ul>
+  )
+}
+```

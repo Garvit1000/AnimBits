@@ -221,3 +221,172 @@ For dark mode support, use CSS variables:
 | `fillColor` | `string` | `"transparent"` | Fill color of the text |
 | `strokeColor` | `string` | `"currentColor"` | Color of the text outline |
 
+## Use cases
+
+`ZoomHollowText` cycles through `words` on a `setInterval` every `interval` milliseconds (default 2500ms). Each word change uses `AnimatePresence mode="wait"`: the current word exits (`scale: 1.5`, `opacity: 0`, `filter: blur(10px)`), then the next word enters (`scale: 0.5` to `scale: 1`, `opacity: 0` to `1`, blur clears). The custom easing `[0.22, 1, 0.36, 1]` (a fast ease-out curve) makes the entry feel snappy and the exit feel like the word explodes outward. The hollow outline is CSS-only via `-webkit-text-stroke` and `-webkit-text-fill-color: transparent`.
+
+Use it when:
+
+- **Hero sections.** A headline like "We help you [Design / Build / Ship / Scale]" where the cycling word reinforces the brand message. The hollow outline at large sizes (`text-7xl` or above) has high visual impact.
+- **Value proposition cycling.** A landing page that cycles through product benefits. `interval=3000` with `duration=0.8` gives enough reading time between transitions.
+- **Loading or splash screens.** While a heavy page loads, a cycling word display entertains the user. `interval=1500` with `duration=0.5` keeps energy high.
+- **Theme-aware decorative text.** With `strokeColor="currentColor"` and `fillColor="transparent"`, the outline color automatically matches the current text color in both light and dark mode, requiring no custom CSS.
+
+## When to use / when not to use
+
+**Use `ZoomHollowText` when:**
+
+- The words are short (1 to 2 words, ideally under 12 characters). Long words at `text-7xl` will overflow their container on mobile.
+- The context is decorative, not informational. Cycling text is not readable for users who need to parse it to understand the page.
+- You control when the component is visible. Running `setInterval` continuously when the element is off-screen wastes CPU. Use an `IntersectionObserver` to pause cycling when scrolled away.
+
+**Do not use `ZoomHollowText` when:**
+
+- The cycling message is essential for the user to read before taking an action. `AnimatePresence mode="wait"` means only one word is in the DOM at a time; users who look away will miss words.
+- The words have very different lengths. `motion.span` has `display: block`, so its bounding box changes with each word. The parent container must have a fixed height to prevent layout shift.
+- You need the animation to stop at a specific word (e.g., after user interaction). The component has no `pause` or `index` prop; pausing requires lifting the `index` state out of the component.
+
+## Accessibility notes
+
+- **Decorative content.** The cycling text conveys no critical information. Wrap it in a container with `aria-hidden="true"` and provide the primary message in a static, always-visible sibling element. This is the safest approach.
+- **If the text is meaningful.** If the cycling words communicate important product benefits, add a visually-hidden list of all words so screen readers read the complete message without the animation. Example: `<ul className="sr-only"><li>Design</li><li>Create</li><li>Innovate</li></ul>`.
+- **`prefers-reduced-motion`.** The component does not currently check `useReducedMotion`. Add it to skip the enter/exit animation and display words statically, just updating the text without the zoom-blur transition:
+
+```tsx
+"use client"
+import { useReducedMotion } from "motion/react"
+import { ZoomHollowText } from "@/components/animations/transitions/zoom-hollow"
+
+// Static fallback when the user prefers reduced motion.
+function AccessibleZoomHollow(props: React.ComponentProps<typeof ZoomHollowText>) {
+  const reduced = useReducedMotion()
+  if (reduced) {
+    return (
+      <span style={{ WebkitTextStroke: `${props.strokeWidth ?? 2}px ${props.strokeColor ?? "currentColor"}`, WebkitTextFillColor: props.fillColor ?? "transparent" }}>
+        {props.words[0]}
+      </span>
+    )
+  }
+  return <ZoomHollowText {...props} />
+}
+```
+
+- **`-webkit-text-stroke` support.** `-webkit-text-stroke` and `-webkit-text-fill-color` are supported in all modern browsers but are technically prefixed. They have no standard fallback in Firefox for very old versions. Test and provide a `fillColor="currentColor"` fallback if full-text support is required.
+
+## Performance considerations
+
+- **`AnimatePresence mode="wait"`.** Only one `motion.span` is in the DOM at a time. The exiting word unmounts before the entering word mounts. This keeps the DOM clean but means two full enter/exit animations fire on each cycle. The combined animation cost is `duration * 2` per cycle (the exit overlaps with the enter by `mode="wait"` semantics, actually it is sequential, so cost is the exit duration plus the enter duration).
+- **Blur in `filter`.** The component animates `filter: blur(10px)` on enter and exit. CSS `filter` creates a new stacking context. For a small inline text span this is cheap, but if the span is very large (e.g., a massive `text-9xl` hero headline), the blur area is large and can cause GPU overdraw. Test on mobile and reduce `blur` if needed by using `duration=0.5` with no blur in the transition config (currently hardcoded at 10px; to change it you would need to modify the component).
+- **`setInterval` + `setIndex`.** Each interval tick calls `setIndex`, which re-renders the component. This is a minimal re-render (only the `motion.span` changes), but keep the component's parent tree shallow to avoid triggering expensive ancestor re-renders.
+- **Custom easing `[0.22, 1, 0.36, 1]`.** This is a fast cubic-bezier with an overshooting feel at the end of the `scale` animation on enter. It is specified as an array, which Framer Motion evaluates as a cubic-bezier. There is no spring settling involved, so the animation ends at exactly `duration` seconds.
+
+## Customization examples
+
+### Brand accent stroke with filled text
+
+Show a filled word in a brand color instead of hollow:
+
+```tsx
+import { ZoomHollowText } from "@/components/animations/transitions/zoom-hollow"
+
+export function BrandHero() {
+  return (
+    <ZoomHollowText
+      words={["Ship", "Scale", "Succeed"]}
+      className="text-8xl font-black"
+      strokeColor="#3b82f6"
+      fillColor="#3b82f6"
+      strokeWidth={0}
+    />
+  )
+}
+```
+
+### Slow, dreamy cycle for a portfolio
+
+Longer interval and slower duration for a meditative feel:
+
+```tsx
+<ZoomHollowText
+  words={["Design", "Code", "Deploy", "Iterate"]}
+  className="text-6xl font-black text-zinc-900 dark:text-zinc-100"
+  duration={1.2}
+  interval={4000}
+  strokeWidth={2}
+  fillColor="transparent"
+/>
+```
+
+### Tight fast cycle for an energy-forward landing page
+
+Short words, fast timing:
+
+```tsx
+<ZoomHollowText
+  words={["Fast", "Bold", "Live"]}
+  className="text-7xl font-black"
+  duration={0.4}
+  interval={1200}
+  strokeColor="currentColor"
+/>
+```
+
+## Real-world examples
+
+### Marketing hero headline
+
+A SaaS landing page where the verb cycles to highlight different capabilities:
+
+```tsx
+"use client"
+import { ZoomHollowText } from "@/components/animations/transitions/zoom-hollow"
+
+export function HeroSection() {
+  return (
+    <section className="flex flex-col items-center justify-center min-h-screen text-center px-4 bg-white dark:bg-zinc-950">
+      <p className="text-sm font-semibold text-zinc-500 dark:text-zinc-400 uppercase tracking-widest mb-4">
+        The platform built to
+      </p>
+      <ZoomHollowText
+        words={["Design", "Prototype", "Test", "Launch"]}
+        className="text-7xl md:text-8xl font-black text-zinc-900 dark:text-zinc-100"
+        strokeWidth={2}
+        duration={0.7}
+        interval={2800}
+      />
+      <p className="mt-6 max-w-md text-base text-zinc-500 dark:text-zinc-400">
+        One workspace for your entire product team.
+      </p>
+    </section>
+  )
+}
+```
+
+### Animated category label
+
+A smaller cycling word inside a card header that cycles through content categories:
+
+```tsx
+"use client"
+import { ZoomHollowText } from "@/components/animations/transitions/zoom-hollow"
+
+export function CategoryCard() {
+  return (
+    <div className="rounded-xl border border-zinc-200 dark:border-zinc-800 p-6 bg-white dark:bg-zinc-900">
+      <div className="flex items-center gap-3 mb-4">
+        <span className="text-sm font-medium text-zinc-500 dark:text-zinc-400">Explore</span>
+        <ZoomHollowText
+          words={["Design", "Engineering", "Growth", "Research"]}
+          className="text-sm font-bold"
+          strokeWidth={1}
+          duration={0.5}
+          interval={2000}
+          strokeColor="currentColor"
+        />
+      </div>
+      <p className="text-sm text-zinc-600 dark:text-zinc-400">Browse resources by category.</p>
+    </div>
+  )
+}
+```
+

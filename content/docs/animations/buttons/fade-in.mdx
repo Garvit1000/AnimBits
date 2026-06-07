@@ -350,3 +350,187 @@ import { FadeInButton } from "@/components/animations/buttons/fade-in"
 | `delay` | `number` | `0` | Delay before animation starts (seconds) |
 | `duration` | `number` | `0.3` | Animation duration (seconds) |
 | `children` | `React.ReactNode` | Required | Button content |
+
+## Use cases
+
+`FadeInButton` animates from `opacity: 0` to `opacity: 1` using the `fadeInVariants` preset (`hidden: { opacity: 0 }`, `visible: { opacity: 1 }`) and `createDelayedTransition` which applies an `easeOut` curve. Because the animation fires on mount (`initial="hidden"`, `animate="visible"`), it runs once when the component first renders. Reach for it when:
+
+- **Staggered toolbar or nav actions.** Reveal a row of buttons one at a time by incrementing the `delay` prop: `delay={0}`, `delay={0.2}`, `delay={0.4}`. The opacity-only transition is subtle enough not to distract from the page content.
+- **Confirmation dialogs and modals.** A button that fades in after a short delay (0.2 to 0.4 seconds) gives the dialog time to settle before the primary action becomes clickable, reducing accidental submissions.
+- **Route-level entrance animations.** When a page loads, primary CTAs can fade in after content has appeared (`delay={0.3}`) to sequence the user's attention.
+- **Empty-state actions.** A "Create your first project" button that fades in when no data exists draws the eye after the surrounding empty-state illustration has rendered.
+
+Because the transition uses `easeOut` with a default `duration` of 0.3 seconds, the button reaches full opacity quickly and does not leave the user waiting.
+
+## When to use / when not to use
+
+**Use `FadeInButton` when:**
+
+- You want a one-time entrance animation that plays on mount and then stays visible.
+- You're sequencing multiple buttons with the `delay` prop to create a staggered reveal.
+- The button lives on a page or section that enters the viewport as part of a route transition.
+
+**Reach for a different button when:**
+
+- You need a hover or click interaction animation rather than an entrance animation. `FadeInButton` does not respond to hover or tap. Use [Glow Button](/docs/animations/buttons/glow), [Lift Button](/docs/animations/buttons/lift), or [Press Button](/docs/animations/buttons/press) for that purpose.
+- The button is always visible (not conditionally mounted or revealed by routing). If the component never unmounts, the fade only plays once on the initial page load, and returning users never see it.
+- You need to slide the button in from a direction. Use [Slide In Button](/docs/animations/buttons/slide-in) which also fades but adds a 20px directional translation (`x: -20` for `left`, `y: 20` for `down`, etc.).
+- You want a continuous or repeating animation. `FadeInButton` plays once; it has no `repeat` setting.
+
+## Accessibility notes
+
+The fade-in is a purely visual entrance effect. The button is fully interactive before the animation completes because motion only affects `opacity`, not `pointer-events` or `visibility`.
+
+- **Content is always in the DOM.** Screen readers see the button the moment it mounts, regardless of where the opacity is in the transition. No additional `aria-live` region is needed.
+- **Keyboard focus.** Because `FadeInButton` renders a `motion.button`, it receives focus normally. The fade does not block tab order; if the user tabs to the button during the 0.3 second fade it activates normally.
+- **Reduced motion.** The fade modifies opacity, which is generally tolerable under `prefers-reduced-motion`. If you want to fully skip the animation for users who prefer less motion:
+
+```tsx
+"use client"
+import { useReducedMotion } from "motion/react"
+import { FadeInButton } from "@/components/animations/buttons/fade-in"
+
+function AccessibleFadeIn({ children }: { children: React.ReactNode }) {
+  const reduced = useReducedMotion()
+  // Skip the fade entirely by setting duration to 0 when reduced motion is preferred.
+  return (
+    <FadeInButton
+      duration={reduced ? 0 : 0.3}
+      className="inline-flex h-11 items-center rounded-lg bg-blue-600 px-6 text-sm font-semibold text-white"
+    >
+      {children}
+    </FadeInButton>
+  )
+}
+```
+
+- **Don't hide action from keyboard-only users.** Never conditionally add `disabled` during the animation; the button should be interactive from mount.
+
+## Performance considerations
+
+- **Opacity-only animation.** `fadeInVariants` changes only `opacity`, which is a compositor-friendly property. The browser does not trigger layout or repaint during the transition.
+- **Single-fire animation.** Unlike `repeat: Infinity` components such as [Border Gradient Button](/docs/animations/buttons/border-gradient), `FadeInButton` fires once and stops scheduling frames after the transition completes. There is no ongoing animation overhead.
+- **`createDelayedTransition` does not poll.** The delay is implemented as a CSS/Web Animations delay, not a `setTimeout` re-render loop, so it does not cause extra React renders.
+- **Staggered groups.** Rendering many `FadeInButton` components with different `delay` values is safe; each is a single `motion.button` with one short animation and no ongoing subscriber after it completes.
+- **Remounting resets the animation.** If the parent component unmounts and remounts `FadeInButton`, the fade plays again from `opacity: 0`. Wrap in a stable parent or use a key-controlled remount only when you intentionally want to replay the entrance.
+
+## Customization examples
+
+### Slower entrance for a hero CTA
+
+A 0.6-second fade feels more deliberate on a marketing page:
+
+```tsx
+<FadeInButton
+  duration={0.6}
+  delay={0.4}
+  className="inline-flex h-11 items-center rounded-lg bg-blue-600 px-6 text-sm font-semibold text-white"
+>
+  Get started
+</FadeInButton>
+```
+
+### Staggered toolbar
+
+Three action buttons appear one after another with 150ms gaps:
+
+```tsx
+<div className="flex gap-3">
+  <FadeInButton delay={0} duration={0.3} className="inline-flex h-9 items-center rounded-lg border border-neutral-200 dark:border-neutral-700 px-4 text-sm font-medium text-neutral-700 dark:text-neutral-300">
+    Edit
+  </FadeInButton>
+  <FadeInButton delay={0.15} duration={0.3} className="inline-flex h-9 items-center rounded-lg border border-neutral-200 dark:border-neutral-700 px-4 text-sm font-medium text-neutral-700 dark:text-neutral-300">
+    Duplicate
+  </FadeInButton>
+  <FadeInButton delay={0.3} duration={0.3} className="inline-flex h-9 items-center rounded-lg bg-red-50 dark:bg-red-900/20 px-4 text-sm font-medium text-red-600 dark:text-red-400">
+    Delete
+  </FadeInButton>
+</div>
+```
+
+### Near-instant fade to avoid layout shift on fast connections
+
+```tsx
+<FadeInButton
+  duration={0.15}
+  delay={0}
+  className="inline-flex h-11 items-center rounded-lg bg-neutral-900 dark:bg-white px-6 text-sm font-semibold text-white dark:text-neutral-900"
+>
+  Continue
+</FadeInButton>
+```
+
+## Real-world examples
+
+### Dialog with a delayed confirm button
+
+The confirm action fades in 200ms after the dialog mounts, giving the content time to render before the primary action draws attention:
+
+```tsx
+"use client"
+import { useState } from "react"
+import { FadeInButton } from "@/components/animations/buttons/fade-in"
+
+export function ConfirmDialog({ onConfirm, onCancel }: { onConfirm: () => void; onCancel: () => void }) {
+  return (
+    <div
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="confirm-title"
+      className="rounded-xl border border-neutral-200 dark:border-neutral-800 bg-white dark:bg-neutral-900 p-6 shadow-xl"
+    >
+      <h2 id="confirm-title" className="text-base font-semibold text-neutral-900 dark:text-white">
+        Delete project?
+      </h2>
+      <p className="mt-2 text-sm text-neutral-500">This action cannot be undone.</p>
+      <div className="mt-6 flex justify-end gap-3">
+        <button
+          onClick={onCancel}
+          className="inline-flex h-9 items-center rounded-lg border border-neutral-200 dark:border-neutral-700 px-4 text-sm font-medium text-neutral-700 dark:text-neutral-300"
+        >
+          Cancel
+        </button>
+        <FadeInButton
+          delay={0.2}
+          duration={0.3}
+          onClick={onConfirm}
+          className="inline-flex h-9 items-center rounded-lg bg-red-600 px-4 text-sm font-semibold text-white"
+        >
+          Delete
+        </FadeInButton>
+      </div>
+    </div>
+  )
+}
+```
+
+### Marketing page CTA section with staggered entrance
+
+Content headline appears first, then the buttons fade in sequentially:
+
+```tsx
+<section className="flex flex-col items-center gap-6 py-24 text-center">
+  <h1 className="text-5xl font-bold text-neutral-900 dark:text-white">
+    Ship animations faster
+  </h1>
+  <p className="max-w-md text-lg text-neutral-500">
+    Copy-paste components built on Motion.
+  </p>
+  <div className="flex gap-4">
+    <FadeInButton
+      delay={0.3}
+      duration={0.4}
+      className="inline-flex h-11 items-center rounded-lg bg-blue-600 px-6 text-sm font-semibold text-white"
+    >
+      Browse components
+    </FadeInButton>
+    <FadeInButton
+      delay={0.5}
+      duration={0.4}
+      className="inline-flex h-11 items-center rounded-lg border border-neutral-200 dark:border-neutral-700 px-6 text-sm font-semibold text-neutral-700 dark:text-neutral-300"
+    >
+      View on GitHub
+    </FadeInButton>
+  </div>
+</section>
+```

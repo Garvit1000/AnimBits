@@ -158,3 +158,158 @@ export default function Example() {
 | `count` | `number` | `3` | Number of dots |
 | `gap` | `number` | `8` | Gap between dots in pixels |
 | `duration` | `number` | `1.2` | Animation duration in seconds |
+
+## Use cases
+
+`LoaderDots` is an **indeterminate** loader. Each dot bounces upward by `size * 1.5` pixels and back, with each dot delayed by `index * (duration / count)` seconds so the wave rolls left to right. Reach for it when:
+
+- **Chat and messaging interfaces.** The bouncing three-dot pattern is universally understood as "the other party is typing" or "response is being generated."
+- **Conversational or AI product surfaces.** Anywhere the product voice is friendly and informal, dots feel more approachable than a clinical spinner.
+- **Inline pending states.** Inside a tooltip, a popover, or beside a label, three small dots at the default `size={10}` fit comfortably without taking over the layout.
+- **Button loading states** where the brand is casual. Swap the button label for dots while a request is in flight.
+
+## When to use / when not to use
+
+**Use dots when:**
+
+- The wait is indeterminate and the surrounding context is conversational or low-stakes.
+- You want a horizontal loading pattern that communicates "preparing a reply" or "almost ready."
+
+**Reach for something else when:**
+
+- **You know the progress percentage.** Use [Liquid Progress](/docs/animations/loaders/liquid-progress) so the bar reflects actual progress.
+- **You are replacing structured content** such as a list, a card, or a profile. A [Skeleton](/docs/animations/loaders/skeleton) preserves the content shape and cuts perceived wait time.
+- **The context is formal or data-dense.** Three bouncing dots feel out of place in a financial dashboard or an admin panel table. A [Spinner](/docs/animations/loaders/spinner) or [Bars](/docs/animations/loaders/bars) reads more neutrally.
+- **The wait is under ~300 ms.** A delay wrapper prevents a one-frame flash.
+
+## Accessibility notes
+
+`LoaderDots` renders plain `<div>` elements; screen readers will skip it without extra markup.
+
+- **Wrap in a live region:**
+
+```tsx
+<div role="status">
+  <LoaderDots />
+  <span className="sr-only">Loading...</span>
+</div>
+```
+
+- **Respect reduced motion.** Continuous vertical bouncing can be uncomfortable for users with vestibular sensitivities:
+
+```tsx
+"use client"
+import { useReducedMotion } from "motion/react"
+import { LoaderDots } from "@/components/animations/loaders/dots"
+
+function AccessibleDots() {
+  const reduced = useReducedMotion()
+  return (
+    <div role="status">
+      <LoaderDots duration={reduced ? 6 : 1.2} />
+      <span className="sr-only">Loading...</span>
+    </div>
+  )
+}
+```
+
+- **Do not rely on motion alone.** The `sr-only` label is the accessible signal.
+
+## Performance considerations
+
+- **`y` is a transform.** Each dot animates `y` only, which maps to `translateY` under the hood. This keeps animation on the compositor thread with no layout cost, delivering smooth 60fps.
+- **Conditionally render.** `repeat: Infinity` keeps each dot's animation loop alive. Unmount the component with `{loading && <LoaderDots />}` rather than toggling visibility.
+- **Watch `count`.** Each dot is a separate `motion.div`. The default `count={3}` is minimal. `count={5}` is still cheap; higher values above eight offer no visual benefit and multiply animation overhead.
+
+## Customization examples
+
+### Typing indicator (chat-style)
+
+Small dots with tight spacing mimic a chat bubble:
+
+```tsx
+<LoaderDots size={7} count={3} gap={5} color="#6366f1" duration={1} />
+```
+
+### Large and prominent
+
+For a full-section or hero waiting state:
+
+```tsx
+<LoaderDots size={16} count={4} gap={12} color="#3b82f6" duration={1.4} />
+```
+
+### Muted and subtle
+
+A slower, low-contrast variant works as a background indicator:
+
+```tsx
+<LoaderDots size={8} count={3} gap={6} color="#94a3b8" duration={1.8} />
+```
+
+## Real-world examples
+
+### AI typing indicator
+
+```tsx
+"use client"
+import { useState } from "react"
+import { LoaderDots } from "@/components/animations/loaders/dots"
+
+export function AiTypingBubble({ responding }: { responding: boolean }) {
+  if (!responding) return null
+
+  return (
+    <div className="flex items-start gap-3">
+      <div className="h-8 w-8 rounded-full bg-neutral-200 dark:bg-neutral-700 flex items-center justify-center text-xs font-bold">
+        AI
+      </div>
+      <div
+        role="status"
+        className="flex items-center gap-2 rounded-2xl rounded-tl-none bg-neutral-100 dark:bg-neutral-800 px-4 py-3"
+      >
+        <LoaderDots size={7} count={3} gap={4} color="#6366f1" duration={1} />
+        <span className="sr-only">AI is typing...</span>
+      </div>
+    </div>
+  )
+}
+```
+
+### Inline button loading state
+
+```tsx
+"use client"
+import { useState } from "react"
+import { LoaderDots } from "@/components/animations/loaders/dots"
+
+export function SendButton() {
+  const [sending, setSending] = useState(false)
+
+  async function handleSend() {
+    setSending(true)
+    try {
+      await sendMessage()
+    } finally {
+      setSending(false)
+    }
+  }
+
+  return (
+    <button
+      onClick={handleSend}
+      disabled={sending}
+      className="inline-flex h-10 min-w-[80px] items-center justify-center gap-2 rounded-full bg-indigo-600 px-5 text-sm font-semibold text-white disabled:opacity-70"
+    >
+      {sending ? (
+        <div role="status" className="flex items-center">
+          <LoaderDots size={6} count={3} gap={4} color="#fff" duration={1} />
+          <span className="sr-only">Sending...</span>
+        </div>
+      ) : (
+        "Send"
+      )}
+    </button>
+  )
+}
+```
