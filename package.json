@@ -4,10 +4,11 @@
   "private": true,
   "scripts": {
     "dev": "next dev --turbopack",
-    "build": "pnpm registry:build && next build",
+    "build": "pnpm registry:build && pnpm generate:llms && next build",
     "start": "next start",
     "lint": "next lint",
-    "registry:build": "shadcn build"
+    "registry:build": "shadcn build",
+    "generate:llms": "node scripts/generate-llms.mjs"
   },
   "dependencies": {
     "@dnd-kit/core": "^6.3.1",

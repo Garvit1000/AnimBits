@@ -1,0 +1,128 @@
+# AnimBits
+
+> A curated suite of copy-and-paste animations, hooks, and components for React and Next.js. Built on Motion and the shadcn registry, AnimBits helps you ship polished, accessible, production-ready interfaces. Every component installs through the shadcn CLI and ships with TypeScript types.
+
+## Getting Started
+
+- [AnimBits](https://animbits.dev/docs): Beautiful, component-agnostic animation primitives for React. Copy, paste, and make it yours.
+- [Installation](https://animbits.dev/docs/installation): AnimBits is not a traditional npm package. You can download using shadcn cli or copy the components and hooks directly into your project. This gives you full control over the code and allows you to customize everything.
+
+## Button Animations
+
+- [Border Gradient Button](https://animbits.dev/docs/animations/buttons/border-gradient): Button with animated gradient border that traces around the perimeter.
+- [Fade In Button](https://animbits.dev/docs/animations/buttons/fade-in): Button with smooth fade-in entrance animation.
+- [Glow Button](https://animbits.dev/docs/animations/buttons/glow): Button with colored glow effect on hover using the useHoverGlow hook.
+- [Lift Button](https://animbits.dev/docs/animations/buttons/lift): Button component that lifts up on hover with shadow effect using the useHoverLift hook.
+- [Magnetic Button](https://animbits.dev/docs/animations/buttons/magnetic): Button that smoothly follows the cursor on hover using spring physics.
+- [Press Button](https://animbits.dev/docs/animations/buttons/press): Button with press-down feedback effect on click using the usePress hook.
+- [Ripple Button](https://animbits.dev/docs/animations/buttons/ripple): Button with Material Design-style ripple effect that expands from click position.
+- [Shine Button](https://animbits.dev/docs/animations/buttons/shine): Button with shine sweep effect that travels across on hover.
+- [Slide In Button](https://animbits.dev/docs/animations/buttons/slide-in): Button with slide-in entrance animation from any direction.
+
+## Card Animations
+
+- [Background Zoom Card](https://animbits.dev/docs/animations/cards/background-zoom): Card with background image that zooms on hover.
+- [Fade In Card](https://animbits.dev/docs/animations/cards/fade-in): Card that fades in when mounted.
+- [Flip Card](https://animbits.dev/docs/animations/cards/flip): Card that flips on hover.
+- [Grayscale Card](https://animbits.dev/docs/animations/cards/grayscale): Card with grayscale to color transition on hover.
+- [Hover Glow Card](https://animbits.dev/docs/animations/cards/hover-glow): Card with customizable glow effect on hover.
+- [Hover Lift Card](https://animbits.dev/docs/animations/cards/hover-lift): Card that lifts up on hover with shadow effect.
+- [Parallax Tilt Card](https://animbits.dev/docs/animations/cards/parallax-tilt): Card with 3D parallax tilt and shadow separation.
+- [Scale In Card](https://animbits.dev/docs/animations/cards/scale-in): Card that scales in when entering viewport.
+- [Slide In Card](https://animbits.dev/docs/animations/cards/slide-in): Card that slides in from a direction.
+- [Tilt Card](https://animbits.dev/docs/animations/cards/tilt): Card that tilts based on mouse position.
+
+## Icon Animations
+
+- [Bounce Continuous](https://animbits.dev/docs/animations/icons/bounce-continuous): Continuous bouncing animation for icons.
+- [Bounce Icon](https://animbits.dev/docs/animations/icons/bounce): One-shot bounce animation for icons triggered by interaction.
+- [Fade In Icon](https://animbits.dev/docs/animations/icons/fade-in): Entrance animation with fade effect for icons.
+- [Heartbeat Icon](https://animbits.dev/docs/animations/icons/heartbeat): Continuous heartbeat rhythm animation for icons.
+- [Morph Icon](https://animbits.dev/docs/animations/icons/morph): An icon that morphs between different states.
+- [Pop Icon](https://animbits.dev/docs/animations/icons/pop): One-shot pop effect (scale from 0 to 1) for icons.
+- [Pulse Icon](https://animbits.dev/docs/animations/icons/pulse): Continuous pulsing animation for icons.
+- [Rotate Icon](https://animbits.dev/docs/animations/icons/rotate): One-shot 360° rotation animation for icons.
+- [Scale In Icon](https://animbits.dev/docs/animations/icons/scale-in): Entrance animation with scale effect for icons.
+- [Shake Icon](https://animbits.dev/docs/animations/icons/shake): One-shot shake animation (horizontal shake) for icons.
+- [Spin Icon](https://animbits.dev/docs/animations/icons/spin): Continuous rotation animation for icons.
+- [Stroke Draw Icon](https://animbits.dev/docs/animations/icons/stroke-draw): An icon that draws itself stroke by stroke.
+- [Wiggle Icon](https://animbits.dev/docs/animations/icons/wiggle): One-shot wiggle animation (rotate left-right) for icons.
+
+## List Animations
+
+- [Slide In List](https://animbits.dev/docs/animations/lists/slide-in): List component with staggered slide-in animation.
+- [Stagger Fade List](https://animbits.dev/docs/animations/lists/stagger-fade): List component with staggered fade-in animation.
+
+## Loaders
+
+- [Bars Loader](https://animbits.dev/docs/animations/loaders/bars): A bars loader with animated height.
+- [Dots Loader](https://animbits.dev/docs/animations/loaders/dots): A bouncing dots loader.
+- [Gooey Blobs Loader](https://animbits.dev/docs/animations/loaders/gooey-blobs): A gooey blobs loader with merging effect.
+- [Liquid Progress Loader](https://animbits.dev/docs/animations/loaders/liquid-progress): A liquid-style progress bar that fills horizontally.
+- [Morphing Loader](https://animbits.dev/docs/animations/loaders/morphing): A morphing shape loader that transitions between different forms.
+- [Orbit Loader](https://animbits.dev/docs/animations/loaders/orbit): A loader with particles orbiting in a circle.
+- [Pulse Loader](https://animbits.dev/docs/animations/loaders/pulse): A pulsing circle loader.
+- [Skeleton Loader](https://animbits.dev/docs/animations/loaders/skeleton): A skeleton loader with shimmer effect.
+- [Spinner Loader](https://animbits.dev/docs/animations/loaders/spinner): A circular spinning loader.
+
+## Page Transitions
+
+- [Page Transition Fade](https://animbits.dev/docs/animations/pages/page-transition-fade): Smooth fade transition between page navigations using View Transitions API.
+- [Page Transition Slide](https://animbits.dev/docs/animations/pages/page-transition-slide): Smooth slide transition between page navigations using View Transitions API.
+
+## Special Components
+
+- [Animated Toast](https://animbits.dev/docs/animations/specials/animated-toast): Detailed toast notification with slide-in animation, icon, and auto-dismiss progress bar.
+- [Border Beam](https://animbits.dev/docs/animations/specials/border-beam): An animated gradient border effect that travels around a container.
+- [Image Text](https://animbits.dev/docs/animations/specials/image-text): Text with a dynamic, animated image mask background.
+- [Linear Carousel](https://animbits.dev/docs/animations/specials/linear-carousel): A stunning, smooth-scrolling 3D carousel inspired by Linear. Features card expansion with layout animations and keyboard navigation.
+- [Magnetic Drawer](https://animbits.dev/docs/animations/specials/magnetic-drawer): A physics-based drawer with magnetic snap points and smooth animations.
+- [Reaction Button](https://animbits.dev/docs/animations/specials/reaction-button): A generic reaction button with burst animation support for any icon.
+- [Reaction Dock](https://animbits.dev/docs/animations/specials/reaction-dock): A smooth, scaling dock of reaction emojis with magnification effect.
+- [Spotlight Card](https://animbits.dev/docs/animations/specials/spotlight-card): An interactive card component with a dynamic spotlight effect that tracks mouse movement.
+- [Swipeable Stack](https://animbits.dev/docs/animations/specials/swipeable-stack): A deck of interactive cards with swipe gestures and physics.
+
+## Text Animations
+
+- [Blur In Text](https://animbits.dev/docs/animations/text/blur-in): Text that blurs in word by word or character by character.
+- [Dia Text](https://animbits.dev/docs/animations/text/dia-text): Scroll-driven text reveal with precision blur and spring physics.
+- [Fade In Text](https://animbits.dev/docs/animations/text/fade-in): Text that fades in word by word or character by character.
+- [Gradient Text](https://animbits.dev/docs/animations/text/gradient): Text with animated gradient colors.
+- [Scramble Text](https://animbits.dev/docs/animations/text/scramble): Text that decodes from random characters.
+- [Shimmer Text](https://animbits.dev/docs/animations/text/shimmer): Text with smooth gradient shimmer effect.
+- [Slide Up Text](https://animbits.dev/docs/animations/text/slide-up): Text that slides up word by word or character by character.
+- [Split Reveal Text](https://animbits.dev/docs/animations/text/split-reveal): Text that reveals with a vertical split effect.
+- [SVG Text Draw](https://animbits.dev/docs/animations/text/svg-text-draw): SVG path drawing animation that reveals text letter by letter with stroke animation.
+- [Text Highlight](https://animbits.dev/docs/animations/text/text-highlight): A smooth, marker underline animation for text.
+- [Typewriter Text](https://animbits.dev/docs/animations/text/typewriter): Text that types out character by character with optional cursor.
+- [Word Carousel Text](https://animbits.dev/docs/animations/text/word-carousel): Text that cycles through an array of words.
+
+## Hooks
+
+- [useBounce](https://animbits.dev/docs/hooks/bounce): Bouncing animation for playful, attention-grabbing interactions.
+- [useFadeIn](https://animbits.dev/docs/hooks/fade-in): Smooth fade-in entrance animation for elegant content reveals.
+- [useHoverGlow](https://animbits.dev/docs/hooks/hover-glow): Add a glowing shadow effect on hover to any element.
+- [useHoverLift](https://animbits.dev/docs/hooks/hover-lift): Component-agnostic hover lift animation hook that adds elevation and shadow effects on hover.
+- [useMagnetic](https://animbits.dev/docs/hooks/magnetic): Magnetic cursor follow effect that makes elements smoothly follow the mouse with spring physics.
+- [useParallaxTilt](https://animbits.dev/docs/hooks/parallax-tilt): 3D parallax tilt effect that creates depth and dimension based on mouse position.
+- [usePress](https://animbits.dev/docs/hooks/press): Press-down feedback animation for interactive elements providing tactile feedback.
+- [usePulse](https://animbits.dev/docs/hooks/pulse): Continuous pulsing animation for attention-grabbing elements like notifications and badges.
+- [useScaleIn](https://animbits.dev/docs/hooks/scale-in): Scale up entrance animation with fade for smooth element reveals.
+- [useScramble](https://animbits.dev/docs/hooks/scramble): Matrix-style text scramble/decode animation that reveals text character by character.
+- [useShimmer](https://animbits.dev/docs/hooks/shimmer): Shimmer/shine text effect using pure CSS for smooth, performant animations.
+- [useSlideIn](https://animbits.dev/docs/hooks/slide-in): Slide in entrance animation from any direction with fade effect.
+- [useStrokeDraw](https://animbits.dev/docs/hooks/stroke-draw): SVG path drawing animation that reveals strokes progressively.
+- [useWordCarousel](https://animbits.dev/docs/hooks/word-carousel): Rotating word carousel that cycles through words with smooth transitions.
+
+## Transitions
+
+- [Expanding Card](https://animbits.dev/docs/transitions/expanding-card): Smoothly expand a card into a detail view with multiple animation styles.
+- [Shared Modal](https://animbits.dev/docs/transitions/shared-modal): A trigger that morphs into a modal with multiple animation styles.
+- [Tab Switcher](https://animbits.dev/docs/transitions/tab-switcher): Animated tab navigation with multiple visual styles.
+- [Theme Toggle Circular](https://animbits.dev/docs/transitions/theme-toggle-circular): Circular ripple animation for theme toggle using View Transitions API.
+- [Theme Toggle Slide Bottom](https://animbits.dev/docs/transitions/theme-toggle-slide-bottom): Bottom to top slide animation for theme toggle using View Transitions API.
+- [Theme Toggle Slide Left](https://animbits.dev/docs/transitions/theme-toggle-slide-left): Left to right slide animation for theme toggle using View Transitions API.
+- [Theme Toggle Slide Right](https://animbits.dev/docs/transitions/theme-toggle-slide-right): Right to left slide animation for theme toggle using View Transitions API.
+- [Theme Toggle Slide Top](https://animbits.dev/docs/transitions/theme-toggle-slide-top): Top to bottom slide animation for theme toggle using View Transitions API.
+- [View Toggle](https://animbits.dev/docs/transitions/view-toggle): Smoothly rearrange items with multiple animation styles when switching views.
+- [Zoom Hollow Text](https://animbits.dev/docs/transitions/zoom-hollow): A beautiful text transition that zooms in with a hollow outline effect, perfect for theme toggles
